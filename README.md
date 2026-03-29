@@ -16,7 +16,7 @@ The Thompson Schema is modeled after [Panther SIEM's](https://docs.panther.com/s
 
 Built entirely by LLM agents using IAO (Iterative Agentic Orchestration) - a methodology distilled from 48+ production iterations on [TripleDB](https://github.com/TachTech-Engineering/tripledb).
 
-**kylejeromethompson.com** | **Phase 1.7** | **Status: RickSteves Phase 1 Discovery Complete**
+**kylejeromethompson.com** | **Phase 2.8** | **Status: CalGold Phase 2 Calibration Complete**
 
 ---
 
@@ -95,7 +95,7 @@ The Thompson Schema provides universal indicator fields across all pipeline data
 
 | Pipeline | Source | Entity Type | Videos | Entities | Status |
 |----------|--------|-------------|--------|----------|--------|
-| `calgold` | California's Gold (Huell Howser) | landmark | 431 | 56 | Phase 1 Discovery |
+| `calgold` | California's Gold (Huell Howser) | landmark | 431 | 218 | Phase 2 Calibration |
 | `ricksteves` | Rick Steves' Europe | destination | 1,865 | 200 | Phase 1 Discovery |
 | `tripledb` | Diners, Drive-Ins and Dives | restaurant | 805 | - | Migration candidate |
 
@@ -200,7 +200,7 @@ This project is built using **Iterative Agentic Orchestration (IAO)** - a develo
 | 0 | Scaffold & Environment | DONE | v0.5 |
 | 1 | CalGold Discovery (30 videos) | DONE | v1.6 |
 | 1 | RickSteves Discovery (30 videos) | DONE | v1.7 |
-| 2 | Calibration (30 videos) | Pending | - |
+| 2 | CalGold Calibration (60 videos) | DONE | v2.8 |
 | 3 | Stress Test (30 videos) | Pending | - |
 | 4 | Validation (30 videos) | Pending | - |
 | 5-7 | Production Run (full datasets) | Pending | - |
@@ -266,6 +266,14 @@ OS:   CachyOS (Arch-based) / KDE Plasma 6.6.2 / Wayland
 ---
 
 ## Changelog
+
+**v2.8 (CalGold Phase 2 - Calibration)**
+- 60 videos processed: 218 unique CalGold entities in staging (up from 56)
+- Geocoding jumped from 43% to 97% via Google Places coordinate backfill
+- Enrichment: 97% via Google Places
+- Schema upgraded to v2 with t_any_countries: ["us"]
+- 3 dedup merges validated across Phase 1 + Phase 2
+- 418 total platform entities (218 CalGold + 200 RickSteves) across 24 countries
 
 **v1.7 (RickSteves Phase 1 - Discovery)**
 - Pipeline 2 live: Rick Steves' Europe, 30 videos, 200 unique destinations across 23 countries

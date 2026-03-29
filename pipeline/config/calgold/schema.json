@@ -2,7 +2,7 @@
   "pipeline_id": "calgold",
   "display_name": "California's Gold",
   "entity_type": "landmark",
-  "t_schema_version": 1,
+  "t_schema_version": 2,
 
   "indicators": {
     "name":              { "extract_into": "t_any_names" },
@@ -12,6 +12,8 @@
     "owner":             { "extract_into": "t_any_people" },
     "historical_figures": { "extract_into": "t_any_people" },
     "city":              { "extract_into": "t_any_cities" },
+    "country":           { "extract_into": "t_any_countries", "default": "us" },
+    "region":            { "extract_into": "t_any_regions" },
     "state":             { "extract_into": "t_any_states", "default": "ca" },
     "county":            { "extract_into": "t_any_counties" },
     "episode_categories": { "extract_into": "t_any_categories" },
