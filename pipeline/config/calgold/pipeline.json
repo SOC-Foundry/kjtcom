@@ -1,0 +1,23 @@
+{
+  "pipeline_id": "calgold",
+  "display_name": "California's Gold",
+  "host": "Huell Howser",
+  "source_network": "PBS SoCal / KCET",
+  "playlist_url": "https://www.youtube.com/playlist?list=PLr7fFk3JB5ic-nEyrqLj6MGDox5DO8oMl",
+  "video_count": 431,
+  "entity_type": "landmark",
+  "icon": "castle",
+  "color": "#C4A000",
+  "t_schema_version": 1,
+  "stages": [
+    "acquire",
+    "transcribe",
+    "extract",
+    "normalize",
+    "geocode",
+    "enrich",
+    "load"
+  ],
+  "enrichment_sources": ["nominatim", "google_places"],
+  "database_target": "staging"
+}

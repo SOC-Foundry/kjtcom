@@ -1,0 +1,43 @@
+{
+  "pipeline_id": "calgold",
+  "display_name": "California's Gold",
+  "entity_type": "landmark",
+  "t_schema_version": 1,
+
+  "indicators": {
+    "name":              { "extract_into": "t_any_names" },
+    "aka_names":         { "extract_into": "t_any_names" },
+    "host":              { "extract_into": "t_any_people", "default": "huell howser" },
+    "builder":           { "extract_into": "t_any_people" },
+    "owner":             { "extract_into": "t_any_people" },
+    "historical_figures": { "extract_into": "t_any_people" },
+    "city":              { "extract_into": "t_any_cities" },
+    "state":             { "extract_into": "t_any_states", "default": "ca" },
+    "county":            { "extract_into": "t_any_counties" },
+    "episode_categories": { "extract_into": "t_any_categories" },
+    "designation":       { "extract_into": "t_any_keywords" },
+    "description":       { "extract_into": "t_any_keywords", "method": "tokenize" },
+    "address":           { "extract_into": "t_any_keywords", "method": "tokenize" },
+    "video_ids":         { "extract_into": "t_any_video_ids" }
+  },
+
+  "enrichment_sources": ["nominatim", "google_places"],
+
+  "source_schema": {
+    "name": { "type": "string", "required": true },
+    "description": { "type": "string", "required": true },
+    "city": { "type": "string", "required": true },
+    "state": { "type": "string", "required": false, "default": "CA" },
+    "county": { "type": "string", "required": false },
+    "address": { "type": "string", "required": false },
+    "historical_period": { "type": "string", "required": false },
+    "builder": { "type": "string", "required": false },
+    "owner": { "type": "string", "required": false },
+    "historical_figures": { "type": "array", "required": false },
+    "designation": { "type": "string", "required": false },
+    "huell_quote": { "type": "string", "required": false },
+    "episode_categories": { "type": "array", "required": true },
+    "aka_names": { "type": "array", "required": false },
+    "visits": { "type": "array", "required": true }
+  }
+}

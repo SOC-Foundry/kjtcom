@@ -1,0 +1,38 @@
+{
+  "indexes": [
+    {
+      "collectionGroup": "locations",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "t_log_type", "order": "ASCENDING" },
+        { "fieldPath": "t_enrichment.google_places.rating", "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "locations",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "t_log_type", "order": "ASCENDING" },
+        { "fieldPath": "t_any_states", "arrayConfig": "CONTAINS" },
+        { "fieldPath": "t_enrichment.google_places.rating", "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "locations",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "t_any_geohashes", "arrayConfig": "CONTAINS" },
+        { "fieldPath": "t_log_type", "order": "ASCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "locations",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "t_any_geohashes", "arrayConfig": "CONTAINS" },
+        { "fieldPath": "t_enrichment.google_places.still_open", "order": "ASCENDING" }
+      ]
+    }
+  ],
+  "fieldOverrides": []
+}

@@ -1,0 +1,18 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Public read on all collections - app is read-only
+    match /locations/{docId} {
+      allow read: if true;
+      allow write: if false;  // Pipeline loads via Admin SDK (bypasses rules)
+    }
+    match /pipelines/{docId} {
+      allow read: if true;
+      allow write: if false;
+    }
+    match /videos/{docId} {
+      allow read: if true;
+      allow write: if false;
+    }
+  }
+}
