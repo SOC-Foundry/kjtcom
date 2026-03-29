@@ -31,7 +31,8 @@ def search_place(query: str, api_key: str) -> dict | None:
             "X-Goog-Api-Key": api_key,
             "X-Goog-FieldMask": "places.id,places.displayName,places.rating,"
                                 "places.userRatingCount,places.websiteUri,"
-                                "places.currentOpeningHours,places.nationalPhoneNumber",
+                                "places.currentOpeningHours,places.nationalPhoneNumber,"
+                                "places.location",
         },
         method="POST",
     )
@@ -85,8 +86,10 @@ def main():
                 query = source.get("name", "")
                 if source.get("city"):
                     query += f", {source['city']}"
-                if source.get("state"):
-                    query += f", {source['state']}"
+                if source.get("state") or source.get("state_province"):
+                    query += f", {source.get('state') or source.get('state_province')}"
+                if source.get("country"):
+                    query += f", {source['country']}"
 
                 place = search_place(query, api_key)
 
@@ -119,6 +122,18 @@ def main():
                         entity.setdefault("t_any_urls", [])
                         if website not in entity["t_any_urls"]:
                             entity["t_any_urls"].append(website)
+
+                    # Backfill coordinates from Google Places if Nominatim missed
+                    loc = place.get("location")
+                    if loc and not entity.get("t_any_coordinates"):
+                        lat = loc.get("latitude")
+                        lon = loc.get("longitude")
+                        if lat and lon:
+                            from scripts.utils.thompson_schema import compute_geohashes
+                            entity["t_any_coordinates"] = [{"lat": lat, "lon": lon}]
+                            entity["t_any_geohashes"] = compute_geohashes(lat, lon)
+                            entity["t_enrichment"]["google_places"]["coordinates_backfilled"] = True
+                            print(f"    Backfilled coords from Places: ({lat}, {lon})")
 
                     print(f"  Enriched: {query} -> {place.get('displayName', {}).get('text', 'N/A')}")
                 else:

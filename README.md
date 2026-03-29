@@ -16,7 +16,7 @@ The Thompson Schema is modeled after [Panther SIEM's](https://docs.panther.com/s
 
 Built entirely by LLM agents using IAO (Iterative Agentic Orchestration) - a methodology distilled from 48+ production iterations on [TripleDB](https://github.com/TachTech-Engineering/tripledb).
 
-**kylejeromethompson.com** | **Phase 1.6** | **Status: Phase 1 Discovery Complete**
+**kylejeromethompson.com** | **Phase 1.7** | **Status: RickSteves Phase 1 Discovery Complete**
 
 ---
 
@@ -76,6 +76,8 @@ The Thompson Schema provides universal indicator fields across all pipeline data
 | `t_any_cities` | array[string] | All city names |
 | `t_any_states` | array[string] | All state abbreviations |
 | `t_any_counties` | array[string] | All county names |
+| `t_any_countries` | array[string] | All country names (v2) |
+| `t_any_regions` | array[string] | Sub-country regions (v2) |
 | `t_any_coordinates` | array[map] | All lat/lon pairs |
 | `t_any_geohashes` | array[string] | Geohash prefixes for proximity |
 | `t_any_keywords` | array[string] | All searchable terms |
@@ -91,13 +93,11 @@ The Thompson Schema provides universal indicator fields across all pipeline data
 
 ## Pipelines
 
-| Pipeline | Source | Entity Type | Videos | Status |
-|----------|--------|-------------|--------|--------|
-| `calgold` | California's Gold (Huell Howser) | landmark | 431 | Phase 1 Discovery |
-| TBD | California hiking trails | trail | 400-1000 | Candidate |
-| TBD | Motorcycle touring routes | route | 400-1000 | Candidate |
-| TBD | Historical California | historical_site | 400-1000 | Candidate |
-| `tripledb` | Diners, Drive-Ins and Dives | restaurant | 805 | Migration candidate |
+| Pipeline | Source | Entity Type | Videos | Entities | Status |
+|----------|--------|-------------|--------|----------|--------|
+| `calgold` | California's Gold (Huell Howser) | landmark | 431 | 56 | Phase 1 Discovery |
+| `ricksteves` | Rick Steves' Europe | destination | 1,865 | 200 | Phase 1 Discovery |
+| `tripledb` | Diners, Drive-Ins and Dives | restaurant | 805 | - | Migration candidate |
 
 Each pipeline requires only 4 config files - no code changes to shared scripts:
 
@@ -198,11 +198,12 @@ This project is built using **Iterative Agentic Orchestration (IAO)** - a develo
 | Phase | Name | Status | Iteration |
 |-------|------|--------|-----------|
 | 0 | Scaffold & Environment | DONE | v0.5 |
-| 1 | Discovery (30 videos) | DONE | v1.6 |
+| 1 | CalGold Discovery (30 videos) | DONE | v1.6 |
+| 1 | RickSteves Discovery (30 videos) | DONE | v1.7 |
 | 2 | Calibration (30 videos) | Pending | - |
 | 3 | Stress Test (30 videos) | Pending | - |
 | 4 | Validation (30 videos) | Pending | - |
-| 5-7 | Production Run (~311 videos) | Pending | - |
+| 5-7 | Production Run (full datasets) | Pending | - |
 | 8 | Flutter App | Pending | - |
 | 9 | App Optimization | Pending | - |
 | 10 | Retrospective + Template | Pending | - |
@@ -266,7 +267,18 @@ OS:   CachyOS (Arch-based) / KDE Plasma 6.6.2 / Wayland
 
 ## Changelog
 
-**v1.6 (Phase 1 - Discovery)**
+**v1.7 (RickSteves Phase 1 - Discovery)**
+- Pipeline 2 live: Rick Steves' Europe, 30 videos, 200 unique destinations across 23 countries
+- Thompson Schema evolved to v2: added t_any_countries, t_any_regions
+- Geocoding: 98% (68% Nominatim + 66 backfilled from Google Places)
+- Enrichment: 98% via Google Places (197/200)
+- Cross-pipeline queries validated: keyword, country, geohash queries return results from both CalGold and RickSteves
+- CalGold entities backfilled to schema v2 (56/56)
+- Migrated phase3_extract.py from google.generativeai to google.genai
+- 256 total entities in staging (56 CalGold + 200 RickSteves)
+- 1 intervention (LD_LIBRARY_PATH for CUDA)
+
+**v1.6 (CalGold Phase 1 - Discovery)**
 - 30-video discovery batch: 30/30 acquired, 30/30 transcribed, 30/30 extracted
 - 57 unique California locations normalized via Thompson Schema
 - Geocoding: 43% via Nominatim (niche/historic locations missed)

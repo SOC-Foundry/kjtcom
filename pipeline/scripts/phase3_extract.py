@@ -22,7 +22,7 @@ def main():
     parser.add_argument("--timeout", type=int, default=300, help="API timeout in seconds")
     args = parser.parse_args()
 
-    import google.generativeai as genai
+    from google import genai
 
     base = os.path.dirname(os.path.dirname(__file__))
     config_dir = os.path.join(base, "config", args.pipeline)
@@ -42,8 +42,7 @@ def main():
         print("ERROR: GEMINI_API_KEY not set")
         sys.exit(1)
 
-    genai.configure(api_key=api_key)
-    model = genai.GenerativeModel("gemini-2.5-flash")
+    client = genai.Client(api_key=api_key)
 
     transcript_files = sorted(glob.glob(os.path.join(transcript_dir, "*.json")))
     count = 0
@@ -67,9 +66,9 @@ def main():
         prompt = f"{system_prompt}\n\n---\nVideo ID: {video_id}\nTranscript:\n{full_text}"
 
         try:
-            response = model.generate_content(
-                prompt,
-                request_options={"timeout": args.timeout},
+            response = client.models.generate_content(
+                model="gemini-2.5-flash",
+                contents=prompt,
             )
             # Parse JSON from response
             text = response.text.strip()

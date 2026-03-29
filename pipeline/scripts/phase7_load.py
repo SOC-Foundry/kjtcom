@@ -69,19 +69,23 @@ def main():
         checkpoint.mark_done(file_id)
         count += 1
 
-    # Update pipeline registry
+    # Update pipeline registry from pipeline.json
     from datetime import datetime, timezone
+    base = base if 'base' in dir() else os.path.dirname(os.path.dirname(__file__))
+    pipeline_json_path = os.path.join(base, "config", args.pipeline, "pipeline.json")
+    with open(pipeline_json_path) as pf:
+        pipeline_meta = json.load(pf)
     db.collection("pipelines").document(args.pipeline).set({
-        "display_name": "California's Gold",
-        "host": "Huell Howser",
-        "source_network": "PBS SoCal / KCET",
-        "playlist_url": "https://www.youtube.com/playlist?list=PLr7fFk3JB5ic-nEyrqLj6MGDox5DO8oMl",
-        "video_count": 431,
+        "display_name": pipeline_meta.get("display_name", args.pipeline),
+        "host": pipeline_meta.get("host", ""),
+        "source_network": pipeline_meta.get("source_network", ""),
+        "source_url": pipeline_meta.get("source_url", pipeline_meta.get("playlist_url", "")),
+        "video_count": pipeline_meta.get("video_count", 0),
         "entity_count": total_docs,
-        "entity_type": "landmark",
-        "icon": "castle",
-        "color": "#C4A000",
-        "t_schema_version": 1,
+        "entity_type": pipeline_meta.get("entity_type", ""),
+        "icon": pipeline_meta.get("icon", ""),
+        "color": pipeline_meta.get("color", ""),
+        "t_schema_version": pipeline_meta.get("t_schema_version", 1),
         "last_run": datetime.now(timezone.utc).isoformat(),
     }, merge=True)
 

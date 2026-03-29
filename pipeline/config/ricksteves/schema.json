@@ -1,0 +1,47 @@
+{
+  "pipeline_id": "ricksteves",
+  "display_name": "Rick Steves' Europe",
+  "entity_type": "destination",
+  "t_schema_version": 2,
+
+  "indicators": {
+    "name":              { "extract_into": "t_any_names" },
+    "aka_names":         { "extract_into": "t_any_names" },
+    "host":              { "extract_into": "t_any_people", "default": "rick steves" },
+    "artist":            { "extract_into": "t_any_people" },
+    "architect":         { "extract_into": "t_any_people" },
+    "historical_figures": { "extract_into": "t_any_people" },
+    "city":              { "extract_into": "t_any_cities" },
+    "country":           { "extract_into": "t_any_countries" },
+    "region":            { "extract_into": "t_any_regions" },
+    "state_province":    { "extract_into": "t_any_states" },
+    "categories":        { "extract_into": "t_any_categories" },
+    "description":       { "extract_into": "t_any_keywords", "method": "tokenize" },
+    "architectural_style": { "extract_into": "t_any_keywords" },
+    "era":               { "extract_into": "t_any_keywords" },
+    "address":           { "extract_into": "t_any_keywords", "method": "tokenize" },
+    "video_ids":         { "extract_into": "t_any_video_ids" }
+  },
+
+  "enrichment_sources": ["nominatim", "google_places"],
+
+  "source_schema": {
+    "name": { "type": "string", "required": true },
+    "description": { "type": "string", "required": true },
+    "city": { "type": "string", "required": true },
+    "country": { "type": "string", "required": true },
+    "region": { "type": "string", "required": false },
+    "state_province": { "type": "string", "required": false },
+    "address": { "type": "string", "required": false },
+    "architectural_style": { "type": "string", "required": false },
+    "era": { "type": "string", "required": false },
+    "artist": { "type": "string", "required": false },
+    "architect": { "type": "string", "required": false },
+    "historical_figures": { "type": "array", "required": false },
+    "admission_info": { "type": "string", "required": false },
+    "rick_tip": { "type": "string", "required": false },
+    "categories": { "type": "array", "required": true },
+    "aka_names": { "type": "array", "required": false },
+    "visits": { "type": "array", "required": true }
+  }
+}

@@ -79,8 +79,10 @@ def main():
                 query_parts = [source.get("name", "")]
                 if source.get("city"):
                     query_parts.append(source["city"])
-                if source.get("state"):
-                    query_parts.append(source["state"])
+                if source.get("state") or source.get("state_province"):
+                    query_parts.append(source.get("state") or source.get("state_province"))
+                if source.get("country"):
+                    query_parts.append(source["country"])
                 query = ", ".join(p for p in query_parts if p)
 
                 result = geocode(query)
