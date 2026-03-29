@@ -1,28 +1,309 @@
-# kjtcom - kylejeromethompson.com
+# kjtcom
 
-Multi-pipeline location intelligence platform. Each pipeline processes YouTube playlists through a 7-stage IAO pipeline (acquire -> transcribe -> extract -> normalize -> geocode -> enrich -> load) into Cloud Firestore, served via Flutter Web.
+**Multi-pipeline location intelligence platform built on Iterative Agentic Orchestration (IAO)**
+
+[![Flutter](https://img.shields.io/badge/Flutter-02569B?style=for-the-badge&logo=flutter&logoColor=white)](https://flutter.dev)
+[![Firebase](https://img.shields.io/badge/Firebase-FFCA28?style=for-the-badge&logo=firebase&logoColor=black)](https://firebase.google.com)
+[![Gemini](https://img.shields.io/badge/Gemini_Flash-4285F4?style=for-the-badge&logo=google&logoColor=white)](https://ai.google.dev)
+[![Claude](https://img.shields.io/badge/Claude_Code-6B4FBB?style=for-the-badge&logo=anthropic&logoColor=white)](https://claude.ai)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg?style=for-the-badge)](LICENSE)
+
+---
+
+kjtcom processes YouTube playlists into structured, searchable, geocoded Firestore databases. Each pipeline extracts entities (landmarks, trails, routes, restaurants) from video transcripts using LLM-powered extraction, normalizes them into the Thompson Schema (`t_any_*` universal indicator fields), enriches with Google Places and Nominatim, and serves them through a unified Flutter Web frontend with cross-dataset search.
+
+The Thompson Schema is modeled after [Panther SIEM's](https://docs.panther.com/search/panther-fields) `p_any_*` indicator fields and [Elastic Common Schema](https://www.elastic.co/guide/en/ecs/current/index.html) - providing universal queryable fields across disparate data sources. The same normalization patterns power production SIEM migrations at [TachTech Engineering](https://tachtech.net).
+
+Built entirely by LLM agents using IAO (Iterative Agentic Orchestration) - a methodology distilled from 48+ production iterations on [TripleDB](https://github.com/TachTech-Engineering/tripledb).
+
+**kylejeromethompson.com** | **Phase 1.6** | **Status: Phase 1 Discovery Complete**
+
+---
+
+## Architecture
+
+```
+YouTube Playlist (per pipeline)
+    | yt-dlp
+    v
+MP3 Audio
+    | faster-whisper (CUDA)
+    v
+Timestamped Transcripts
+    | Gemini 2.5 Flash API + pipeline extraction prompt
+    v
+Raw Extracted JSON
+    | phase4_normalize.py + schema.json (Thompson Schema)
+    v
+Normalized JSONL (t_any_* indicator fields populated)
+    | Nominatim (1 req/sec)
+    v
+Geocoded JSONL
+    | Google Places API (New)
+    v
+Enriched JSONL (t_enrichment.google_places + t_enrichment.nominatim)
+    | Firebase Admin SDK
+    v
+Cloud Firestore (kjtcom-c78cd, Blaze)
+    | Cloud Functions (search API) + Flutter Web
+    v
+kylejeromethompson.com
+```
+
+---
+
+## Thompson Schema (`t_any_*`)
+
+The Thompson Schema provides universal indicator fields across all pipeline datasets - the same pattern SIEM platforms use to normalize disparate log sources into a single queryable schema.
+
+**Standard Fields** (present on every document):
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `t_log_type` | string | Pipeline ID (discriminator) |
+| `t_row_id` | string | Unique entity ID |
+| `t_event_time` | timestamp | Source event time |
+| `t_parse_time` | timestamp | Pipeline processing time (UTC) |
+| `t_source_label` | string | Human-readable pipeline name |
+| `t_schema_version` | int | Schema version for this pipeline |
+
+**Indicator Fields** (universal cross-pipeline arrays):
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `t_any_names` | array[string] | All entity names |
+| `t_any_people` | array[string] | All people mentioned |
+| `t_any_cities` | array[string] | All city names |
+| `t_any_states` | array[string] | All state abbreviations |
+| `t_any_counties` | array[string] | All county names |
+| `t_any_coordinates` | array[map] | All lat/lon pairs |
+| `t_any_geohashes` | array[string] | Geohash prefixes for proximity |
+| `t_any_keywords` | array[string] | All searchable terms |
+| `t_any_categories` | array[string] | Normalized category tags |
+| `t_any_urls` | array[string] | Associated URLs |
+| `t_any_video_ids` | array[string] | Source YouTube video IDs |
+
+**Enrichment** (`t_enrichment.*`): Google Places ratings, open/closed status, websites. Nominatim geocoding. Extensible to any enrichment source via named keys.
+
+**Source** (`source.*`): Pipeline-specific raw data. Schema varies per pipeline, defined in `pipeline/config/{pipeline_id}/schema.json`.
+
+---
 
 ## Pipelines
 
-| Pipeline | Source | Entity Type | Videos |
-|----------|--------|-------------|--------|
-| calgold | California's Gold (Huell Howser) | landmark | 431 |
+| Pipeline | Source | Entity Type | Videos | Status |
+|----------|--------|-------------|--------|--------|
+| `calgold` | California's Gold (Huell Howser) | landmark | 431 | Phase 1 Discovery |
+| TBD | California hiking trails | trail | 400-1000 | Candidate |
+| TBD | Motorcycle touring routes | route | 400-1000 | Candidate |
+| TBD | Historical California | historical_site | 400-1000 | Candidate |
+| `tripledb` | Diners, Drive-Ins and Dives | restaurant | 805 | Migration candidate |
 
-## Thompson Schema
+Each pipeline requires only 4 config files - no code changes to shared scripts:
 
-Universal indicator fields (`t_any_*`) enable cross-dataset queries without knowing source schemas. Mirrors Panther SIEM's `p_any_*` pattern.
+```
+pipeline/config/{pipeline_id}/
+  pipeline.json           # metadata (display name, entity type, icon, color)
+  schema.json             # Thompson Schema indicator mappings
+  extraction_prompt.md    # Gemini Flash extraction prompt
+  playlist_urls.txt       # YouTube video IDs
+```
 
-## Stack
+---
 
-- **Frontend:** Flutter Web
-- **Database:** Cloud Firestore (Firebase Blaze)
-- **Search:** Cloud Functions + native Firestore queries
-- **Extraction:** Gemini 2.5 Flash API
-- **Transcription:** faster-whisper (CUDA)
-- **Geocoding:** Nominatim (OSM)
-- **Enrichment:** Google Places API (New)
+## Setup
 
-## Docs
+```fish
+# Clone
+git clone git@github.com:SOC-Foundry/kjtcom.git
+cd kjtcom
 
-- `docs/calgold-design-v0.5.md` - Architecture + Thompson Schema
-- `docs/calgold-plan-v0.5.md` - Execution plan
+# Environment (fish shell)
+set -x GEMINI_API_KEY "..."
+set -x GOOGLE_PLACES_API_KEY "..."
+set -x GOOGLE_APPLICATION_CREDENTIALS "$HOME/.config/gcloud/kjtcom-sa.json"
+
+# Firebase
+firebase use kjtcom-c78cd
+firebase deploy --only firestore:rules,firestore:indexes
+
+# Validate
+yt-dlp --flat-playlist --print "%(id)s %(title)s" \
+  "https://www.youtube.com/playlist?list=PLr7fFk3JB5ic-nEyrqLj6MGDox5DO8oMl" | wc -l
+```
+
+## Running a Pipeline
+
+```fish
+# Phase 1-7: Process 30 videos through the full pipeline
+python3 pipeline/scripts/phase1_acquire.py    --pipeline calgold --limit 30
+python3 pipeline/scripts/phase2_transcribe.py --pipeline calgold --limit 30
+python3 pipeline/scripts/phase3_extract.py    --pipeline calgold --limit 30
+python3 pipeline/scripts/phase4_normalize.py  --pipeline calgold --limit 30
+python3 pipeline/scripts/phase5_geocode.py    --pipeline calgold --limit 30
+python3 pipeline/scripts/phase6_enrich.py     --pipeline calgold --limit 30
+python3 pipeline/scripts/phase7_load.py       --pipeline calgold --database staging
+```
+
+By default, data is saved in `pipeline/data/{pipeline_id}/` per stage.
+
+---
+
+## File Structure
+
+```
+kjtcom/
+  app/                    Flutter Web frontend
+  pipeline/
+    scripts/              Shared pipeline stages (7 phases + utilities)
+    config/               Per-pipeline configuration (schema.json, prompts)
+    data/                 Per-pipeline data (gitignored)
+  functions/              Firebase Cloud Functions (search API)
+  docs/                   IAO artifacts (design, plan, build, report, changelog)
+  requirements/           Environment manifests + install script
+  CLAUDE.md               Agent instructions (Claude Code)
+  GEMINI.md               Agent instructions (Gemini CLI)
+```
+
+---
+
+## IAO Methodology
+
+This project is built using **Iterative Agentic Orchestration (IAO)** - a development methodology where LLM agents execute project phases autonomously while humans review versioned artifacts between iterations. Distilled from 48 production iterations on [TripleDB](https://github.com/TachTech-Engineering/tripledb).
+
+### The Nine Pillars
+
+**Pillar 1 - Artifact Loop.** Every iteration produces five artifacts: design doc (living architecture), plan (execution steps), build log (session transcript), report (metrics + orchestration), changelog (versioned snapshot). Previous artifacts archive to `docs/archive/`. Agents never see outdated instructions.
+
+**Pillar 2 - Agentic Orchestration.** The primary agent (Claude Code or Gemini CLI) orchestrates LLMs, MCP servers, scripts, APIs, and sub-agents. Agents CAN build and deploy. Agents CANNOT git commit or sudo. The human commits at phase boundaries.
+
+**Pillar 3 - Zero-Intervention Target.** Every question the agent asks during execution is a failure in the plan document. Pre-answer every decision point. Measure plan quality by counting interventions - zero is the floor.
+
+**Pillar 4 - Pre-Flight Verification.** Before execution begins, validate: previous docs archived, new design + plan in place, agent instructions updated, git clean, API keys set, build tools verified.
+
+**Pillar 5 - Self-Healing Execution.** Errors are inevitable. Diagnose -> fix -> re-run. Max 3 attempts per error, then log and skip. Checkpoint after every completed step for crash recovery.
+
+**Pillar 6 - Progressive Batching.** Start small. Graduate to production scale only after the small batch achieves zero interventions. 30 -> 100 -> 250 -> full dataset.
+
+**Pillar 7 - Post-Flight Functional Testing.** Three tiers: Tier 1 (app bootstraps, console clean, changelog verified), Tier 2 (iteration-specific automated playbook), Tier 3 (hardening audit - Lighthouse, security headers, browser compat).
+
+**Pillar 8 - Platform Constraints.** Flutter Web + Firebase (Blaze) + Cloud Functions. Google Places enrichment. Nominatim geocoding. CachyOS / fish shell. The non-negotiable architectural decisions that shape every tool choice.
+
+**Pillar 9 - Continuous Improvement.** The methodology evolves alongside the project. Archive reviews, tool efficacy reports, technology radar, retrospectives. Static processes atrophy.
+
+---
+
+## Project Status
+
+| Phase | Name | Status | Iteration |
+|-------|------|--------|-----------|
+| 0 | Scaffold & Environment | DONE | v0.5 |
+| 1 | Discovery (30 videos) | DONE | v1.6 |
+| 2 | Calibration (30 videos) | Pending | - |
+| 3 | Stress Test (30 videos) | Pending | - |
+| 4 | Validation (30 videos) | Pending | - |
+| 5-7 | Production Run (~311 videos) | Pending | - |
+| 8 | Flutter App | Pending | - |
+| 9 | App Optimization | Pending | - |
+| 10 | Retrospective + Template | Pending | - |
+
+---
+
+## Tech Stack
+
+| Component | Tool | Purpose |
+|-----------|------|---------|
+| Audio Download | yt-dlp | YouTube -> mp3 |
+| Transcription | faster-whisper (CUDA) | mp3 -> timestamped JSON |
+| Extraction | Gemini 2.5 Flash API | Transcript -> structured entity JSON |
+| Normalization | Python + schema.json | Raw JSON -> Thompson Schema (t_any_*) |
+| Geocoding | Nominatim (OSM) | Address/name -> lat/lon |
+| Enrichment | Google Places API (New) | Rating, open/closed, website, phone |
+| Database | Cloud Firestore (Blaze) | Denormalized documents, multi-database |
+| Search API | Firebase Cloud Functions | Complex cross-dataset queries |
+| Frontend | Flutter Web | Unified search, map, list views |
+| Hosting | Firebase Hosting | CDN, preview channels, SSL |
+| Orchestration | Claude Code (Opus) / Gemini CLI | IAO agent execution |
+
+---
+
+## Hardware
+
+```
+NZXTcos (Primary Dev)
+CPU:  Intel Core i9-13900K (24-core, 5.8 GHz)
+RAM:  64 GB DDR4
+GPU:  NVIDIA GeForce RTX 2080 SUPER (8 GB VRAM)
+OS:   CachyOS (Arch-based) / KDE Plasma 6.6.2 / Wayland
+```
+
+---
+
+## Cost
+
+| Component | Cost |
+|-----------|------|
+| All local inference (transcription, normalization) | Free |
+| Gemini 2.5 Flash API | Free tier |
+| Nominatim geocoding | Free (OSM) |
+| Google Places API | Free tier |
+| Cloud Firestore (Blaze, pay-as-you-go) | ~$0.50/month |
+| Cloud Functions | ~$0.40/month |
+| Firebase Hosting | Free |
+| **Total** | **~$1-3/month** |
+
+---
+
+## Future Directions
+
+**Meta/Hyperagents integration.** Evaluating [HyperAgents](https://github.com/facebookresearch/Hyperagents) (Meta FAIR) for self-improving pipeline optimization - letting a meta-agent evolve extraction prompts and schema mappings across iterations. The IAO artifact loop provides natural fitness signals (extraction success rate, geocoding hit rate, enrichment match rate) that a hyperagent could optimize against.
+
+**Multi-LLM pipeline stages.** Currently Gemini Flash handles extraction. Future iterations will benchmark extraction quality across Claude Sonnet, Gemini Flash, GPT-4o, and local models (Nemotron, Qwen) per pipeline. The schema.json already decouples extraction from normalization - swapping the LLM requires only changing the extraction prompt, not the normalization pipeline.
+
+**SIEM migration tooling.** The Thompson Schema normalization pipeline is structurally identical to SIEM log normalization. Each `schema.json` is a field mapping artifact - the same deliverable produced during Splunk-to-Panther or Splunk-to-CrowdStrike migrations. Future work explores generating these mappings automatically from source SIEM configurations.
+
+---
+
+## Changelog
+
+**v1.6 (Phase 1 - Discovery)**
+- 30-video discovery batch: 30/30 acquired, 30/30 transcribed, 30/30 extracted
+- 57 unique California locations normalized via Thompson Schema
+- Geocoding: 43% via Nominatim (niche/historic locations missed)
+- Enrichment: 100% match rate via Google Places API (New)
+- 56 documents loaded to staging Firestore, all array-contains queries validated
+- 3 interventions resolved (CUDA path, pip install, Places API key)
+
+**v0.5 (Phase 0 - Scaffold)**
+- Repo: git@github.com:SOC-Foundry/kjtcom.git
+- Firebase: kjtcom (kjtcom-c78cd) under socfoundry.com, Blaze billing
+- Monorepo scaffolded: app/, pipeline/, functions/, docs/
+- Multi-database configured: (default) + staging, both us-central1
+- Thompson Schema (t_any_*) designed and validated with test entity
+- CalGold pipeline config: schema.json (14 indicator mappings), extraction_prompt.md
+- Cloud Functions search endpoint deployed
+- 431 CalGold playlist URLs validated via yt-dlp
+
+---
+
+## Author
+
+**Kyle Thompson** - VP of Engineering & Solutions Architect @ [TachTech Engineering](https://tachtech.net)
+
+Built as a platform for extracting, normalizing, and querying structured data from YouTube content - sharpening the same data pipeline skills used in production SIEM migrations for Fortune 50 customers.
+
+---
+
+## Citing
+
+If you find the IAO methodology or Thompson Schema useful:
+
+```
+@misc{thompson2026iao,
+  title={Iterative Agentic Orchestration: A Methodology for Agent-Driven Software Projects},
+  author={Kyle Thompson},
+  year={2026},
+  organization={TachTech Engineering},
+  url={https://github.com/TachTech-Engineering/tripledb}
+}
+```
