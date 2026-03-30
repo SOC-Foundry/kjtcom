@@ -9,6 +9,7 @@ import argparse
 import glob
 import json
 import os
+import signal
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
@@ -29,11 +30,20 @@ def main():
 
     checkpoint = Checkpoint(args.pipeline, "transcribe")
 
+    timeout_seconds = int(os.environ.get("TRANSCRIBE_TIMEOUT", "0"))
+
+    class TranscribeTimeout(Exception):
+        pass
+
+    def _timeout_handler(signum, frame):
+        raise TranscribeTimeout()
+
     from faster_whisper import WhisperModel
     model = WhisperModel(args.model, device="cuda", compute_type="float16")
 
     audio_files = sorted(glob.glob(os.path.join(audio_dir, "*.mp3")))
     count = 0
+    timed_out = 0
 
     for audio_path in audio_files:
         video_id = os.path.splitext(os.path.basename(audio_path))[0]
@@ -44,31 +54,45 @@ def main():
             break
 
         print(f"Transcribing {video_id}...")
-        segments, info = model.transcribe(audio_path, beam_size=5)
 
-        transcript = {
-            "video_id": video_id,
-            "language": info.language,
-            "duration": info.duration,
-            "segments": [
-                {
-                    "start": seg.start,
-                    "end": seg.end,
-                    "text": seg.text.strip(),
-                }
-                for seg in segments
-            ],
-        }
+        if timeout_seconds > 0:
+            signal.signal(signal.SIGALRM, _timeout_handler)
+            signal.alarm(timeout_seconds)
 
-        output_path = os.path.join(output_dir, f"{video_id}.json")
-        with open(output_path, "w") as f:
-            json.dump(transcript, f, indent=2)
+        try:
+            segments, info = model.transcribe(audio_path, beam_size=5)
 
-        checkpoint.mark_done(video_id)
-        count += 1
-        print(f"  OK - {len(transcript['segments'])} segments ({count})")
+            transcript = {
+                "video_id": video_id,
+                "language": info.language,
+                "duration": info.duration,
+                "segments": [
+                    {
+                        "start": seg.start,
+                        "end": seg.end,
+                        "text": seg.text.strip(),
+                    }
+                    for seg in segments
+                ],
+            }
 
-    print(f"Transcribed {count} new files. Total: {checkpoint.count()}")
+            if timeout_seconds > 0:
+                signal.alarm(0)
+
+            output_path = os.path.join(output_dir, f"{video_id}.json")
+            with open(output_path, "w") as f:
+                json.dump(transcript, f, indent=2)
+
+            checkpoint.mark_done(video_id)
+            count += 1
+            print(f"  OK - {len(transcript['segments'])} segments ({count})")
+
+        except TranscribeTimeout:
+            timed_out += 1
+            print(f"  SKIPPED - timed out after {timeout_seconds}s ({timed_out} total timeouts)")
+            continue
+
+    print(f"Transcribed {count} new files. Timed out: {timed_out}. Total done: {checkpoint.count()}")
 
 
 if __name__ == "__main__":
