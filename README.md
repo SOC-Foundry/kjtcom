@@ -16,7 +16,7 @@ The Thompson Schema is modeled after [Panther SIEM's](https://docs.panther.com/s
 
 Built entirely by LLM agents using IAO (Iterative Agentic Orchestration) - a methodology distilled from 48+ production iterations on [TripleDB](https://github.com/TachTech-Engineering/tripledb).
 
-**kylejeromethompson.com** | **Phase 2.8** | **Status: CalGold Phase 2 Calibration Complete**
+**kylejeromethompson.com** | **Phase 2.9** | **Status: RickSteves Phase 2 Calibration Complete**
 
 ---
 
@@ -96,7 +96,7 @@ The Thompson Schema provides universal indicator fields across all pipeline data
 | Pipeline | Source | Entity Type | Videos | Entities | Status |
 |----------|--------|-------------|--------|----------|--------|
 | `calgold` | California's Gold (Huell Howser) | landmark | 431 | 218 | Phase 2 Calibration |
-| `ricksteves` | Rick Steves' Europe | destination | 1,865 | 200 | Phase 1 Discovery |
+| `ricksteves` | Rick Steves' Europe | destination | 1,865 | 559 | Phase 2 Calibration |
 | `tripledb` | Diners, Drive-Ins and Dives | restaurant | 805 | - | Migration candidate |
 
 Each pipeline requires only 4 config files - no code changes to shared scripts:
@@ -201,6 +201,7 @@ This project is built using **Iterative Agentic Orchestration (IAO)** - a develo
 | 1 | CalGold Discovery (30 videos) | DONE | v1.6 |
 | 1 | RickSteves Discovery (30 videos) | DONE | v1.7 |
 | 2 | CalGold Calibration (60 videos) | DONE | v2.8 |
+| 2 | RickSteves Calibration (60 videos) | DONE | v2.9 |
 | 3 | Stress Test (30 videos) | Pending | - |
 | 4 | Validation (30 videos) | Pending | - |
 | 5-7 | Production Run (full datasets) | Pending | - |
@@ -266,6 +267,15 @@ OS:   CachyOS (Arch-based) / KDE Plasma 6.6.2 / Wayland
 ---
 
 ## Changelog
+
+**v2.9 (RickSteves Phase 2 - Calibration)**
+- Videos 31-90 processed via Gemini CLI (first Gemini execution on kjtcom)
+- 494 new entities, 559 total RickSteves entities across 29 countries
+- Geocoding: 99% (Nominatim + Places backfill)
+- Enrichment: 99% via Google Places
+- Dedup merges: 95 entities with multiple visits (implemented array merge in phase7_load.py)
+- 3 interventions (LD_LIBRARY_PATH fix, transcription timeouts, load logic merge)
+- Total platform: 777 entities (218 CalGold + 559 RickSteves)
 
 **v2.8 (CalGold Phase 2 - Calibration)**
 - 60 videos processed: 218 unique CalGold entities in staging (up from 56)

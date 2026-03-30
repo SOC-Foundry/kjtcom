@@ -1,15 +1,13 @@
-# kjtcom - Agent Instructions
+printf '# kjtcom - Agent Instructions
 
 ## Read Order
-1. docs/calgold-design-v2.8.md
-2. docs/calgold-plan-v2.8.md
+1. docs/ricksteves-design-v2.9.md
+2. docs/ricksteves-plan-v2.9.md
 
 ## Shell - MANDATORY
-- Run: claude config set preferredShell fish (before first launch)
 - All commands execute in fish shell
 - Environment variables are in ~/.config/fish/config.fish
 - NEVER use bash syntax (no ${VAR}, no heredocs, no source ~/.bashrc)
-- If a command fails with "not a valid variable", you are in bash. Switch to fish.
 
 ## Security - ABSOLUTE RULES
 - NEVER write API keys, tokens, or credentials into ANY file in the repo
@@ -42,13 +40,18 @@
 
 ## Artifact Rules - MANDATORY
 - Every iteration MUST produce/update these 4 files before completing:
-  1. docs/calgold-build-v2.8.md (session transcript)
-  2. docs/calgold-report-v2.8.md (metrics + recommendation)
+  1. docs/ricksteves-build-v2.9.md (session transcript)
+  2. docs/ricksteves-report-v2.9.md (metrics + recommendation)
   3. docs/kjtcom-changelog.md (UNIFIED - append entry, never overwrite)
   4. README.md (update project status, pipelines table, changelog section)
 - If ANY re-run, fix, or backfill changes metrics, update ALL 4 files
 - Do NOT mark a step complete until artifacts reflect the final state
 
+## Living Documents
+- If ANY new package is installed (pip, npm, pacman, yay), update docs/install.fish
+
 ## Formatting
 - No em-dashes. Use " - " instead.
 - Use "->" for arrows.
+' > GEMINI.md
+cp GEMINI.md CLAUDE.md
