@@ -18,6 +18,13 @@ For each distinct destination visited or discussed in this video, extract:
   "artist": "Primary artist if this is an art site (e.g., Michelangelo, Bernini)",
   "architect": "Architect if mentioned",
   "historical_figures": ["People historically associated with this place"],
+  "actors": ["Named people featured. Always include 'Rick Steves'. Plus local guides, chefs, artisans, historians, hoteliers, tour operators, etc."],
+  "roles": ["Normalized role types (host, guide, chef, artisan, historian, hotelier, sommelier, fisherman, baker, etc.)"],
+  "shows": ["Always include 'Rick Steves\\' Europe'"],
+  "cuisines": ["Cuisine types if food is featured (French, Italian, Tapas, Greek, Turkish, Moroccan, etc.). Empty array if no food."],
+  "dishes": ["Specific food items mentioned (croissant, gelato, paella, bratwurst, schnitzel, moussaka, etc.). Empty array if no food."],
+  "eras": ["Historical periods or time references (Medieval, Renaissance, Roman, Ottoman, Victorian, WWII, Cold War, etc.). Empty array if no historical context."],
+  "continents": ["The continent(s) for this location. Usually ['Europe'] but can be ['Africa'] for Morocco/Egypt episodes, ['Asia'] for Turkey episodes, etc. Derive from the country."],
   "admission_info": "Admission cost or hours if mentioned",
   "rick_tip": "Rick's practical travel tip about this place if he gives one",
   "categories": ["museum", "church", "castle", "palace", "restaurant", "neighborhood",
@@ -40,3 +47,5 @@ Return a JSON array of destination objects. One video may discuss multiple desti
 If the video is a general travel tips video with no specific geocodable destinations,
 return an empty array.
 Do NOT extract countries or cities as entities - only specific visitable places within them.
+Every destination object MUST include all fields, even if they are empty arrays or null.
+Specifically, 'shows' should always be ['Rick Steves\\' Europe'] and 'actors' should always include 'Rick Steves'.

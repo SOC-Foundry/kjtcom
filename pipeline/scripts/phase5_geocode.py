@@ -13,6 +13,7 @@ import sys
 import time
 import urllib.parse
 import urllib.request
+import datetime
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 from scripts.utils.checkpoint import Checkpoint
@@ -76,13 +77,26 @@ def main():
 
                 # Build geocode query from source fields
                 source = entity.get("source", {})
-                query_parts = [source.get("name", "")]
-                if source.get("city"):
-                    query_parts.append(source["city"])
-                if source.get("state") or source.get("state_province"):
-                    query_parts.append(source.get("state") or source.get("state_province"))
-                if source.get("country"):
-                    query_parts.append(source["country"])
+
+                def get_str(field):
+                    val = source.get(field, "")
+                    if isinstance(val, list):
+                        return ", ".join(str(v) for v in val if v)
+                    return str(val) if val else ""
+
+                query_parts = [get_str("name")]
+                city = get_str("city")
+                if city:
+                    query_parts.append(city)
+
+                state = get_str("state") or get_str("state_province")
+                if state:
+                    query_parts.append(state)
+
+                country = get_str("country")
+                if country:
+                    query_parts.append(country)
+
                 query = ", ".join(p for p in query_parts if p)
 
                 result = geocode(query)
@@ -97,6 +111,14 @@ def main():
 
                     entity["t_any_geohashes"] = compute_geohashes(lat, lon)
 
+                    # County parsing enhancement (Schema v3)
+                    address = result.get("address", {})
+                    county = address.get("county")
+                    if county:
+                        entity.setdefault("t_any_counties", [])
+                        if county.lower() not in [c.lower() for c in entity["t_any_counties"]]:
+                            entity["t_any_counties"].append(county.lower())
+
                     entity.setdefault("t_enrichment", {})
                     entity["t_enrichment"]["nominatim"] = {
                         "t_match": query,
@@ -105,8 +127,8 @@ def main():
                         "display_name": result.get("display_name", ""),
                         "osm_type": result.get("osm_type", ""),
                         "osm_id": result.get("osm_id"),
-                        "geocoded_at": __import__("datetime").datetime.now(
-                            __import__("datetime").timezone.utc
+                        "geocoded_at": datetime.datetime.now(
+                            datetime.timezone.utc
                         ).isoformat(),
                     }
                     print(f"  Geocoded: {query} -> ({lat}, {lon})")

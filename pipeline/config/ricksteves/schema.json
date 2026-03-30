@@ -2,7 +2,7 @@
   "pipeline_id": "ricksteves",
   "display_name": "Rick Steves' Europe",
   "entity_type": "destination",
-  "t_schema_version": 2,
+  "t_schema_version": 3,
 
   "indicators": {
     "name":              { "extract_into": "t_any_names" },
@@ -20,7 +20,14 @@
     "architectural_style": { "extract_into": "t_any_keywords" },
     "era":               { "extract_into": "t_any_keywords" },
     "address":           { "extract_into": "t_any_keywords", "method": "tokenize" },
-    "video_ids":         { "extract_into": "t_any_video_ids" }
+    "video_ids":         { "extract_into": "t_any_video_ids" },
+    "actors":            { "extract_into": "t_any_actors" },
+    "roles":             { "extract_into": "t_any_roles" },
+    "shows":             { "extract_into": "t_any_shows" },
+    "cuisines":          { "extract_into": "t_any_cuisines" },
+    "dishes":            { "extract_into": "t_any_dishes" },
+    "eras":              { "extract_into": "t_any_eras" },
+    "continents":        { "extract_into": "t_any_continents" }
   },
 
   "enrichment_sources": ["nominatim", "google_places"],
@@ -42,6 +49,13 @@
     "rick_tip": { "type": "string", "required": false },
     "categories": { "type": "array", "required": true },
     "aka_names": { "type": "array", "required": false },
-    "visits": { "type": "array", "required": true }
+    "visits": { "type": "array", "required": true },
+    "actors": { "type": "array", "required": false },
+    "roles": { "type": "array", "required": false },
+    "shows": { "type": "array", "required": false },
+    "cuisines": { "type": "array", "required": false },
+    "dishes": { "type": "array", "required": false },
+    "eras": { "type": "array", "required": false },
+    "continents": { "type": "array", "required": false }
   }
 }

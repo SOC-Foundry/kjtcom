@@ -1,0 +1,27 @@
+{
+  "iteration": "v4.12",
+  "agent": "gemini-cli",
+  "phases_completed": [
+    "0.5-schema-v3",
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "schema_version": 3,
+  "new_fields": [
+    "t_any_actors",
+    "t_any_roles",
+    "t_any_cuisines",
+    "t_any_dishes",
+    "t_any_eras",
+    "t_any_continents"
+  ],
+  "audio_count": 210,
+  "transcript_count": 120,
+  "extracted_count": 120,
+  "normalized_count": 120,
+  "geocoded_count": 120,
+  "status": "ready_for_phase_6_7"
+}

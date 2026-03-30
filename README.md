@@ -10,13 +10,13 @@
 
 ---
 
-kjtcom processes YouTube playlists into structured, searchable, geocoded Firestore databases. Each pipeline extracts entities (landmarks, trails, routes, restaurants) from video transcripts using LLM-powered extraction, normalizes them into the Thompson Schema (`t_any_*` universal indicator fields), enriches with Google Places and Nominatim, and serves them through a unified Flutter Web frontend with cross-dataset search.
+kjtcom processes YouTube playlists into structured, searchable, geocoded Firestore databases. Each pipeline extracts entities (landmarks, trails, routes, restaurants) from video transcripts using LLM-powered extraction, normalizes them into the Thompson Indicator Fields (`t_any_*` universal indicator fields), enriches with Google Places and Nominatim, and serves them through a unified Flutter Web frontend with cross-dataset search.
 
-The Thompson Schema is modeled after [Panther SIEM's](https://docs.panther.com/search/panther-fields) `p_any_*` indicator fields and [Elastic Common Schema](https://www.elastic.co/guide/en/ecs/current/index.html) - providing universal queryable fields across disparate data sources. The same normalization patterns power production SIEM migrations at [TachTech Engineering](https://tachtech.net).
+The Thompson Indicator Fields are modeled after [Panther SIEM's](https://docs.panther.com/search/panther-fields) `p_any_*` indicator fields and [Elastic Common Schema](https://www.elastic.co/guide/en/ecs/current/index.html) - providing universal queryable fields across disparate data sources. The same normalization patterns power production SIEM migrations at [TachTech Engineering](https://tachtech.net).
 
 Built entirely by LLM agents using IAO (Iterative Agentic Orchestration) - a methodology distilled from 48+ production iterations on [TripleDB](https://github.com/TachTech-Engineering/tripledb).
 
-**kylejeromethompson.com** | **Phase 3.11** | **Status: RickSteves Phase 3 Stress Test Complete**
+**kylejeromethompson.com** | **Phase 4.13** | **Status: Phase 4 Validation + Schema v3 Complete (Both Pipelines)**
 
 ---
 
@@ -33,7 +33,7 @@ Timestamped Transcripts
     | Gemini 2.5 Flash API + pipeline extraction prompt
     v
 Raw Extracted JSON
-    | phase4_normalize.py + schema.json (Thompson Schema)
+    | phase4_normalize.py + schema.json (Thompson Indicator Fields)
     v
 Normalized JSONL (t_any_* indicator fields populated)
     | Nominatim (1 req/sec)
@@ -52,9 +52,22 @@ kylejeromethompson.com
 
 ---
 
-## Thompson Schema (`t_any_*`)
+## Data Architecture
 
-The Thompson Schema provides universal indicator fields across all pipeline datasets - the same pattern SIEM platforms use to normalize disparate log sources into a single queryable schema.
+kjtcom utilizes a **single-collection Firestore design** where all entities from all pipelines live together in a single `locations` collection. This allows for unified, cross-dataset search.
+
+- **Discriminator**: The `t_log_type` field acts as the discriminator to filter by pipeline (e.g., `calgold`, `ricksteves`).
+- **Querying**: Extensive use of `array-contains` queries enables searching across multiple attributes (keywords, categories, regions) without rigid schemas.
+- **Indexes**: Composite indexes are defined in `firestore.indexes.json` to support multi-field filtering and sorting.
+- **Environments**: A multi-database setup (`(default)` for production, `staging` for pipeline runs) safely separates work in progress.
+- **Pricing**: Powered by the Firebase Blaze plan to support Cloud Functions and multi-database architectures.
+- **Enforcement**: The field convention is enforced purely by the pipeline scripts (specifically `phase4_normalize.py`), not by the database itself.
+
+---
+
+## Thompson Indicator Fields (`t_any_*`)
+
+The Thompson Indicator Fields provide universal indicator fields across all pipeline datasets - the same pattern SIEM platforms use to normalize disparate log sources into a single queryable schema.
 
 **Standard Fields** (present on every document):
 
@@ -69,21 +82,28 @@ The Thompson Schema provides universal indicator fields across all pipeline data
 
 **Indicator Fields** (universal cross-pipeline arrays):
 
-| Field | Type | Description |
-|-------|------|-------------|
-| `t_any_names` | array[string] | All entity names |
-| `t_any_people` | array[string] | All people mentioned |
-| `t_any_cities` | array[string] | All city names |
-| `t_any_states` | array[string] | All state abbreviations |
-| `t_any_counties` | array[string] | All county names |
-| `t_any_countries` | array[string] | All country names (v2) |
-| `t_any_regions` | array[string] | Sub-country regions (v2) |
-| `t_any_coordinates` | array[map] | All lat/lon pairs |
-| `t_any_geohashes` | array[string] | Geohash prefixes for proximity |
-| `t_any_keywords` | array[string] | All searchable terms |
-| `t_any_categories` | array[string] | Normalized category tags |
-| `t_any_urls` | array[string] | Associated URLs |
-| `t_any_video_ids` | array[string] | Source YouTube video IDs |
+| Field | Type | Description | Examples |
+|-------|------|-------------|----------|
+| `t_any_names` | array[string] | All entity names | `["eiffel tower", "la tour eiffel"]` |
+| `t_any_people` | array[string] | All people mentioned | `["rick steves", "huell howser"]` |
+| `t_any_cities` | array[string] | All city names | `["paris", "los angeles"]` |
+| `t_any_states` | array[string] | All state abbreviations | `["ca", "ny"]` |
+| `t_any_counties` | array[string] | All county names | `["los angeles county"]` |
+| `t_any_countries` | array[string] | All country names (v2) | `["france", "us"]` |
+| `t_any_regions` | array[string] | Sub-country regions (v2) | `["bavaria", "tuscany"]` |
+| `t_any_coordinates` | array[map] | All lat/lon pairs | `[{"lat": 48.85, "lon": 2.29}]` |
+| `t_any_geohashes` | array[string] | Geohash prefixes for proximity | `["u09t", "u09tv"]` |
+| `t_any_keywords` | array[string] | All searchable terms | `["gothic", "museum", "art"]` |
+| `t_any_categories` | array[string] | Normalized category tags | `["landmark", "restaurant"]` |
+| `t_any_actors` | array[string] | Named people featured (v3) | `["rick steves", "local guide"]` |
+| `t_any_roles` | array[string] | Normalized role types (v3) | `["host", "guide", "historian"]` |
+| `t_any_shows` | array[string] | Show name(s) (v3) | `["rick steves' europe", "california's gold"]` |
+| `t_any_cuisines` | array[string] | Cuisine categories (v3) | `["french", "italian"]` |
+| `t_any_dishes` | array[string] | Specific food items (v3) | `["croissant", "paella"]` |
+| `t_any_eras` | array[string] | Historical periods mentioned (v3) | `["medieval", "roman"]` |
+| `t_any_continents` | array[string] | Continent(s) (v3) | `["europe", "asia"]` |
+| `t_any_urls` | array[string] | Associated URLs | `["https://example.com"]` |
+| `t_any_video_ids` | array[string] | Source YouTube video IDs | `["dQw4w9WgXcQ"]` |
 
 **Enrichment** (`t_enrichment.*`): Google Places ratings, open/closed status, websites. Nominatim geocoding. Extensible to any enrichment source via named keys.
 
@@ -93,18 +113,19 @@ The Thompson Schema provides universal indicator fields across all pipeline data
 
 ## Pipelines
 
-| Pipeline | Source | Entity Type | Videos | Entities | Status |
-|----------|--------|-------------|--------|----------|--------|
-| `calgold` | California's Gold (Huell Howser) | landmark | 431 | 218 | Phase 3 Stress Test |
-| `ricksteves` | Rick Steves' Europe | destination | 1,865 | 669 | Phase 3 Stress Test |
+| Pipeline (`t_log_type`) | Source | Entity Type | Videos | Entities | Status |
+|-------------------------|--------|-------------|--------|----------|--------|
+| `calgold` | California's Gold (Huell Howser) | landmark | 431 | 412 | Phase 4 Validation Complete (Schema v3) |
+| `ricksteves` | Rick Steves' Europe | destination | 1,865 | 1,035 | Phase 4 Validation Complete (Schema v3) |
 | `tripledb` | Diners, Drive-Ins and Dives | restaurant | 805 | - | Migration candidate |
+| `bourdain` | Anthony Bourdain: Parts Unknown | destination | 104 | - | Pending onboarding |
 
 Each pipeline requires only 4 config files - no code changes to shared scripts:
 
 ```
 pipeline/config/{pipeline_id}/
   pipeline.json           # metadata (display name, entity type, icon, color)
-  schema.json             # Thompson Schema indicator mappings
+  schema.json             # Thompson Indicator Fields indicator mappings
   extraction_prompt.md    # Gemini Flash extraction prompt
   playlist_urls.txt       # YouTube video IDs
 ```
@@ -198,15 +219,14 @@ This project is built using **Iterative Agentic Orchestration (IAO)** - a develo
 | Phase | Name | Status | Iteration |
 |-------|------|--------|-----------|
 | 0 | Scaffold & Environment | DONE | v0.5 |
-| 1 | CalGold Discovery (30 videos) | DONE | v1.6 |
-| 1 | RickSteves Discovery (30 videos) | DONE | v1.7 |
-| 2 | CalGold Calibration (60 videos) | DONE | v2.8 |
-| 2 | RickSteves Calibration (60 videos) | DONE | v2.9 |
-| 3 | CalGold Stress Test (30 videos) | DONE | v3.10 |
-| 3 | RickSteves Stress Test (30 videos) | DONE | v3.11 |
-| 4 | Validation (30 videos) | Pending | - |
-| 5-7 | Production Run (full datasets) | Pending | - |
-| 8 | Flutter App | Pending | - |
+| 1 | Discovery (30 videos) | DONE | v1.6, v1.7 |
+| 2 | Calibration (60 videos) | DONE | v2.8, v2.9 |
+| 3 | Stress Test (90 videos) | DONE | v3.10, v3.11 |
+| 4 | Validation + Schema v3 | DONE | v4.12, v4.13 |
+| 5 | Production Run | Pending | - |
+| 6 | Flutter App | Pending | - |
+| 7 | Firestore Load | Pending | - |
+| 8 | Enrichment Hardening | Pending | - |
 | 9 | App Optimization | Pending | - |
 | 10 | Retrospective + Template | Pending | - |
 
@@ -219,7 +239,7 @@ This project is built using **Iterative Agentic Orchestration (IAO)** - a develo
 | Audio Download | yt-dlp | YouTube -> mp3 |
 | Transcription | faster-whisper (CUDA) | mp3 -> timestamped JSON |
 | Extraction | Gemini 2.5 Flash API | Transcript -> structured entity JSON |
-| Normalization | Python + schema.json | Raw JSON -> Thompson Schema (t_any_*) |
+| Normalization | Python + schema.json | Raw JSON -> Thompson Indicator Fields (t_any_*) |
 | Geocoding | Nominatim (OSM) | Address/name -> lat/lon |
 | Enrichment | Google Places API (New) | Rating, open/closed, website, phone |
 | Database | Cloud Firestore (Blaze) | Denormalized documents, multi-database |
@@ -263,11 +283,26 @@ OS:   CachyOS (Arch-based) / KDE Plasma 6.6.2 / Wayland
 
 **Multi-LLM pipeline stages.** Currently Gemini Flash handles extraction. Future iterations will benchmark extraction quality across Claude Sonnet, Gemini Flash, GPT-4o, and local models (Nemotron, Qwen) per pipeline. The schema.json already decouples extraction from normalization - swapping the LLM requires only changing the extraction prompt, not the normalization pipeline.
 
-**SIEM migration tooling.** The Thompson Schema normalization pipeline is structurally identical to SIEM log normalization. Each `schema.json` is a field mapping artifact - the same deliverable produced during Splunk-to-Panther or Splunk-to-CrowdStrike migrations. Future work explores generating these mappings automatically from source SIEM configurations.
+**SIEM migration tooling.** The Thompson Indicator Fields normalization pipeline is structurally identical to SIEM log normalization. Each `schema.json` is a field mapping artifact - the same deliverable produced during Splunk-to-Panther or Splunk-to-CrowdStrike migrations. Future work explores generating these mappings automatically from source SIEM configurations.
 
 ---
 
 ## Changelog
+
+**v4.13 (RickSteves Phase 4 - Validation + Schema v3)**
+- Schema v3 migration: 7 new t_any_* fields including t_any_shows
+- 150 videos (30 new + ALL 150 re-extracted). 1,035 unique RickSteves entities
+- Schema v3 field rates: actors 100%, shows 100%, continents 99%, eras 73%
+- CalGold backfill: 412 entities updated with t_any_shows
+- Gemini: 0 interventions, Claude: 1. 33 countries
+- Total platform: 1,447 entities (412 CalGold + 1,035 RickSteves)
+
+**v4.12 (CalGold Phase 4 - Validation + Schema v3)**
+- Schema v3 migration: 6 new t_any_* fields (actors, roles, cuisines, dishes, eras, continents)
+- 120 videos, 300 unique CalGold entities. ALL re-extracted with v3 prompt
+- Schema v3 validation: actors 100%, continents 100%, counties 84.1%, eras 82.4%
+- Geocoding: 97.6%, Enrichment: 97.6%. Gemini: 0 interventions, Claude: 1
+- Total platform: 969 entities (300 CalGold + 669 RickSteves) across 30 countries
 
 **v3.11 (RickSteves Phase 3 - Stress Test)**
 - Videos 91-120 processed via split-agent model: Gemini CLI (phases 1-5) + Claude Code (phases 6-7)
@@ -304,7 +339,7 @@ OS:   CachyOS (Arch-based) / KDE Plasma 6.6.2 / Wayland
 
 **v1.7 (RickSteves Phase 1 - Discovery)**
 - Pipeline 2 live: Rick Steves' Europe, 30 videos, 200 unique destinations across 23 countries
-- Thompson Schema evolved to v2: added t_any_countries, t_any_regions
+- Thompson Indicator Fields evolved to v2: added t_any_countries, t_any_regions
 - Geocoding: 98% (68% Nominatim + 66 backfilled from Google Places)
 - Enrichment: 98% via Google Places (197/200)
 - Cross-pipeline queries validated: keyword, country, geohash queries return results from both CalGold and RickSteves
@@ -315,7 +350,7 @@ OS:   CachyOS (Arch-based) / KDE Plasma 6.6.2 / Wayland
 
 **v1.6 (CalGold Phase 1 - Discovery)**
 - 30-video discovery batch: 30/30 acquired, 30/30 transcribed, 30/30 extracted
-- 57 unique California locations normalized via Thompson Schema
+- 57 unique California locations normalized via Thompson Indicator Fields
 - Geocoding: 43% via Nominatim (niche/historic locations missed)
 - Enrichment: 100% match rate via Google Places API (New)
 - 56 documents loaded to staging Firestore, all array-contains queries validated
@@ -326,7 +361,7 @@ OS:   CachyOS (Arch-based) / KDE Plasma 6.6.2 / Wayland
 - Firebase: kjtcom (kjtcom-c78cd) under socfoundry.com, Blaze billing
 - Monorepo scaffolded: app/, pipeline/, functions/, docs/
 - Multi-database configured: (default) + staging, both us-central1
-- Thompson Schema (t_any_*) designed and validated with test entity
+- Thompson Indicator Fields (t_any_*) designed and validated with test entity
 - CalGold pipeline config: schema.json (14 indicator mappings), extraction_prompt.md
 - Cloud Functions search endpoint deployed
 - 431 CalGold playlist URLs validated via yt-dlp
@@ -343,7 +378,7 @@ Built as a platform for extracting, normalizing, and querying structured data fr
 
 ## Citing
 
-If you find the IAO methodology or Thompson Schema useful:
+If you find the IAO methodology or Thompson Indicator Fields useful:
 
 ```
 @misc{thompson2026iao,

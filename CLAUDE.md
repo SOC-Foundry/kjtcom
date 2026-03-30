@@ -2,75 +2,76 @@
 
 ## Read Order
 
-1. docs/ricksteves-design-v3.11.md
-2. docs/ricksteves-plan-v3.11.md (execute Section B only - Gemini CLI completed Section A)
+1. docs/ricksteves-design-v4.13.md
+2. docs/ricksteves-plan-v4.13.md (execute Section B only)
 
 ## Context
 
-This is a split-agent iteration. Gemini CLI executed phases 1-5 (acquire, transcribe, extract, normalize, geocode). You are executing phases 6-7 (enrich, load) plus post-flight and artifacts. Verify the handoff checkpoint at pipeline/data/ricksteves/handoff-v3.11.json before starting any work.
+Schema v3 migration for RickSteves. Gemini CLI completed schema config changes + phases 1-5 with re-extraction of ALL 150 videos. Verify handoff checkpoint at pipeline/data/ricksteves/handoff-v4.13.json. Confirm schema_version: 3 and 7 new_fields.
+
+CRITICAL (G24): Reset enrichment and load checkpoints BEFORE running phases 6-7. The v3.11 checkpoints are stale (schema v2, 120 files). Step 5.5 in the plan covers this.
 
 ## Shell - MANDATORY
 
-- Run: claude config set preferredShell fish (before first launch, one-time)
-- All commands execute in fish shell
-- Environment variables are in ~/.config/fish/config.fish
-- NEVER use bash syntax (no ${VAR}, no heredocs, no source ~/.bashrc)
-- If a command fails with "not a valid variable", you are in bash. Switch to fish.
+- claude config set preferredShell fish (one-time)
+- All commands in fish shell
+- NEVER cat config.fish (G20)
 
 ## Security - ABSOLUTE RULES
 
-- NEVER write API keys, tokens, or credentials into ANY file in the repo
-- NEVER include API keys in build logs, reports, or changelog artifacts
-- NEVER echo or print API key values in commands that get logged
-- NEVER cat or read ~/.config/fish/config.fish (it contains API keys - G20)
-- Read keys from environment variables ONLY
-- If a key needs to be tested, print only "SET" or "NOT SET", never the value
-- Before signaling completion: grep -rnI "AIzaSy" . must return only plan checklist references
-- Violation of these rules is a BLOCKING failure - stop and alert Kyle
+- grep -rnI "AIzaSy" . before signaling completion
+- Print only "SET" or "NOT SET" for key checks
 
-## Gotcha G2 - CUDA LD_LIBRARY_PATH
+## Enrichment Note
 
-- RESOLVED in v3.10. LD_LIBRARY_PATH is embedded in phase2_transcribe.py AND config.fish.
-- Not relevant for phases 6-7 but verify if needed: echo $LD_LIBRARY_PATH
+- phase6_enrich.py does NOT accept --database flag
+- phase7_load.py DOES accept --database staging
 
-## Enrichment Note (Learned in v3.10)
+## CalGold t_any_shows Backfill
 
-- phase6_enrich.py does NOT accept --database flag. It operates on files only. Do not pass --database staging to phase 6.
-- phase7_load.py DOES accept --database staging. Use it.
+After RickSteves load, backfill all CalGold entities with t_any_shows: ["California's Gold"]. Script provided in plan Step 7.5. If it fails, defer -- not blocking.
 
 ## Permissions
 
-- CAN: flutter build web, firebase deploy --only hosting/firestore/functions
-- CAN: pip install, npm install (project-level)
-- CANNOT: git add / commit / push (human commits at phase boundaries)
-- CANNOT: sudo (ask Kyle)
+- CAN: flutter build web, firebase deploy
+- CANNOT: git add / commit / push
+- CANNOT: sudo
 
 ## Database Rules
 
-- Load to "staging" database only
-- NEVER write to "(default)" without Kyle approval
-- phase7_load.py uses fetch-and-merge (not .set()) for array fields
+- Load to "staging" only
+- fetch-and-merge for array fields
 
-## Changelog
+## README updates
 
-- Write all changes to docs/kjtcom-changelog.md (unified, not per-pipeline)
-- APPEND entries at the TOP - never overwrite previous entries
+Also update README.md with these structural changes:
+
+- Rename "Thompson Schema" to "Thompson Indicator Fields" throughout
+- Add a "Data Architecture" section before the indicator fields section explaining the single-collection Firestore design (t_log_type discriminator, array-contains queries, composite indexes, multi-database staging/default, Blaze pricing)
+- Show all 4 pipelines (calgold, ricksteves, tripledb, bourdain) in the Pipelines table with t_log_type column
+- Add an Examples column to the indicator fields table
+- Note that the field convention is enforced by pipeline scripts, not the database
 
 ## Artifact Rules - MANDATORY
 
-Every iteration MUST produce/update these 4 files before completing:
+1. docs/ricksteves-build-v4.13.md (include checkpoint reset detail, CalGold backfill status)
+2. docs/ricksteves-report-v4.13.md (v3 field population rates, Phase 5 readiness)
+3. docs/kjtcom-changelog.md (append v4.13 at top)
+4. README.md - Use this phase structure:
 
-1. docs/ricksteves-build-v3.11.md (session transcript - include both Gemini Section A summary and Claude Section B detail)
-2. docs/ricksteves-report-v3.11.md (metrics + recommendation for Phase 4, report interventions per agent separately)
-3. docs/kjtcom-changelog.md (UNIFIED - append v3.11 entry at top, never overwrite)
-4. README.md (update Project Status table, Pipelines table entity count, Changelog section)
-
-- If ANY re-run, fix, or backfill changes metrics, update ALL 4 files
-- Do NOT mark a step complete until artifacts reflect the final state
-
-## Living Documents
-
-- If ANY new package is installed (pip, npm, pacman, yay), update docs/install.fish
+| Phase | Name | Status | Iteration |
+|-------|------|--------|-----------|
+| 0 | Scaffold & Environment | DONE | v0.5 |
+| 1 | Discovery (30 videos) | DONE | v1.6, v1.7 |
+| 2 | Calibration (60 videos) | DONE | v2.8, v2.9 |
+| 3 | Stress Test (90 videos) | DONE | v3.10, v3.11 |
+| 4 | Validation + Schema v3 | DONE | v4.12, v4.13 |
+| 5 | Production Run | Pending | - |
+| 6 | Flutter App | Pending | - |
+| 7 | Firestore Load | Pending | - |
+| 8 | Enrichment Hardening | Pending | - |
+| 9 | App Optimization | Pending | - |
+| 10 | Retrospective + Template | Pending | - |
 
 ## Formatting
 

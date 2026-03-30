@@ -18,6 +18,30 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 from scripts.utils.checkpoint import Checkpoint
 from scripts.utils.thompson_schema import normalize_entity
 
+# Country to continent lookup for auto-deriving t_any_continents
+COUNTRY_TO_CONTINENT = {
+    "us": "north america", "united states": "north america",
+    "france": "europe", "italy": "europe", "spain": "europe",
+    "germany": "europe", "austria": "europe", "switzerland": "europe",
+    "netherlands": "europe", "belgium": "europe", "england": "europe",
+    "united kingdom": "europe", "scotland": "europe", "ireland": "europe",
+    "portugal": "europe", "greece": "europe", "turkey": "europe",
+    "croatia": "europe", "czech republic": "europe", "czechia": "europe",
+    "hungary": "europe", "poland": "europe", "norway": "europe",
+    "sweden": "europe", "denmark": "europe", "finland": "europe",
+    "romania": "europe", "bulgaria": "europe", "slovenia": "europe",
+    "montenegro": "europe", "bosnia and herzegovina": "europe",
+    "vatican city": "europe",
+    "morocco": "africa", "egypt": "africa", "ethiopia": "africa",
+    "israel": "asia", "iran": "asia", "india": "asia", "japan": "asia",
+    "china": "asia", "south korea": "asia", "thailand": "asia",
+    "vietnam": "asia", "cambodia": "asia",
+    "canada": "north america", "mexico": "north america",
+    "brazil": "south america", "argentina": "south america",
+    "peru": "south america", "colombia": "south america",
+    "australia": "oceania", "new zealand": "oceania",
+}
+
 
 def main():
     parser = argparse.ArgumentParser(description="Normalize entities with Thompson Schema")
@@ -63,6 +87,17 @@ def main():
                     print(f"  SKIP: null-name entity in {video_id}")
                     continue
                 normalized = normalize_entity(entity, schema)
+
+                # Continent lookup enhancement (Schema v3)
+                countries = normalized.get("t_any_countries", [])
+                continents = normalized.get("t_any_continents", [])
+                for country in countries:
+                    continent = COUNTRY_TO_CONTINENT.get(country.lower())
+                    if continent and continent not in continents:
+                        continents.append(continent)
+                if continents:
+                    normalized["t_any_continents"] = sorted(set(continents))
+
                 f.write(json.dumps(normalized) + "\n")
                 total_entities += 1
 

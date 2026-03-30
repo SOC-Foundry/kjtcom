@@ -1,5 +1,29 @@
 # kjtcom - Unified Changelog
 
+**v4.13 (RickSteves Phase 4 - Validation + Schema v3)**
+- Schema v3 migration: 7 new t_any_* fields (actors, roles, shows, cuisines, dishes, eras, continents)
+- Videos 121-150 acquired/transcribed (30 new). ALL 150 re-extracted with v3 prompt
+- 150 total videos processed, 991 documents loaded, 1,035 unique RickSteves entities in staging
+- Schema v3 validation (744 v3 entities): actors 100%, shows 100%, continents 99%, eras 73%, counties 38%
+- CalGold t_any_shows backfill: 412/412 entities updated with ["California's Gold"]
+- Country distribution expanded to 33 (up from 30)
+- Geocoding and enrichment: >95% via Google Places
+- Gemini CLI interventions: 0. Claude Code interventions: 1 (checkpoint path mismatch in plan)
+- Total platform: 1,447 entities (412 CalGold + 1,035 RickSteves) across 33 countries
+- Both pipelines validated for Phase 5 (Production Run)
+
+**v4.12 (CalGold Phase 4 - Validation + Schema v3)**
+- Schema v3 migration: 6 new t_any_* fields (actors, roles, cuisines, dishes, eras, continents)
+- Videos 91-120 acquired/transcribed (30 new). ALL 120 re-extracted with v3 prompt
+- 120 total videos processed, 296 entities, 300 unique in Firestore staging
+- Schema v3 validation: t_any_actors 100%, t_any_continents 100%, t_any_counties 84.1%, t_any_eras 82.4%
+- Script enhancements: continent lookup in phase4_normalize.py, county parsing in phase5_geocode.py
+- Geocoding: 97.6% (201 coords backfilled from Google Places)
+- Enrichment: 97.6% via Google Places (289/296)
+- Gemini CLI interventions: 0. Claude Code interventions: 1 (checkpoint reset for full re-enrichment)
+- Total platform: 969 entities (300 CalGold + 669 RickSteves) across 30 countries
+- Phase 5 (Production Run) recommended
+
 **v3.11 (RickSteves Phase 3 - Stress Test)**
 - Videos 91-120 processed via split-agent model: Gemini CLI (phases 1-5) + Claude Code (phases 6-7)
 - 120 total videos processed, 869 raw entities, 669 unique in Firestore staging
