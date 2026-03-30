@@ -1,5 +1,17 @@
 # kjtcom - Unified Changelog
 
+**v3.10 (CalGold Phase 3 - Stress Test)**
+- Videos 61-90 processed via split-agent model: Gemini CLI (phases 1-5) + Claude Code (phases 6-7)
+- 90 total videos processed, 226 total entities, 218 unique in Firestore staging
+- 5 multi-visit entity merges across Phase 1-3 batches
+- Geocoding: 36% Nominatim -> 98% after Google Places coordinate backfill (140 backfilled)
+- Enrichment: 98% via Google Places (222/226)
+- 4 misses: niche infrastructure (debris basins, historic water channels, private rail car)
+- G2 (CUDA LD_LIBRARY_PATH) permanently resolved - zero failures across full iteration
+- Zero interventions for both agents (Gemini: 0, Claude: 0)
+- First successful split-agent execution with handoff checkpoint protocol
+- Total platform: 777 entities (218 CalGold + 559 RickSteves) across 29 countries
+
 **v2.8 (CalGold Phase 2 - Calibration)**
 - Videos 31-60 processed: 60/60/60 (acquired/transcribed/extracted)
 - 162 new entities, 218 total CalGold entities after dedup

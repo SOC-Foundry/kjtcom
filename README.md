@@ -16,7 +16,7 @@ The Thompson Schema is modeled after [Panther SIEM's](https://docs.panther.com/s
 
 Built entirely by LLM agents using IAO (Iterative Agentic Orchestration) - a methodology distilled from 48+ production iterations on [TripleDB](https://github.com/TachTech-Engineering/tripledb).
 
-**kylejeromethompson.com** | **Phase 2.9** | **Status: RickSteves Phase 2 Calibration Complete**
+**kylejeromethompson.com** | **Phase 3.10** | **Status: CalGold Phase 3 Stress Test Complete**
 
 ---
 
@@ -95,7 +95,7 @@ The Thompson Schema provides universal indicator fields across all pipeline data
 
 | Pipeline | Source | Entity Type | Videos | Entities | Status |
 |----------|--------|-------------|--------|----------|--------|
-| `calgold` | California's Gold (Huell Howser) | landmark | 431 | 218 | Phase 2 Calibration |
+| `calgold` | California's Gold (Huell Howser) | landmark | 431 | 218 | Phase 3 Stress Test |
 | `ricksteves` | Rick Steves' Europe | destination | 1,865 | 559 | Phase 2 Calibration |
 | `tripledb` | Diners, Drive-Ins and Dives | restaurant | 805 | - | Migration candidate |
 
@@ -202,7 +202,7 @@ This project is built using **Iterative Agentic Orchestration (IAO)** - a develo
 | 1 | RickSteves Discovery (30 videos) | DONE | v1.7 |
 | 2 | CalGold Calibration (60 videos) | DONE | v2.8 |
 | 2 | RickSteves Calibration (60 videos) | DONE | v2.9 |
-| 3 | Stress Test (30 videos) | Pending | - |
+| 3 | CalGold Stress Test (30 videos) | DONE | v3.10 |
 | 4 | Validation (30 videos) | Pending | - |
 | 5-7 | Production Run (full datasets) | Pending | - |
 | 8 | Flutter App | Pending | - |
@@ -267,6 +267,14 @@ OS:   CachyOS (Arch-based) / KDE Plasma 6.6.2 / Wayland
 ---
 
 ## Changelog
+
+**v3.10 (CalGold Phase 3 - Stress Test)**
+- Videos 61-90 processed via split-agent model: Gemini CLI (phases 1-5) + Claude Code (phases 6-7)
+- 90 total videos, 218 unique CalGold entities in Firestore staging
+- Geocoding: 98% (Nominatim + Places backfill, 140 coords backfilled)
+- Enrichment: 98% via Google Places (222/226)
+- Zero interventions for both agents
+- Total platform: 777 entities (218 CalGold + 559 RickSteves) across 29 countries
 
 **v2.9 (RickSteves Phase 2 - Calibration)**
 - Videos 31-90 processed via Gemini CLI (first Gemini execution on kjtcom)
