@@ -16,7 +16,7 @@ The Thompson Schema is modeled after [Panther SIEM's](https://docs.panther.com/s
 
 Built entirely by LLM agents using IAO (Iterative Agentic Orchestration) - a methodology distilled from 48+ production iterations on [TripleDB](https://github.com/TachTech-Engineering/tripledb).
 
-**kylejeromethompson.com** | **Phase 3.10** | **Status: CalGold Phase 3 Stress Test Complete**
+**kylejeromethompson.com** | **Phase 3.11** | **Status: RickSteves Phase 3 Stress Test Complete**
 
 ---
 
@@ -96,7 +96,7 @@ The Thompson Schema provides universal indicator fields across all pipeline data
 | Pipeline | Source | Entity Type | Videos | Entities | Status |
 |----------|--------|-------------|--------|----------|--------|
 | `calgold` | California's Gold (Huell Howser) | landmark | 431 | 218 | Phase 3 Stress Test |
-| `ricksteves` | Rick Steves' Europe | destination | 1,865 | 559 | Phase 2 Calibration |
+| `ricksteves` | Rick Steves' Europe | destination | 1,865 | 669 | Phase 3 Stress Test |
 | `tripledb` | Diners, Drive-Ins and Dives | restaurant | 805 | - | Migration candidate |
 
 Each pipeline requires only 4 config files - no code changes to shared scripts:
@@ -203,6 +203,7 @@ This project is built using **Iterative Agentic Orchestration (IAO)** - a develo
 | 2 | CalGold Calibration (60 videos) | DONE | v2.8 |
 | 2 | RickSteves Calibration (60 videos) | DONE | v2.9 |
 | 3 | CalGold Stress Test (30 videos) | DONE | v3.10 |
+| 3 | RickSteves Stress Test (30 videos) | DONE | v3.11 |
 | 4 | Validation (30 videos) | Pending | - |
 | 5-7 | Production Run (full datasets) | Pending | - |
 | 8 | Flutter App | Pending | - |
@@ -267,6 +268,14 @@ OS:   CachyOS (Arch-based) / KDE Plasma 6.6.2 / Wayland
 ---
 
 ## Changelog
+
+**v3.11 (RickSteves Phase 3 - Stress Test)**
+- Videos 91-120 processed via split-agent model: Gemini CLI (phases 1-5) + Claude Code (phases 6-7)
+- 120 total videos, 669 unique RickSteves entities in Firestore staging
+- Geocoding: 99.3%, Enrichment: 99.3% via Google Places
+- New countries: Egypt, Ethiopia, Vatican City (30 total)
+- Zero interventions for both agents
+- Total platform: 887 entities (218 CalGold + 669 RickSteves) across 30 countries
 
 **v3.10 (CalGold Phase 3 - Stress Test)**
 - Videos 61-90 processed via split-agent model: Gemini CLI (phases 1-5) + Claude Code (phases 6-7)

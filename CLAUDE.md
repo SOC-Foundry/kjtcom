@@ -2,12 +2,12 @@
 
 ## Read Order
 
-1. docs/calgold-design-v3.10.md
-2. docs/calgold-plan-v3.10.md (execute Section B only - Gemini CLI completed Section A)
+1. docs/ricksteves-design-v3.11.md
+2. docs/ricksteves-plan-v3.11.md (execute Section B only - Gemini CLI completed Section A)
 
 ## Context
 
-This is a split-agent iteration. Gemini CLI executed phases 1-5 (acquire, transcribe, extract, normalize, geocode). You are executing phases 6-7 (enrich, load) plus post-flight and artifacts. Verify the handoff checkpoint at pipeline/data/calgold/handoff-v3.10.json before starting any work.
+This is a split-agent iteration. Gemini CLI executed phases 1-5 (acquire, transcribe, extract, normalize, geocode). You are executing phases 6-7 (enrich, load) plus post-flight and artifacts. Verify the handoff checkpoint at pipeline/data/ricksteves/handoff-v3.11.json before starting any work.
 
 ## Shell - MANDATORY
 
@@ -28,14 +28,15 @@ This is a split-agent iteration. Gemini CLI executed phases 1-5 (acquire, transc
 - Before signaling completion: grep -rnI "AIzaSy" . must return only plan checklist references
 - Violation of these rules is a BLOCKING failure - stop and alert Kyle
 
-## Gotcha G2 - CUDA LD_LIBRARY_PATH (READ THIS)
+## Gotcha G2 - CUDA LD_LIBRARY_PATH
 
-- faster-whisper/ctranslate2 WILL fail if LD_LIBRARY_PATH is not set
-- The path MUST include CUDA libs BEFORE calling any transcription
-- Check: echo $LD_LIBRARY_PATH (must be non-empty and include cuda/cublas/cudnn)
-- If empty: source ~/.config/fish/config.fish
-- LD_LIBRARY_PATH is now also embedded in phase2_transcribe.py as a fallback
-- This has caused interventions in EVERY phase so far. Do not skip this check.
+- RESOLVED in v3.10. LD_LIBRARY_PATH is embedded in phase2_transcribe.py AND config.fish.
+- Not relevant for phases 6-7 but verify if needed: echo $LD_LIBRARY_PATH
+
+## Enrichment Note (Learned in v3.10)
+
+- phase6_enrich.py does NOT accept --database flag. It operates on files only. Do not pass --database staging to phase 6.
+- phase7_load.py DOES accept --database staging. Use it.
 
 ## Permissions
 
@@ -59,9 +60,9 @@ This is a split-agent iteration. Gemini CLI executed phases 1-5 (acquire, transc
 
 Every iteration MUST produce/update these 4 files before completing:
 
-1. docs/calgold-build-v3.10.md (session transcript - include both Gemini Section A summary and Claude Section B detail)
-2. docs/calgold-report-v3.10.md (metrics + recommendation for Phase 4, report interventions per agent separately)
-3. docs/kjtcom-changelog.md (UNIFIED - append v3.10 entry at top, never overwrite)
+1. docs/ricksteves-build-v3.11.md (session transcript - include both Gemini Section A summary and Claude Section B detail)
+2. docs/ricksteves-report-v3.11.md (metrics + recommendation for Phase 4, report interventions per agent separately)
+3. docs/kjtcom-changelog.md (UNIFIED - append v3.11 entry at top, never overwrite)
 4. README.md (update Project Status table, Pipelines table entity count, Changelog section)
 
 - If ANY re-run, fix, or backfill changes metrics, update ALL 4 files

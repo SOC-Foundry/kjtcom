@@ -1,5 +1,16 @@
 # kjtcom - Unified Changelog
 
+**v3.11 (RickSteves Phase 3 - Stress Test)**
+- Videos 91-120 processed via split-agent model: Gemini CLI (phases 1-5) + Claude Code (phases 6-7)
+- 120 total videos processed, 869 raw entities, 669 unique in Firestore staging
+- 42 multi-visit entity merges in this batch (200 cumulative across all phases)
+- Geocoding: 99.3% (Nominatim + Google Places coordinate backfill)
+- Enrichment: 99.3% via Google Places (863/869)
+- New countries: Egypt, Ethiopia, Vatican City (30 total, up from 29)
+- Zero interventions for both agents (Gemini: 0, Claude: 0)
+- Third consecutive zero-intervention split-agent execution
+- Total platform: 887 entities (218 CalGold + 669 RickSteves) across 30 countries
+
 **v3.10 (CalGold Phase 3 - Stress Test)**
 - Videos 61-90 processed via split-agent model: Gemini CLI (phases 1-5) + Claude Code (phases 6-7)
 - 90 total videos processed, 226 total entities, 218 unique in Firestore staging
