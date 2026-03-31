@@ -1,0 +1,1264 @@
+==========================================
+kjtcom Production Run
+Pipeline: calgold
+Timeout: 1200s
+Started: Mon Mar 30 03:37:03 PM PDT 2026
+==========================================
+
+=== Phase 1: Acquire ===
+Downloading Tw-b0dfILQg...
+  FAILED: ERROR: [youtube] Tw-b0dfILQg: Private video. Sign in if you've been granted access to this video. Use --cookies-from-browser or --cookies for the authentication. See  https://github.com/yt-dlp/yt-dlp/
+Downloading TbOR9K5bAl8...
+  FAILED: ERROR: [youtube] TbOR9K5bAl8: Video unavailable. This video is no longer available because the YouTube account associated with this video has been terminated.
+
+Downloading c92qwCQGtYg...
+  FAILED: ERROR: [youtube] c92qwCQGtYg: Private video. Sign in if you've been granted access to this video. Use --cookies-from-browser or --cookies for the authentication. See  https://github.com/yt-dlp/yt-dlp/
+Downloading mO_XXk27vfc...
+  FAILED: ERROR: [youtube] mO_XXk27vfc: Video unavailable. This video is no longer available because the YouTube account associated with this video has been terminated.
+
+Downloading nm_Qj_K1jOA...
+  FAILED: ERROR: [youtube] nm_Qj_K1jOA: Video unavailable. This video is no longer available because the YouTube account associated with this video has been terminated.
+
+Downloading sKJiZObutVE...
+  FAILED: ERROR: [youtube] sKJiZObutVE: Private video. Sign in if you've been granted access to this video. Use --cookies-from-browser or --cookies for the authentication. See  https://github.com/yt-dlp/yt-dlp/
+Downloading xrPp1S-F1jQ...
+  FAILED: ERROR: [youtube] xrPp1S-F1jQ: Video unavailable. This video is no longer available because the YouTube account associated with this video has been terminated.
+
+Downloading QkrjIvQDzhY...
+  FAILED: ERROR: [youtube] QkrjIvQDzhY: Private video. Sign in if you've been granted access to this video. Use --cookies-from-browser or --cookies for the authentication. See  https://github.com/yt-dlp/yt-dlp/
+Downloading lYDhj57S8ZE...
+  FAILED: ERROR: [youtube] lYDhj57S8ZE: Private video. Sign in if you've been granted access to this video. Use --cookies-from-browser or --cookies for the authentication. See  https://github.com/yt-dlp/yt-dlp/
+Downloading iyV7qzD0G5U...
+  FAILED: ERROR: [youtube] iyV7qzD0G5U: Video unavailable. This video is no longer available because the YouTube account associated with this video has been terminated.
+
+Downloading Mgu-0LSAtD8...
+  FAILED: ERROR: [youtube] Mgu-0LSAtD8: Video unavailable. This video is no longer available because the YouTube account associated with this video has been terminated.
+
+Downloading h1PvboIRHdI...
+  FAILED: ERROR: [youtube] h1PvboIRHdI: Private video. Sign in if you've been granted access to this video. Use --cookies-from-browser or --cookies for the authentication. See  https://github.com/yt-dlp/yt-dlp/
+Downloading XwE0yh-nHzY...
+  FAILED: ERROR: [youtube] XwE0yh-nHzY: Private video. Sign in if you've been granted access to this video. Use --cookies-from-browser or --cookies for the authentication. See  https://github.com/yt-dlp/yt-dlp/
+Downloading lQrVE6k-ISA...
+  FAILED: ERROR: [youtube] lQrVE6k-ISA: Private video. Sign in if you've been granted access to this video. Use --cookies-from-browser or --cookies for the authentication. See  https://github.com/yt-dlp/yt-dlp/
+Downloading z4hIIAsqd_0...
+  FAILED: ERROR: [youtube] z4hIIAsqd_0: Private video. Sign in if you've been granted access to this video. Use --cookies-from-browser or --cookies for the authentication. See  https://github.com/yt-dlp/yt-dlp/
+Downloading PaNkKKwRElo...
+  FAILED: ERROR: [youtube] PaNkKKwRElo: Video unavailable. This video is no longer available because the YouTube account associated with this video has been terminated.
+
+Downloading FSMW7b_un2M...
+  FAILED: ERROR: [youtube] FSMW7b_un2M: Private video. Sign in if you've been granted access to this video. Use --cookies-from-browser or --cookies for the authentication. See  https://github.com/yt-dlp/yt-dlp/
+Downloading kJy514yp8wI...
+  FAILED: ERROR: [youtube] kJy514yp8wI: Private video. Sign in if you've been granted access to this video. Use --cookies-from-browser or --cookies for the authentication. See  https://github.com/yt-dlp/yt-dlp/
+Downloading 9sODb_HI3S0...
+  FAILED: ERROR: [youtube] 9sODb_HI3S0: Private video. Sign in if you've been granted access to this video. Use --cookies-from-browser or --cookies for the authentication. See  https://github.com/yt-dlp/yt-dlp/
+Downloading cYybvQtnJxs...
+  FAILED: ERROR: [youtube] cYybvQtnJxs: Private video. Sign in if you've been granted access to this video. Use --cookies-from-browser or --cookies for the authentication. See  https://github.com/yt-dlp/yt-dlp/
+Downloading bVd8PbsGQGM...
+  FAILED: ERROR: [youtube] bVd8PbsGQGM: Private video. Sign in if you've been granted access to this video. Use --cookies-from-browser or --cookies for the authentication. See  https://github.com/yt-dlp/yt-dlp/
+Downloading gABZd744p_w...
+  FAILED: ERROR: [youtube] gABZd744p_w: Private video. Sign in if you've been granted access to this video. Use --cookies-from-browser or --cookies for the authentication. See  https://github.com/yt-dlp/yt-dlp/
+Downloading 2_Iyq_-QvuM...
+  FAILED: ERROR: [youtube] 2_Iyq_-QvuM: Private video. Sign in if you've been granted access to this video. Use --cookies-from-browser or --cookies for the authentication. See  https://github.com/yt-dlp/yt-dlp/
+Downloading _o8f1m80-8Q...
+  FAILED: ERROR: [youtube] _o8f1m80-8Q: Private video. Sign in if you've been granted access to this video. Use --cookies-from-browser or --cookies for the authentication. See  https://github.com/yt-dlp/yt-dlp/
+Downloading 15CVHVmiBHE...
+  FAILED: ERROR: [youtube] 15CVHVmiBHE: Private video. Sign in if you've been granted access to this video. Use --cookies-from-browser or --cookies for the authentication. See  https://github.com/yt-dlp/yt-dlp/
+Downloading 4uXrZy_UUzI...
+  FAILED: ERROR: [youtube] 4uXrZy_UUzI: Private video. Sign in if you've been granted access to this video. Use --cookies-from-browser or --cookies for the authentication. See  https://github.com/yt-dlp/yt-dlp/
+Downloading IUUVqbRr-so...
+  FAILED: ERROR: [youtube] IUUVqbRr-so: Private video. Sign in if you've been granted access to this video. Use --cookies-from-browser or --cookies for the authentication. See  https://github.com/yt-dlp/yt-dlp/
+Downloading auEMgsgPhbs...
+  FAILED: ERROR: [youtube] auEMgsgPhbs: Private video. Sign in if you've been granted access to this video. Use --cookies-from-browser or --cookies for the authentication. See  https://github.com/yt-dlp/yt-dlp/
+Downloading cDZtjScy4lg...
+  FAILED: ERROR: [youtube] cDZtjScy4lg: Private video. Sign in if you've been granted access to this video. Use --cookies-from-browser or --cookies for the authentication. See  https://github.com/yt-dlp/yt-dlp/
+Downloading D1kFi7Qp4Og...
+  FAILED: ERROR: [youtube] D1kFi7Qp4Og: Private video. Sign in if you've been granted access to this video. Use --cookies-from-browser or --cookies for the authentication. See  https://github.com/yt-dlp/yt-dlp/
+Downloading UpsJ8Ib_ZoM...
+  FAILED: ERROR: [youtube] UpsJ8Ib_ZoM: Private video. Sign in if you've been granted access to this video. Use --cookies-from-browser or --cookies for the authentication. See  https://github.com/yt-dlp/yt-dlp/
+Downloading _K5zmO5rUqc...
+  FAILED: ERROR: [youtube] _K5zmO5rUqc: Private video. Sign in if you've been granted access to this video. Use --cookies-from-browser or --cookies for the authentication. See  https://github.com/yt-dlp/yt-dlp/
+Downloading 3pVb0QuHrSg...
+  FAILED: ERROR: [youtube] 3pVb0QuHrSg: Private video. Sign in if you've been granted access to this video. Use --cookies-from-browser or --cookies for the authentication. See  https://github.com/yt-dlp/yt-dlp/
+Downloading tnOS3LsV_Xk...
+  FAILED: ERROR: [youtube] tnOS3LsV_Xk: Private video. Sign in if you've been granted access to this video. Use --cookies-from-browser or --cookies for the authentication. See  https://github.com/yt-dlp/yt-dlp/
+Downloading gC8RtWSVvu0...
+  FAILED: ERROR: [youtube] gC8RtWSVvu0: Private video. Sign in if you've been granted access to this video. Use --cookies-from-browser or --cookies for the authentication. See  https://github.com/yt-dlp/yt-dlp/
+Downloading 9Zc7uV9nni8...
+  FAILED: ERROR: [youtube] 9Zc7uV9nni8: Private video. Sign in if you've been granted access to this video. Use --cookies-from-browser or --cookies for the authentication. See  https://github.com/yt-dlp/yt-dlp/
+Downloading cwD1-Uc3NKk...
+  FAILED: ERROR: [youtube] cwD1-Uc3NKk: Video unavailable. This video is no longer available because the YouTube account associated with this video has been terminated.
+
+Downloading WiS88p03UqE...
+  FAILED: ERROR: [youtube] WiS88p03UqE: Private video. Sign in if you've been granted access to this video. Use --cookies-from-browser or --cookies for the authentication. See  https://github.com/yt-dlp/yt-dlp/
+Downloading tz--PaG-cRk...
+  FAILED: ERROR: [youtube] tz--PaG-cRk: Private video. Sign in if you've been granted access to this video. Use --cookies-from-browser or --cookies for the authentication. See  https://github.com/yt-dlp/yt-dlp/
+Downloading Q0k_u4kUZxs...
+  FAILED: ERROR: [youtube] Q0k_u4kUZxs: Private video. Sign in if you've been granted access to this video. Use --cookies-from-browser or --cookies for the authentication. See  https://github.com/yt-dlp/yt-dlp/
+Downloading 5xYHjI4tD6E...
+  FAILED: ERROR: [youtube] 5xYHjI4tD6E: Private video. Sign in if you've been granted access to this video. Use --cookies-from-browser or --cookies for the authentication. See  https://github.com/yt-dlp/yt-dlp/
+Acquired 0 new videos. Total: 390
+Acquire complete: Mon Mar 30 03:37:35 PM PDT 2026 (0 min)
+
+=== Phase 2: Transcribe (timeout: 1200s) ===
+Transcribing QyMgjb8dBRQ...
+  OK - 1318 segments (1)
+Transcribing RBtWLj5_PJU...
+  OK - 489 segments (2)
+Transcribing RYqy8mwEFOw...
+  OK - 849 segments (3)
+Transcribing RrHta8F8Wms...
+  OK - 37 segments (4)
+Transcribing S0_G2uiuA4E...
+  OK - 304 segments (5)
+Transcribing S5nHjCWl_Xg...
+  OK - 632 segments (6)
+Transcribing SKrv2lFZ-C0...
+  OK - 575 segments (7)
+Transcribing SbOM_Z3-W3Q...
+  OK - 860 segments (8)
+Transcribing Tp9WxhFU08c...
+  OK - 178 segments (9)
+Transcribing TvqHF_oMJVI...
+  OK - 235 segments (10)
+Transcribing TyXPaCoW5Vo...
+  OK - 618 segments (11)
+Transcribing U__-U6c6N_Y...
+  OK - 610 segments (12)
+Transcribing Ujw4jMjsr80...
+  OK - 55 segments (13)
+Transcribing UnSOsb3MH3Q...
+  OK - 488 segments (14)
+Transcribing V29-kM45aVw...
+  OK - 599 segments (15)
+Transcribing V9PgvP7lbS4...
+  OK - 3 segments (16)
+Transcribing VOjfQDAuLsk...
+  OK - 563 segments (17)
+Transcribing VpBsL6BTk4E...
+  OK - 128 segments (18)
+Transcribing VqxKgZ_ydfA...
+  OK - 306 segments (19)
+Transcribing WJbXE2Z-dGA...
+  OK - 500 segments (20)
+Transcribing WQWLOyVeskM...
+  OK - 506 segments (21)
+Transcribing WXXNR3XldkM...
+  OK - 168 segments (22)
+Transcribing Wu_iNMzv9UE...
+  OK - 700 segments (23)
+Transcribing X0ac_MyRKtk...
+  OK - 781 segments (24)
+Transcribing XJMMJpiEjgI...
+  OK - 349 segments (25)
+Transcribing XJoqqY3wpk0...
+  OK - 477 segments (26)
+Transcribing XKfgP0WDONA...
+  OK - 389 segments (27)
+Transcribing XcageNndoWc...
+  OK - 657 segments (28)
+Transcribing XuZerNezDhs...
+  OK - 106 segments (29)
+Transcribing Y2xoND32KRM...
+  OK - 611 segments (30)
+Transcribing Y8OsENUK9E0...
+  OK - 654 segments (31)
+Transcribing YBAZ_1rNBWs...
+  OK - 741 segments (32)
+Transcribing YRZbO5ula7w...
+  OK - 181 segments (33)
+Transcribing YakKBpiqDL0...
+  OK - 372 segments (34)
+Transcribing Yudzw_6hKRs...
+  OK - 550 segments (35)
+Transcribing YwRMGXAeKcg...
+  OK - 597 segments (36)
+Transcribing Z4cxQ1sovu8...
+  OK - 179 segments (37)
+Transcribing ZEQIh3Qi7gQ...
+  OK - 641 segments (38)
+Transcribing ZQZHg-aNJZY...
+  OK - 488 segments (39)
+Transcribing ZgLA6IHB1-k...
+  OK - 682 segments (40)
+Transcribing _99UnSRJr_I...
+  OK - 795 segments (41)
+Transcribing _NZcNChGhgk...
+  OK - 799 segments (42)
+Transcribing _Q9TQxjX7i8...
+  OK - 141 segments (43)
+Transcribing _SpTyRDtTLw...
+  OK - 666 segments (44)
+Transcribing _ZzQgUmD6N4...
+  OK - 732 segments (45)
+Transcribing _en3yx9gGWQ...
+  OK - 620 segments (46)
+Transcribing aRdpBh0B7yc...
+  OK - 1249 segments (47)
+Transcribing bG5zSiXs-Xs...
+  OK - 173 segments (48)
+Transcribing bKgw-n955Cg...
+  OK - 554 segments (49)
+Transcribing bfUGoeg8oiQ...
+  OK - 543 segments (50)
+Transcribing bhR5nWcTSWs...
+  OK - 630 segments (51)
+Transcribing c4M3kwt0ZPw...
+  OK - 853 segments (52)
+Transcribing cEMkQsfeftg...
+  OK - 726 segments (53)
+Transcribing c_WqfwXHaPU...
+  OK - 2173 segments (54)
+Transcribing c_nw9i6bCms...
+  OK - 122 segments (55)
+Transcribing ccio9PzvbSg...
+  OK - 660 segments (56)
+Transcribing cqpceqEnyLM...
+  OK - 89 segments (57)
+Transcribing cv3-1AtxsyI...
+  OK - 261 segments (58)
+Transcribing cvmkuANwUz0...
+  OK - 698 segments (59)
+Transcribing cxBDY88zdKY...
+  OK - 1478 segments (60)
+Transcribing cxuzj-k-XuU...
+  OK - 560 segments (61)
+Transcribing d0m6Ls64WnU...
+  OK - 681 segments (62)
+Transcribing d25nhAijjKI...
+  OK - 157 segments (63)
+Transcribing dJcOhj5C0EQ...
+  OK - 525 segments (64)
+Transcribing djsafv4SArM...
+  OK - 856 segments (65)
+Transcribing dkVmNLH2-Ww...
+  OK - 592 segments (66)
+Transcribing dnpmetj66gw...
+  OK - 84 segments (67)
+Transcribing e1A7KcvZKek...
+  OK - 698 segments (68)
+Transcribing edVhQz1eXvs...
+  OK - 562 segments (69)
+Transcribing efJvRd-TgwQ...
+  OK - 455 segments (70)
+Transcribing egGGxoGJll4...
+  OK - 667 segments (71)
+Transcribing ehj5wF3nSeM...
+  OK - 649 segments (72)
+Transcribing eyXlQCDAV4w...
+  OK - 753 segments (73)
+Transcribing f6LO43GbVL4...
+  OK - 487 segments (74)
+Transcribing f9ZYU95k-rc...
+  OK - 718 segments (75)
+Transcribing fIWCJaE2P8M...
+  OK - 799 segments (76)
+Transcribing fOl2itVCams...
+  OK - 598 segments (77)
+Transcribing fVn2MDEkEHA...
+  OK - 683 segments (78)
+Transcribing fwME9k3RX-o...
+  OK - 1169 segments (79)
+Transcribing gDRWIgbhEec...
+  OK - 549 segments (80)
+Transcribing gLB28Ai7G1o...
+  OK - 452 segments (81)
+Transcribing gU0uJ8TWE9A...
+  OK - 647 segments (82)
+Transcribing gj7zSPDh8YA...
+  OK - 602 segments (83)
+Transcribing h3rigKLV8tI...
+  OK - 568 segments (84)
+Transcribing hAWn0GjG1dY...
+  OK - 530 segments (85)
+Transcribing hOeo5jq-N2E...
+  OK - 628 segments (86)
+Transcribing ha7gjDR-y4w...
+  OK - 134 segments (87)
+Transcribing hjLJAk8AhmU...
+  OK - 352 segments (88)
+Transcribing ht-GBK8EEAQ...
+  OK - 304 segments (89)
+Transcribing hutMcYVPOpw...
+  OK - 476 segments (90)
+Transcribing i3s4S6O6cKw...
+  OK - 14 segments (91)
+Transcribing iC5YOyc_Lo8...
+  OK - 1051 segments (92)
+Transcribing iVi2OgCIpQs...
+  OK - 1325 segments (93)
+Transcribing io9D7Fp58JQ...
+  OK - 763 segments (94)
+Transcribing j8l2MqvhYz4...
+  OK - 472 segments (95)
+Transcribing jBfZa_CY11Q...
+  OK - 643 segments (96)
+Transcribing jYuWT3u7__8...
+  OK - 616 segments (97)
+Transcribing jouLN2-Fk0o...
+  OK - 567 segments (98)
+Transcribing jzd8NGPuUEw...
+  OK - 679 segments (99)
+Transcribing kLxBeFdhUCg...
+  OK - 539 segments (100)
+Transcribing kz7g-DFn37w...
+  OK - 704 segments (101)
+Transcribing l2HBBjzoVuU...
+  OK - 688 segments (102)
+Transcribing l99Ek4YtTuw...
+  OK - 25 segments (103)
+Transcribing lToZ36grVj8...
+  OK - 721 segments (104)
+Transcribing lVHGUdgvluU...
+  OK - 721 segments (105)
+Transcribing lX1peVlq1Ug...
+  OK - 606 segments (106)
+Transcribing lY_Q1rcdjCo...
+  OK - 166 segments (107)
+Transcribing m8PmLWuY7gI...
+  OK - 794 segments (108)
+Transcribing mPEq80mUQFo...
+  OK - 537 segments (109)
+Transcribing n81hCeF_jpY...
+  OK - 437 segments (110)
+Transcribing nqY8d1pceL4...
+  OK - 629 segments (111)
+Transcribing nz8OHK3isSQ...
+  OK - 688 segments (112)
+Transcribing o9xHU5zu4jg...
+  OK - 706 segments (113)
+Transcribing oIQ8FmplfVU...
+  OK - 483 segments (114)
+Transcribing oIfcxSpKg3s...
+  OK - 711 segments (115)
+Transcribing oW5WGbgc84I...
+  OK - 704 segments (116)
+Transcribing oboIu55MQJE...
+  OK - 543 segments (117)
+Transcribing ochVJJm7UQ0...
+  OK - 530 segments (118)
+Transcribing ogTXcvgU8Ak...
+  OK - 565 segments (119)
+Transcribing olk0F51j1ic...
+  OK - 1302 segments (120)
+Transcribing pSWV5yAmxyA...
+  OK - 999 segments (121)
+Transcribing pVv36RKwJx4...
+  OK - 656 segments (122)
+Transcribing qCfgh8hLyos...
+  OK - 481 segments (123)
+Transcribing qfqjhhFBprE...
+  OK - 552 segments (124)
+Transcribing qo5xjsfXgxs...
+  OK - 605 segments (125)
+Transcribing qpGz_jtE4YY...
+  OK - 21 segments (126)
+Transcribing rWcj9mVgWhY...
+  OK - 717 segments (127)
+Transcribing ra_oDThTJjs...
+  OK - 903 segments (128)
+Transcribing rup1fApEjHo...
+  OK - 560 segments (129)
+Transcribing rvMmW474UwA...
+  OK - 622 segments (130)
+Transcribing sUbDYJ7bZzI...
+  OK - 156 segments (131)
+Transcribing seCMfaZHQN8...
+  OK - 763 segments (132)
+Transcribing skHVwEPoWNY...
+  OK - 883 segments (133)
+Transcribing st64i9BrDi0...
+  OK - 686 segments (134)
+Transcribing tN-qdQh_s1U...
+  OK - 529 segments (135)
+Transcribing tN6yZTLPWzI...
+  OK - 668 segments (136)
+Transcribing tf8yb6rlxiM...
+  OK - 771 segments (137)
+Transcribing tjoriSjdw8g...
+  OK - 443 segments (138)
+Transcribing u4wk663HMEY...
+  OK - 522 segments (139)
+Transcribing ujztnr1ITrc...
+  OK - 600 segments (140)
+Transcribing unlG8KeJ5x4...
+  OK - 93 segments (141)
+Transcribing utIudIIupts...
+  OK - 418 segments (142)
+Transcribing v0upIZQKl8E...
+  OK - 669 segments (143)
+Transcribing v5s2k_crpcs...
+  OK - 862 segments (144)
+Transcribing vjWF3lBLZHE...
+  OK - 668 segments (145)
+Transcribing wFcylWCztNg...
+  OK - 672 segments (146)
+Transcribing wGfnhHt7sek...
+  OK - 709 segments (147)
+Transcribing wNa0ghM3tJQ...
+  OK - 399 segments (148)
+Transcribing xLL6thssiYc...
+  OK - 266 segments (149)
+Transcribing xmAYmPGECS0...
+  OK - 555 segments (150)
+Transcribing xpZTLcHn6n4...
+  OK - 582 segments (151)
+Transcribing xzGwb-zwxPs...
+  OK - 579 segments (152)
+Transcribing y8-fLhXqLM0...
+  OK - 781 segments (153)
+Transcribing yO5tOUZRSeY...
+  OK - 1705 segments (154)
+Transcribing y_jMqZHNyns...
+  OK - 365 segments (155)
+Transcribing yc9Y7z8PSGc...
+  OK - 620 segments (156)
+Transcribing zB1QibHsG-s...
+  OK - 5 segments (157)
+Transcribing zJDap5_vQm8...
+  OK - 709 segments (158)
+Transcribing zLMC_GyJWZg...
+  OK - 141 segments (159)
+Transcribing zUVncbQp6v8...
+  OK - 454 segments (160)
+Transcribing zqSepcl96C4...
+  OK - 668 segments (161)
+Transcribed 161 new files. Timed out: 0. Total done: 390
+Transcribe complete: Mon Mar 30 09:37:05 PM PDT 2026 (359 min)
+
+=== Phase 3: Extract ===
+Extracting QyMgjb8dBRQ (54234 chars)...
+  OK - 2 entities (1)
+Extracting RBtWLj5_PJU (25392 chars)...
+  OK - 2 entities (2)
+Extracting RYqy8mwEFOw (26991 chars)...
+  OK - 1 entities (3)
+Extracting RrHta8F8Wms (1657 chars)...
+  OK - 2 entities (4)
+Extracting S0_G2uiuA4E (25299 chars)...
+  OK - 1 entities (5)
+Extracting S5nHjCWl_Xg (24112 chars)...
+  OK - 1 entities (6)
+Extracting SKrv2lFZ-C0 (21921 chars)...
+  OK - 1 entities (7)
+Extracting SbOM_Z3-W3Q (25244 chars)...
+  OK - 1 entities (8)
+Extracting Tp9WxhFU08c (6296 chars)...
+  OK - 1 entities (9)
+Extracting TvqHF_oMJVI (9100 chars)...
+  OK - 1 entities (10)
+Extracting TyXPaCoW5Vo (27522 chars)...
+  OK - 3 entities (11)
+Extracting U__-U6c6N_Y (21245 chars)...
+  OK - 2 entities (12)
+Extracting Ujw4jMjsr80 (1439 chars)...
+  OK - 0 entities (13)
+Extracting UnSOsb3MH3Q (24285 chars)...
+  OK - 1 entities (14)
+Extracting V29-kM45aVw (26507 chars)...
+  OK - 3 entities (15)
+Extracting V9PgvP7lbS4 (108 chars)...
+  OK - 0 entities (16)
+Extracting VOjfQDAuLsk (25629 chars)...
+  OK - 1 entities (17)
+Extracting VpBsL6BTk4E (6201 chars)...
+  OK - 2 entities (18)
+Extracting VqxKgZ_ydfA (14540 chars)...
+  OK - 4 entities (19)
+Extracting WJbXE2Z-dGA (19778 chars)...
+  OK - 3 entities (20)
+Extracting WQWLOyVeskM (27695 chars)...
+  OK - 1 entities (21)
+Extracting WXXNR3XldkM (4491 chars)...
+  OK - 1 entities (22)
+Extracting Wu_iNMzv9UE (25683 chars)...
+  OK - 1 entities (23)
+Extracting X0ac_MyRKtk (25137 chars)...
+  OK - 1 entities (24)
+Extracting XJMMJpiEjgI (24300 chars)...
+  OK - 1 entities (25)
+Extracting XJoqqY3wpk0 (21853 chars)...
+  OK - 4 entities (26)
+Extracting XKfgP0WDONA (16904 chars)...
+  OK - 1 entities (27)
+Extracting XcageNndoWc (26395 chars)...
+  OK - 2 entities (28)
+Extracting XuZerNezDhs (5980 chars)...
+  OK - 1 entities (29)
+Extracting Y2xoND32KRM (24810 chars)...
+  OK - 1 entities (30)
+Extracting Y8OsENUK9E0 (26630 chars)...
+  OK - 3 entities (31)
+Extracting YBAZ_1rNBWs (24309 chars)...
+  OK - 2 entities (32)
+Extracting YRZbO5ula7w (7402 chars)...
+  OK - 1 entities (33)
+Extracting YakKBpiqDL0 (14895 chars)...
+  OK - 3 entities (34)
+Extracting Yudzw_6hKRs (25573 chars)...
+  OK - 1 entities (35)
+Extracting YwRMGXAeKcg (27238 chars)...
+  OK - 1 entities (36)
+Extracting Z4cxQ1sovu8 (6752 chars)...
+  OK - 1 entities (37)
+Extracting ZEQIh3Qi7gQ (22713 chars)...
+  OK - 1 entities (38)
+Extracting ZQZHg-aNJZY (20639 chars)...
+  OK - 1 entities (39)
+Extracting ZgLA6IHB1-k (25102 chars)...
+  OK - 1 entities (40)
+Extracting _99UnSRJr_I (26661 chars)...
+  OK - 1 entities (41)
+Extracting _NZcNChGhgk (24712 chars)...
+  OK - 2 entities (42)
+Extracting _Q9TQxjX7i8 (7455 chars)...
+  OK - 3 entities (43)
+Extracting _SpTyRDtTLw (23919 chars)...
+  OK - 3 entities (44)
+Extracting _ZzQgUmD6N4 (27040 chars)...
+  OK - 2 entities (45)
+Extracting _en3yx9gGWQ (18897 chars)...
+  OK - 5 entities (46)
+Extracting aRdpBh0B7yc (52357 chars)...
+  OK - 1 entities (47)
+Extracting bG5zSiXs-Xs (12704 chars)...
+  OK - 1 entities (48)
+Extracting bKgw-n955Cg (25117 chars)...
+  OK - 1 entities (49)
+Extracting bfUGoeg8oiQ (22998 chars)...
+  OK - 2 entities (50)
+Extracting bhR5nWcTSWs (23183 chars)...
+  OK - 1 entities (51)
+Extracting c4M3kwt0ZPw (27934 chars)...
+  OK - 1 entities (52)
+Extracting cEMkQsfeftg (26147 chars)...
+  OK - 3 entities (53)
+Extracting c_WqfwXHaPU (51525 chars)...
+  OK - 1 entities (54)
+Extracting c_nw9i6bCms (5729 chars)...
+  OK - 1 entities (55)
+Extracting ccio9PzvbSg (23821 chars)...
+  OK - 3 entities (56)
+Extracting cqpceqEnyLM (3088 chars)...
+  OK - 1 entities (57)
+Extracting cv3-1AtxsyI (19760 chars)...
+  OK - 3 entities (58)
+Extracting cvmkuANwUz0 (38961 chars)...
+  OK - 2 entities (59)
+Extracting cxBDY88zdKY (56608 chars)...
+  OK - 9 entities (60)
+Extracting cxuzj-k-XuU (23901 chars)...
+  OK - 1 entities (61)
+Extracting d0m6Ls64WnU (24189 chars)...
+  OK - 1 entities (62)
+Extracting d25nhAijjKI (7193 chars)...
+  OK - 2 entities (63)
+Extracting dJcOhj5C0EQ (25545 chars)...
+  OK - 1 entities (64)
+Extracting djsafv4SArM (26548 chars)...
+  OK - 1 entities (65)
+Extracting dkVmNLH2-Ww (25713 chars)...
+  OK - 4 entities (66)
+Extracting dnpmetj66gw (3416 chars)...
+  OK - 2 entities (67)
+Extracting e1A7KcvZKek (24312 chars)...
+  OK - 2 entities (68)
+Extracting edVhQz1eXvs (25552 chars)...
+  OK - 1 entities (69)
+Extracting efJvRd-TgwQ (21649 chars)...
+  OK - 1 entities (70)
+Extracting egGGxoGJll4 (23331 chars)...
+  OK - 1 entities (71)
+Extracting ehj5wF3nSeM (24504 chars)...
+  OK - 8 entities (72)
+Extracting eyXlQCDAV4w (24359 chars)...
+  OK - 1 entities (73)
+Extracting f6LO43GbVL4 (26035 chars)...
+  OK - 6 entities (74)
+Extracting f9ZYU95k-rc (24619 chars)...
+  OK - 2 entities (75)
+Extracting fIWCJaE2P8M (27157 chars)...
+  OK - 1 entities (76)
+Extracting fOl2itVCams (21927 chars)...
+  OK - 3 entities (77)
+Extracting fVn2MDEkEHA (27821 chars)...
+  OK - 1 entities (78)
+Extracting fwME9k3RX-o (54522 chars)...
+  OK - 14 entities (79)
+Extracting gDRWIgbhEec (24781 chars)...
+  OK - 2 entities (80)
+Extracting gLB28Ai7G1o (20086 chars)...
+  OK - 2 entities (81)
+Extracting gU0uJ8TWE9A (24067 chars)...
+  OK - 1 entities (82)
+Extracting gj7zSPDh8YA (26401 chars)...
+  OK - 3 entities (83)
+Extracting h3rigKLV8tI (21449 chars)...
+  OK - 2 entities (84)
+Extracting hAWn0GjG1dY (24630 chars)...
+  OK - 1 entities (85)
+Extracting hOeo5jq-N2E (26282 chars)...
+  OK - 7 entities (86)
+Extracting ha7gjDR-y4w (5961 chars)...
+  OK - 1 entities (87)
+Extracting hjLJAk8AhmU (11473 chars)...
+  OK - 1 entities (88)
+Extracting ht-GBK8EEAQ (26798 chars)...
+  OK - 1 entities (89)
+Extracting hutMcYVPOpw (15275 chars)...
+  OK - 3 entities (90)
+Extracting i3s4S6O6cKw (491 chars)...
+  OK - 1 entities (91)
+Extracting iC5YOyc_Lo8 (51215 chars)...
+  OK - 4 entities (92)
+Extracting iVi2OgCIpQs (45037 chars)...
+  OK - 3 entities (93)
+Extracting io9D7Fp58JQ (27362 chars)...
+  OK - 1 entities (94)
+Extracting j8l2MqvhYz4 (15131 chars)...
+  OK - 1 entities (95)
+Extracting jBfZa_CY11Q (27702 chars)...
+  OK - 1 entities (96)
+Extracting jYuWT3u7__8 (25716 chars)...
+  OK - 1 entities (97)
+Extracting jouLN2-Fk0o (21325 chars)...
+  OK - 1 entities (98)
+Extracting jzd8NGPuUEw (23320 chars)...
+  OK - 1 entities (99)
+Extracting kLxBeFdhUCg (25162 chars)...
+  OK - 1 entities (100)
+Extracting kz7g-DFn37w (28171 chars)...
+  OK - 7 entities (101)
+Extracting l2HBBjzoVuU (26245 chars)...
+  OK - 1 entities (102)
+Extracting l99Ek4YtTuw (1105 chars)...
+  OK - 0 entities (103)
+Extracting lToZ36grVj8 (24559 chars)...
+  OK - 1 entities (104)
+Extracting lVHGUdgvluU (29938 chars)...
+  OK - 4 entities (105)
+Extracting lX1peVlq1Ug (25345 chars)...
+  OK - 1 entities (106)
+Extracting lY_Q1rcdjCo (8680 chars)...
+  OK - 5 entities (107)
+Extracting m8PmLWuY7gI (28143 chars)...
+  OK - 1 entities (108)
+Extracting mPEq80mUQFo (21521 chars)...
+  OK - 1 entities (109)
+Extracting n81hCeF_jpY (24580 chars)...
+  OK - 1 entities (110)
+Extracting nqY8d1pceL4 (22793 chars)...
+  OK - 1 entities (111)
+Extracting nz8OHK3isSQ (24568 chars)...
+  OK - 1 entities (112)
+Extracting o9xHU5zu4jg (27479 chars)...
+  OK - 1 entities (113)
+Extracting oIQ8FmplfVU (25701 chars)...
+  OK - 3 entities (114)
+Extracting oIfcxSpKg3s (25654 chars)...
+  OK - 1 entities (115)
+Extracting oW5WGbgc84I (25645 chars)...
+  OK - 1 entities (116)
+Extracting oboIu55MQJE (25795 chars)...
+  OK - 1 entities (117)
+Extracting ochVJJm7UQ0 (27130 chars)...
+  OK - 8 entities (118)
+Extracting ogTXcvgU8Ak (25511 chars)...
+  OK - 1 entities (119)
+Extracting olk0F51j1ic (56042 chars)...
+  OK - 2 entities (120)
+Extracting pSWV5yAmxyA (49094 chars)...
+  OK - 3 entities (121)
+Extracting pVv36RKwJx4 (28439 chars)...
+  OK - 1 entities (122)
+Extracting qCfgh8hLyos (24153 chars)...
+  OK - 1 entities (123)
+Extracting qfqjhhFBprE (25447 chars)...
+  OK - 1 entities (124)
+Extracting qo5xjsfXgxs (21941 chars)...
+  OK - 2 entities (125)
+Extracting qpGz_jtE4YY (339 chars)...
+  OK - 0 entities (126)
+Extracting rWcj9mVgWhY (27897 chars)...
+  OK - 3 entities (127)
+Extracting ra_oDThTJjs (30133 chars)...
+  OK - 2 entities (128)
+Extracting rup1fApEjHo (22734 chars)...
+  OK - 1 entities (129)
+Extracting rvMmW474UwA (23468 chars)...
+  OK - 1 entities (130)
+Extracting sUbDYJ7bZzI (7839 chars)...
+  OK - 1 entities (131)
+Extracting seCMfaZHQN8 (25508 chars)...
+  OK - 1 entities (132)
+Extracting skHVwEPoWNY (39077 chars)...
+  OK - 19 entities (133)
+Extracting st64i9BrDi0 (26230 chars)...
+  OK - 1 entities (134)
+Extracting tN-qdQh_s1U (22149 chars)...
+  OK - 2 entities (135)
+Extracting tN6yZTLPWzI (28668 chars)...
+  OK - 1 entities (136)
+Extracting tf8yb6rlxiM (26153 chars)...
+  OK - 1 entities (137)
+Extracting tjoriSjdw8g (27181 chars)...
+  OK - 5 entities (138)
+Extracting u4wk663HMEY (20940 chars)...
+  OK - 2 entities (139)
+Extracting ujztnr1ITrc (23279 chars)...
+  OK - 3 entities (140)
+Extracting unlG8KeJ5x4 (2965 chars)...
+  OK - 1 entities (141)
+Extracting utIudIIupts (23482 chars)...
+  OK - 1 entities (142)
+Extracting v0upIZQKl8E (22673 chars)...
+  OK - 1 entities (143)
+Extracting v5s2k_crpcs (25144 chars)...
+  OK - 1 entities (144)
+Extracting vjWF3lBLZHE (25111 chars)...
+  OK - 2 entities (145)
+Extracting wFcylWCztNg (26549 chars)...
+  OK - 2 entities (146)
+Extracting wGfnhHt7sek (27455 chars)...
+  OK - 1 entities (147)
+Extracting wNa0ghM3tJQ (21454 chars)...
+  OK - 2 entities (148)
+Extracting xLL6thssiYc (11205 chars)...
+  OK - 4 entities (149)
+Extracting xmAYmPGECS0 (19649 chars)...
+  OK - 2 entities (150)
+Extracting xpZTLcHn6n4 (23833 chars)...
+  OK - 1 entities (151)
+Extracting xzGwb-zwxPs (24918 chars)...
+  OK - 3 entities (152)
+Extracting y8-fLhXqLM0 (21060 chars)...
+  OK - 1 entities (153)
+Extracting yO5tOUZRSeY (56874 chars)...
+  OK - 1 entities (154)
+Extracting y_jMqZHNyns (26707 chars)...
+  OK - 1 entities (155)
+Extracting yc9Y7z8PSGc (25747 chars)...
+  OK - 2 entities (156)
+Extracting zB1QibHsG-s (133 chars)...
+  OK - 0 entities (157)
+Extracting zJDap5_vQm8 (22785 chars)...
+  OK - 1 entities (158)
+Extracting zLMC_GyJWZg (6186 chars)...
+  OK - 1 entities (159)
+Extracting zUVncbQp6v8 (22231 chars)...
+  OK - 2 entities (160)
+Extracting zqSepcl96C4 (23822 chars)...
+  OK - 4 entities (161)
+Extracted 161 new files. Total: 390
+Extract complete: Mon Mar 30 10:26:15 PM PDT 2026 (49 min)
+
+=== Phase 4: Normalize ===
+  Normalized QyMgjb8dBRQ: 2 entities (1)
+  Normalized RBtWLj5_PJU: 2 entities (2)
+  Normalized RYqy8mwEFOw: 1 entities (3)
+  Normalized RrHta8F8Wms: 2 entities (4)
+  Normalized S0_G2uiuA4E: 1 entities (5)
+  Normalized S5nHjCWl_Xg: 1 entities (6)
+  Normalized SKrv2lFZ-C0: 1 entities (7)
+  Normalized SbOM_Z3-W3Q: 1 entities (8)
+  Normalized Tp9WxhFU08c: 1 entities (9)
+  Normalized TvqHF_oMJVI: 1 entities (10)
+  Normalized TyXPaCoW5Vo: 3 entities (11)
+  Normalized U__-U6c6N_Y: 2 entities (12)
+  Normalized Ujw4jMjsr80: 0 entities (13)
+  Normalized UnSOsb3MH3Q: 1 entities (14)
+  Normalized V29-kM45aVw: 3 entities (15)
+  Normalized V9PgvP7lbS4: 0 entities (16)
+  Normalized VOjfQDAuLsk: 1 entities (17)
+  Normalized VpBsL6BTk4E: 2 entities (18)
+  Normalized VqxKgZ_ydfA: 4 entities (19)
+  Normalized WJbXE2Z-dGA: 3 entities (20)
+  Normalized WQWLOyVeskM: 1 entities (21)
+  Normalized WXXNR3XldkM: 1 entities (22)
+  Normalized Wu_iNMzv9UE: 1 entities (23)
+  Normalized X0ac_MyRKtk: 1 entities (24)
+  Normalized XJMMJpiEjgI: 1 entities (25)
+  Normalized XJoqqY3wpk0: 4 entities (26)
+  Normalized XKfgP0WDONA: 1 entities (27)
+  Normalized XcageNndoWc: 2 entities (28)
+  Normalized XuZerNezDhs: 1 entities (29)
+  Normalized Y2xoND32KRM: 1 entities (30)
+  Normalized Y8OsENUK9E0: 3 entities (31)
+  Normalized YBAZ_1rNBWs: 2 entities (32)
+  Normalized YRZbO5ula7w: 1 entities (33)
+  Normalized YakKBpiqDL0: 3 entities (34)
+  Normalized Yudzw_6hKRs: 1 entities (35)
+  Normalized YwRMGXAeKcg: 1 entities (36)
+  Normalized Z4cxQ1sovu8: 1 entities (37)
+  Normalized ZEQIh3Qi7gQ: 1 entities (38)
+  Normalized ZQZHg-aNJZY: 1 entities (39)
+  Normalized ZgLA6IHB1-k: 1 entities (40)
+  Normalized _99UnSRJr_I: 1 entities (41)
+  Normalized _NZcNChGhgk: 2 entities (42)
+  Normalized _Q9TQxjX7i8: 3 entities (43)
+  Normalized _SpTyRDtTLw: 3 entities (44)
+  Normalized _ZzQgUmD6N4: 2 entities (45)
+  Normalized _en3yx9gGWQ: 5 entities (46)
+  Normalized aRdpBh0B7yc: 1 entities (47)
+  Normalized bG5zSiXs-Xs: 1 entities (48)
+  Normalized bKgw-n955Cg: 1 entities (49)
+  Normalized bfUGoeg8oiQ: 2 entities (50)
+  Normalized bhR5nWcTSWs: 1 entities (51)
+  Normalized c4M3kwt0ZPw: 1 entities (52)
+  Normalized cEMkQsfeftg: 3 entities (53)
+  Normalized c_WqfwXHaPU: 1 entities (54)
+  Normalized c_nw9i6bCms: 1 entities (55)
+  Normalized ccio9PzvbSg: 3 entities (56)
+  Normalized cqpceqEnyLM: 1 entities (57)
+  Normalized cv3-1AtxsyI: 3 entities (58)
+  Normalized cvmkuANwUz0: 2 entities (59)
+  Normalized cxBDY88zdKY: 9 entities (60)
+  Normalized cxuzj-k-XuU: 1 entities (61)
+  Normalized d0m6Ls64WnU: 1 entities (62)
+  Normalized d25nhAijjKI: 2 entities (63)
+  Normalized dJcOhj5C0EQ: 1 entities (64)
+  Normalized djsafv4SArM: 1 entities (65)
+  Normalized dkVmNLH2-Ww: 4 entities (66)
+  Normalized dnpmetj66gw: 2 entities (67)
+  Normalized e1A7KcvZKek: 2 entities (68)
+  Normalized edVhQz1eXvs: 1 entities (69)
+  Normalized efJvRd-TgwQ: 1 entities (70)
+  Normalized egGGxoGJll4: 1 entities (71)
+  Normalized ehj5wF3nSeM: 8 entities (72)
+  Normalized eyXlQCDAV4w: 1 entities (73)
+  Normalized f6LO43GbVL4: 6 entities (74)
+  Normalized f9ZYU95k-rc: 2 entities (75)
+  Normalized fIWCJaE2P8M: 1 entities (76)
+  Normalized fOl2itVCams: 3 entities (77)
+  Normalized fVn2MDEkEHA: 1 entities (78)
+  Normalized fwME9k3RX-o: 14 entities (79)
+  Normalized gDRWIgbhEec: 2 entities (80)
+  Normalized gLB28Ai7G1o: 2 entities (81)
+  Normalized gU0uJ8TWE9A: 1 entities (82)
+  Normalized gj7zSPDh8YA: 3 entities (83)
+  Normalized h3rigKLV8tI: 2 entities (84)
+  Normalized hAWn0GjG1dY: 1 entities (85)
+  Normalized hOeo5jq-N2E: 7 entities (86)
+  Normalized ha7gjDR-y4w: 1 entities (87)
+  Normalized hjLJAk8AhmU: 1 entities (88)
+  Normalized ht-GBK8EEAQ: 1 entities (89)
+  Normalized hutMcYVPOpw: 3 entities (90)
+  Normalized i3s4S6O6cKw: 1 entities (91)
+  Normalized iC5YOyc_Lo8: 4 entities (92)
+  Normalized iVi2OgCIpQs: 3 entities (93)
+  Normalized io9D7Fp58JQ: 1 entities (94)
+  Normalized j8l2MqvhYz4: 1 entities (95)
+  Normalized jBfZa_CY11Q: 1 entities (96)
+  Normalized jYuWT3u7__8: 1 entities (97)
+  Normalized jouLN2-Fk0o: 1 entities (98)
+  Normalized jzd8NGPuUEw: 1 entities (99)
+  Normalized kLxBeFdhUCg: 1 entities (100)
+  Normalized kz7g-DFn37w: 7 entities (101)
+  Normalized l2HBBjzoVuU: 1 entities (102)
+  Normalized l99Ek4YtTuw: 0 entities (103)
+  Normalized lToZ36grVj8: 1 entities (104)
+  Normalized lVHGUdgvluU: 4 entities (105)
+  Normalized lX1peVlq1Ug: 1 entities (106)
+  Normalized lY_Q1rcdjCo: 5 entities (107)
+  Normalized m8PmLWuY7gI: 1 entities (108)
+  Normalized mPEq80mUQFo: 1 entities (109)
+  Normalized n81hCeF_jpY: 1 entities (110)
+  Normalized nqY8d1pceL4: 1 entities (111)
+  Normalized nz8OHK3isSQ: 1 entities (112)
+  Normalized o9xHU5zu4jg: 1 entities (113)
+  Normalized oIQ8FmplfVU: 3 entities (114)
+  Normalized oIfcxSpKg3s: 1 entities (115)
+  Normalized oW5WGbgc84I: 1 entities (116)
+  Normalized oboIu55MQJE: 1 entities (117)
+  Normalized ochVJJm7UQ0: 8 entities (118)
+  Normalized ogTXcvgU8Ak: 1 entities (119)
+  Normalized olk0F51j1ic: 2 entities (120)
+  Normalized pSWV5yAmxyA: 3 entities (121)
+  Normalized pVv36RKwJx4: 1 entities (122)
+  Normalized qCfgh8hLyos: 1 entities (123)
+  Normalized qfqjhhFBprE: 1 entities (124)
+  Normalized qo5xjsfXgxs: 2 entities (125)
+  Normalized qpGz_jtE4YY: 0 entities (126)
+  Normalized rWcj9mVgWhY: 3 entities (127)
+  Normalized ra_oDThTJjs: 2 entities (128)
+  Normalized rup1fApEjHo: 1 entities (129)
+  Normalized rvMmW474UwA: 1 entities (130)
+  Normalized sUbDYJ7bZzI: 1 entities (131)
+  Normalized seCMfaZHQN8: 1 entities (132)
+  Normalized skHVwEPoWNY: 19 entities (133)
+  Normalized st64i9BrDi0: 1 entities (134)
+  Normalized tN-qdQh_s1U: 2 entities (135)
+  Normalized tN6yZTLPWzI: 1 entities (136)
+  Normalized tf8yb6rlxiM: 1 entities (137)
+  Normalized tjoriSjdw8g: 5 entities (138)
+  Normalized u4wk663HMEY: 2 entities (139)
+  Normalized ujztnr1ITrc: 3 entities (140)
+  Normalized unlG8KeJ5x4: 1 entities (141)
+  Normalized utIudIIupts: 1 entities (142)
+  Normalized v0upIZQKl8E: 1 entities (143)
+  Normalized v5s2k_crpcs: 1 entities (144)
+  Normalized vjWF3lBLZHE: 2 entities (145)
+  Normalized wFcylWCztNg: 2 entities (146)
+  Normalized wGfnhHt7sek: 1 entities (147)
+  Normalized wNa0ghM3tJQ: 2 entities (148)
+  Normalized xLL6thssiYc: 4 entities (149)
+  Normalized xmAYmPGECS0: 2 entities (150)
+  Normalized xpZTLcHn6n4: 1 entities (151)
+  Normalized xzGwb-zwxPs: 3 entities (152)
+  Normalized y8-fLhXqLM0: 1 entities (153)
+  Normalized yO5tOUZRSeY: 1 entities (154)
+  Normalized y_jMqZHNyns: 1 entities (155)
+  Normalized yc9Y7z8PSGc: 2 entities (156)
+  Normalized zB1QibHsG-s: 0 entities (157)
+  Normalized zJDap5_vQm8: 1 entities (158)
+  Normalized zLMC_GyJWZg: 1 entities (159)
+  Normalized zUVncbQp6v8: 2 entities (160)
+  Normalized zqSepcl96C4: 4 entities (161)
+Normalized 161 new files, 326 entities. Total files: 390
+Normalize complete: Mon Mar 30 10:26:15 PM PDT 2026 (0 min)
+
+=== Phase 5: Geocode ===
+  MISS: Long Beach Naval Shipyard, Long Beach, CA
+  MISS: USS Antietam (CG-54), San Diego, CA
+  MISS: The Original Farmers Market, Los Angeles, CA
+  Geocoded: Hollywood Studio Club, Hollywood, CA -> (34.0929289, -118.3237787)
+  Geocoded: Jurupa Mountains Cultural Center, Riverside, CA -> (34.0182748, -117.4512364)
+  Geocoded: Olvera Street, Los Angeles, CA -> (34.0574634, -118.2379182)
+  Geocoded: Union Station, Los Angeles, CA -> (34.0560576, -118.2358962)
+  MISS: Esther Dibar's Home and Garden, Los Angeles, CA
+  MISS: Joe Renato's House and Workshop, Montrose, CA
+  MISS: Ray Hartzell's Garden, Twentynine Palms, CA
+  MISS: Ray Martinez's Annual Hatch Green Chili Sale & Roast, La Puente, CA
+  Geocoded: Pixie Woods, Stockton, CA -> (37.9568682, -121.3455029)
+  Geocoded: Bowers Museum, Santa Ana, CA -> (33.7633705, -117.8682293)
+  MISS: Chino Valley Dairy Region, Chino, CA
+  MISS: Abandoned Dairy Farm (Euclid Avenue), Chino, CA
+  MISS: Hockma Family Dairy, Chino, CA
+  MISS: Miyako Oriental Foods, Baldwin Park, CA
+  MISS: Onami Restaurant, West Covina, CA
+  MISS: Smith Emery Company, Los Angeles, CA
+  MISS: Historic San Pedro Stone House, San Pedro, CA
+  Geocoded: Korean Friendship Bell, San Pedro, CA -> (33.7097239, -118.2938109)
+  Geocoded: Point Fermin Lighthouse, San Pedro, CA -> (33.7054604, -118.2937043)
+  MISS: Ralph Velez's Palm Tree Garden and Greenhouse, Westminster, CA
+  MISS: Metrolink System, Los Angeles, CA
+  MISS: Fullerton Metrolink Station Area, Fullerton, CA
+  MISS: Winters Downtown Historic Core, Winters, CA
+  MISS: The Palms Playhouse, Winters, CA
+  MISS: DeVilbiss Hotel, Winters, CA
+  MISS: The Buckhorn Restaurant, Winters, CA
+  MISS: Apex Aquariums, Culver City, CA
+  MISS: Doug Robertson's Videotape Dubbing Shop, Culver City, CA
+  Geocoded: Self-Realization Fellowship Lake Shrine, Pacific Palisades, CA -> (34.0426848, -118.5524748)
+  MISS: McGuire Gardens and Central Library, Los Angeles, CA
+  MISS: Guild House, Bakersfield, CA
+  MISS: The Munch Box, Chatsworth, CA
+  MISS: National Association of Watch and Clock Collectors, Chapter 75, 133 Los Angeles Regional Watch Antique Watch and Clock Show, Pasadena, CA
+  MISS: Lenox County Branch Library, Lennox, CA
+  MISS: San Luis Obispo's Chinatown, San Luis Obispo, CA
+  MISS: Ah Lui Store, San Luis Obispo, CA
+  MISS: San Luis Obispo County Historical Museum, San Luis Obispo, CA
+  MISS: Cal Poly Archaeology Lab, San Luis Obispo, CA
+  Geocoded: Geisel Library, La Jolla, CA -> (32.8456029, -117.2778153)
+  Geocoded: Old Pasadena, Pasadena, CA -> (34.1458473, -118.1498123)
+  Geocoded: Paseo Colorado, Pasadena, CA -> (34.1449164, -118.1436937)
+  MISS: In-N-Out Burger (Baldwin Park Complex), Baldwin Park, CA
+  MISS: Sylvia Woods Harp Center, Glendale, CA
+  MISS: Sacramento-San Joaquin Delta Wetlands Restoration Project, CA
+  MISS: Penoche Water District Saline Water Reuse Project, CA
+  MISS: Skip Seguspe's Almond Orchard, CA
+  Geocoded: El Coyote Restaurant, Los Angeles, CA -> (34.0759336, -118.3492387)
+  MISS: Jaffron, Los Angeles, CA
+  Geocoded: Pearson Park, Anaheim, CA -> (33.8378814, -117.9187809)
+  MISS: The Palace Theater, Los Angeles, CA
+  MISS: The Los Angeles Theater, Los Angeles, CA
+  MISS: Broadway Historic Theater District, Los Angeles, CA
+  MISS: Acorn Engineering Company, City of Industry, CA
+  MISS: Metrolink Commuter Rail, Montclair, CA
+  MISS: The Alley Cat, Bakersfield, CA
+  MISS: Forrest J Ackerman's Ackermansion, Los Feliz, CA
+  MISS: Senzava Serbian Orthodox Church, San Gabriel, CA
+  Geocoded: Central Library, Los Angeles, CA -> (34.0508201, -118.2554523)
+  MISS: T. George's Chicken, Los Angeles, CA
+  MISS: John Talbot's Recycled Wood Art Studio, North Hills, CA
+  MISS: Griffith Park (Jackie Hadnott's Outdoor Wood Carving Studio), Los Angeles, CA
+  MISS: Downtown Anaheim / Center Street Promenade, Anaheim, CA
+  MISS: Thursday Morning Farmers Market, Anaheim, CA
+  MISS: Carnegie Library (Anaheim Public Library History Reading Room), Anaheim, CA
+  MISS: Russak's Meats, Los Angeles, CA
+  Geocoded: Langer's Deli, Los Angeles, CA -> (34.0562589, -118.2767722)
+  Geocoded: El Ranchito, Los Angeles, CA -> (34.264267, -118.46627)
+  MISS: The Pawn Shop on Melrose, Hollywood, CA
+  MISS: Knights of Neon, North Hollywood, CA
+  MISS: California's Gold Huell Howser Memorial Exhibit Museum, Orange, CA
+  Geocoded: Bakersfield, Bakersfield, CA -> (35.372195, -119.007864)
+  Geocoded: Locke, California, Locke, CA -> (38.2504703, -121.5093974)
+  Geocoded: Solvang, Solvang, CA -> (34.5918015, -120.1396073)
+  Geocoded: Fort Ross State Historic Park, CA -> (38.516217, -123.242832)
+  MISS: Bullock's Wilshire Building (now Southwestern Law School), Los Angeles, CA
+  Geocoded: Orpheum Theater, Los Angeles, CA -> (34.0427183, -118.2553893)
+  Geocoded: San Bernardino County Museum, San Bernardino, CA -> (34.0682215, -117.2226929)
+  MISS: Sonoma County Water Agency Wastewater Treatment Plant (Solar Facility), CA
+  MISS: Inland Empire Utilities Agency Chino Facilities, Chino, CA
+  Geocoded: Northridge Hospital Medical Center, Northridge, CA -> (34.219985, -118.5338793)
+  MISS: Trinity Lutheran Church, Covina, CA
+  Geocoded: El Carrillo, Santa Barbara, CA -> (34.422775, -119.699857)
+  MISS: Casa Fuentes, Santa Barbara, CA
+  MISS: Our Daily Bread, Santa Barbara, CA
+  Geocoded: Griffith Observatory, Los Angeles, CA -> (34.1182188, -118.3002933)
+  Geocoded: Opryland Hotel, Nashville, TN -> (36.2116359, -86.6946461)
+  MISS: Larchmont Cleaners, Los Angeles, CA
+  MISS: Global Bakeries, Pacoima, CA
+  Geocoded: Phoenicia Restaurant, Glendale, CA -> (34.1514662, -118.2581789)
+  Geocoded: Golden Gate Bridge, San Francisco, CA -> (37.8176155, -122.4783123)
+  Geocoded: Japanese Village Plaza, Los Angeles, CA -> (34.0490457, -118.2398778)
+  Geocoded: Mitsuru Cafe, Los Angeles, CA -> (34.0489945, -118.2400734)
+  MISS: Fugetsu-Do Bakery, Los Angeles, CA
+  MISS: Huell Howser Archives at Chapman University, Orange, CA
+  MISS: Volcano House, Newberry Springs, CA
+  MISS: Warner Bros. Studio Lot, Burbank, CA
+  MISS: Wooded Area / Jungle Set (Warner Bros. Studio Lot), Burbank, CA
+  MISS: Western Town Set (Warner Bros. Studio Lot), Burbank, CA
+  MISS: Costume Department (Warner Bros. Studio Lot), Burbank, CA
+  MISS: Midwest Street Set (Warner Bros. Studio Lot), Burbank, CA
+  MISS: Sound Stage 16 (Warner Bros. Studio Lot), Burbank, CA
+  MISS: Crafts Building (Warner Bros. Studio Lot), Burbank, CA
+  MISS: New York Street / Hennessy Street Set (Warner Bros. Studio Lot), Burbank, CA
+  MISS: Warner Bros. Commissary (The Commodore), Burbank, CA
+  MISS: Terminal Island Fish Cannery (Reopened), San Pedro, CA
+  MISS: Ferguson's Seashells, Wilmington, CA
+  Geocoded: Victory Park, Stockton, CA -> (37.9606593, -121.3142544)
+  Geocoded: Haggin Museum, Stockton, CA -> (37.9606489, -121.3138741)
+  MISS: Los Angeles County Arboretum and Botanic Garden, Arcadia, CA
+  Geocoded: Long Beach Convention Center, Long Beach, CA -> (33.764731, -118.1906881)
+  MISS: Lenox Ranch Barn, Oxnard, CA
+  MISS: Rancho Santa Clara del Norte Barn, Oxnard, CA
+  MISS: Mulhart Barn, CA
+  MISS: Hip Roof Barn, CA
+  MISS: The Talleyrand, Burbank, CA
+  MISS: Frank Sinatra's house, CA
+  MISS: Miriam Spaulding's Rose Garden, South Pasadena, CA
+  Geocoded: South Pasadena Post Office, South Pasadena, CA -> (34.1144917, -118.1534967)
+  MISS: Joe and Tony Suffredini's Home (Falconry Demonstration), Castaic, CA
+  MISS: Bouncing Hooves Ranch, Rosamond, CA
+  MISS: InterVisual Books, Santa Monica, CA
+  MISS: The Triforium, Los Angeles, CA
+  MISS: The Family Group (Parker Center Sculpture), Los Angeles, CA
+  MISS: Challenger 7 Crew Memorial, Los Angeles, CA
+  MISS: Ninomiya Sontoku Statue, Los Angeles, CA
+  MISS: Origami Horse Sculpture, Los Angeles, CA
+  MISS: Bill and Hillary Cut-Outs, Los Angeles, CA
+  MISS: Homage to Cabrillo, Venetian Quadrant, Los Angeles, CA
+  MISS: Jill D'Angelica's Angels Project, Los Angeles, CA
+  MISS: Iwasaki Images of America, Torrance, CA
+  MISS: Greater Los Angeles County Vector Control District (North Hollywood Branch), North Hollywood, CA
+  MISS: Earthquake-Damaged Apartment Pool, Sherman Oaks, Sherman Oaks, CA
+  MISS: Sepulveda Dam and Basin, Los Angeles, CA
+  MISS: Chatsworth Reservoir, Chatsworth, CA
+  MISS: California Live Oak Tree (Tree-Hole Mosquito Habitat), CA
+  MISS: Eucalyptus Trees (Africanized Honeybee Suppression Simulation Site), CA
+  MISS: Oakley's Barbershop, Westwood, CA
+  MISS: Stan's Donuts, Westwood, CA
+  MISS: David Sanfield Jewell's Catering Kitchen, Los Angeles, CA
+  MISS: Temecula (Freeway Exit Meeting Point), Temecula, CA
+  MISS: Borrego Springs Restaurant (unnamed), Borrego Springs, CA
+  Geocoded: Anza-Borrego Desert State Park, Borrego Springs, CA -> (33.2576979, -116.405879)
+  MISS: San Bernardino Santa Fe Depot, San Bernardino, CA
+  MISS: Los Angeles River (Los Feliz Blvd & I-5 Section), Los Angeles, CA
+  MISS: Marsh Park, Los Angeles, CA
+  Geocoded: Duck Park, Los Angeles, CA -> (34.0121662, -118.4664049)
+  MISS: Oros Street Green Street Project, Los Angeles, CA
+  Geocoded: Steelhead Park, Los Angeles, CA -> (34.086689, -118.228901)
+  MISS: Los Angeles River (Concrete Channel Section), Los Angeles, CA
+  MISS: Farmer John's Plant (vicinity), Vernon, CA
+  MISS: Confluence of Rio Hondo River and Los Angeles River, South Gate, CA
+  MISS: Los Angeles River Bike Path (South Gate section), South Gate, CA
+  MISS: Vacant Land near 710 Freeway (LA River Future Park), Long Beach, CA
+  MISS: Under a Bridge (Los Angeles River), Compton, CA
+  MISS: Dominguez Gap Wetlands Project, Long Beach, CA
+  Geocoded: Golden Shore Reserve, Long Beach, CA -> (33.7639189, -118.2030236)
+  MISS: Mouth of the Los Angeles River (Long Beach), Long Beach, CA
+  Geocoded: University High School, West Los Angeles, CA -> (34.0538307, -118.4014743)
+  MISS: Intersection of 21st Street and Ocean Park Boulevard, Santa Monica, CA
+  Geocoded: Los Angeles National Cemetery, Los Angeles, CA -> (34.0614244, -118.45345)
+  Geocoded: Hollywood Bowl, Los Angeles, CA -> (34.1121836, -118.3392774)
+  MISS: Recording for the Blind and Dyslexic, Los Angeles unit, Los Angeles, CA
+  MISS: Perry Junior High, Gardena, CA
+  Geocoded: Gardena High School, Gardena, CA -> (33.8676699, -118.2968081)
+  MISS: The Irvine Museum, Irvine, CA
+  MISS: Lummis House, Los Angeles, CA
+  MISS: Chapman University, Huell Howser Archives, Orange, CA
+  Geocoded: Yamashiro Restaurant, Hollywood, CA -> (34.1058544, -118.3422938)
+  Geocoded: Ole's Waffle Shop, Alameda, CA -> (37.7656721, -122.241788)
+  Geocoded: Downtown Alameda, Alameda, CA -> (37.8036295, -122.2715244)
+  Geocoded: Alameda Theater, Alameda, CA -> (36.2103648, -5.3888086)
+  Geocoded: Tucker's Ice Cream, Alameda, CA -> (37.7638327, -122.2433479)
+  MISS: Alameda Waterfront / Estuary, Alameda, CA
+  MISS: Former Alameda Naval Air Station, Alameda, CA
+  Geocoded: Bladium Sports Club, Alameda, CA -> (37.7828201, -122.3011063)
+  MISS: Sylvia Woods Harp Center, Glendale, CA
+  MISS: Juanita's Foods, Wilmington, CA
+  MISS: Manmi Bakery, Garden Grove, CA
+  Geocoded: Million Dollar Theater, Los Angeles, CA -> (34.0510775, -118.2486726)
+  Geocoded: Los Angeles Theater, Los Angeles, CA -> (34.0566135, -118.248922)
+  Geocoded: Orpheum Theater, Los Angeles, CA -> (34.0427183, -118.2553893)
+  Geocoded: Foster's Freeze, Twentynine Palms, CA -> (34.149862, -116.0558842)
+  MISS: Los Angeles County + USC Medical Center (Old General Hospital Building), Los Angeles, CA
+  MISS: Original Los Angeles County Hospital (Olvera Street), Los Angeles, CA
+  MISS: First County-Built Hospital (Mission Boulevard), Los Angeles, CA
+  MISS: New LAC+USC Medical Center, Los Angeles, CA
+  MISS: LAPD Metropolitan Mounted Unit Facility, Los Angeles, CA
+  MISS: Downtown Los Angeles Patrol Area, Los Angeles, CA
+  MISS: Argomanis Family Home, Boyle Heights, CA
+  MISS: Long Beach Naval Shipyard, Long Beach, CA
+  Geocoded: Oasis Senior Center, Newport Beach, CA -> (33.5996512, -117.8662747)
+  Geocoded: Liberty Station, San Diego, CA -> (32.7380769, -117.2143012)
+  MISS: Old Twentynine Palms Schoolhouse Museum, Twentynine Palms, CA
+  MISS: House of Red Canary (Neil Riveron's Residence), Bell Gardens, CA
+  MISS: Otsuka Farms, Garden Grove, CA
+  Geocoded: Art City, Ventura, CA -> (34.2809679, -119.2972062)
+  MISS: Perris Santa Fe Depot (Perris Historical Museum), Perris, CA
+  MISS: Original Perris Bank Building, Perris, CA
+  MISS: The Chief Theater, Perris, CA
+  MISS: Southern Hotel, Perris, CA
+  MISS: Perris Senior Affordable Housing Project Site, Perris, CA
+  MISS: Perris City Hall (Council Community Chamber), Perris, CA
+  MISS: Tarasco Restaurant, Perris, CA
+  MISS: Roguer's Farm Fresh Dairy, Montebello, CA
+  MISS: Willie's Shoe Service, Hollywood, CA
+  MISS: NYPD Blue Precinct Detective's Office Set (20th Century Fox Studios), Los Angeles, CA
+  MISS: NYPD Blue First Floor Precinct Set (20th Century Fox Studios), Los Angeles, CA
+  MISS: Mulberry Street Backlot Set (20th Century Fox Studios), Los Angeles, CA
+  MISS: NYPD Blue Tenement Building Set (20th Century Fox Studios), Los Angeles, CA
+  MISS: San Francisquito Power Plant No. 1 and Community, Santa Clarita, CA
+  MISS: Anaheim Colony Historic District, Anaheim, CA
+  MISS: Heidi's Historic Home, Anaheim, CA
+  MISS: Carl Karcher's House, Anaheim, CA
+  Geocoded: Anaheim High School, Anaheim, CA -> (33.8352519, -117.9256492)
+  Geocoded: Mother Colony House, Anaheim, CA -> (33.8362515, -117.928049)
+  MISS: Tanita's Homemade Salsa, Lancaster, CA
+  Geocoded: SS Lane Victory, San Pedro, CA -> (33.721108, -118.2745853)
+  Geocoded: Yamashiro, Hollywood, CA -> (34.1058544, -118.3422938)
+  MISS: Glendale Quilt Guild Wild West Show, Glendale, CA
+  Geocoded: NHRA Motorsports Museum, Pomona, CA -> (34.0803096, -117.7640964)
+  MISS: Pasadena Area Office, California Highway Patrol, Pasadena, CA
+  Geocoded: El Pueblo de Los Angeles Historical Monument, Los Angeles, CA -> (34.0568507, -118.238556)
+  MISS: Zanja Madre Site (Cornfields), Los Angeles, CA
+  MISS: River Station Memorial Plaque, Los Angeles, CA
+  MISS: Kruegerman Pickle and Sauerkraut Company, Silver Lake, Los Angeles, CA
+  MISS: Turtle Dreams, Santa Barbara, CA
+  Geocoded: Santa Anita Park, Arcadia, CA -> (34.117377, -118.0283982)
+  Geocoded: Old Town Clovis, Clovis, CA -> (36.8461895, -119.7187851)
+  MISS: Clovis Big Dry Creek Museum, Clovis, CA
+  MISS: Tarpey Depot (Visitor's Center), Clovis, CA
+  MISS: The 'Walking Doctor' Sculpture, Clovis, CA
+  Geocoded: Old Town Trail, Clovis, CA -> (36.8106765, -119.6999922)
+  MISS: Gateway to the Sierras Sign, Clovis, CA
+  MISS: Ken Curtis (Festus) Statue, Clovis, CA
+  MISS: Victoria Rose Cottage, Clovis, CA
+  MISS: Solano Canyon Community Garden and Urban Farm, Los Angeles, CA
+  MISS: Peter Nicoletti's Home, Santa Barbara, CA
+  MISS: Jet Propulsion Laboratory (JPL), Pasadena, CA
+  Geocoded: Planes of Fame Museum, Chino, CA -> (33.9819909, -117.6402512)
+  MISS: Northrop Grumman Military Aircraft Systems Division, Palmdale, CA
+  MISS: Edwards Air Force Base (B-2 Facilities), Edwards, CA
+  MISS: Fire Station 112 & Fireboat No. 2 (Ralph J. Scott), San Pedro, CA
+  MISS: Orange County Dental Society Museum, Orange, CA
+  MISS: The Historical Glass Museum, Redlands, CA
+  MISS: Ciccone Water Buffalo Farm, Chino, CA
+  MISS: Ciccone Mozzarella Cheese Plant, Gardena, CA
+  MISS: Joe Ortiz's Yard (Private Collection), Shadow Hills, CA
+  MISS: Los Angeles City Fire Department Museum (Future Location), Hollywood, CA
+  MISS: Hansondown Recreation Area Parking Lot, Los Angeles, CA
+  MISS: Vacant Lot in Downtown Los Angeles, Los Angeles, CA
+  Geocoded: Elysian Park, Los Angeles, CA -> (34.0828982, -118.2344137)
+  Geocoded: William Mulholland Memorial Fountain, Los Angeles, CA -> (34.11608, -118.2716587)
+  MISS: The Panorama (Hollywood Boulevard), Los Angeles, CA
+  Geocoded: Old Pasadena, Pasadena, CA -> (34.1458473, -118.1498123)
+  MISS: Russox Cured and Smoked Product, Los Angeles, CA
+  MISS: Petichi Rinak (Bird Market), Moscow, N/A
+  MISS: Moscow Outdoor Heated Swimming Pool, Moscow, N/A
+  MISS: Moscow Gym / Health Club, Moscow, N/A
+  MISS: Largest Barbershop in Moscow, Moscow, N/A
+  MISS: American Ambassador's Official Residence, Moscow, N/A
+  MISS: Central House of Artists, Moscow, N/A
+  MISS: Izmailovsky Park Flea Market, Moscow, N/A
+  MISS: Lyudmila and Roman's Apartment, Moscow, N/A
+  MISS: Tatyana Kudryasova's Apartment, Moscow, N/A
+  MISS: School Number 46, Moscow, N/A
+  MISS: Russian White House, Moscow, N/A
+  MISS: Red Square, Moscow, N/A
+  MISS: Moscow Metro, Moscow, N/A
+  MISS: McDonald's (Pushkinskaya Square, Moscow), Moscow, N/A
+  MISS: Pizza Hut (Moscow), Moscow, N/A
+  MISS: Adopted Moscow Family's Apartment, Moscow, N/A
+  MISS: Lennon Stadium, Moscow, N/A
+  Geocoded: Kolomna, Kolomna, N/A -> (59.9270026, 30.2912853)
+  MISS: Collective Farm (Russian Countryside), N/A, N/A
+  MISS: The Juices Fountain, Hollywood, CA
+  Geocoded: Griffith Park, Los Angeles, CA -> (34.1344267, -118.3050915)
+  Geocoded: Los Angeles Fire Station, Los Angeles, CA -> (34.075377, -118.217701)
+  MISS: Fort Irwin National Training Center, Fort Irwin, CA
+  Geocoded: Natural History Museum of Los Angeles County, Los Angeles, CA -> (34.0170795, -118.2886906)
+  Geocoded: Electric Fountain, Beverly Hills, CA -> (34.0673407, -118.4104503)
+  MISS: Echo Park Lake Fountain and Lotus Garden, Los Angeles, CA
+  Geocoded: William Mulholland Memorial Fountain, Los Angeles, CA -> (34.11608, -118.2716587)
+  MISS: Watercourt Garden at California Plaza, Los Angeles, CA
+  MISS: USC University Hospital Healing Fountain, Los Angeles, CA
+  MISS: Target Parking Lot (Space Shuttle Cafe), Oxnard, CA
+  Geocoded: Ventura Harbor, Ventura, CA -> (34.2494483, -119.264833)
+  MISS: Pisa Bayon Market, Long Beach, CA
+  MISS: New Paradise Restaurant, Long Beach, CA
+  MISS: Cambodian Art Preservation Group, Long Beach, CA
+  MISS: Whittier Backyard Farm, Whittier, CA
+  MISS: Folk Music Center and Museum, Claremont, CA
+  Geocoded: San Diego Wild Animal Park, San Diego, CA -> (33.0981185, -116.9965363)
+  MISS: Marukai Forum, Gardena, CA
+  Geocoded: Sepulveda Basin, Los Angeles, CA -> (34.1733026, -118.4868622)
+  Geocoded: Echo Park Lake, Los Angeles, CA -> (34.0747343, -118.2592315)
+  Geocoded: Old Town Temecula, Temecula, CA -> (33.4948716, -117.1497968)
+  Geocoded: Temecula Valley Museum, Temecula, CA -> (33.4974472, -117.1509984)
+  Geocoded: Doheny Mansion, Los Angeles, CA -> (34.0306751, -118.2769541)
+  Geocoded: Madison Middle School, North Hollywood, CA -> (34.1963235, -118.4172544)
+  MISS: Maya Mobile (L.A. County Museum of Art), North Hollywood, CA
+  MISS: Railroad Avenue & Main Street (D.O. Judy Palm Tree), Winters, CA
+  Geocoded: Rotary Park, Winters, CA -> (38.5216727, -121.9676936)
+  MISS: Berryessa Gap Wine Tasting Room, Winters, CA
+  MISS: Winters Historic Trestle Bridge & Poudre Creek, Winters, CA
+  MISS: The Wizard of Bras, Monrovia, CA
+  MISS: Studio C Hair Artistry, Monrovia, CA
+  MISS: Los Angeles Memorial Sports Arena, Los Angeles, CA
+  Geocoded: Culver Hotel, Culver City, CA -> (34.0237827, -118.3942011)
+  Geocoded: Veterans Memorial Building, Culver City, CA -> (34.0128901, -118.4026879)
+  MISS: Culver City Archives and Resources Center, Culver City, CA
+  Geocoded: El Segundo Beach, El Segundo, CA -> (33.9106247, -118.426213)
+  MISS: Galco's Old World Grocery, Los Angeles, CA
+  MISS: Animal Acres, Acton, CA
+  Geocoded: Ford Assembly Building, Richmond, CA -> (37.9108347, -122.3584186)
+  MISS: Rosie the Riveter World War II Home Front National Historical Park (Visitor Education Center at the Oil House), Richmond, CA
+  MISS: Gaitan Foods, City of Industry, CA
+  Geocoded: North City Water Reclamation Plant, San Diego, CA -> (32.8787043, -117.1983402)
+  MISS: Slater Barron's Home and Studio, Long Beach, CA
+  MISS: USC Institute for Genetic Medicine Art Gallery, Los Angeles, CA
+  MISS: Pierce Brothers Valhalla Memorial Park, North Hollywood, CA
+  MISS: Portal of the Folded Wings Shrine to Aviation, North Hollywood, CA
+  Geocoded: Brand Library & Art Center, Glendale, CA -> (34.182052, -118.2765332)
+  MISS: Brand Cemetery, Glendale, CA
+Geocoded 161 new files. Total: 390
+Geocode complete: Mon Mar 30 10:35:30 PM PDT 2026 (9 min)
+
+==========================================
+Production Run Complete
+Pipeline: calgold
+Timeout: 1200s
+Finished: Mon Mar 30 10:35:30 PM PDT 2026
+Total runtime: 6h 418m
+==========================================
+
+Counts:
+  Audio files:  390
+  Transcripts:  390
+  Extractions:  390
+  Normalized:   390
+  Geocoded:     390
+
+NEXT: Review log, then relaunch with higher timeout or proceed to Phase 6-7.
