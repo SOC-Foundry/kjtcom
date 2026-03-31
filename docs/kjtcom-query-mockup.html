@@ -1,0 +1,167 @@
+
+<div style="background: #0D1117; border-radius: 12px; overflow: hidden; font-family: 'Courier New', monospace; color: #E2E8F0; min-height: 700px; position: relative;">
+  <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=30" style="position:absolute;top:0;left:0;width:100%;height:260px;object-fit:cover;opacity:0.15;pointer-events:none;" />
+  <div style="position:relative;z-index:1;">
+    <div style="padding: 20px 24px 12px; display:flex; align-items:center; gap:12px;">
+      <div style="font-size:18px; font-weight:500; color:#4ADE80; letter-spacing:0.5px;">kjtcom</div>
+      <div style="font-size:11px; color:#94A3B8; border:1px solid #30363D; padding:2px 8px; border-radius:4px;">Investigate</div>
+      <div style="font-size:11px; color:#4ADE80; margin-left:auto; border:1px solid #1B4332; background:#0D2818; padding:2px 8px; border-radius:4px;">staging</div>
+    </div>
+    <div style="padding: 0 24px 8px;">
+      <div style="font-size:14px; color:#E2E8F0; font-family:system-ui,sans-serif; font-weight:500;">Search</div>
+      <div style="font-size:11px; color:#94A3B8; font-family:system-ui,sans-serif;">Query Thompson Indicator Fields across all pipelines</div>
+    </div>
+    <div style="margin:0 24px; background:#161B22; border:1px solid #30363D; border-radius:8px; padding:12px 16px; position:relative;">
+      <div style="display:flex; gap:8px; margin-bottom:4px;">
+        <span style="background:#1B2838; color:#58A6FF; font-size:10px; padding:2px 8px; border-radius:4px;">NoSQL</span>
+        <span style="background:#1B2838; color:#94A3B8; font-size:10px; padding:2px 8px; border-radius:4px;">Logs</span>
+        <span style="background:#1B2838; color:#94A3B8; font-size:10px; padding:2px 8px; border-radius:4px; margin-left:auto;">locations</span>
+        <span style="background:#1B2838; color:#94A3B8; font-size:10px; padding:2px 8px; border-radius:4px;">All time</span>
+      </div>
+      <div style="margin-top:8px;">
+        <div style="display:flex; gap:8px; align-items:baseline; padding:3px 0;">
+          <span style="color:#6E7681; font-size:12px; min-width:20px; text-align:right;">1</span>
+          <span style="color:#4ADE80; font-size:13px;" id="q1">locations</span>
+        </div>
+        <div style="display:flex; gap:8px; align-items:baseline; padding:3px 0;">
+          <span style="color:#6E7681; font-size:12px; min-width:20px; text-align:right;">2</span>
+          <span style="font-size:13px;"><span style="color:#FF7B72;">|</span> <span style="color:#D2A8FF;">where</span> <span style="color:#79C0FF;">t_any_cuisines</span> <span style="color:#FF7B72;">contains</span> <span style="color:#A5D6FF;">"French"</span></span>
+        </div>
+        <div style="display:flex; gap:8px; align-items:baseline; padding:3px 0;">
+          <span style="color:#6E7681; font-size:12px; min-width:20px; text-align:right;">3</span>
+          <span style="font-size:13px;"><span style="color:#FF7B72;">|</span> <span style="color:#D2A8FF;">where</span> <span style="color:#79C0FF;">t_any_shows</span> <span style="color:#FF7B72;">==</span> <span style="color:#A5D6FF;">"Rick Steves' Europe"</span></span>
+        </div>
+        <div style="display:flex; gap:8px; align-items:baseline; padding:3px 0;">
+          <span style="color:#6E7681; font-size:12px; min-width:20px; text-align:right;">4</span>
+          <span style="font-size:13px; color:#6E7681;">|</span><span style="color:#4ADE80; font-size:13px; animation: blink 1s step-end infinite;">_</span>
+        </div>
+      </div>
+      <div style="position:absolute; right:12px; top:50%; transform:translateY(-50%); background:#238636; color:#fff; font-size:12px; font-family:system-ui,sans-serif; padding:6px 16px; border-radius:6px; font-weight:500; cursor:pointer;">Search</div>
+    </div>
+    <div style="display:flex; margin:0 24px; padding:8px 0; border-bottom:1px solid #21262D;">
+      <span style="font-size:12px; color:#E2E8F0; font-family:system-ui,sans-serif; border-bottom:2px solid #58A6FF; padding:4px 8px;">Results</span>
+      <span style="font-size:12px; color:#94A3B8; font-family:system-ui,sans-serif; padding:4px 8px;">Map</span>
+      <span style="font-size:12px; color:#94A3B8; font-family:system-ui,sans-serif; padding:4px 8px;">Globe</span>
+    </div>
+    <div style="display:flex; margin:0 24px; padding:8px 0; align-items:center; gap:8px;">
+      <span style="font-size:12px; color:#4ADE80; font-family:system-ui,sans-serif; font-weight:500;">47 entities</span>
+      <span style="font-size:11px; color:#94A3B8; font-family:system-ui,sans-serif;">across 8 countries</span>
+    </div>
+    <div style="display:flex; margin:0 24px;">
+      <div style="flex:1; min-width:0;">
+        <div style="display:grid; grid-template-columns:30px 1fr 100px 100px 80px; gap:0; font-size:11px; color:#94A3B8; font-family:system-ui,sans-serif; padding:6px 8px; border-bottom:1px solid #21262D; background:#161B22;">
+          <span></span><span>NAME</span><span>CITY</span><span>COUNTRY</span><span>SHOW</span>
+        </div>
+        <div id="row1" style="display:grid; grid-template-columns:30px 1fr 100px 100px 80px; gap:0; font-size:12px; padding:8px 8px; border-bottom:1px solid #21262D; cursor:pointer; background:#1A2332;" onclick="document.getElementById('detail').style.display='block';document.querySelectorAll('[id^=row]').forEach(r=>r.style.background='transparent');this.style.background='#1A2332'">
+          <span style="color:#3B82F6;">&#9679;</span>
+          <span style="color:#E2E8F0;">Bouchon Restaurant</span>
+          <span style="color:#94A3B8;">Lyon</span>
+          <span style="color:#94A3B8;">France</span>
+          <span style="background:#1B2838; color:#3B82F6; font-size:10px; padding:1px 6px; border-radius:3px; text-align:center;">RS</span>
+        </div>
+        <div id="row2" style="display:grid; grid-template-columns:30px 1fr 100px 100px 80px; gap:0; font-size:12px; padding:8px 8px; border-bottom:1px solid #21262D; cursor:pointer;" onclick="document.getElementById('detail').style.display='block';document.querySelectorAll('[id^=row]').forEach(r=>r.style.background='transparent');this.style.background='#1A2332'">
+          <span style="color:#3B82F6;">&#9679;</span>
+          <span style="color:#E2E8F0;">Portuguese Seafood Restaurant</span>
+          <span style="color:#94A3B8;">Lisbon</span>
+          <span style="color:#94A3B8;">Portugal</span>
+          <span style="background:#1B2838; color:#3B82F6; font-size:10px; padding:1px 6px; border-radius:3px; text-align:center;">RS</span>
+        </div>
+        <div id="row3" style="display:grid; grid-template-columns:30px 1fr 100px 100px 80px; gap:0; font-size:12px; padding:8px 8px; border-bottom:1px solid #21262D; cursor:pointer;" onclick="document.getElementById('detail').style.display='block';document.querySelectorAll('[id^=row]').forEach(r=>r.style.background='transparent');this.style.background='#1A2332'">
+          <span style="color:#3B82F6;">&#9679;</span>
+          <span style="color:#E2E8F0;">Restaurant in Villefranche</span>
+          <span style="color:#94A3B8;">Villefranche</span>
+          <span style="color:#94A3B8;">France</span>
+          <span style="background:#1B2838; color:#3B82F6; font-size:10px; padding:1px 6px; border-radius:3px; text-align:center;">RS</span>
+        </div>
+        <div id="row4" style="display:grid; grid-template-columns:30px 1fr 100px 100px 80px; gap:0; font-size:12px; padding:8px 8px; border-bottom:1px solid #21262D; cursor:pointer;" onclick="document.getElementById('detail').style.display='block';document.querySelectorAll('[id^=row]').forEach(r=>r.style.background='transparent');this.style.background='#1A2332'">
+          <span style="color:#8B5CF6;">&#9679;</span>
+          <span style="color:#E2E8F0;">Le Chateaubriand</span>
+          <span style="color:#94A3B8;">Paris</span>
+          <span style="color:#94A3B8;">France</span>
+          <span style="background:#1B2838; color:#8B5CF6; font-size:10px; padding:1px 6px; border-radius:3px; text-align:center;">NR</span>
+        </div>
+        <div id="row5" style="display:grid; grid-template-columns:30px 1fr 100px 100px 80px; gap:0; font-size:12px; padding:8px 8px; border-bottom:1px solid #21262D; cursor:pointer;" onclick="document.getElementById('detail').style.display='block';document.querySelectorAll('[id^=row]').forEach(r=>r.style.background='transparent');this.style.background='#1A2332'">
+          <span style="color:#3B82F6;">&#9679;</span>
+          <span style="color:#E2E8F0;">Cooking Class in Paris</span>
+          <span style="color:#94A3B8;">Paris</span>
+          <span style="color:#94A3B8;">France</span>
+          <span style="background:#1B2838; color:#3B82F6; font-size:10px; padding:1px 6px; border-radius:3px; text-align:center;">RS</span>
+        </div>
+        <div style="padding:8px; font-size:11px; color:#6E7681; text-align:center;">+ 42 more results</div>
+      </div>
+      <div id="detail" style="width:320px; border-left:1px solid #21262D; padding:12px; font-size:12px; overflow-y:auto; max-height:400px;">
+        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;">
+          <span style="font-family:system-ui,sans-serif; font-weight:500; color:#E2E8F0;">Entity detail</span>
+          <span style="color:#6E7681; cursor:pointer; font-size:16px;" onclick="this.parentElement.parentElement.style.display='none'">&times;</span>
+        </div>
+        <div style="background:#161B22; border-radius:6px; padding:10px; margin-bottom:8px;">
+          <div style="color:#94A3B8; font-size:10px; margin-bottom:2px;">t_any_names</div>
+          <div style="color:#E2E8F0;">"Bouchon Restaurant"</div>
+        </div>
+        <div style="background:#161B22; border-radius:6px; padding:10px; margin-bottom:8px;">
+          <div style="color:#94A3B8; font-size:10px; margin-bottom:2px;">t_any_cuisines</div>
+          <div style="display:flex; gap:4px; flex-wrap:wrap;">
+            <span style="color:#A5D6FF;">"french"</span>
+            <span style="color:#A5D6FF;">"lyonnaise"</span>
+          </div>
+          <div style="display:flex; gap:4px; margin-top:6px;">
+            <span style="background:#1B4332; color:#4ADE80; font-size:9px; padding:2px 6px; border-radius:3px; cursor:pointer;" title="Add: | where t_any_cuisines == 'lyonnaise'">+ filter</span>
+            <span style="background:#3B1B1B; color:#FF7B72; font-size:9px; padding:2px 6px; border-radius:3px; cursor:pointer;" title="Exclude: | where t_any_cuisines != 'lyonnaise'">- exclude</span>
+          </div>
+        </div>
+        <div style="background:#161B22; border-radius:6px; padding:10px; margin-bottom:8px;">
+          <div style="color:#94A3B8; font-size:10px; margin-bottom:2px;">t_any_dishes</div>
+          <div style="display:flex; gap:4px; flex-wrap:wrap;">
+            <span style="color:#A5D6FF;">"duck"</span>
+            <span style="color:#A5D6FF;">"escargot"</span>
+            <span style="color:#A5D6FF;">"foie gras"</span>
+            <span style="color:#A5D6FF;">"quenelle"</span>
+          </div>
+          <div style="display:flex; gap:4px; margin-top:6px;">
+            <span style="background:#1B4332; color:#4ADE80; font-size:9px; padding:2px 6px; border-radius:3px; cursor:pointer;">+ filter</span>
+            <span style="background:#3B1B1B; color:#FF7B72; font-size:9px; padding:2px 6px; border-radius:3px; cursor:pointer;">- exclude</span>
+          </div>
+        </div>
+        <div style="background:#161B22; border-radius:6px; padding:10px; margin-bottom:8px;">
+          <div style="color:#94A3B8; font-size:10px; margin-bottom:2px;">t_any_actors</div>
+          <div style="display:flex; gap:4px; flex-wrap:wrap;">
+            <span style="color:#A5D6FF;">"Rick Steves"</span>
+          </div>
+          <div style="display:flex; gap:4px; margin-top:6px;">
+            <span style="background:#1B4332; color:#4ADE80; font-size:9px; padding:2px 6px; border-radius:3px; cursor:pointer;">+ filter</span>
+            <span style="background:#3B1B1B; color:#FF7B72; font-size:9px; padding:2px 6px; border-radius:3px; cursor:pointer;">- exclude</span>
+          </div>
+        </div>
+        <div style="background:#161B22; border-radius:6px; padding:10px; margin-bottom:8px;">
+          <div style="color:#94A3B8; font-size:10px; margin-bottom:2px;">t_any_shows</div>
+          <div style="color:#A5D6FF;">"Rick Steves' Europe"</div>
+        </div>
+        <div style="background:#161B22; border-radius:6px; padding:10px; margin-bottom:8px;">
+          <div style="color:#94A3B8; font-size:10px; margin-bottom:2px;">t_any_eras</div>
+          <div style="display:flex; gap:4px; flex-wrap:wrap;">
+            <span style="color:#A5D6FF;">"medieval"</span>
+            <span style="color:#A5D6FF;">"roman"</span>
+          </div>
+        </div>
+        <div style="background:#161B22; border-radius:6px; padding:10px; margin-bottom:8px;">
+          <div style="color:#94A3B8; font-size:10px; margin-bottom:2px;">t_enrichment.google_places</div>
+          <div style="color:#94A3B8; font-size:11px;">
+            rating: <span style="color:#FFA657;">4.3</span><br>
+            still_open: <span style="color:#4ADE80;">true</span><br>
+            place_id: <span style="color:#6E7681;">ChIJ2...</span>
+          </div>
+        </div>
+        <div style="background:#161B22; border-radius:6px; padding:10px;">
+          <div style="color:#94A3B8; font-size:10px; margin-bottom:2px;">t_any_coordinates</div>
+          <div style="color:#94A3B8; font-size:11px;">
+            lat: <span style="color:#FFA657;">45.7640</span><br>
+            lon: <span style="color:#FFA657;">4.8357</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<style>
+@keyframes blink { 50% { opacity: 0; } }
+</style>

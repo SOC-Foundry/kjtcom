@@ -1,0 +1,2 @@
+[   12649ms] TypeError: gsap.ticker.removeAll is not a function
+    at onResize (https://www.monad.com/:724:19)

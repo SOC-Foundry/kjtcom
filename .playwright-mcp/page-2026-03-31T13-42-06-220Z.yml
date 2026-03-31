@@ -1,0 +1,629 @@
+- generic [active] [ref=e1]:
+  - dialog "This website uses cookies" [ref=e2]:
+    - generic [ref=e3]:
+      - generic [ref=e5]:
+        - img "logo" [ref=e7]
+        - link "Cookiebot by Usercentrics - opens in a new window" [ref=e8] [cursor=pointer]:
+          - /url: https://www.cookiebot.com/en/what-is-behind-powered-by-cookiebot/?utm_source=banner_cb&utm_medium=referral&utm_content=v2
+          - img [ref=e9]
+      - tabpanel "Consent" [ref=e36]:
+        - generic [ref=e38]:
+          - heading "This website uses cookies" [level=2] [ref=e39]
+          - generic [ref=e40]: We use cookies to personalise content and ads, to provide social media features and to analyse our traffic. We also share information about your use of our site with our social media, advertising and analytics partners who may combine it with other information that you’ve provided to them or that they’ve collected from your use of their services.
+        - generic [ref=e41]:
+          - group "Consent Selection" [ref=e47]:
+            - generic [ref=e48]: Consent Selection
+            - generic [ref=e49]:
+              - generic [ref=e50]:
+                - strong [ref=e52]: Necessary
+                - generic [ref=e53]:
+                  - checkbox "Necessary" [checked] [disabled]
+              - generic [ref=e54]:
+                - strong [ref=e56] [cursor=pointer]: Preferences
+                - checkbox "Preferences" [checked] [ref=e58] [cursor=pointer]
+              - generic [ref=e59]:
+                - strong [ref=e61] [cursor=pointer]: Statistics
+                - checkbox "Statistics" [checked] [ref=e63] [cursor=pointer]
+              - generic [ref=e64]:
+                - strong [ref=e66] [cursor=pointer]: Marketing
+                - checkbox "Marketing" [checked] [ref=e68] [cursor=pointer]
+          - link "Settings" [ref=e70] [cursor=pointer]:
+            - /url: "#"
+      - button "Accept" [ref=e75] [cursor=pointer]
+  - main [ref=e76]:
+    - generic [ref=e79]:
+      - link "Logo of Maltego Technologies" [ref=e80] [cursor=pointer]:
+        - /url: /
+        - img "Logo of Maltego Technologies" [ref=e81]
+      - list [ref=e83]:
+        - listitem [ref=e84]:
+          - link "PRICING" [ref=e85] [cursor=pointer]:
+            - /url: https://www.maltego.com/pricing/
+        - listitem [ref=e86]:
+          - link "Tools" [ref=e87] [cursor=pointer]:
+            - /url: "#"
+        - listitem [ref=e88]:
+          - link "Resources" [ref=e89] [cursor=pointer]:
+            - /url: "#"
+        - listitem [ref=e90]:
+          - link "Industries" [ref=e91] [cursor=pointer]:
+            - /url: "#"
+        - listitem [ref=e92]:
+          - link "INVESTIGATE" [ref=e93] [cursor=pointer]:
+            - /url: https://www.maltego.com/person-of-interest-investigations/
+      - generic [ref=e94]:
+        - link "Sign In" [ref=e95] [cursor=pointer]:
+          - /url: https://app.maltego.com/
+          - generic [ref=e97]: Sign In
+        - link "Get a Demo" [ref=e98] [cursor=pointer]:
+          - /url: /get-a-demo/
+    - generic [ref=e102]:
+      - heading "From data to intelligence - in minutes." [level=1] [ref=e103]:
+        - text: From data to
+        - text: intelligence - in minutes.
+      - generic [ref=e104]:
+        - generic [ref=e105] [cursor=pointer]:
+          - text: Get Started Now
+          - generic [ref=e106]: arrow_forward
+        - generic [ref=e107]:
+          - generic [ref=e108]:
+            - link "G2" [ref=e109] [cursor=pointer]:
+              - /url: https://www.g2.com/products/maltego/reviews
+              - img "G2" [ref=e110]
+            - generic "4.5 stars" [ref=e111]
+            - paragraph [ref=e112]: 4.5 rating
+          - paragraph [ref=e114]: 200K+ users world-wide
+    - paragraph [ref=e119]: Trusted by thousands of government organizations and leading companies around the world
+    - iframe [ref=e150]:
+      - generic [active] [ref=f30e1]:
+        - generic "YouTube Video Player" [ref=f30e3]
+        - generic [ref=f30e5]:
+          - generic:
+            - generic:
+              - button "Play video" [ref=f30e10] [cursor=pointer]
+              - button "Hide player controls" [ref=f30e12] [cursor=pointer]
+              - generic [ref=f30e14]:
+                - generic [ref=f30e19]:
+                  - generic [ref=f30e20]:
+                    - link "What is Maltego?" [ref=f30e21] [cursor=pointer]:
+                      - /url: https://www.youtube.com/watch?v=cZeQJunglAU
+                    - link "Maltego" [ref=f30e22] [cursor=pointer]:
+                      - /url: /channel/UCVqC64G_H0UA7_lUxXKjEcg
+                      - generic [ref=f30e23]: Maltego
+                  - generic [ref=f30e24]:
+                    - button [ref=f30e25] [cursor=pointer]
+                    - generic [ref=f30e27]:
+                      - generic: Maltego
+                      - generic: 10.8K subscribers
+                - generic [ref=f30e28]:
+                  - button "Share" [ref=f30e31] [cursor=pointer]:
+                    - generic [ref=f30e35]:
+                      - img
+                  - link "Watch on YouTube" [ref=f30e42] [cursor=pointer]:
+                    - /url: https://www.youtube.com/watch?v=cZeQJunglAU
+                    - generic [ref=f30e45]:
+                      - text: Watch on
+                      - img [ref=f30e47]:
+                        - generic [ref=f30e49]:
+                          - img
+    - generic [ref=e155]:
+      - generic [ref=e156]:
+        - tab "Monitor" [ref=e157] [cursor=pointer]
+        - tab "Investigate" [selected] [ref=e158] [cursor=pointer]
+        - tab "Customize" [ref=e159] [cursor=pointer]
+        - tab "Manage" [ref=e160] [cursor=pointer]
+        - tab "Upskill" [ref=e161] [cursor=pointer]
+      - tabpanel "Investigate" [ref=e162]:
+        - generic [ref=e163]:
+          - generic [ref=e165]:
+            - link "Maltego Search" [ref=e167] [cursor=pointer]:
+              - /url: /search/
+              - img "Maltego Search" [ref=e168]
+            - generic [ref=e169]:
+              - generic [ref=e171]:
+                - link "Maltego Search" [ref=e172] [cursor=pointer]:
+                  - /url: /search/
+                - paragraph [ref=e173]: Run quick OSINT searches on suspects and threat actors with data from social media, the dark web, identity databases, and breach data
+              - generic [ref=e174]:
+                - link "Maltego Monitor" [ref=e176] [cursor=pointer]:
+                  - /url: /monitor/
+                  - img "Maltego Monitor" [ref=e177]
+                - generic [ref=e179]:
+                  - link "Maltego Monitor" [ref=e180] [cursor=pointer]:
+                    - /url: /monitor/
+                  - paragraph [ref=e181]: Monitor real-time data and use AI-powered sentiment analysis to detect and assess potential and ongoing public safety disruptions and cyber threats
+          - generic [ref=e183]:
+            - link "Maltego Graph" [ref=e185] [cursor=pointer]:
+              - /url: /graph/
+              - img "Maltego Graph" [ref=e186]
+            - generic [ref=e187]:
+              - generic [ref=e189]:
+                - link "Maltego Graph" [ref=e190] [cursor=pointer]:
+                  - /url: /graph/
+                - paragraph [ref=e191]: Conduct deep investigations into complex OSINT cases and cyber threats with access to all external and internal data
+              - generic [ref=e192]:
+                - link "Maltego Evidence" [ref=e194] [cursor=pointer]:
+                  - /url: /evidence/
+                  - img "Maltego Evidence" [ref=e195]
+                - generic [ref=e197]:
+                  - link "Maltego Evidence" [ref=e198] [cursor=pointer]:
+                    - /url: /evidence/
+                  - paragraph [ref=e199]: Uncover hidden truths in large social media datasets with customized crawling profiles
+    - generic [ref=e201]:
+      - generic [ref=e204]:
+        - generic [ref=e205]: Maltego Platform
+        - heading "The all-in-one investigation platform that accelerates complex cyber investigations from hours to minutes" [level=2] [ref=e206]
+        - list [ref=e207]:
+          - listitem [ref=e208]: Novice Intelligence Analysts
+          - listitem [ref=e209]: Trained OSINT Analysts
+          - listitem [ref=e210]: Technical Investigators
+      - generic [ref=e213]:
+        - button "Real-time social media monitoring" [ref=e215] [cursor=pointer]
+        - button "Preliminary OSINT searches on suspect" [ref=e217] [cursor=pointer]
+        - button "Complex link analysis of large datasets" [ref=e219] [cursor=pointer]
+        - button "Securing social media evidence" [ref=e221] [cursor=pointer]
+        - button "Storage for all investigations in 1 place" [ref=e223] [cursor=pointer]
+        - button "Audit and operations management" [ref=e225] [cursor=pointer]
+        - button "Instant access to 120+ data providers" [ref=e227] [cursor=pointer]
+        - button "Custom support and engineering" [ref=e229] [cursor=pointer]
+      - generic [ref=e234]:
+        - generic [ref=e235]: Maltego Monitor
+        - heading "Monitor social media in real-time using AI-driven analysis to manage large data volumes" [level=3] [ref=e236]
+        - generic [ref=e237]:
+          - link "get a demo" [ref=e238] [cursor=pointer]:
+            - /url: /get-a-demo
+          - link "learn more about monitor" [ref=e239] [cursor=pointer]:
+            - /url: /monitor/
+    - generic [ref=e242]:
+      - heading "Try Out the World’s Most Used Investigation Platform for OSINT and Investigations!" [level=2] [ref=e244]
+      - generic [ref=e246]:
+        - generic [ref=e247]:
+          - strong [ref=e248]: 2K+
+          - generic [ref=e249]: government organizations
+        - generic [ref=e250]:
+          - strong [ref=e251]: 4K+
+          - generic [ref=e252]: private companies
+        - generic [ref=e253]:
+          - strong [ref=e254]: 60%+
+          - generic [ref=e255]: of the Dow 30 companies
+        - generic [ref=e256]:
+          - strong [ref=e257]: ISO
+          - generic [ref=e258]: ISO 27001:2022 Certified
+    - link "Frost & Sullivan - Best Practices Award 2025 Maltego receives Frost & Sullivan's 2025 product leadership award for global OSINT solutions" [ref=e259] [cursor=pointer]:
+      - /url: /blog/maltego-receives-frost-sullivans-2025-product-leadership-award-for-global-osint-solutions
+      - generic [ref=e264]:
+        - img "Frost & Sullivan - Best Practices Award 2025" [ref=e265]
+        - generic [ref=e266]:
+          - paragraph [ref=e267]: Maltego receives Frost & Sullivan's
+          - heading "2025 product leadership award for global OSINT solutions" [level=2] [ref=e268]:
+            - text: 2025 product leadership award
+            - text: for global OSINT solutions
+    - generic [ref=e270]:
+      - heading "Maltego Solutions in Practice" [level=2] [ref=e273]
+      - generic [ref=e276]:
+        - link "Protecting National Security" [ref=e278] [cursor=pointer]:
+          - /url: /get-a-demo
+          - strong [ref=e279]: Protecting National Security
+        - link "Conducting Criminal Investigations" [ref=e281] [cursor=pointer]:
+          - /url: /get-a-demo
+          - strong [ref=e282]: Conducting Criminal Investigations
+        - link "Combating Cybercrime" [ref=e284] [cursor=pointer]:
+          - /url: /get-a-demo
+          - strong [ref=e285]:
+            - text: Combating
+            - text: Cybercrime
+        - link "Ensuring Public Safety" [ref=e287] [cursor=pointer]:
+          - /url: /get-a-demo
+          - strong [ref=e288]:
+            - text: Ensuring Public
+            - text: Safety
+        - link "Enhancing Cyber Threat Intelligence" [ref=e290] [cursor=pointer]:
+          - /url: /get-a-demo
+          - strong [ref=e291]:
+            - text: Enhancing Cyber
+            - text: Threat Intelligence
+        - link "Combatting Product and Platform Abuse" [ref=e293] [cursor=pointer]:
+          - /url: /get-a-demo
+          - strong [ref=e294]:
+            - text: Combatting Product
+            - text: and Platform Abuse
+        - link "Protecting Corporate Security" [ref=e296] [cursor=pointer]:
+          - /url: /get-a-demo
+          - strong [ref=e297]: Protecting Corporate Security
+        - link "Reducing Supply Chain Risk" [ref=e299] [cursor=pointer]:
+          - /url: /get-a-demo
+          - strong [ref=e300]:
+            - text: Reducing Supply
+            - text: Chain Risk
+    - generic [ref=e301]:
+      - generic [ref=e305]:
+        - heading "Why rely on multiple vendors when all data is secured in one place?" [level=2] [ref=e306]
+        - list [ref=e307]:
+          - listitem [ref=e308]:
+            - generic [ref=e309]: 120+ data partners
+          - listitem [ref=e310]:
+            - generic [ref=e311]: Cost-efficient access
+          - listitem [ref=e312]:
+            - generic [ref=e313]: Integrate own tools and data
+        - generic [ref=e314]:
+          - link "Get a demo" [ref=e315] [cursor=pointer]:
+            - /url: /get-a-demo
+          - link "Learn more" [ref=e316] [cursor=pointer]:
+            - /url: /maltego-data/
+        - img "Maltego Data" [ref=e317]
+      - generic [ref=e323]:
+        - img "SOCRadar"
+        - img "Facebook"
+        - img "Abuse Ch"
+        - img "AbuseIPDB"
+        - img "Constella Intelligence"
+        - img "X"
+        - img "Dark Owl"
+        - img "Polyswarm"
+        - img "YouTube"
+        - img "District 4"
+        - img "Open Corporates"
+        - img "Instagram"
+        - img "Epieos"
+        - img "PIPL"
+        - img "Anomali"
+        - img "Odnoklassniki"
+        - img "VK"
+        - img "service now"
+        - img "Microsoft Sentinel"
+        - img "Att&ck MISP"
+        - img "Splunk"
+        - img "DomainTools"
+        - img "Recorded Future"
+        - img "IBM Radar"
+        - img "Open CTI"
+        - img "TikTok"
+        - img "Virus Total"
+        - img "Snapchat"
+        - img "Evo"
+    - generic [ref=e326]:
+      - heading "Why do companies around the world prefer Maltego for improving investigations?" [level=3] [ref=e328]
+      - generic [ref=e330]:
+        - generic [ref=e332]:
+          - generic [ref=e334]:
+            - generic:
+              - img "4theONE Foundation"
+            - paragraph [ref=e335]: "\"Maltego allows us to quickly pull data from profiles, posts, and comments into one graph, where we can conduct text searches and see connections. In just a few minutes, we can narrow initial research to a handful individuals using variations of aliases connected to suspected local traffickers. We would not have been able to do that without Maltego.\""
+            - strong [ref=e338]: 4theONE Foundation
+          - generic [ref=e340]:
+            - generic:
+              - img "Nick Furneaux, MD"
+            - paragraph [ref=e341]: "\"I have been an avid user and advocate of Maltego for many years, using it especially for internet infrastructure mapping. However, its automated search and graphing capabilities make it perfectly suited for creating cryptocurrency transaction maps. If you are looking for a low cost entry into address identification, I highly recommend it.\""
+            - generic [ref=e343]:
+              - strong [ref=e344]: Nick Furneaux, MD
+              - generic [ref=e345]: CSITech
+          - generic [ref=e347]:
+            - generic:
+              - img "Andy Green"
+            - paragraph [ref=e348]: "\"Maltego is a wonderful aggregator of interfaces to various OSINT databases. The company behind Maltego has even formed its own OSINT ecosystem. Maltego can scan a target website, but then it lets its users effortlessly apply what it calls “Transforms” from its ecosystem to connect the web information to various databases. I’ve been blogging about infosec for years, and even I’m nervous about Maltego’s capabilities. With OSINT, knowledge is truly power.\""
+            - generic [ref=e350]:
+              - strong [ref=e351]: Andy Green
+              - generic [ref=e352]: Technoverse Blog
+          - generic [ref=e354]:
+            - generic:
+              - img "Maksym Gryshchenko"
+            - paragraph [ref=e355]: "\"Maltego is simply limitless in the options that it provides us. We see great potential in the default options available in Maltego, from graphing capabilities to the different entities to data integrations. It allows us to extend its capabilities and customize it to our investigative needs.\""
+            - generic [ref=e357]:
+              - strong [ref=e358]: Maksym Gryshchenko
+              - generic [ref=e359]: CCP Games
+          - generic [ref=e361]:
+            - generic:
+              - img "Robert McArdle"
+            - paragraph [ref=e362]: "\"Maltego is the first tool I'd install on any researchers laptop, and the first I open any time I'm starting a new investigation. From the ability to access many different data sources through one tool, to the advanced visualisations, its an absolutely essential part of modern cybercrime research\""
+            - generic [ref=e364]:
+              - strong [ref=e365]: Robert McArdle
+              - generic [ref=e366]: Trend Micro
+          - generic [ref=e368]:
+            - generic:
+              - img "Ukrainian Cyber Police"
+            - paragraph [ref=e369]: "\"Maltego’s strength lies in its capacity to visualize relationships among Entities, even when dealing with large volumes of data. Ultimately, Maltego enables us to quickly obtain information about the subject from the surface web and the deep and dark web.\""
+            - strong [ref=e372]: Ukrainian Cyber Police
+          - generic [ref=e374]:
+            - generic:
+              - img "Keith Gilbert"
+            - paragraph [ref=e375]: "\"A great strength of Maltego is the ease of gaining insights from multiple, disparate data sets. In the past couple of years, Maltego has been increasingly developed towards a relevant market place for data and I am excited to see how this will evolve in the future.\""
+            - generic [ref=e377]:
+              - strong [ref=e378]: Keith Gilbert
+              - generic [ref=e379]: Malformity Labs
+          - generic [ref=e381]:
+            - generic:
+              - img "4theONE Foundation"
+            - paragraph [ref=e382]: "\"Maltego allows us to quickly pull data from profiles, posts, and comments into one graph, where we can conduct text searches and see connections. In just a few minutes, we can narrow initial research to a handful individuals using variations of aliases connected to suspected local traffickers. We would not have been able to do that without Maltego.\""
+            - strong [ref=e385]: 4theONE Foundation
+          - generic [ref=e387]:
+            - generic:
+              - img "Nick Furneaux, MD"
+            - paragraph [ref=e388]: "\"I have been an avid user and advocate of Maltego for many years, using it especially for internet infrastructure mapping. However, its automated search and graphing capabilities make it perfectly suited for creating cryptocurrency transaction maps. If you are looking for a low cost entry into address identification, I highly recommend it.\""
+            - generic [ref=e390]:
+              - strong [ref=e391]: Nick Furneaux, MD
+              - generic [ref=e392]: CSITech
+          - generic [ref=e394]:
+            - generic:
+              - img "Andy Green"
+            - paragraph [ref=e395]: "\"Maltego is a wonderful aggregator of interfaces to various OSINT databases. The company behind Maltego has even formed its own OSINT ecosystem. Maltego can scan a target website, but then it lets its users effortlessly apply what it calls “Transforms” from its ecosystem to connect the web information to various databases. I’ve been blogging about infosec for years, and even I’m nervous about Maltego’s capabilities. With OSINT, knowledge is truly power.\""
+            - generic [ref=e397]:
+              - strong [ref=e398]: Andy Green
+              - generic [ref=e399]: Technoverse Blog
+          - generic [ref=e401]:
+            - generic:
+              - img "Maksym Gryshchenko"
+            - paragraph [ref=e402]: "\"Maltego is simply limitless in the options that it provides us. We see great potential in the default options available in Maltego, from graphing capabilities to the different entities to data integrations. It allows us to extend its capabilities and customize it to our investigative needs.\""
+            - generic [ref=e404]:
+              - strong [ref=e405]: Maksym Gryshchenko
+              - generic [ref=e406]: CCP Games
+          - generic [ref=e408]:
+            - generic:
+              - img "Robert McArdle"
+            - paragraph [ref=e409]: "\"Maltego is the first tool I'd install on any researchers laptop, and the first I open any time I'm starting a new investigation. From the ability to access many different data sources through one tool, to the advanced visualisations, its an absolutely essential part of modern cybercrime research\""
+            - generic [ref=e411]:
+              - strong [ref=e412]: Robert McArdle
+              - generic [ref=e413]: Trend Micro
+          - generic [ref=e415]:
+            - generic:
+              - img "Ukrainian Cyber Police"
+            - paragraph [ref=e416]: "\"Maltego’s strength lies in its capacity to visualize relationships among Entities, even when dealing with large volumes of data. Ultimately, Maltego enables us to quickly obtain information about the subject from the surface web and the deep and dark web.\""
+            - strong [ref=e419]: Ukrainian Cyber Police
+          - generic [ref=e421]:
+            - generic:
+              - img "Keith Gilbert"
+            - paragraph [ref=e422]: "\"A great strength of Maltego is the ease of gaining insights from multiple, disparate data sets. In the past couple of years, Maltego has been increasingly developed towards a relevant market place for data and I am excited to see how this will evolve in the future.\""
+            - generic [ref=e424]:
+              - strong [ref=e425]: Keith Gilbert
+              - generic [ref=e426]: Malformity Labs
+          - generic [ref=e428]:
+            - generic:
+              - img "4theONE Foundation"
+            - paragraph [ref=e429]: "\"Maltego allows us to quickly pull data from profiles, posts, and comments into one graph, where we can conduct text searches and see connections. In just a few minutes, we can narrow initial research to a handful individuals using variations of aliases connected to suspected local traffickers. We would not have been able to do that without Maltego.\""
+            - strong [ref=e432]: 4theONE Foundation
+        - generic [ref=e433]:
+          - button [ref=e434] [cursor=pointer]
+          - button [ref=e435] [cursor=pointer]
+        - generic [ref=e436]:
+          - button [ref=e437] [cursor=pointer]
+          - button [ref=e439] [cursor=pointer]
+          - button [ref=e441] [cursor=pointer]
+          - button [ref=e443] [cursor=pointer]
+    - generic [ref=e448]:
+      - heading "Learn with our resources" [level=3] [ref=e449]
+      - generic [ref=e450]:
+        - link "Maltego Blog Stay up to date with the latest features, data partners, whitepaper, and interesting use cases from our official Maltego Blog" [ref=e451] [cursor=pointer]:
+          - /url: /blog
+          - heading "Maltego Blog" [level=4] [ref=e452]
+          - paragraph [ref=e453]: Stay up to date with the latest features, data partners, whitepaper, and interesting use cases from our official Maltego Blog
+        - link "Maltego Academy Access to Enterprise-grade on-demand courses, OSINT Masterclasses with industry experts, and live training sessions with our specialists" [ref=e454] [cursor=pointer]:
+          - /url: https://academy.maltego.com/?utm_medium=website&utm_source=landing&utm_content=resources
+          - heading "Maltego Academy" [level=4] [ref=e455]
+          - paragraph [ref=e456]: Access to Enterprise-grade on-demand courses, OSINT Masterclasses with industry experts, and live training sessions with our specialists
+    - generic [ref=e459]:
+      - heading "In the Spotlight" [level=3] [ref=e461]
+      - generic [ref=e463]:
+        - generic [ref=e465]:
+          - link "Handbook Maltego Handbook for Cyber Threat Intelligence" [ref=e467] [cursor=pointer]:
+            - /url: https://get.maltego.com/resources/maltego-handbook-for-cti
+            - generic [ref=e469]: Handbook
+            - heading "Maltego Handbook for Cyber Threat Intelligence" [level=4] [ref=e471]
+            - button [ref=e472]
+          - link "Webinar Unmask Cybercriminals’ Real Identities with Constella and Maltego" [ref=e474] [cursor=pointer]:
+            - /url: /webinars/webinar-unmask-cybercriminals-real-identities-with-constella-and-maltego/
+            - generic [ref=e476]: Webinar
+            - heading "Unmask Cybercriminals’ Real Identities with Constella and Maltego" [level=4] [ref=e478]
+            - button [ref=e479]
+          - 'link "Webinar Cyber Meets Physical Security: Threat Assessments for Corporate Security" [ref=e481] [cursor=pointer]':
+            - /url: /webinars/webinar-cyber-meets-physical-security-threat-assessments-for-corporate-security/
+            - generic [ref=e483]: Webinar
+            - 'heading "Cyber Meets Physical Security: Threat Assessments for Corporate Security" [level=4] [ref=e485]'
+            - button [ref=e486]
+          - link "Company News Maltego is Now ISO 27001:2022 Certified!" [ref=e488] [cursor=pointer]:
+            - /url: /blog/maltego-is-now-iso-27001-2022-certified/
+            - generic [ref=e490]: Company News
+            - heading "Maltego is Now ISO 27001:2022 Certified!" [level=4] [ref=e492]
+            - button [ref=e493]
+          - link "COMPANY NEWS Maltego Receives Frost & Sullivan’s 2025 Product Leadership Award for Global OSINT Solutions" [ref=e495] [cursor=pointer]:
+            - /url: /blog/maltego-receives-frost-sullivans-2025-product-leadership-award-for-global-osint-solutions/
+            - generic [ref=e497]: COMPANY NEWS
+            - heading "Maltego Receives Frost & Sullivan’s 2025 Product Leadership Award for Global OSINT Solutions" [level=4] [ref=e499]
+            - button [ref=e500]
+          - link "Webinar Investigation Tactics That Broke Ransomware Cases" [ref=e502] [cursor=pointer]:
+            - /url: /webinars/webinar-more-than-the-truth-investigation-tactics-that-broke-ransomware-cases/
+            - generic [ref=e504]: Webinar
+            - heading "Investigation Tactics That Broke Ransomware Cases" [level=4] [ref=e506]
+            - button [ref=e507]
+          - link "Whitepaper How Law Enforcement Can Adapt to the Ever-Changing OSINT Landscape" [ref=e509] [cursor=pointer]:
+            - /url: https://get.maltego.com/resources/maltego-whitepaper-for-osint-investigations
+            - generic [ref=e511]: Whitepaper
+            - heading "How Law Enforcement Can Adapt to the Ever-Changing OSINT Landscape" [level=4] [ref=e513]
+            - button [ref=e514]
+          - link "Handbook Maltego Handbook for Cyber Threat Intelligence" [ref=e516] [cursor=pointer]:
+            - /url: https://get.maltego.com/resources/maltego-handbook-for-cti
+            - generic [ref=e518]: Handbook
+            - heading "Maltego Handbook for Cyber Threat Intelligence" [level=4] [ref=e520]
+            - button [ref=e521]
+          - link "Webinar Unmask Cybercriminals’ Real Identities with Constella and Maltego" [ref=e523] [cursor=pointer]:
+            - /url: /webinars/webinar-unmask-cybercriminals-real-identities-with-constella-and-maltego/
+            - generic [ref=e525]: Webinar
+            - heading "Unmask Cybercriminals’ Real Identities with Constella and Maltego" [level=4] [ref=e527]
+            - button [ref=e528]
+          - 'link "Webinar Cyber Meets Physical Security: Threat Assessments for Corporate Security" [ref=e530] [cursor=pointer]':
+            - /url: /webinars/webinar-cyber-meets-physical-security-threat-assessments-for-corporate-security/
+            - generic [ref=e532]: Webinar
+            - 'heading "Cyber Meets Physical Security: Threat Assessments for Corporate Security" [level=4] [ref=e534]'
+            - button [ref=e535]
+          - link "Company News Maltego is Now ISO 27001:2022 Certified!" [ref=e537] [cursor=pointer]:
+            - /url: /blog/maltego-is-now-iso-27001-2022-certified/
+            - generic [ref=e539]: Company News
+            - heading "Maltego is Now ISO 27001:2022 Certified!" [level=4] [ref=e541]
+            - button [ref=e542]
+          - link "COMPANY NEWS Maltego Receives Frost & Sullivan’s 2025 Product Leadership Award for Global OSINT Solutions" [ref=e544] [cursor=pointer]:
+            - /url: /blog/maltego-receives-frost-sullivans-2025-product-leadership-award-for-global-osint-solutions/
+            - generic [ref=e546]: COMPANY NEWS
+            - heading "Maltego Receives Frost & Sullivan’s 2025 Product Leadership Award for Global OSINT Solutions" [level=4] [ref=e548]
+            - button [ref=e549]
+          - link "Webinar Investigation Tactics That Broke Ransomware Cases" [ref=e551] [cursor=pointer]:
+            - /url: /webinars/webinar-more-than-the-truth-investigation-tactics-that-broke-ransomware-cases/
+            - generic [ref=e553]: Webinar
+            - heading "Investigation Tactics That Broke Ransomware Cases" [level=4] [ref=e555]
+            - button [ref=e556]
+          - link "Whitepaper How Law Enforcement Can Adapt to the Ever-Changing OSINT Landscape" [ref=e558] [cursor=pointer]:
+            - /url: https://get.maltego.com/resources/maltego-whitepaper-for-osint-investigations
+            - generic [ref=e560]: Whitepaper
+            - heading "How Law Enforcement Can Adapt to the Ever-Changing OSINT Landscape" [level=4] [ref=e562]
+            - button [ref=e563]
+          - link "Handbook Maltego Handbook for Cyber Threat Intelligence" [ref=e565] [cursor=pointer]:
+            - /url: https://get.maltego.com/resources/maltego-handbook-for-cti
+            - generic [ref=e567]: Handbook
+            - heading "Maltego Handbook for Cyber Threat Intelligence" [level=4] [ref=e569]
+            - button [ref=e570]
+        - generic [ref=e571]:
+          - button [ref=e572] [cursor=pointer]
+          - button [ref=e573] [cursor=pointer]
+        - generic [ref=e574]:
+          - button [ref=e575] [cursor=pointer]
+          - button [ref=e577] [cursor=pointer]
+          - button [ref=e579] [cursor=pointer]
+    - generic [ref=e585]:
+      - paragraph [ref=e586]:
+        - text: Speak to our expert team to find out how we can
+        - text: help you amplify your intelligence analysis.
+      - link "Get started today" [ref=e587] [cursor=pointer]:
+        - /url: /get-a-demo?utm_campaign=get_demo_homepage
+    - generic [ref=e591]:
+      - generic [ref=e592]:
+        - generic [ref=e593]:
+          - generic [ref=e594]: Products & Pricing
+          - list [ref=e595]:
+            - listitem [ref=e596]:
+              - link "Pricing" [ref=e597] [cursor=pointer]:
+                - /url: https://www.maltego.com/pricing/
+            - listitem [ref=e598]:
+              - link "Maltego Graph" [ref=e599] [cursor=pointer]:
+                - /url: /graph/
+            - listitem [ref=e600]:
+              - link "Maltego Search" [ref=e601] [cursor=pointer]:
+                - /url: /search/
+            - listitem [ref=e602]:
+              - link "Maltego Monitor" [ref=e603] [cursor=pointer]:
+                - /url: /monitor/
+            - listitem [ref=e604]:
+              - link "Maltego Evidence" [ref=e605] [cursor=pointer]:
+                - /url: /evidence/
+            - listitem [ref=e606]:
+              - link "Maltego Data" [ref=e607] [cursor=pointer]:
+                - /url: /maltego-data/
+            - listitem [ref=e608]:
+              - link "Channel Partners" [ref=e609] [cursor=pointer]:
+                - /url: https://www.maltego.com/reseller/
+        - generic [ref=e610]:
+          - generic [ref=e611]: Get Maltego
+          - list [ref=e612]:
+            - listitem [ref=e613]:
+              - link "Download Maltego" [ref=e614] [cursor=pointer]:
+                - /url: https://www.maltego.com/downloads/
+            - listitem [ref=e615]:
+              - link "Use Maltego for free" [ref=e616] [cursor=pointer]:
+                - /url: /use-for-free/?utm_source=website&utm_medium=footer&utm_campaign=clg_community&utm_content=
+            - listitem [ref=e617]:
+              - link "Reset Password for Maltego ID" [ref=e618] [cursor=pointer]:
+                - /url: https://login.maltego.com/recovery
+            - listitem [ref=e619]:
+              - link "Documentation" [ref=e620] [cursor=pointer]:
+                - /url: https://docs.maltego.com/
+            - listitem [ref=e621]:
+              - link "Get a demo" [ref=e622] [cursor=pointer]:
+                - /url: /get-a-demo
+            - listitem [ref=e623]:
+              - link "Buy Online" [ref=e624] [cursor=pointer]:
+                - /url: https://store.maltego.com/
+        - generic [ref=e625]:
+          - generic [ref=e626]: Data Sources
+          - list [ref=e627]:
+            - listitem [ref=e628]:
+              - link "Maltego Data" [ref=e629] [cursor=pointer]:
+                - /url: https://www.maltego.com/maltego-data/
+            - listitem [ref=e630]:
+              - link "Connectors" [ref=e631] [cursor=pointer]:
+                - /url: https://www.maltego.com/transform-hub/
+            - listitem [ref=e632]:
+              - link "Become a Data Partner" [ref=e633] [cursor=pointer]:
+                - /url: https://www.maltego.com/transform-hub/#become-a-partner
+          - generic [ref=e634]: Company
+          - list [ref=e635]:
+            - listitem [ref=e636]:
+              - link "About Us" [ref=e637] [cursor=pointer]:
+                - /url: https://www.maltego.com/about-us/#about-us
+            - listitem [ref=e638]:
+              - link "Careers" [ref=e639] [cursor=pointer]:
+                - /url: https://www.maltego.com/about-us/#careers-at-maltego
+            - listitem [ref=e640]:
+              - link "Press Mentions" [ref=e641] [cursor=pointer]:
+                - /url: https://www.maltego.com/press-mentions/
+            - listitem [ref=e642]:
+              - link "Download logo" [ref=e643] [cursor=pointer]:
+                - /url: https://www.maltego.com/logo-downloads/
+            - listitem [ref=e644]:
+              - link "Legal Documents" [ref=e645] [cursor=pointer]:
+                - /url: https://get.maltego.com/legal
+        - generic [ref=e646]:
+          - generic [ref=e647]: Resources
+          - list [ref=e648]:
+            - listitem [ref=e649]:
+              - link "Blog" [ref=e650] [cursor=pointer]:
+                - /url: https://www.maltego.com/blog/
+            - listitem [ref=e651]:
+              - link "Webinars" [ref=e652] [cursor=pointer]:
+                - /url: /webinars
+            - listitem [ref=e653]:
+              - link "Maltego Grants" [ref=e654] [cursor=pointer]:
+                - /url: https://www.maltego.com/maltego-grants/
+            - listitem [ref=e655]:
+              - link "FAQs" [ref=e656] [cursor=pointer]:
+                - /url: https://www.maltego.com/maltego-faq/
+            - listitem [ref=e657]:
+              - link "For Resellers" [ref=e658] [cursor=pointer]:
+                - /url: https://www.maltego.com/reseller/
+            - listitem [ref=e659]:
+              - link "Trust Center" [ref=e660] [cursor=pointer]:
+                - /url: https://trust.maltego.com/
+            - listitem [ref=e661]:
+              - link "Status" [ref=e662] [cursor=pointer]:
+                - /url: https://status.maltego.com/
+      - generic [ref=e665]:
+        - link "Twitter" [ref=e666] [cursor=pointer]:
+          - /url: https://twitter.com/MaltegoHQ
+        - link "LinkedIn" [ref=e667] [cursor=pointer]:
+          - /url: https://www.linkedin.com/company/maltego
+        - link "YouTube" [ref=e668] [cursor=pointer]:
+          - /url: https://youtube.com/playlist?list=PLfRX-xJAc2ywlg_6wwZIzLUWY6MXYo1jN&si=F7TLgFhiBTDzV7PY
+        - link "Spotify" [ref=e669] [cursor=pointer]:
+          - /url: https://open.spotify.com/show/5OpQqUb1Z5cS1vpB2UB3VG?si=qztqQf8fQfmVbI713hpdDw
+        - link "Apple Podcasts" [ref=e670] [cursor=pointer]:
+          - /url: https://podcasts.apple.com/de/podcast/human-element/id1812895529?l=en-GB
+      - generic [ref=e672]:
+        - generic [ref=e674]:
+          - generic [ref=e675]: © 2018-2026 by Maltego Technologies.
+          - generic [ref=e676]: ISO 27001:2022 Certified
+        - list [ref=e678]:
+          - listitem [ref=e679]:
+            - link "Legal Notice" [ref=e680] [cursor=pointer]:
+              - /url: https://www.maltego.com/legal-notice/
+          - listitem [ref=e681]:
+            - link "License Agreement" [ref=e682] [cursor=pointer]:
+              - /url: https://www.maltego.com/license-agreement/
+          - listitem [ref=e683]:
+            - link "Data Processing Agreement" [ref=e684] [cursor=pointer]:
+              - /url: https://www.maltego.com/data-processing-agreement/
+          - listitem [ref=e685]:
+            - link "Data Privacy" [ref=e686] [cursor=pointer]:
+              - /url: https://www.maltego.com/data-privacy/
+          - listitem [ref=e687]:
+            - link "Website Privacy" [ref=e688] [cursor=pointer]:
+              - /url: https://www.maltego.com/website-privacy/
+          - listitem [ref=e689]:
+            - link "Cookie Policy" [ref=e690] [cursor=pointer]:
+              - /url: https://www.maltego.com/cookie-policy/
+  - iframe [ref=e691]:
+    

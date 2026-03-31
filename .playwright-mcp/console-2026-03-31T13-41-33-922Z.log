@@ -1,0 +1,10 @@
+[    1055ms] TypeError: gsap.ticker.removeAll is not a function
+    at onResize (https://www.monad.com/:724:19)
+[    1678ms] TypeError: gsap.ticker.removeAll is not a function
+    at onResize (https://www.monad.com/:724:19)
+[    1678ms] [LOG] 2 destroy @ https://www.monad.com/:938
+[    1678ms] [LOG] 1 destroy @ https://www.monad.com/:922
+[    1808ms] TypeError: gsap.ticker.removeAll is not a function
+    at onResize (https://www.monad.com/:724:19)
+[    5898ms] TypeError: gsap.ticker.removeAll is not a function
+    at onResize (https://www.monad.com/:724:19)

@@ -259,7 +259,9 @@ Zero Gemini interventions across 4 consecutive iterations. Same model, better ha
 | 3 | Stress Test (90 videos) | DONE | v3.10, v3.11 |
 | 4 | Validation + Schema v3 (120 videos) | DONE | v4.12, v4.13 |
 | 5 | Production Run (full datasets) | CalGold DONE | v5.14 |
-| 6 | Flutter App | Pending | - |
+| 6a | Flutter App - Discovery | DONE | v6.15 |
+| 6b | Flutter App - Design Contract | Pending | - |
+| 6c | Flutter App - UI Scaffolding | Pending | - |
 | 7 | Firestore Load | Pending | - |
 | 8 | Enrichment Hardening | Pending | - |
 | 9 | App Optimization | Pending | - |
@@ -420,6 +422,17 @@ Built as a platform for extracting, normalizing, and querying structured data fr
 ## Citing
 
 If you find the IAO methodology or Thompson Indicator Fields useful:
+
+```
+@misc{thompson2026iao,
+  title={Iterative Agentic Orchestration: A Methodology for Agent-Driven Software Projects},
+  author={Kyle Thompson},
+  year={2026},
+  organization={TachTech Engineering},
+  url={https://github.com/TachTech-Engineering/tripledb}
+}
+```
+Thompson Indicator Fields useful:
 
 ```
 @misc{thompson2026iao,

@@ -1,0 +1,306 @@
+- generic [active] [ref=e1]:
+  - region "We value your privacy" [ref=e2]:
+    - generic [ref=e4]:
+      - heading "We value your privacy" [level=2] [ref=e5]
+      - generic [ref=e6]:
+        - paragraph [ref=e8]: We use cookies to enhance your browsing experience, serve personalized ads or content, and analyze our traffic. By clicking "Accept All", you consent to our use of cookies.
+        - generic [ref=e9]:
+          - button "Customize" [ref=e10] [cursor=pointer]
+          - button "Reject All" [ref=e11] [cursor=pointer]
+          - button "Accept All" [ref=e12] [cursor=pointer]
+  - banner [ref=e13]:
+    - banner [ref=e14]:
+      - generic [ref=e16]:
+        - link "home" [ref=e17] [cursor=pointer]:
+          - /url: /
+        - navigation [ref=e18]:
+          - generic [ref=e21] [cursor=pointer]: Product
+          - generic [ref=e24] [cursor=pointer]: Resources
+          - generic [ref=e27] [cursor=pointer]: Company
+          - link "Pricing" [ref=e28] [cursor=pointer]:
+            - /url: /pricing
+            - generic [ref=e29]: Pricing
+          - link "Docs link_out" [ref=e30] [cursor=pointer]:
+            - /url: https://docs.scanner.dev/scanner/
+            - generic [ref=e31]: Docs
+            - generic [ref=e33]: link_out
+        - generic [ref=e34]:
+          - link "Log In" [ref=e35] [cursor=pointer]:
+            - /url: https://app.scanner.dev/
+            - generic [ref=e36]: Log In
+          - link "Book a Demo" [ref=e37] [cursor=pointer]:
+            - /url: /demo
+            - generic [ref=e38]: Book a Demo
+  - main [ref=e39]:
+    - link "Series A, 22 Million Scanner Raises Series A Led by Sequoia Capital" [ref=e40] [cursor=pointer]:
+      - /url: /blog/scanner-raises-series-a-led-by-sequoia-capital
+      - generic [ref=e41]:
+        - img "Series A, 22 Million" [ref=e42]
+        - generic [ref=e43]: Scanner Raises Series A Led by Sequoia Capital
+    - generic [ref=e47]:
+      - generic [ref=e48]:
+        - heading "Your SIEM sees 1%." [level=1] [ref=e49]
+        - heading "Scanner sees what it can't." [level=1] [ref=e50]
+      - generic [ref=e51]:
+        - generic [ref=e52]:
+          - paragraph [ref=e53]: A radically different way to detect threats in security data.
+          - paragraph [ref=e54]: Index data directly in S3, where it already lives. Run detections continuously on the full stream. Search years of data in seconds.
+        - generic [ref=e55]:
+          - link "Read the Docs link_out" [ref=e56] [cursor=pointer]:
+            - /url: https://docs.scanner.dev/scanner/
+            - generic [ref=e57]: Read the Docs
+            - generic [ref=e59]: link_out
+          - link "Book a Demo" [ref=e60] [cursor=pointer]:
+            - /url: /demo
+            - generic [ref=e61]: Book a Demo
+    - generic [ref=e62]:
+      - img "Unit21 company logo" [ref=e64]
+      - img "Unit21 company logo" [ref=e66]
+      - img "Unit21 company logo" [ref=e68]
+    - generic [ref=e76]:
+      - generic [ref=e77]:
+        - generic [ref=e78]:
+          - generic [ref=e79]: caret_right
+          - generic [ref=e80]: PRObLem
+        - heading "Traditional tools can’t handle cloud scale" [level=3] [ref=e81]
+        - paragraph [ref=e82]: "Teams are stuck choosing between two broken approaches:"
+      - generic [ref=e83]:
+        - generic [ref=e84]:
+          - heading "Traditional SIEMs" [level=4] [ref=e85]
+          - generic [ref=e86]:
+            - generic [ref=e88] [cursor=pointer]:
+              - generic [ref=e89]: Cost forces data loss
+              - generic [ref=e91]: caret_down
+            - generic [ref=e93] [cursor=pointer]:
+              - generic [ref=e94]: Painful to operate
+              - generic [ref=e96]: caret_down
+            - generic [ref=e98] [cursor=pointer]:
+              - generic [ref=e99]: Vendor lock-in
+              - generic [ref=e101]: caret_down
+        - generic [ref=e102]:
+          - heading "Traditional Data Lakes" [level=4] [ref=e103]
+          - generic [ref=e104]:
+            - generic [ref=e106] [cursor=pointer]:
+              - generic [ref=e107]: Heavy engineering required
+              - generic [ref=e109]: caret_down
+            - generic [ref=e111] [cursor=pointer]:
+              - generic [ref=e112]: Slow and expensive queries
+              - generic [ref=e114]: caret_down
+            - generic [ref=e116] [cursor=pointer]:
+              - generic [ref=e117]: No real-time detection
+              - generic [ref=e119]: caret_down
+    - generic [ref=e123]:
+      - generic [ref=e125]:
+        - generic [ref=e126]:
+          - generic [ref=e127]: caret_right
+          - generic [ref=e128]: solution
+        - heading "Scanner unlocks the power of your security data" [level=2] [ref=e129]
+        - paragraph [ref=e131]: A cloud-native security data lake that never slows down, never drops data, and gives you complete control.
+      - generic [ref=e132]:
+        - link "Collect & Enrich Build your security data lake in an afternoon with schema-less ingestion from any source. arrow_right" [ref=e135] [cursor=pointer]:
+          - /url: /collect-enrich
+          - generic [ref=e136]:
+            - heading "Collect & Enrich" [level=3] [ref=e137]
+            - paragraph [ref=e138]: Build your security data lake in an afternoon with schema-less ingestion from any source.
+          - generic [ref=e140]: arrow_right
+        - link "Search & Investigate Lightning-fast full-text search across petabytes. 100x faster than Athena. arrow_right" [ref=e144] [cursor=pointer]:
+          - /url: /search-investigate
+          - generic [ref=e145]:
+            - heading "Search & Investigate" [level=3] [ref=e146]
+            - paragraph [ref=e147]: Lightning-fast full-text search across petabytes. 100x faster than Athena.
+          - generic [ref=e149]: arrow_right
+        - link "Detections & Response Streaming query engine that continuously evaluates rules and alerts in minutes. arrow_right" [ref=e153] [cursor=pointer]:
+          - /url: /detect-respond
+          - generic [ref=e154]:
+            - heading "Detections & Response" [level=3] [ref=e155]
+            - paragraph [ref=e156]: Streaming query engine that continuously evaluates rules and alerts in minutes.
+          - generic [ref=e158]: arrow_right
+        - link "MCP & APIs Fast access to your Security Data Lake with Model Context Protocol arrow_right" [ref=e162] [cursor=pointer]:
+          - /url: /mcp-apis
+          - generic [ref=e163]:
+            - heading "MCP & APIs" [level=3] [ref=e164]
+            - paragraph [ref=e165]: Fast access to your Security Data Lake with Model Context Protocol
+          - generic [ref=e167]: arrow_right
+    - generic [ref=e171]:
+      - generic [ref=e173]:
+        - generic [ref=e174]:
+          - generic [ref=e175]: caret_right
+          - generic [ref=e176]: Scanner MCP
+        - heading "Built for the AI Security Era" [level=2] [ref=e177]
+        - generic [ref=e178]:
+          - paragraph [ref=e179]: Traditional SIEMs can't handle AI workloads. Queries are too slow and too expensive for AI agents to explore freely.
+          - paragraph [ref=e180]: Scanner is the only platform with the speed and economics to make AI-driven security viable.
+      - generic [ref=e182]:
+        - generic [ref=e183]:
+          - generic [ref=e184]: API-First Architecture
+          - heading "Every query, every dataset available programmatically" [level=3] [ref=e185]
+          - paragraph [ref=e186]: Built for integrations, automation, and custom workflows. Connect Scanner to your existing tools and security stack.
+        - generic [ref=e187]:
+          - generic [ref=e188]: Native MCP Support
+          - heading "Fast access to your Security Data Lake with Model Context Protocol" [level=3] [ref=e189]
+          - paragraph [ref=e190]: AI agents get structured access to your security data through a standardized interface built for intelligence tools.
+        - generic [ref=e191]:
+          - generic [ref=e192]: Built for AI Workloads
+          - heading "Fast and economical for AI to freely iterate" [level=3] [ref=e193]:
+            - text: Fast and economical
+            - text: for AI to freely iterate
+          - paragraph [ref=e194]: Enable investigations that would timeout or cost too much in traditional SIEMs. AI needs complete context, Scanner delivers it.
+    - generic [ref=e198]:
+      - generic [ref=e200]:
+        - paragraph [ref=e201]: “We can search through a full year of logs in seconds, giving us visibility into an order of magnitude more data than before. Analysis at this kind of scale is essential in the cloud era.”
+        - generic [ref=e202]:
+          - generic [ref=e203]: Jonathan Jaffe
+          - generic [ref=e205]: CISO
+          - link "Lemonade link_out" [ref=e207] [cursor=pointer]:
+            - /url: "#"
+            - generic [ref=e208]: Lemonade
+            - generic [ref=e209]: link_out
+      - list [ref=e211]:
+        - listitem [ref=e212]:
+          - link "Ramp Case Study Ramp Increases Security Visibility and Accelerates Threat Hunting with Scanner’s Security Data Lake arrow_right" [ref=e213] [cursor=pointer]:
+            - /url: /customers/ramp
+            - generic [ref=e215]:
+              - generic [ref=e216]:
+                - heading "Ramp Case Study" [level=3] [ref=e217]
+                - paragraph [ref=e218]: Ramp Increases Security Visibility and Accelerates Threat Hunting with Scanner’s Security Data Lake
+              - generic [ref=e220]: arrow_right
+        - listitem [ref=e221]:
+          - link "FloQast Scanner Case Study FloQast Optimizes High-Volume Security Log Analysis and Threat Detections Using Scanner arrow_right" [ref=e222] [cursor=pointer]:
+            - /url: /customers/floqast-optimizes-high-volume-security-log-analysis-threat-detections
+            - generic [ref=e224]:
+              - generic [ref=e225]:
+                - heading "FloQast Scanner Case Study" [level=3] [ref=e226]
+                - paragraph [ref=e227]: FloQast Optimizes High-Volume Security Log Analysis and Threat Detections Using Scanner
+              - generic [ref=e229]: arrow_right
+        - listitem [ref=e230]:
+          - link "Lemonade Scanner Case Study Lemonade Accelerates Security Operations With A High-Speed Security Data Lake Using Scanner arrow_right" [ref=e231] [cursor=pointer]:
+            - /url: /customers/lemonade-accelerates-security-operations-high-speed-security-data-lake
+            - generic [ref=e233]:
+              - generic [ref=e234]:
+                - heading "Lemonade Scanner Case Study" [level=3] [ref=e235]
+                - paragraph [ref=e236]: Lemonade Accelerates Security Operations With A High-Speed Security Data Lake Using Scanner
+              - generic [ref=e238]: arrow_right
+      - generic [ref=e240]:
+        - heading "Integrations" [level=3] [ref=e241]
+        - paragraph [ref=e242]:
+          - text: Connect to your existing tools with
+          - text: an expanding library of integrations.
+        - link "Documentation link_out" [ref=e243] [cursor=pointer]:
+          - /url: https://docs.scanner.dev/scanner/
+          - generic [ref=e244]: Documentation
+          - generic [ref=e246]: link_out
+      - generic [ref=e247]:
+        - generic [ref=e248]:
+          - img [ref=e250]
+          - generic [ref=e254]: AWS CloudTrail
+        - generic [ref=e256]:
+          - img [ref=e258]
+          - generic [ref=e263]: Azure
+        - generic [ref=e265]:
+          - img [ref=e267]
+          - generic [ref=e269]: Google Cloud
+        - generic [ref=e271]:
+          - img [ref=e273]
+          - generic [ref=e275]: Okta
+        - generic [ref=e277]:
+          - img [ref=e279]
+          - generic [ref=e281]: GitHub
+        - generic [ref=e283]:
+          - img [ref=e285]
+          - generic [ref=e287]: Tines
+        - generic [ref=e289]:
+          - img [ref=e291]
+          - generic [ref=e294]: PagerDuty
+        - generic [ref=e296]:
+          - generic [ref=e297]: And many more
+          - link "View docs link_out" [ref=e298] [cursor=pointer]:
+            - /url: https://docs.scanner.dev/scanner/
+            - generic [ref=e299]: View docs
+            - generic [ref=e300]: link_out
+      - generic [ref=e301]:
+        - generic [ref=e302]:
+          - heading "Enterprise-Grade Security" [level=3] [ref=e303]
+          - paragraph [ref=e304]:
+            - text: Your data stays in your cloud.
+            - text: Full custody. No vendor lock-in.
+        - generic [ref=e305]:
+          - generic [ref=e306]:
+            - generic [ref=e307]: complete
+            - generic [ref=e308]: SOC 2 Type II Certified
+          - generic [ref=e309]:
+            - generic [ref=e310]: complete
+            - generic [ref=e311]: GDPR Compliant
+          - generic [ref=e312]:
+            - generic [ref=e313]: complete
+            - generic [ref=e314]: Data Residency Options
+    - generic [ref=e318]:
+      - generic [ref=e320]:
+        - heading "Ready to Transform Your Security Data?" [level=2] [ref=e322]
+        - paragraph [ref=e324]: See how Scanner can help you retain everything, search instantly, and unlock AI-powered security workflows.
+      - link "Book a Demo" [ref=e325] [cursor=pointer]:
+        - /url: /demo
+        - generic [ref=e326]: Book a Demo
+  - contentinfo [ref=e328]:
+    - generic [ref=e331]:
+      - generic [ref=e333]:
+        - generic [ref=e334]:
+          - generic [ref=e335]:
+            - generic [ref=e336]: Product
+            - generic [ref=e337]:
+              - link "Collect & Enrich" [ref=e338] [cursor=pointer]:
+                - /url: /collect-enrich
+                - generic [ref=e339]: Collect & Enrich
+              - link "Search & Investigate" [ref=e340] [cursor=pointer]:
+                - /url: /search-investigate
+                - generic [ref=e341]: Search & Investigate
+              - link "Detections & Response" [ref=e342] [cursor=pointer]:
+                - /url: /detect-respond
+                - generic [ref=e343]: Detections & Response
+              - link "MCP & APIs" [ref=e344] [cursor=pointer]:
+                - /url: /mcp-apis
+                - generic [ref=e345]: MCP & APIs
+          - generic [ref=e346]:
+            - generic [ref=e347]: Resources
+            - generic [ref=e348]:
+              - link "Documentation link_out" [ref=e349] [cursor=pointer]:
+                - /url: https://docs.scanner.dev/scanner/
+                - generic [ref=e350]: Documentation
+                - generic [ref=e351]: link_out
+              - link "Blog" [ref=e352] [cursor=pointer]:
+                - /url: /blog
+                - generic [ref=e353]: Blog
+              - link "Case Studies" [ref=e354] [cursor=pointer]:
+                - /url: /customers
+                - generic [ref=e355]: Case Studies
+              - link "Changelog" [ref=e356] [cursor=pointer]:
+                - /url: /changelog
+                - generic [ref=e357]: Changelog
+          - generic [ref=e358]:
+            - generic [ref=e359]: Company
+            - generic [ref=e360]:
+              - link "Pricing" [ref=e361] [cursor=pointer]:
+                - /url: /pricing
+                - generic [ref=e362]: Pricing
+              - link "About Us" [ref=e363] [cursor=pointer]:
+                - /url: /about
+                - generic [ref=e364]: About Us
+              - link "Careers link_out" [ref=e365] [cursor=pointer]:
+                - /url: https://job-boards.greenhouse.io/scanner
+                - generic [ref=e366]: Careers
+                - generic [ref=e367]: link_out
+              - link "Terms of Service" [ref=e368] [cursor=pointer]:
+                - /url: /terms
+                - generic [ref=e369]: Terms of Service
+              - link "Privacy Policy" [ref=e370] [cursor=pointer]:
+                - /url: /privacy
+                - generic [ref=e371]: Privacy Policy
+        - generic [ref=e375]:
+          - generic [ref=e376]:
+            - generic [ref=e377]: Subscribe to our Newsletter
+            - textbox "Subscribe to our Newsletter" [ref=e379]:
+              - /placeholder: Email address
+          - button "Submit" [ref=e382] [cursor=pointer]
+      - generic [ref=e383]:
+        - generic [ref=e384]: © 2026 Scanner, Inc.
+        - generic [ref=e385]: All rights reserved
+        - generic [ref=e386]: Based in San Francisco, CA

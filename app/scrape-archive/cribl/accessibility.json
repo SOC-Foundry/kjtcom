@@ -1,0 +1,755 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e3]:
+    - paragraph [ref=e5]: Is your telemetry ready for AI?
+    - link "Take the assessment" [ref=e6] [cursor=pointer]:
+      - /url: https://cribl.io/ai-readiness-assessment/
+      - text: Take the assessment
+      - img [ref=e7]
+  - banner [ref=e9]:
+    - generic [ref=e10]:
+      - generic [ref=e11]:
+        - link "Cribl" [ref=e12] [cursor=pointer]:
+          - /url: https://cribl.io/
+          - img "Cribl" [ref=e14]
+        - navigation "Main" [ref=e15]:
+          - generic [ref=e16]:
+            - list [ref=e18]:
+              - listitem [ref=e19]:
+                - button "Solutions chevron-left" [ref=e20] [cursor=pointer]:
+                  - text: Solutions
+                  - img "chevron-left" [ref=e21]
+              - listitem [ref=e23]:
+                - button "Products chevron-left" [ref=e24] [cursor=pointer]:
+                  - text: Products
+                  - img "chevron-left" [ref=e25]
+              - listitem [ref=e27]:
+                - button "Customers chevron-left" [ref=e28] [cursor=pointer]:
+                  - text: Customers
+                  - img "chevron-left" [ref=e29]
+              - listitem [ref=e31]:
+                - button "Learning & Resources chevron-left" [ref=e32] [cursor=pointer]:
+                  - text: Learning & Resources
+                  - img "chevron-left" [ref=e33]
+              - listitem [ref=e35]:
+                - button "Pricing chevron-left" [ref=e36] [cursor=pointer]:
+                  - text: Pricing
+                  - img "chevron-left" [ref=e37]
+              - listitem [ref=e39]:
+                - button "About chevron-left" [ref=e40] [cursor=pointer]:
+                  - text: About
+                  - img "chevron-left" [ref=e41]
+            - list [ref=e44]:
+              - listitem [ref=e45]:
+                - button "Demos chevron-left" [ref=e46] [cursor=pointer]:
+                  - text: Demos
+                  - img "chevron-left" [ref=e47]
+              - listitem [ref=e49]:
+                - button "Try Cribl chevron-left" [ref=e50] [cursor=pointer]:
+                  - text: Try Cribl
+                  - img "chevron-left" [ref=e51]
+              - listitem [ref=e53]:
+                - button "login" [ref=e54] [cursor=pointer]:
+                  - img "login" [ref=e55]
+      - generic [ref=e58]:
+        - button "search-md" [ref=e59] [cursor=pointer]:
+          - img "search-md" [ref=e60]
+        - generic:
+          - generic:
+            - generic:
+              - button "x-close":
+                - img "x-close"
+            - generic:
+              - generic:
+                - textbox "Search..."
+                - button "search-md":
+                  - img "search-md"
+  - generic [ref=e65]:
+    - generic [ref=e67]:
+      - heading "From AI hype to investigations" [level=1] [ref=e69]:
+        - generic [ref=e70]: From AI hype to
+        - generic [ref=e72]:
+          - generic:
+            - img
+            - img
+            - img
+            - img
+          - generic [ref=e74]: 10x incid
+      - generic [ref=e76]:
+        - paragraph [ref=e77]: Choice, control, and flexibility to realize your agentic vision — on true AI-ready infrastructure
+        - paragraph
+      - generic [ref=e78]:
+        - link "See it in action" [ref=e79] [cursor=pointer]:
+          - /url: https://cribl.io/solutions/initiatives/investigations/
+        - link "Explore the Data Engine" [ref=e80] [cursor=pointer]:
+          - /url: https://cribl.io/products/
+    - img "Hero Search Animation" [ref=e82]
+  - generic [ref=e85]:
+    - generic [ref=e87]:
+      - generic [ref=e88]:
+        - img "get-started" [ref=e89]
+        - paragraph [ref=e91]: Use Cases
+      - heading "Logs, metrics, traces without the hassl." [level=2] [ref=e92]:
+        - paragraph [ref=e93]: Logs, metrics, traces without the hassl.
+    - generic [ref=e94]:
+      - generic [ref=e95]:
+        - button "function-search Investigate" [ref=e96] [cursor=pointer]:
+          - img "function-search" [ref=e97]
+          - generic [ref=e99]: Investigate
+        - button "global Onboard" [ref=e100] [cursor=pointer]:
+          - img "global" [ref=e101]
+          - generic [ref=e103]: Onboard
+        - button "directional-sign Route" [ref=e104] [cursor=pointer]:
+          - img "directional-sign" [ref=e105]
+          - generic [ref=e107]: Route
+        - button "arrow-trend-down Reduce" [ref=e108] [cursor=pointer]:
+          - img "arrow-trend-down" [ref=e109]
+          - generic [ref=e111]: Reduce
+        - button "replay Replay" [ref=e112] [cursor=pointer]:
+          - img "replay" [ref=e113]
+          - generic [ref=e115]: Replay
+        - button "interactive Transform" [ref=e116] [cursor=pointer]:
+          - img "interactive" [ref=e117]
+          - generic [ref=e119]: Transform
+        - button "funnel Collect" [ref=e120] [cursor=pointer]:
+          - img "funnel" [ref=e121]
+          - generic [ref=e123]: Collect
+        - button "data-lakehouse Store" [ref=e124] [cursor=pointer]:
+          - img "data-lakehouse" [ref=e125]
+          - generic [ref=e127]: Store
+        - button "cpu-graph Visualize" [ref=e128] [cursor=pointer]:
+          - img "cpu-graph" [ref=e129]
+          - generic [ref=e131]: Visualize
+      - generic [ref=e135]:
+        - generic [ref=e136]:
+          - generic [ref=e137]:
+            - generic [ref=e138]: Every analyst, a 10x investigator
+            - paragraph [ref=e140]:
+              - text: Cribl unifies ingest, storage, and analysis so SREs, devs, and security teams can collect once, search anywhere, and get answers -
+              - emphasis [ref=e141]: FAST
+          - generic [ref=e144]:
+            - generic [ref=e145]: “There have been incidents where searching data was needed as soon as possible, but we weren’t always in a position to grab data and replay it without creating custom scripts or using up dev time. With Cribl Search, we now have immediate access to that data.”
+            - generic [ref=e149]: Cloud Solutions Senior Engineer, Fortune 1000 company
+          - link "Learn more" [ref=e150] [cursor=pointer]:
+            - /url: https://cribl.io/solutions/initiatives/investigations/
+            - text: Learn more
+            - img [ref=e151]
+        - generic [ref=e155]:
+          - iframe [ref=e158]:
+            - generic [ref=f37e2]:
+              - generic:
+                - generic:
+                  - img
+              - generic:
+                - generic:
+                  - generic:
+                    - generic:
+                      - img
+                - generic:
+                  - img
+                  - generic: Playing in picture-in-picture
+              - generic:
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic:
+                        - generic: More options
+                      - button "More options" [ref=f37e9] [cursor=pointer]:
+                        - img
+                - generic:
+                  - button "Play" [ref=f37e11] [cursor=pointer]:
+                    - img [ref=f37e12]
+                    - generic:
+                      - generic: Play
+                  - generic [ref=f37e15]:
+                    - generic [ref=f37e16]:
+                      - slider "Progress Bar" [ref=f37e17] [cursor=pointer]
+                      - generic:
+                        - generic:
+                          - generic: 00:00
+                      - generic [ref=f37e22]: 02:32
+                    - generic [ref=f37e23]:
+                      - generic [ref=f37e24]:
+                        - generic [ref=f37e25]:
+                          - button "Mute" [ref=f37e26] [cursor=pointer]:
+                            - img [ref=f37e27]
+                          - slider "Volume (use up/down arrow keys to change)"
+                        - button "CC/subtitles" [ref=f37e29] [cursor=pointer]:
+                          - img [ref=f37e30]
+                          - generic:
+                            - generic: CC/subtitles
+                        - button "Settings" [ref=f37e32] [cursor=pointer]:
+                          - img [ref=f37e33]
+                          - generic:
+                            - generic: Settings
+                        - button "Transcript" [ref=f37e35] [cursor=pointer]:
+                          - img [ref=f37e36]
+                          - generic:
+                            - generic: Transcript
+                        - button "Picture-in-Picture" [ref=f37e38] [cursor=pointer]:
+                          - img [ref=f37e39]
+                          - generic:
+                            - generic: Picture-in-Picture
+                        - button "Fullscreen" [ref=f37e41] [cursor=pointer]:
+                          - img [ref=f37e42]
+                          - generic:
+                            - generic: Fullscreen
+                      - link "Watch on Vimeo" [ref=f37e44] [cursor=pointer]:
+                        - /url: https://vimeo.com/?fl=pl&fe=vl
+                        - img [ref=f37e45]
+          - button "play" [ref=e160] [cursor=pointer]:
+            - img "play" [ref=e161]
+  - generic [ref=e167]:
+    - generic [ref=e169]:
+      - generic [ref=e170]:
+        - generic [ref=e171]:
+          - img "settings-01" [ref=e172]
+          - paragraph [ref=e174]: Integrations
+        - heading "The tools you love, now extra controllabl." [level=2] [ref=e176]
+      - paragraph [ref=e178]: Get logs, metrics, and traces from any source to any destination. Cribl consistently adds new integrations so you can continue to build pipelines to and from even more sources and destinations in your toolkit. Check out our integrations page for the complete list.
+      - link "View all integrations" [ref=e180] [cursor=pointer]:
+        - /url: https://cribl.io/integrations/
+    - generic [ref=e182]:
+      - link "Integration Logo" [disabled] [ref=e183]:
+        - /url: ""
+        - img "Integration Logo" [ref=e184]
+      - link "Integration GraFana Icon" [disabled] [ref=e185]:
+        - /url: ""
+        - img "Integration GraFana Icon" [ref=e186]
+      - link "Integration InfluxData" [disabled] [ref=e187]:
+        - /url: ""
+        - img "Integration InfluxData" [ref=e188]
+      - link "Integration Unters Icon" [disabled] [ref=e189]:
+        - /url: ""
+        - img "Integration Unters Icon" [ref=e190]
+      - link "Palo Alto Networks - White" [ref=e191] [cursor=pointer]:
+        - /url: https://cribl.io/solutions/technologies/palo-alto-networks/
+        - img "Palo Alto Networks - White" [ref=e192]
+      - link "Integration MicrosoftAzure Icon" [ref=e193] [cursor=pointer]:
+        - /url: https://cribl.io/solutions/technologies/microsoft-azure/
+        - img "Integration MicrosoftAzure Icon" [ref=e194]
+      - link "Integration Splunk Icon" [ref=e195] [cursor=pointer]:
+        - /url: https://cribl.io/solutions/technologies/splunk/
+        - img "Integration Splunk Icon" [ref=e196]
+      - link "Integration Sumologic Icon" [disabled] [ref=e197]:
+        - /url: ""
+        - img "Integration Sumologic Icon" [ref=e198]
+      - link "Integration Google Cloud Icon" [ref=e199] [cursor=pointer]:
+        - /url: https://cribl.io/solutions/technologies/google-cloud-platform/
+        - img "Integration Google Cloud Icon" [ref=e200]
+      - link "Integration AWS Icon" [ref=e201] [cursor=pointer]:
+        - /url: https://cribl.io/solutions/technologies/amazon-web-services/
+        - img "Integration AWS Icon" [ref=e202]
+      - link "Integration CrowdStrike Icon" [ref=e203] [cursor=pointer]:
+        - /url: https://cribl.io/solutions/technologies/crowdstrike/
+        - img "Integration CrowdStrike Icon" [ref=e204]
+      - link "Integration SentinelOne Icon" [disabled] [ref=e205]:
+        - /url: ""
+        - img "Integration SentinelOne Icon" [ref=e206]
+      - link "integration WIZ Icon" [ref=e207] [cursor=pointer]:
+        - /url: https://cribl.io/solutions/technologies/wiz/
+        - img "integration WIZ Icon" [ref=e208]
+      - link "Integration Confluent Icon" [ref=e209] [cursor=pointer]:
+        - /url: https://cribl.io/solutions/technologies/confluent-cloud/
+        - img "Integration Confluent Icon" [ref=e210]
+      - link "Integration Exabeam Icon" [ref=e211] [cursor=pointer]:
+        - /url: https://cribl.io/solutions/technologies/exabeam/
+        - img "Integration Exabeam Icon" [ref=e212]
+      - link "Integration Elastic Icon" [ref=e213] [cursor=pointer]:
+        - /url: https://cribl.io/solutions/technologies/elastic/
+        - img "Integration Elastic Icon" [ref=e214]
+      - link "Integration NetSkope Icon" [disabled] [ref=e215]:
+        - /url: ""
+        - img "Integration NetSkope Icon" [ref=e216]
+      - link "Integration Databricks Icon" [disabled] [ref=e217]:
+        - /url: ""
+        - img "Integration Databricks Icon" [ref=e218]
+      - link "Integration Zscaler Icon" [disabled] [ref=e219]:
+        - /url: ""
+        - img "Integration Zscaler Icon" [ref=e220]
+      - link "Integration HashiCorp Icon" [disabled] [ref=e221]:
+        - /url: ""
+        - img "Integration HashiCorp Icon" [ref=e222]
+  - img [ref=e225]
+  - generic [ref=e231]:
+    - generic [ref=e232]:
+      - img "user-square" [ref=e233]
+      - paragraph [ref=e235]: Customer Testimonials
+    - heading "Fueling the data engines of 50% of the Fortune 100" [level=2] [ref=e237]
+  - generic [ref=e241]:
+    - generic [ref=e246]:
+      - img "Customer-Siemens" [ref=e247]
+      - img "Customer-Leidos" [ref=e248]
+      - img "Customer-New-Balance" [ref=e249]
+      - img "Customer-Accenture" [ref=e250]
+      - img "Customer-Dominos" [ref=e251]
+      - img "Customer-Sally" [ref=e252]
+      - img "Customer-Aflac" [ref=e253]
+      - img "Customer-Vodafone" [ref=e254]
+      - img "Customer-Finra" [ref=e255]
+      - img "Customer-TransUnion" [ref=e256]
+      - img "Customer-SpyCloud" [ref=e257]
+      - img "Customer-Siemens" [ref=e258]
+      - img "Customer-Leidos" [ref=e259]
+      - img "Customer-New-Balance" [ref=e260]
+      - img "Customer-Accenture" [ref=e261]
+      - img "Customer-Dominos" [ref=e262]
+      - img "Customer-Sally" [ref=e263]
+      - img "Customer-Aflac" [ref=e264]
+      - img "Customer-Vodafone" [ref=e265]
+      - img "Customer-Finra" [ref=e266]
+      - img "Customer-TransUnion" [ref=e267]
+      - img "Customer-SpyCloud" [ref=e268]
+    - generic [ref=e271]:
+      - img "Customer-Siemens" [ref=e272]
+      - img "Customer-Leidos" [ref=e273]
+      - img "Customer-New-Balance" [ref=e274]
+      - img "Customer-Accenture" [ref=e275]
+      - img "Customer-Dominos" [ref=e276]
+      - img "Customer-Sally" [ref=e277]
+      - img "Customer-Aflac" [ref=e278]
+      - img "Customer-Vodafone" [ref=e279]
+      - img "Customer-Finra" [ref=e280]
+      - img "Customer-TransUnion" [ref=e281]
+      - img "Customer-SpyCloud" [ref=e282]
+      - img "Customer-Siemens" [ref=e283]
+      - img "Customer-Leidos" [ref=e284]
+      - img "Customer-New-Balance" [ref=e285]
+      - img "Customer-Accenture" [ref=e286]
+      - img "Customer-Dominos" [ref=e287]
+      - img "Customer-Sally" [ref=e288]
+      - img "Customer-Aflac" [ref=e289]
+      - img "Customer-Vodafone" [ref=e290]
+      - img "Customer-Finra" [ref=e291]
+      - img "Customer-TransUnion" [ref=e292]
+      - img "Customer-SpyCloud" [ref=e293]
+  - generic [ref=e296]:
+    - generic [ref=e297]:
+      - generic [ref=e299]:
+        - generic [ref=e300]:
+          - img "criblcon 2023 customer story 10 - scott burger v9 web (720p)" [ref=e301]
+          - button "play" [ref=e302] [cursor=pointer]:
+            - img "play" [ref=e303]
+        - generic [ref=e305]:
+          - heading "ServiceNow" [level=3] [ref=e306]
+          - paragraph [ref=e307]: How to halve data problems with a snap, like Thanos.
+          - link "See full story" [ref=e308] [cursor=pointer]:
+            - /url: https://cribl.io/resources/vd-1068823796/
+            - text: See full story
+            - img [ref=e309]
+        - generic:
+          - generic:
+            - generic:
+              - button "x-close":
+                - img "x-close"
+            - generic:
+              - generic:
+                - generic:
+                  - generic:
+                    - button "play":
+                      - img "play"
+      - generic [ref=e312]:
+        - generic [ref=e313]:
+          - img "demand gen customer story 9 - brandon gagliardi" [ref=e314]
+          - button "play" [ref=e315] [cursor=pointer]:
+            - img "play" [ref=e316]
+        - generic [ref=e318]:
+          - heading "Nutanix" [level=3] [ref=e319]
+          - paragraph [ref=e320]: Nutanix reduces firewall log volume by 50%.
+          - link "See full story" [ref=e321] [cursor=pointer]:
+            - /url: https://cribl.io/resources/vd-942367237/
+            - text: See full story
+            - img [ref=e322]
+        - generic:
+          - generic:
+            - generic:
+              - button "x-close":
+                - img "x-close"
+            - generic:
+              - generic:
+                - generic:
+                  - generic:
+                    - button "play":
+                      - img "play"
+      - generic [ref=e325]:
+        - generic [ref=e326]:
+          - img "cribl customer stories - john lim v10" [ref=e327]
+          - button "play" [ref=e328] [cursor=pointer]:
+            - img "play" [ref=e329]
+        - generic [ref=e331]:
+          - heading "Cox Automotive" [level=3] [ref=e332]
+          - paragraph [ref=e333]: Solving the cost and complexity challenge.
+          - link "See full story" [ref=e334] [cursor=pointer]:
+            - /url: https://cribl.io/resources/vd-996859851/
+            - text: See full story
+            - img [ref=e335]
+        - generic:
+          - generic:
+            - generic:
+              - button "x-close":
+                - img "x-close"
+            - generic:
+              - generic:
+                - generic:
+                  - generic:
+                    - button "play":
+                      - img "play"
+      - generic [ref=e338]:
+        - generic [ref=e339]:
+          - img "cribl customer stories - karl fosburg v10" [ref=e340]
+          - button "play" [ref=e341] [cursor=pointer]:
+            - img "play" [ref=e342]
+        - generic [ref=e344]:
+          - heading "Hughes Network Systems" [level=3] [ref=e345]
+          - paragraph [ref=e346]: How this Observability team can now say ‘yes’ more.
+          - link "See full story" [ref=e347] [cursor=pointer]:
+            - /url: https://cribl.io/resources/vd-996859892/
+            - text: See full story
+            - img [ref=e348]
+        - generic:
+          - generic:
+            - generic:
+              - button "x-close":
+                - img "x-close"
+            - generic:
+              - generic:
+                - generic:
+                  - generic:
+                    - button "play":
+                      - img "play"
+      - generic [ref=e351]:
+        - generic [ref=e352]:
+          - img "demand gen customer story 2 - steve tieland rev 9" [ref=e353]
+          - button "play" [ref=e354] [cursor=pointer]:
+            - img "play" [ref=e355]
+        - generic [ref=e357]:
+          - heading "Pegasystems" [level=3] [ref=e358]
+          - paragraph [ref=e359]: SIEM evaluation is a breeze for Pegasystems.
+          - link "See full story" [ref=e360] [cursor=pointer]:
+            - /url: https://cribl.io/resources/vd-942367276/
+            - text: See full story
+            - img [ref=e361]
+        - generic:
+          - generic:
+            - generic:
+              - button "x-close":
+                - img "x-close"
+            - generic:
+              - generic:
+                - generic:
+                  - generic:
+                    - button "play":
+                      - img "play"
+    - link "See Customer Stories" [ref=e364] [cursor=pointer]:
+      - /url: https://cribl.io/customers/
+      - text: See Customer Stories
+      - img [ref=e365]
+  - generic [ref=e371]:
+    - generic [ref=e373]:
+      - generic [ref=e374]:
+        - paragraph [ref=e376]: CriblCon 25
+        - heading "Cribl boldly goes where insights grow" [level=2] [ref=e378]
+      - generic [ref=e379]:
+        - paragraph [ref=e380]: "Attendees of CriblCon 25 united with the galaxy's brightest minds for best practices, thoughtful insights, and innovations. Watch the opening keynote on-demand here, and see:"
+        - list [ref=e381]:
+          - listitem [ref=e382]:
+            - paragraph [ref=e383]: New product innovations
+          - listitem [ref=e384]:
+            - paragraph [ref=e385]: Live demos of cutting-edge solutions
+          - listitem [ref=e386]:
+            - paragraph [ref=e387]: Real use cases from industry leaders and peers
+        - paragraph [ref=e388]:
+          - text: Also, check out our
+          - link "recap blog" [ref=e389] [cursor=pointer]:
+            - /url: https://cribl.io/blog/criblcon-25-boldly-go-where-no-log-has-gone-before/
+          - text: for some of the highlights!
+    - generic [ref=e392]:
+      - generic [ref=e393]:
+        - iframe [ref=e396]:
+          - generic [active] [ref=f38e1]:
+            - generic "YouTube Video Player" [ref=f38e3]
+            - generic [ref=f38e5]:
+              - generic:
+                - generic:
+                  - button "Play video" [ref=f38e10] [cursor=pointer]
+                  - button "Hide player controls" [ref=f38e12] [cursor=pointer]
+                  - generic [ref=f38e14]:
+                    - generic [ref=f38e19]:
+                      - generic [ref=f38e20]:
+                        - link "CriblCon 25 Keynote Livestream" [ref=f38e21] [cursor=pointer]:
+                          - /url: https://www.youtube.com/watch?v=TRi0wKmnYSc
+                        - link "Cribl" [ref=f38e22] [cursor=pointer]:
+                          - /url: /channel/UC1tTDQgiC_o1eqPfRGk4ewA
+                          - generic [ref=f38e23]: Cribl
+                      - generic [ref=f38e24]:
+                        - button [ref=f38e25] [cursor=pointer]
+                        - generic [ref=f38e27]:
+                          - generic: Cribl
+                          - generic: 1.96K subscribers
+                    - generic [ref=f38e28]:
+                      - button "Share" [ref=f38e31] [cursor=pointer]:
+                        - generic [ref=f38e35]:
+                          - img
+                      - link "Watch on YouTube" [ref=f38e42] [cursor=pointer]:
+                        - /url: https://www.youtube.com/watch?v=TRi0wKmnYSc
+                        - generic [ref=f38e45]:
+                          - text: Watch on
+                          - img [ref=f38e47]:
+                            - generic [ref=f38e49]:
+                              - img
+        - button "play" [ref=e398] [cursor=pointer]:
+          - img "play" [ref=e399]
+      - paragraph [ref=e402]: Watch the CriblCon 25 Keynote On-Demand!
+  - generic [ref=e408]:
+    - generic [ref=e409]:
+      - img "resources" [ref=e410]
+      - paragraph [ref=e412]: Good Reads
+    - heading "Get inspiration from our blog" [level=2] [ref=e414]
+  - generic [ref=e417]:
+    - generic [ref=e418]:
+      - 'link "LIVE blog image.gif 03/11/2026 | Cribl Search The future of Search is here: Faster, simpler, AI-driven 1667935124350 Felicia Dorng Headshot Jack Coates and Felicia Dorng Read now chevron-right" [ref=e419] [cursor=pointer]':
+        - /url: https://cribl.io/blog/the-future-of-search-is-here-faster-simpler-ai-driven/
+        - img "LIVE blog image.gif" [ref=e422]
+        - generic [ref=e423]:
+          - generic [ref=e424]:
+            - generic [ref=e425]: 03/11/2026
+            - generic [ref=e426]: "|"
+            - generic "Cribl Search" [ref=e427]
+          - 'heading "The future of Search is here: Faster, simpler, AI-driven" [level=2] [ref=e429]'
+          - generic [ref=e430]:
+            - generic [ref=e431]:
+              - img "1667935124350" [ref=e433]
+              - img "Felicia Dorng Headshot" [ref=e435]
+            - generic [ref=e436]:
+              - generic [ref=e438]: Jack Coates and
+              - generic [ref=e440]: Felicia Dorng
+          - generic [ref=e441]:
+            - text: Read now
+            - img "chevron-right" [ref=e442]
+      - 'link "cribl guard background detection.png 03/11/2026 | Cribl Stream Cribl Guard background detection: Uncover the sensitive data you didn’t know you had Judith Silverberg-Rajna Headcount Judith Silverberg-Rajna Read now chevron-right" [ref=e444] [cursor=pointer]':
+        - /url: https://cribl.io/blog/cribl-guard-background-detection-uncover-the-sensitive-data-you-didnt-know/
+        - img "cribl guard background detection.png" [ref=e447]
+        - generic [ref=e448]:
+          - generic [ref=e449]:
+            - generic [ref=e450]: 03/11/2026
+            - generic [ref=e451]: "|"
+            - generic "Cribl Stream" [ref=e452]
+          - 'heading "Cribl Guard background detection: Uncover the sensitive data you didn’t know you had" [level=2] [ref=e454]'
+          - generic [ref=e455]:
+            - img "Judith Silverberg-Rajna Headcount" [ref=e458]
+            - generic [ref=e461]: Judith Silverberg-Rajna
+          - generic [ref=e462]:
+            - text: Read now
+            - img "chevron-right" [ref=e463]
+      - link "Dritan-Blog_update_OG (1).png 09/17/2025 | Announcements Cribl.Cloud Government Is a New Era of Secure Cloud Telemetry for Federal Agencies Dritan Bitincka Headshot Dritan Bitincka Read now chevron-right" [ref=e465] [cursor=pointer]:
+        - /url: https://cribl.io/blog/cribl-cloud-government-is-a-new-era-of-secure-cloud-telemetry-for-federal/
+        - img "Dritan-Blog_update_OG (1).png" [ref=e468]
+        - generic [ref=e469]:
+          - generic [ref=e470]:
+            - generic [ref=e471]: 09/17/2025
+            - generic [ref=e472]: "|"
+            - generic "Announcements" [ref=e473]
+          - heading "Cribl.Cloud Government Is a New Era of Secure Cloud Telemetry for Federal Agencies" [level=2] [ref=e475]
+          - generic [ref=e476]:
+            - img "Dritan Bitincka Headshot" [ref=e479]
+            - generic [ref=e482]: Dritan Bitincka
+          - generic [ref=e483]:
+            - text: Read now
+            - img "chevron-right" [ref=e484]
+    - link "See More Blogs" [ref=e487] [cursor=pointer]:
+      - /url: https://cribl.io/blog/
+  - img [ref=e489]
+  - generic [ref=e494]:
+    - generic [ref=e496]:
+      - generic [ref=e497]:
+        - img "get-started" [ref=e498]
+        - paragraph [ref=e500]: get started
+      - heading "Choose how to get started" [level=2] [ref=e502]
+    - generic [ref=e503]:
+      - generic [ref=e504]:
+        - generic [ref=e505]:
+          - generic [ref=e506]:
+            - heading [level=3]
+            - heading "See" [level=3] [ref=e507]
+            - heading "Cribl" [level=3] [ref=e508]
+          - paragraph [ref=e509]: See demos by use case, by yourself or with one of our team.
+        - generic [ref=e510]:
+          - link "Schedule a demo" [ref=e512] [cursor=pointer]:
+            - /url: https://cribl.io/demo/
+          - link "Interactive Demo Center" [ref=e514] [cursor=pointer]:
+            - /url: https://cribl.io/demo/center/
+      - generic [ref=e515]:
+        - generic [ref=e516]:
+          - generic [ref=e517]:
+            - heading [level=3]
+            - heading "Try" [level=3] [ref=e518]
+            - heading "Cribl" [level=3] [ref=e519]
+          - paragraph [ref=e520]: Get hands-on with a Sandbox or guided Cloud Trial.
+        - generic [ref=e521]:
+          - link "Try a Sandbox" [ref=e523] [cursor=pointer]:
+            - /url: https://cribl.io/try-cribl/
+          - link "Start a Cloud Trial" [ref=e525] [cursor=pointer]:
+            - /url: https://cribl.io/try-cloud/
+      - generic [ref=e526]:
+        - generic [ref=e527]:
+          - generic [ref=e528]:
+            - heading [level=3]
+            - heading "Free" [level=3] [ref=e529]
+            - heading "Cribl" [level=3] [ref=e530]
+          - paragraph [ref=e531]: Process up to 1TB/day, no license required.
+        - generic [ref=e532]:
+          - link "Cribl.Cloud account" [ref=e534] [cursor=pointer]:
+            - /url: https://cribl.io/try-cloud/
+          - link "Download" [ref=e536] [cursor=pointer]:
+            - /url: https://cribl.io/download/
+  - generic [ref=e540]:
+    - img "Forbes ABSE" [ref=e542]
+    - img "FortuneCyber - Award" [ref=e544]
+    - img "ForbesCloud - Award" [ref=e546]
+    - img "Deloitte 500 White - Award" [ref=e548]
+  - contentinfo [ref=e549]:
+    - generic [ref=e551]:
+      - generic [ref=e552]:
+        - generic [ref=e553]:
+          - link "Log in" [ref=e554] [cursor=pointer]:
+            - /url: https://login.cribl.cloud/u/login/identifier/?state=hKFo2SAxQ2ZvX2tqZG52Q29QbW9KbGRGelFYUWVpVHdocV9XRqFur3VuaXZlcnNhbC1sb2dpbqN0aWTZIHh1bVJLTGVIYnh5MG1GdjNaVnEwQ01GTnlnTHdvWGR0o2NpZNkgOHlQOXNIRWhWUzZZSThpSG44Mmk3eDQxNmYxWnE3WVQ&utm_source=direct&utm_medium=organic&utm_campaign=cribl.io
+            - img [ref=e555]
+            - generic [ref=e556]: Log in
+          - link "Support" [ref=e557] [cursor=pointer]:
+            - /url: https://cribl.io/support/
+            - img [ref=e558]
+            - generic [ref=e559]: Support
+          - link "Cloud Trial" [ref=e560] [cursor=pointer]:
+            - /url: https://cribl.io/try-cloud/
+            - img [ref=e561]
+            - generic [ref=e562]: Cloud Trial
+          - link "Partners" [ref=e563] [cursor=pointer]:
+            - /url: https://cribl.io/partners/
+            - img [ref=e564]
+            - generic [ref=e565]: Partners
+        - generic [ref=e566]:
+          - generic [ref=e568]:
+            - heading "Products & Services" [level=3] [ref=e569]
+            - link "Products Overview" [ref=e570] [cursor=pointer]:
+              - /url: https://cribl.io/products/
+            - link "Cribl Stream" [ref=e571] [cursor=pointer]:
+              - /url: https://cribl.io/products/stream/
+            - link "Cribl Edge" [ref=e572] [cursor=pointer]:
+              - /url: https://cribl.io/products/edge/
+            - link "Cribl Search" [ref=e573] [cursor=pointer]:
+              - /url: https://cribl.io/products/search/
+            - link "Cribl Lake" [ref=e574] [cursor=pointer]:
+              - /url: https://cribl.io/products/lake/
+            - link "Cribl.Cloud" [ref=e575] [cursor=pointer]:
+              - /url: https://cribl.io/products/cribl-cloud/
+            - link "Cribl AI" [ref=e576] [cursor=pointer]:
+              - /url: https://cribl.io/products/cribl-ai/
+            - link "Cribl Pricing" [ref=e577] [cursor=pointer]:
+              - /url: https://cribl.io/pricing/plan/
+            - link "Activation Services" [ref=e578] [cursor=pointer]:
+              - /url: https://cribl.io/professional-services/
+            - link "Service Delivery Partners" [ref=e579] [cursor=pointer]:
+              - /url: https://cribl.io/partners/sdp/
+          - generic [ref=e581]:
+            - heading "Learning & Resources" [level=3] [ref=e582]
+            - link "Cribl University" [ref=e583] [cursor=pointer]:
+              - /url: https://cribl.io/university/
+            - link "Knowledge Base" [ref=e584] [cursor=pointer]:
+              - /url: https://knowledge.cribl.io/
+            - link "Resource Library" [ref=e585] [cursor=pointer]:
+              - /url: https://cribl.io/resources/
+            - link "Documentation" [ref=e586] [cursor=pointer]:
+              - /url: https://docs.cribl.io/
+            - link "Downloads" [ref=e587] [cursor=pointer]:
+              - /url: https://cribl.io/download/
+            - link "Blog" [ref=e588] [cursor=pointer]:
+              - /url: https://cribl.io/blog/
+            - link "Events" [ref=e589] [cursor=pointer]:
+              - /url: https://cribl.io/events/
+            - link "Webinars" [ref=e590] [cursor=pointer]:
+              - /url: https://cribl.io/webinars/
+            - link "Glossary" [ref=e591] [cursor=pointer]:
+              - /url: https://cribl.io/glossary/
+            - link "Packs" [ref=e592] [cursor=pointer]:
+              - /url: https://packs.cribl.io/
+            - link "GitHub Repos" [ref=e593] [cursor=pointer]:
+              - /url: https://github.com/criblio/
+            - link "Docker Hub" [ref=e594] [cursor=pointer]:
+              - /url: https://hub.docker.com/r/cribl/cribl/
+          - generic [ref=e595]:
+            - generic [ref=e596]:
+              - heading "Company" [level=3] [ref=e597]
+              - link "About Cribl" [ref=e598] [cursor=pointer]:
+                - /url: https://cribl.io/about-us/
+              - link "Careers" [ref=e599] [cursor=pointer]:
+                - /url: https://cribl.io/careers/
+              - link "Newsroom" [ref=e600] [cursor=pointer]:
+                - /url: https://cribl.io/newsroom/
+              - link "Customers" [ref=e601] [cursor=pointer]:
+                - /url: https://cribl.io/customers/
+              - link "Security" [ref=e602] [cursor=pointer]:
+                - /url: https://cribl.io/vulnerability-disclosure-program/
+              - link "Trust" [ref=e603] [cursor=pointer]:
+                - /url: https://trust.cribl.io/home/
+              - link "Legal" [ref=e604] [cursor=pointer]:
+                - /url: https://cribl.io/legal/
+            - generic [ref=e605]:
+              - heading "Get Started" [level=3] [ref=e606]
+              - link "Interactive Demo Center" [ref=e607] [cursor=pointer]:
+                - /url: https://cribl.io/demo/center/
+              - link "Take a Sandbox" [ref=e608] [cursor=pointer]:
+                - /url: https://cribl.io/try-cribl/
+              - link "Cloud Trial" [ref=e609] [cursor=pointer]:
+                - /url: https://cribl.io/try-cloud/
+              - link "Demo Request" [ref=e610] [cursor=pointer]:
+                - /url: https://cribl.io/demo/
+              - link "Contact Sales" [ref=e611] [cursor=pointer]:
+                - /url: https://cribl.io/contact/
+          - generic [ref=e612]:
+            - generic [ref=e613]:
+              - link "linkedin.svg" [ref=e614] [cursor=pointer]:
+                - /url: https://www.linkedin.com/company/cribl/
+                - img "linkedin.svg" [ref=e615]
+              - link "x.svg" [ref=e616] [cursor=pointer]:
+                - /url: https://x.com/cribl_io/
+                - img "x.svg" [ref=e617]
+              - link "youtube.svg" [ref=e618] [cursor=pointer]:
+                - /url: https://www.youtube.com/@Cribl/
+                - img "youtube.svg" [ref=e619]
+            - generic [ref=e620]:
+              - heading "NewsLetter" [level=3] [ref=e621]
+              - link "Subscribe Now" [ref=e622] [cursor=pointer]:
+                - /url: https://cribl.io/newsletter-subscribe/
+            - generic [ref=e623]:
+              - generic:
+                - link "Gartner Peer Insights":
+                  - /url: https://www.gartner.com/reviews/market/event-stream-processing/vendor/cribl?utm_source=cribl&utm_medium=referral&utm_campaign=widget&utm_content=NWM3NmJhMDQtMWM5NC00Mzg3LWI2YmEtYTQzODg2ZGFhMDNh&quot
+                  - img "Gartner Peer Insights"
+              - generic [ref=e624]: Cribl
+              - generic [ref=e625]: Event Stream Processing
+              - generic [ref=e626]:
+                - heading "4.7" [level=3] [ref=e628]
+                - generic [ref=e630]:
+                  - generic [ref=e631]: 76 Ratings
+                  - link "Submit a review" [ref=e632] [cursor=pointer]:
+                    - /url: https://gtnr.io/deoR7mFEn
+      - generic [ref=e633]:
+        - img "cribl-logo-white.svg" [ref=e634]
+        - generic [ref=e635]:
+          - generic [ref=e636]: ©2018 – 2026 Cribl, Inc.
+          - link "Terms of Use" [ref=e638] [cursor=pointer]:
+            - /url: https://cribl.io/legal/terms-of-use/
+          - link "Privacy Notice" [ref=e640] [cursor=pointer]:
+            - /url: https://cribl.io/legal/privacy-notice/
+          - button "Do Not Sell or Share My Personal Information" [ref=e642] [cursor=pointer]
+  - alert [ref=e643]
+  - button "Open AI assistant" [ref=e645] [cursor=pointer]:
+    - img [ref=e646]
+  - region "Cookie banner" [ref=e650]:
+    - dialog "Privacy" [ref=e651]:
+      - generic [ref=e653]:
+        - generic [ref=e656]:
+          - text: This website uses cookies and other tracking technologies to enhance user experience and to analyze performance and traffic on our website. We also share information about your use of our site with our social media, advertising and analytics partners. If we have detected an opt-out preference signal then it will be honored. Further information is available in our
+          - link "Privacy Policy" [ref=e657] [cursor=pointer]:
+            - /url: https://cribl.io/legal/privacy-notice/
+        - button "Do Not Sell or Share My Personal Information" [ref=e660] [cursor=pointer]
+      - button "Close" [ref=e662] [cursor=pointer]

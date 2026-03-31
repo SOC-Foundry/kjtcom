@@ -2,64 +2,54 @@
 
 ## Read Order
 
-1. docs/ricksteves-design-v4.13.md
-2. docs/ricksteves-plan-v4.13.md (execute Section A only - stop at handoff checkpoint)
+1. docs/kjtcom-design-v6.15.md
+2. docs/kjtcom-plan-v6.15.md (execute Section C)
 
 ## Context
 
-Schema v3 migration for RickSteves. The shared script enhancements (continent lookup, county parsing) already exist from v4.12. You need to:
-1. Update RickSteves-specific config files (schema.json, extraction_prompt.md) with 7 new fields (including t_any_shows)
-2. Acquire + transcribe 30 new videos (121-150)
-3. Re-extract, re-normalize, re-geocode ALL 150 videos with v3 prompt
+Phase 6a Discovery. Scrape 8 public competitor sites via Playwright MCP.
 
-Stop at handoff checkpoint. Claude Code handles phases 6-7.
+PRIMARY DESIGN REFERENCE: Panther SIEM (tachtech.runpanther.net).
+Pre-staged in app/design-brief/panther/ with 3 screenshots + 1 HTML mockup.
+Do NOT attempt to scrape Panther (Okta MFA, wrong landing page). Review the
+pre-staged materials and use them as the #1 comparison point for all scrapes.
+
+This is the first kjtcom run on tsP3-cos (P3 Ultra).
 
 ## Shell - MANDATORY
 
-- All commands MUST be wrapped in fish -c "..." (G19)
-- Use "command ls" or Python for file listing (G22)
+- All commands in fish shell via fish -c wrappers
+- NEVER cat config.fish (G20)
 
-## Security - ABSOLUTE RULES
+## Security
 
-- NEVER cat or read ~/.config/fish/config.fish (G20)
-- Print only "SET" or "NOT SET" for key checks
-- Violation is a BLOCKING failure
+- grep -rnI "AIzaSy" . before completion
+- Print only SET/NOT SET for key checks
 
-## Transcription - CRITICAL (G18, G21)
+## MCP Tools
 
-- ALL transcription as background job with polling
-- Rick Steves episodes are 30-60 min. Budget ~30 min for 30 videos.
-- ONE process only (G21)
+- Playwright: screenshots + accessibility snapshots
+- Do NOT use Firecrawl (cert issues - G28)
+- Do NOT scrape Panther (G29)
 
-## Re-Extraction Note
+## Scraping Parameters
 
-Step 3 re-extracts ALL 150 RickSteves transcripts (not just 121-150). Use --limit 150. This overwrites previous extracted JSON. Every entity needs the 7 new v3 fields.
+- Desktop: 1440x900 viewport
+- Mobile: 375x812 viewport
+- Timeout: 10s per page (networkidle)
+- Max 3 min per blocked site before moving on
 
 ## Permissions
 
-- CAN: pip install, edit pipeline config files and scripts
 - CANNOT: git add / commit / push
 - CANNOT: sudo
 
-## Database Rules
+## Artifact Rules - MANDATORY
 
-- Do NOT load to Firestore. Phase 7 is Claude Code's job.
-
-## README updates
-
-Also update README.md with these structural changes:
-
-- Rename "Thompson Schema" to "Thompson Indicator Fields" throughout
-- Add a "Data Architecture" section before the indicator fields section explaining the single-collection Firestore design (t_log_type discriminator, array-contains queries, composite indexes, multi-database staging/default, Blaze pricing)
-- Show all 4 pipelines (calgold, ricksteves, tripledb, bourdain) in the Pipelines table with t_log_type column
-- Add an Examples column to the indicator fields table
-- Note that the field convention is enforced by pipeline scripts, not the database
-
-
-## Handoff Protocol
-
-Produce checkpoint at pipeline/data/ricksteves/handoff-v4.13.json with schema_version: 3 and all 7 new_fields listed.
-STOP. Do not proceed to phases 6-7.
+1. docs/kjtcom-build-v6.15.md
+2. docs/kjtcom-report-v6.15.md
+3. docs/kjtcom-changelog.md (append v6.15)
+4. README.md (Phase 6a DONE)
 
 ## Formatting
 

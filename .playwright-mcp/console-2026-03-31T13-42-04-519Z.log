@@ -1,0 +1,4 @@
+[       6ms] [ERROR] Connecting to 'https://privacyportal.onetrust.com/request/v1/consentreceipts' violates the following Content Security Policy directive: "connect-src 'self' geolocation.onetrust.com 120-gkj-051.mktoutil.com 120-gkj-051.mktoresp.com www.google.com googleads.g.doubleclick.net stats.g.doubleclick.net www.google-analytics.com secure.adnxs.com cdn.cookielaw.org api.lever.co vimeo.com https://pagead2.googlesyndication.com googlesyndication.com https://investors.palantir.com https://palantir.com https://px.ads.linkedin.com". The action has been blocked. @ https://cdn.cookielaw.org/scripttemplates/202407.1.0/otBannerSdk.js:6
+[     220ms] [WARNING] Error with Permissions-Policy header: Unrecognized feature: 'window-placement'. @ :0
+[     220ms] [WARNING] Error with Permissions-Policy header: Unrecognized feature: 'browser-topics'. @ :0
+[     415ms] [WARNING] Unrecognized feature: 'web-share'. @ https://www.maltego.com/:1451

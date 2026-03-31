@@ -1,5 +1,11 @@
 # kjtcom - Unified Changelog
 
+**v6.15 (Phase 6a - Discovery)**
+- Scraped 8 public competitor sites via Playwright MCP across Pipeline, Investigation, and Concierge categories.
+- Captured desktop and mobile screenshots plus accessibility snapshots for structural analysis.
+- Selected Geist Sans/Mono (Scanner.dev) as the primary typographic reference.
+- Validated pipeline aesthetics (Monad, Cribl) and editorial polish (Black Tomato) for kjtcom.
+
 **v5.14 (CalGold Phase 5 - Production Run)**
 - Full production run: 390/431 videos processed (41 unavailable on YouTube)
 - 829 entities extracted, 899 unique CalGold entities in Firestore staging
