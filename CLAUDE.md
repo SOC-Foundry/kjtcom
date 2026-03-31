@@ -2,14 +2,21 @@
 
 ## Read Order
 
-1. docs/ricksteves-design-v4.13.md
-2. docs/ricksteves-plan-v4.13.md (execute Section B only)
+1. docs/kjtcom-design-v6.15.md
+2. docs/kjtcom-plan-v6.15.md
+3. All scrape.md files in app/scrape-archive/*/scrape.md
+4. app/design-brief/panther/kjtcom-query-mockup.html
+5. app/scrape-archive/ux-analysis.md
 
 ## Context
 
-Schema v3 migration for RickSteves. Gemini CLI completed schema config changes + phases 1-5 with re-extraction of ALL 150 videos. Verify handoff checkpoint at pipeline/data/ricksteves/handoff-v4.13.json. Confirm schema_version: 3 and 7 new_fields.
+Phase 6b Design Contract. Synthesize the Phase 6a scrape archive into a
+three-file design contract. No code changes to the Flutter app yet.
 
-CRITICAL (G24): Reset enrichment and load checkpoints BEFORE running phases 6-7. The v3.11 checkpoints are stale (schema v2, 120 files). Step 5.5 in the plan covers this.
+PRIMARY DESIGN REFERENCE: Panther SIEM query UX.
+Pre-staged in app/design-brief/panther/ (3 screenshots + 1 HTML mockup).
+The NoSQL query box is a live, real-time frontend to the entire production
+Firestore locations collection. No local copy, no cached subset.
 
 ## Shell - MANDATORY
 
@@ -17,63 +24,37 @@ CRITICAL (G24): Reset enrichment and load checkpoints BEFORE running phases 6-7.
 - All commands in fish shell
 - NEVER cat config.fish (G20)
 
-## Security - ABSOLUTE RULES
+## Security
 
-- grep -rnI "AIzaSy" . before signaling completion
-- Print only "SET" or "NOT SET" for key checks
+- grep -rnI "AIzaSy" . before completion
+- Print only SET/NOT SET for key checks
 
-## Enrichment Note
+## Deliverables
 
-- phase6_enrich.py does NOT accept --database flag
-- phase7_load.py DOES accept --database staging
+Produce the three-file design contract in app/design-brief/:
 
-## CalGold t_any_shows Backfill
+1. app/design-brief/design-tokens.json (colors, typography, spacing, elevation, breakpoints)
+2. app/design-brief/design-brief.md (aesthetic direction, color rules, imagery strategy, tone)
+3. app/design-brief/component-patterns.md (widget blueprints with token references)
 
-After RickSteves load, backfill all CalGold entities with t_any_shows: ["California's Gold"]. Script provided in plan Step 7.5. If it fails, defer -- not blocking.
+Then produce all 4 mandatory artifacts:
+
+1. docs/kjtcom-build-v6.16.md
+2. docs/kjtcom-report-v6.16.md
+3. docs/kjtcom-changelog.md (append v6.16)
+4. README.md (Phase 6b DONE)
 
 ## Permissions
 
-- CAN: flutter build web, firebase deploy
 - CANNOT: git add / commit / push
 - CANNOT: sudo
-
-## Database Rules
-
-- Load to "staging" only
-- fetch-and-merge for array fields
-
-## README updates
-
-Also update README.md with these structural changes:
-
-- Rename "Thompson Schema" to "Thompson Indicator Fields" throughout
-- Add a "Data Architecture" section before the indicator fields section explaining the single-collection Firestore design (t_log_type discriminator, array-contains queries, composite indexes, multi-database staging/default, Blaze pricing)
-- Show all 4 pipelines (calgold, ricksteves, tripledb, bourdain) in the Pipelines table with t_log_type column
-- Add an Examples column to the indicator fields table
-- Note that the field convention is enforced by pipeline scripts, not the database
-
-## Artifact Rules - MANDATORY
-
-1. docs/ricksteves-build-v4.13.md (include checkpoint reset detail, CalGold backfill status)
-2. docs/ricksteves-report-v4.13.md (v3 field population rates, Phase 5 readiness)
-3. docs/kjtcom-changelog.md (append v4.13 at top)
-4. README.md - Use this phase structure:
-
-| Phase | Name | Status | Iteration |
-|-------|------|--------|-----------|
-| 0 | Scaffold & Environment | DONE | v0.5 |
-| 1 | Discovery (30 videos) | DONE | v1.6, v1.7 |
-| 2 | Calibration (60 videos) | DONE | v2.8, v2.9 |
-| 3 | Stress Test (90 videos) | DONE | v3.10, v3.11 |
-| 4 | Validation + Schema v3 | DONE | v4.12, v4.13 |
-| 5 | Production Run | Pending | - |
-| 6 | Flutter App | Pending | - |
-| 7 | Firestore Load | Pending | - |
-| 8 | Enrichment Hardening | Pending | - |
-| 9 | App Optimization | Pending | - |
-| 10 | Retrospective + Template | Pending | - |
 
 ## Formatting
 
 - No em-dashes. Use " - " instead.
 - Use "->" for arrows.
+```
+
+**Launch prompt:**
+```
+Read CLAUDE.md, then read ALL scrape.md files in app/scrape-archive/ and the Panther reference in app/design-brief/panther/. Synthesize everything into the three-file design contract (design-tokens.json, design-brief.md, component-patterns.md) in app/design-brief/. Then produce all 4 mandatory artifacts. Start with reading the scrape archive.

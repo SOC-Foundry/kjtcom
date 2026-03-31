@@ -1,0 +1,135 @@
+{
+  "$schema": "design-tokens-v6.16",
+  "$description": "kjtcom design tokens - synthesized from Panther SIEM reference, 8 competitor scrapes, and locked design decisions. Phase 6b Design Contract.",
+
+  "color": {
+    "surface": {
+      "base": { "value": "#0D1117", "description": "Primary app background (Panther/Monad/GitHub dark)" },
+      "elevated": { "value": "#161B22", "description": "Cards, query editor input area, detail panel fields" },
+      "overlay": { "value": "#1B2838", "description": "Badges, chips, tag backgrounds" },
+      "row-hover": { "value": "#1A2332", "description": "Active/selected table row highlight" },
+      "filter-positive": { "value": "#1B4332", "description": "+filter button background (green tint)" },
+      "filter-negative": { "value": "#3B1B1B", "description": "-exclude button background (red tint)" },
+      "cta": { "value": "#238636", "description": "Search button, primary CTA background" }
+    },
+    "border": {
+      "default": { "value": "#30363D", "description": "Card borders, query editor outline, dividers" },
+      "subtle": { "value": "#21262D", "description": "Table row separators, tab underlines" }
+    },
+    "text": {
+      "primary": { "value": "#E2E8F0", "description": "Headings, entity names, primary content" },
+      "secondary": { "value": "#94A3B8", "description": "Column headers, field labels, metadata" },
+      "muted": { "value": "#6E7681", "description": "Line numbers, placeholder text, disabled states" },
+      "on-cta": { "value": "#FFFFFF", "description": "Text on CTA buttons" }
+    },
+    "accent": {
+      "green": { "value": "#4ADE80", "description": "Logo, entity count, terminal cursor, +filter text" },
+      "blue": { "value": "#58A6FF", "description": "Active tab underline, NoSQL badge, links" },
+      "orange": { "value": "#FFA657", "description": "Numeric values (ratings, coordinates)" },
+      "red": { "value": "#FF7B72", "description": "-exclude text, operator highlighting, error states" }
+    },
+    "syntax": {
+      "field": { "value": "#79C0FF", "description": "Thompson Indicator Field names in query editor" },
+      "operator": { "value": "#FF7B72", "description": "Operators: contains, ==, !=, |" },
+      "value": { "value": "#A5D6FF", "description": "Quoted string values in queries and detail panel" },
+      "keyword": { "value": "#D2A8FF", "description": "Keywords: where, and, or" },
+      "cursor": { "value": "#4ADE80", "description": "Blinking cursor in query editor" }
+    },
+    "pipeline": {
+      "calgold": { "value": "#DA7E12", "description": "California's Gold - gold" },
+      "ricksteves": { "value": "#3B82F6", "description": "Rick Steves' Europe - blue" },
+      "tripledb": { "value": "#DD3333", "description": "Diners, Drive-Ins and Dives - red" },
+      "bourdain": { "value": "#8B5CF6", "description": "Parts Unknown - purple" }
+    },
+    "semantic": {
+      "success": { "value": "#4ADE80", "description": "Positive states, open status" },
+      "warning": { "value": "#FFA657", "description": "Caution states" },
+      "error": { "value": "#FF7B72", "description": "Error states, closed status" },
+      "info": { "value": "#58A6FF", "description": "Informational states" }
+    }
+  },
+
+  "typography": {
+    "family": {
+      "sans": { "value": "'Geist Sans', 'Inter', system-ui, -apple-system, sans-serif", "description": "All UI text - headings, body, labels, navigation" },
+      "mono": { "value": "'Geist Mono', 'JetBrains Mono', 'Fira Code', ui-monospace, monospace", "description": "Query editor, field names, data values, entity detail values" }
+    },
+    "size": {
+      "xs": { "value": "9px", "description": "+filter/-exclude button labels" },
+      "sm": { "value": "10px", "description": "Field labels in detail panel, badge text, chip text" },
+      "base": { "value": "11px", "description": "Column headers, metadata, secondary info" },
+      "md": { "value": "12px", "description": "Table row text, tab labels, entity count" },
+      "lg": { "value": "13px", "description": "Query editor text, line content" },
+      "xl": { "value": "14px", "description": "Section headings (Search, Entity detail)" },
+      "2xl": { "value": "18px", "description": "Logo / app name" }
+    },
+    "weight": {
+      "normal": { "value": "400", "description": "Body text, table rows" },
+      "medium": { "value": "500", "description": "Section labels, tab text, logo, CTA button" }
+    },
+    "line-height": {
+      "tight": { "value": "1.2", "description": "Headings, badges" },
+      "normal": { "value": "1.5", "description": "Body text, table rows" },
+      "relaxed": { "value": "1.75", "description": "Query editor lines" }
+    },
+    "letter-spacing": {
+      "tight": { "value": "-0.01em", "description": "Large headings" },
+      "normal": { "value": "0", "description": "Body text" },
+      "wide": { "value": "0.5px", "description": "Logo, all-caps labels" }
+    }
+  },
+
+  "spacing": {
+    "$base": "4px",
+    "0": { "value": "0px" },
+    "1": { "value": "4px", "description": "Inline gaps, badge padding-y" },
+    "2": { "value": "8px", "description": "Icon gaps, tab padding, row padding-y, inter-field spacing" },
+    "3": { "value": "12px", "description": "Detail panel padding, card internal padding" },
+    "4": { "value": "16px", "description": "Card padding, query editor padding, CTA padding-x" },
+    "5": { "value": "20px", "description": "Header padding" },
+    "6": { "value": "24px", "description": "Section margin, outer content padding (Panther/Scanner standard)" },
+    "8": { "value": "32px", "description": "Section gaps" },
+    "12": { "value": "48px", "description": "Major section spacing (Scanner pattern)" },
+    "16": { "value": "64px", "description": "Hero vertical padding" },
+    "24": { "value": "96px", "description": "Page-level vertical spacing (Monad pattern)" }
+  },
+
+  "radius": {
+    "sm": { "value": "3px", "description": "Badges, pipeline dots, chips" },
+    "md": { "value": "4px", "description": "Tags, small buttons, environment badge" },
+    "lg": { "value": "6px", "description": "Detail panel field cards, CTA button, filter buttons" },
+    "xl": { "value": "8px", "description": "Query editor container, main cards" },
+    "2xl": { "value": "12px", "description": "Outer app container shell" }
+  },
+
+  "elevation": {
+    "none": { "value": "none", "description": "Flat elements (table rows, badges)" },
+    "sm": { "value": "0 1px 2px rgba(0, 0, 0, 0.3)", "description": "Subtle lift for cards in elevated surface" },
+    "md": { "value": "0 4px 12px rgba(0, 0, 0, 0.4)", "description": "Detail panel, dropdown overlays" },
+    "lg": { "value": "0 8px 24px rgba(0, 0, 0, 0.5)", "description": "Modal dialogs, tooltip popovers" }
+  },
+
+  "breakpoint": {
+    "mobile": { "value": "375px", "description": "Phone (iPhone SE baseline)" },
+    "tablet": { "value": "768px", "description": "Tablet / narrow desktop" },
+    "desktop": { "value": "1024px", "description": "Standard desktop - detail panel stacks below on narrower" },
+    "wide": { "value": "1440px", "description": "Full layout with side-by-side results + detail panel (Panther reference viewport)" }
+  },
+
+  "layout": {
+    "max-width": { "value": "1440px", "description": "Maximum content width" },
+    "sidebar-width": { "value": "320px", "description": "Detail panel / JSON viewer width (from Panther mockup)" },
+    "results-columns": {
+      "value": "30px 1fr 100px 100px 80px",
+      "description": "Grid template: dot | NAME | CITY | COUNTRY | SHOW (from HTML mockup)"
+    },
+    "query-line-number-width": { "value": "20px", "description": "Line number gutter in query editor" }
+  },
+
+  "animation": {
+    "cursor-blink": { "value": "1s step-end infinite", "description": "Query editor cursor blink" },
+    "detail-slide": { "value": "200ms ease-out", "description": "Detail panel slide-in from right" },
+    "row-highlight": { "value": "150ms ease", "description": "Table row hover/select transition" },
+    "globe-rotation": { "value": "60s linear infinite", "description": "Background globe slow rotation (Phase 6c)" }
+  }
+}

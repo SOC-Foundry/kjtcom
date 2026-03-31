@@ -1,5 +1,15 @@
 # kjtcom - Unified Changelog
 
+**v6.16 (Phase 6b - Design Contract)**
+- Synthesized Phase 6a scrape archive (8 sites + Panther SIEM) into three-file design contract
+- design-tokens.json: 100+ tokens (colors, typography, spacing, elevation, breakpoints, layout, animation)
+- design-brief.md: aesthetic direction, color rules, imagery strategy, tone, responsive behavior
+- component-patterns.md: 10 widget blueprints with token mappings, interaction patterns, accessibility
+- Locked visual identity: dark SIEM aesthetic (#0D1117 base), Geist Sans/Mono, pipeline-colored dots
+- Defined core interaction patterns: row-select -> detail panel, +filter/-exclude -> query append
+- Zero Flutter code changes. Specification-only phase.
+- Claude Code interventions: 0
+
 **v6.15 (Phase 6a - Discovery)**
 - Scraped 8 public competitor sites via Playwright MCP across Pipeline, Investigation, and Concierge categories.
 - Captured desktop and mobile screenshots plus accessibility snapshots for structural analysis.

@@ -16,7 +16,7 @@ The Thompson Indicator Fields are modeled after [Panther SIEM's](https://docs.pa
 
 Built entirely by LLM agents using IAO (Iterative Agentic Orchestration) - a methodology distilled from 48+ production iterations on [TripleDB](https://github.com/TachTech-Engineering/tripledb).
 
-**kylejeromethompson.com** | **Phase 5.14** | **Status: Phase 5 Production Run - CalGold DONE**
+**kylejeromethompson.com** | **Phase 6b v6.16** | **Status: Phase 6b Design Contract DONE**
 
 ---
 
@@ -260,8 +260,10 @@ Zero Gemini interventions across 4 consecutive iterations. Same model, better ha
 | 4 | Validation + Schema v3 (120 videos) | DONE | v4.12, v4.13 |
 | 5 | Production Run (full datasets) | CalGold DONE | v5.14 |
 | 6a | Flutter App - Discovery | DONE | v6.15 |
-| 6b | Flutter App - Design Contract | Pending | - |
-| 6c | Flutter App - UI Scaffolding | Pending | - |
+| 6b | Flutter App - Design Contract | DONE | v6.16 |
+| 6c | Flutter App - Implementation | Pending | - |
+| 6d | Flutter App - QA | Pending | - |
+| 6e | Flutter App - Deploy | Pending | - |
 | 7 | Firestore Load | Pending | - |
 | 8 | Enrichment Hardening | Pending | - |
 | 9 | App Optimization | Pending | - |
@@ -325,6 +327,17 @@ OS:   CachyOS (Arch-based) / KDE Plasma 6.6.2 / Wayland
 ---
 
 ## Changelog
+
+**v6.16 (Phase 6b - Design Contract)**
+- Synthesized 8-site scrape archive + Panther SIEM into three-file design contract
+- 100+ design tokens, 10 component blueprints, 3 interaction patterns documented
+- Locked visual identity: dark SIEM aesthetic, Geist Sans/Mono, pipeline-colored dots
+- Zero Flutter code changes. Specification-only phase. 0 interventions.
+
+**v6.15 (Phase 6a - Discovery)**
+- Scraped 8 public competitor sites via Playwright MCP (Pipeline, Investigation, Concierge)
+- Selected Geist Sans/Mono as primary typographic reference (Scanner.dev)
+- Validated dark SIEM aesthetic across Panther, Monad, Scanner.dev, GreyNoise
 
 **v5.14 (CalGold Phase 5 - Production Run)**
 - Full production run: 390/431 videos, 829 entities, 899 unique in staging
