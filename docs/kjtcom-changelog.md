@@ -1,5 +1,27 @@
 # kjtcom - Unified Changelog
 
+**v6.18 (Phase 6d - QA)**
+- Executed multi-viewport visual audit (1440x900, 768x1024, 375x812) using Playwright MCP
+- Validated responsive layout shifts: query editor full-width on mobile, table columns hidden on tablet/mobile
+- Completed Lighthouse compliance audit: Accessibility 0.92 (PASS >= 0.90), SEO 1.0 (PASS >= 0.90)
+- Confirmed design contract adherence: dark SIEM aesthetic (#0D1117), Geist font stack, green terminal accents
+- Verified SIEM-style information density and "Investigate"/"staging" status tone
+- Benchmarked initialization performance: 7.7s - 14.1s FCP (standard Flutter bootstrap overhead)
+- Produced Phase 6d mandatory artifacts: build, report, and screenshots
+- Gemini CLI interventions: 0
+
+**v6.17 (Phase 6c - Implementation)**
+- Built Flutter Web app from Phase 6b design contract: 12 Dart files, 8 widget components
+- Geist Sans + Geist Mono fonts bundled from npm (geist@1.7.0, SIL OFL)
+- Syntax-highlighted query editor with 5-color tokenizer (field/operator/value/keyword/collection)
+- Results table: 5-column grid with pipeline-colored dots, responsive column hiding
+- Entity detail panel: t_any_* field cards with +filter/-exclude buttons -> query append
+- Riverpod state: queryProvider, resultsProvider (Firestore stream), selectedEntityProvider
+- Firestore query: server-side arrayContains + client-side filtering for multi-clause queries
+- flutter analyze: 0 issues. flutter build web: success. flutter test: 3/3 pass
+- Firebase web app registered (flutterfire configure). App ID: 1:703812044891:web:84b2df9330066bfbe6177e
+- Claude Code interventions: 1 (Firebase auth - user resolved)
+
 **v6.16 (Phase 6b - Design Contract)**
 - Synthesized Phase 6a scrape archive (8 sites + Panther SIEM) into three-file design contract
 - design-tokens.json: 100+ tokens (colors, typography, spacing, elevation, breakpoints, layout, animation)

@@ -16,7 +16,7 @@ The Thompson Indicator Fields are modeled after [Panther SIEM's](https://docs.pa
 
 Built entirely by LLM agents using IAO (Iterative Agentic Orchestration) - a methodology distilled from 48+ production iterations on [TripleDB](https://github.com/TachTech-Engineering/tripledb).
 
-**kylejeromethompson.com** | **Phase 6b v6.16** | **Status: Phase 6b Design Contract DONE**
+**kylejeromethompson.com** | **Phase 6d v6.18** | **Status: Phase 6d QA DONE**
 
 ---
 
@@ -261,8 +261,8 @@ Zero Gemini interventions across 4 consecutive iterations. Same model, better ha
 | 5 | Production Run (full datasets) | CalGold DONE | v5.14 |
 | 6a | Flutter App - Discovery | DONE | v6.15 |
 | 6b | Flutter App - Design Contract | DONE | v6.16 |
-| 6c | Flutter App - Implementation | Pending | - |
-| 6d | Flutter App - QA | Pending | - |
+| 6c | Flutter App - Implementation | DONE | v6.17 |
+| 6d | Flutter App - QA | DONE | v6.18 |
 | 6e | Flutter App - Deploy | Pending | - |
 | 7 | Firestore Load | Pending | - |
 | 8 | Enrichment Hardening | Pending | - |
@@ -327,6 +327,23 @@ OS:   CachyOS (Arch-based) / KDE Plasma 6.6.2 / Wayland
 ---
 
 ## Changelog
+
+**v6.18 (Phase 6d - QA)**
+- Executed multi-viewport visual audit (1440x900, 768x1024, 375x812) using Playwright MCP
+- Validated responsive layout shifts: query editor full-width on mobile, table columns hidden on tablet/mobile
+- Completed Lighthouse compliance audit: Accessibility 0.92 (PASS >= 0.90), SEO 1.0 (PASS >= 0.90)
+- Confirmed design contract adherence: dark SIEM aesthetic (#0D1117), Geist font stack, green terminal accents
+- Verified SIEM-style information density and "Investigate"/"staging" status tone
+- Benchmarked initialization performance: 7.7s - 14.1s FCP (standard Flutter bootstrap overhead)
+- Produced Phase 6d mandatory artifacts: build, report, and screenshots
+- Gemini CLI interventions: 0
+
+**v6.17 (Phase 6c - Implementation)**
+- Built Flutter Web app: 12 Dart files, 8 widgets, Geist Sans/Mono bundled
+- Syntax-highlighted query editor, results table with pipeline dots, detail panel with +filter/-exclude
+- Riverpod state + Firestore stream provider (arrayContains + client-side filtering)
+- flutter analyze: 0 issues. flutter build web: success. 3/3 tests pass.
+- Firebase web app registered via flutterfire configure. 1 intervention (Firebase auth).
 
 **v6.16 (Phase 6b - Design Contract)**
 - Synthesized 8-site scrape archive + Panther SIEM into three-file design contract
