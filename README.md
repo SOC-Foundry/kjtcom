@@ -16,7 +16,7 @@ The Thompson Indicator Fields are modeled after [Panther SIEM's](https://docs.pa
 
 Built entirely by LLM agents using IAO (Iterative Agentic Orchestration) - a methodology distilled from 48+ production iterations on [TripleDB](https://github.com/TachTech-Engineering/tripledb).
 
-**kylejeromethompson.com** | **Phase 4.13** | **Status: Phase 4 Validation + Schema v3 Complete (Both Pipelines)**
+**kylejeromethompson.com** | **Phase 5.14** | **Status: Phase 5 Production Run - CalGold DONE**
 
 ---
 
@@ -115,7 +115,7 @@ The Thompson Indicator Fields provide universal indicator fields across all pipe
 
 | Pipeline (`t_log_type`) | Source | Entity Type | Videos | Entities | Status |
 |-------------------------|--------|-------------|--------|----------|--------|
-| `calgold` | California's Gold (Huell Howser) | landmark | 431 | 412 | Phase 4 Validation Complete (Schema v3) |
+| `calgold` | California's Gold (Huell Howser) | landmark | 390 | 899 | Phase 5 Production Run DONE |
 | `ricksteves` | Rick Steves' Europe | destination | 1,865 | 1,035 | Phase 4 Validation Complete (Schema v3) |
 | `tripledb` | Diners, Drive-Ins and Dives | restaurant | 805 | - | Migration candidate |
 | `bourdain` | Anthony Bourdain: Parts Unknown | destination | 104 | - | Pending onboarding |
@@ -190,11 +190,46 @@ kjtcom/
 
 ## IAO Methodology
 
-This project is built using **Iterative Agentic Orchestration (IAO)** - a development methodology where LLM agents execute project phases autonomously while humans review versioned artifacts between iterations. Distilled from 48 production iterations on [TripleDB](https://github.com/TachTech-Engineering/tripledb).
+kjtcom is built using the Iterative Agentic Orchestration (IAO) methodology - a structured approach to running AI coding agents (Claude Code, Gemini CLI) against multi-phase data pipelines with zero-to-minimal human intervention. Distilled from 48+ production iterations on [TripleDB](https://github.com/TachTech-Engineering/tripledb).
+
+IAO maps directly to the "harness engineering" pattern formalized by LangChain, Anthropic, and the broader agent ecosystem in 2026. The core principle: the model contains the intelligence; the harness makes it useful.
+
+### IAO Components
+
+| Component | Purpose | Implementation |
+|-----------|---------|----------------|
+| Agent Instructions | System prompt per agent | CLAUDE.md, GEMINI.md |
+| Pipeline Scripts | Tool definitions | phase1_acquire.py through phase7_load.py |
+| Gotcha Registry | Executable middleware (failure prevention) | G1-G25 documented patterns |
+| Checkpoint Files | State persistence across agent handoffs | .checkpoint_enrich.json, handoff JSON |
+| 4-Artifact Output | Trace analysis and improvement loop | build log, report, changelog, README |
+| Split-Agent Model | Cross-provider subagent delegation | Gemini CLI (phases 1-5) + Claude Code (phases 6-7) |
+
+### Split-Agent Execution
+
+kjtcom uses a two-agent model validated across 5+ iterations with decreasing interventions:
+
+- **Gemini CLI** (`gemini --yolo`): Phases 1-5 (acquire, transcribe, extract, normalize, geocode). Free-tier execution for mechanical pipeline work.
+- **Claude Code** (`claude --dangerously-skip-permissions`): Phases 6-7 (enrich, load to Firestore) + post-flight validation and artifact production.
+- **tmux runner** (`group_b_runner.sh`): Unattended production runs (Phase 5+) replace Gemini CLI for phases 1-5 when no agent reasoning is needed.
+- **Handoff:** Gemini produces a checkpoint JSON consumed by Claude. Cross-provider subagent delegation.
+
+**Agent performance across iterations:**
+
+| Iteration | Phases 1-5 Executor | Ph 1-5 Interventions | Claude Interventions |
+|-----------|---------------------|---------------------|---------------------|
+| v2.9 | Gemini CLI | 3 | N/A (Gemini only) |
+| v3.10 | Gemini CLI | 0 | 0 |
+| v3.11 | Gemini CLI | 0 | 0 |
+| v4.12 | Gemini CLI | 0 | 1 |
+| v4.13 | Gemini CLI | 0 | 1 |
+| v5.14 | tmux | 1 (CUDA OOM) | 0 |
+
+Zero Gemini interventions across 4 consecutive iterations. Same model, better harness.
 
 ### The Nine Pillars
 
-**Pillar 1 - Artifact Loop.** Every iteration produces five artifacts: design doc (living architecture), plan (execution steps), build log (session transcript), report (metrics + orchestration), changelog (versioned snapshot). Previous artifacts archive to `docs/archive/`. Agents never see outdated instructions.
+**Pillar 1 - Artifact Loop.** Every iteration produces four artifacts: design doc (living architecture), plan (execution steps), build log (session transcript), report (metrics + orchestration). Previous artifacts archive to `docs/archive/`. Agents never see outdated instructions.
 
 **Pillar 2 - Agentic Orchestration.** The primary agent (Claude Code or Gemini CLI) orchestrates LLMs, MCP servers, scripts, APIs, and sub-agents. Agents CAN build and deploy. Agents CANNOT git commit or sudo. The human commits at phase boundaries.
 
@@ -222,8 +257,8 @@ This project is built using **Iterative Agentic Orchestration (IAO)** - a develo
 | 1 | Discovery (30 videos) | DONE | v1.6, v1.7 |
 | 2 | Calibration (60 videos) | DONE | v2.8, v2.9 |
 | 3 | Stress Test (90 videos) | DONE | v3.10, v3.11 |
-| 4 | Validation + Schema v3 | DONE | v4.12, v4.13 |
-| 5 | Production Run | Pending | - |
+| 4 | Validation + Schema v3 (120 videos) | DONE | v4.12, v4.13 |
+| 5 | Production Run (full datasets) | CalGold DONE | v5.14 |
 | 6 | Flutter App | Pending | - |
 | 7 | Firestore Load | Pending | - |
 | 8 | Enrichment Hardening | Pending | - |
@@ -288,6 +323,12 @@ OS:   CachyOS (Arch-based) / KDE Plasma 6.6.2 / Wayland
 ---
 
 ## Changelog
+
+**v5.14 (CalGold Phase 5 - Production Run)**
+- Full production run: 390/431 videos, 829 entities, 899 unique in staging
+- Geocoding: 95%, Enrichment: 95%, Schema v3: 100%
+- tmux 2-pass execution (600s + 1200s). 1 intervention (CUDA OOM recovery)
+- Total platform: 1,934 entities (899 CalGold + 1,035 RickSteves)
 
 **v4.13 (RickSteves Phase 4 - Validation + Schema v3)**
 - Schema v3 migration: 7 new t_any_* fields including t_any_shows

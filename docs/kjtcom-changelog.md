@@ -1,5 +1,16 @@
 # kjtcom - Unified Changelog
 
+**v5.14 (CalGold Phase 5 - Production Run)**
+- Full production run: 390/431 videos processed (41 unavailable on YouTube)
+- 829 entities extracted, 899 unique CalGold entities in Firestore staging
+- tmux graduated timeout passes: 600s (109 transcripts, CUDA OOM) + 1200s (281 remaining, clean)
+- Geocoding: 31% Nominatim -> 95% after Google Places coordinate backfill (538 backfilled)
+- Enrichment: 95% via Google Places (795/829)
+- Schema v3: 100%. Actors 100%, continents 100%, eras 76%
+- t_any_shows backfill: 899/899 CalGold entities updated with ["California's Gold"]
+- tmux interventions: 1 (CUDA OOM, checkpoint recovery). Claude Code interventions: 0
+- Total platform: 1,934 entities (899 CalGold + 1,035 RickSteves)
+
 **v4.13 (RickSteves Phase 4 - Validation + Schema v3)**
 - Schema v3 migration: 7 new t_any_* fields (actors, roles, shows, cuisines, dishes, eras, continents)
 - Videos 121-150 acquired/transcribed (30 new). ALL 150 re-extracted with v3 prompt
