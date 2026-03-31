@@ -1,0 +1,7 @@
+=== CALGOLD PRODUCTION QUALITY REPORT ===
+Total geocoded files: 390
+Total entities: 829
+Geocoded: 257 (31%)
+Schema v3: 829 (100%)
+Has actors: 829 (100%)
+Has continents: 829 (100%)
