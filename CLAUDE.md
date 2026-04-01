@@ -2,32 +2,39 @@
 
 ## Read Order
 
-1. docs/kjtcom-report-v6.18.md (QA results)
-2. docs/kjtcom-design-v6.15.md (Architecture Decisions)
+1. docs/kjtcom-design-v7.21.md (schema mapping specification)
+2. docs/kjtcom-plan-v7.21.md (execute Section B)
 
 ## Context
 
-Phase 6e Deploy. Deploy the Flutter Web app to Firebase Hosting at
-kylejeromethompson.com. Domain is already verified (A record + TXT record
-confirmed in Firebase Console).
+Phase 7 Firestore Load. Two tasks:
+1. Migrate ~1,100 TripleDB restaurants from external Firestore project
+   to kjtcom production locations collection (Option 4: schema mapping)
+2. Copy 1,934 CalGold + RickSteves entities from staging to production
 
-## Tasks
-
-1. flutter build web --release
-2. firebase deploy --only hosting (project: kjtcom-c78cd)
-3. Verify deployment at kylejeromethompson.com
-4. Add Google Analytics (GA4) - Firebase console integration or gtag.js in index.html
-5. Cross-browser smoke test (Chrome, Firefox)
+TripleDB SA credentials are at ~/.config/gcloud/tripledb-sa.json
+kjtcom SA credentials are at $GOOGLE_APPLICATION_CREDENTIALS
+TripleDB project ID: TRIPLEDB_PROJECT_ID (replace with actual)
+kjtcom project ID: kjtcom-c78cd
 
 ## Shell - MANDATORY
 
 - All commands in fish shell
-- NEVER cat config.fish (G20)
+- NEVER cat config.fish or SA JSON files (G20, G11)
 
 ## Security
 
 - grep -rnI "AIzaSy" . before completion
+- NEVER print SA credentials or API keys
 - Print only SET/NOT SET for key checks
+
+## Migration Script Requirements
+
+- migrate_tripledb.py: --dry-run, --limit, --project, --sa-path flags
+- migrate_staging_to_production.py: simple copy, no transformation
+- Batch writes (500 docs per batch) for both scripts
+- Deterministic t_row_id for dedup safety (G33)
+- Print summary with field population rates after each migration
 
 ## Permissions
 
@@ -36,17 +43,12 @@ confirmed in Firebase Console).
 
 ## Artifact Rules - MANDATORY
 
-1. docs/kjtcom-build-v6.19.md
-2. docs/kjtcom-report-v6.19.md
-3. docs/kjtcom-changelog.md (append v6.19)
-4. README.md (Phase 6e DONE)
+1. docs/kjtcom-build-v7.21.md
+2. docs/kjtcom-report-v7.21.md
+3. docs/kjtcom-changelog.md (append v7.21)
+4. README.md (Phase 7 DONE, updated entity counts)
 
 ## Formatting
 
 - No em-dashes. Use " - " instead.
 - Use "->" for arrows.
-```
-
-**Prompt:**
-```
-Read CLAUDE.md. Build the Flutter web release, deploy to Firebase Hosting (project kjtcom-c78cd), verify at kylejeromethompson.com, add Google Analytics (GA4), and produce all 4 mandatory artifacts for v6.19.

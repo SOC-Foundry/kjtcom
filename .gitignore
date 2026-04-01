@@ -26,3 +26,27 @@ __pycache__/
 # Keys
 *.key
 *.pem
+
+# Editor swap files
+*.kate-swp
+*.swp
+
+# Logs
+*.log
+
+# Playwright MCP artifacts
+.playwright-mcp/
+
+# IDE
+app/.idea/
+app/.metadata
+app/.flutter-plugins-dependencies
+app/*.iml
+
+# Cloud Functions build output
+functions/lib/
+
+# Scratch files
+audios.txt
+transcripts.txt
+update_readme.py

@@ -8,7 +8,7 @@
   "entity_type": "landmark",
   "icon": "castle",
   "color": "#C4A000",
-  "t_schema_version": 1,
+  "t_schema_version": 3,
   "stages": [
     "acquire",
     "transcribe",

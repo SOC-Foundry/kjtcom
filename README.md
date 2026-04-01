@@ -484,14 +484,3 @@ If you find the IAO methodology or Thompson Indicator Fields useful:
   url={https://github.com/TachTech-Engineering/tripledb}
 }
 ```
-Thompson Indicator Fields useful:
-
-```
-@misc{thompson2026iao,
-  title={Iterative Agentic Orchestration: A Methodology for Agent-Driven Software Projects},
-  author={Kyle Thompson},
-  year={2026},
-  organization={TachTech Engineering},
-  url={https://github.com/TachTech-Engineering/tripledb}
-}
-```

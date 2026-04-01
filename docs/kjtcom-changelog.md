@@ -118,6 +118,15 @@
 - First successful split-agent execution with handoff checkpoint protocol
 - Total platform: 777 entities (218 CalGold + 559 RickSteves) across 29 countries
 
+**v2.9 (RickSteves Phase 2 - Calibration)**
+- Videos 31-90 processed via Gemini CLI (first Gemini execution on kjtcom)
+- 494 new entities, 559 total RickSteves entities across 29 countries
+- Geocoding: 99% (Nominatim + Places backfill)
+- Enrichment: 99% via Google Places
+- Dedup merges: 95 entities with multiple visits (implemented array merge in phase7_load.py)
+- 3 interventions (LD_LIBRARY_PATH fix, transcription timeouts, load logic merge)
+- Total platform: 777 entities (218 CalGold + 559 RickSteves)
+
 **v2.8 (CalGold Phase 2 - Calibration)**
 - Videos 31-60 processed: 60/60/60 (acquired/transcribed/extracted)
 - 162 new entities, 218 total CalGold entities after dedup
@@ -151,13 +160,3 @@
 - Repo, Firebase, multi-database, Thompson Schema, pipeline config
 - 431 CalGold playlist URLs validated
 - Cloud Functions search endpoint deployed
-
-**v2.9 (RickSteves Phase 2 - Calibration)**
-- Videos 31-90 processed via Gemini CLI (first Gemini execution on kjtcom)
-- 494 new entities, 559 total RickSteves entities across 29 countries
-- Geocoding: 99% (Nominatim + Places backfill)
-- Enrichment: 99% via Google Places
-- Dedup merges: 95 entities with multiple visits (implemented array merge in phase7_load.py)
-- 3 interventions (LD_LIBRARY_PATH fix, transcription timeouts, load logic merge)
-- Total platform: 777 entities (218 CalGold + 559 RickSteves)
-

@@ -8,7 +8,7 @@
   "entity_type": "destination",
   "icon": "location_city",
   "color": "#1565C0",
-  "t_schema_version": 2,
+  "t_schema_version": 3,
   "stages": ["acquire", "transcribe", "extract", "normalize", "geocode", "enrich", "load"],
   "enrichment_sources": ["nominatim", "google_places"],
   "database_target": "staging"
