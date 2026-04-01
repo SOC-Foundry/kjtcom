@@ -1,5 +1,27 @@
 # kjtcom - Unified Changelog
 
+**v6.20 (Phase 6e - Visual Polish)**
+- Closed 5 visual gaps between HTML mockup and deployed Flutter app
+- Added globe_hero.jpg background at 15% opacity (replaces gradient placeholder)
+- Added rotating example queries (5 queries, 6s cycle) showcasing all 5 syntax highlight colors
+- Added blinking green cursor underscore on empty last line (530ms interval)
+- Added animated count-up for entity and country counts (600ms easeOut)
+- Fixed Riverpod ref.listen timing race: provider initial value now matches first example query
+- Pipeline-colored dots confirmed working (implemented in v6.17, no change needed)
+- flutter analyze: 0 issues. flutter test: 3/3 pass. Console errors: 0
+- Claude Code interventions: 0
+
+**v6.19 (Phase 6e - Deploy)**
+- Deployed Flutter Web app to Firebase Hosting at kylejeromethompson.com
+- Build: flutter build web --release (16.9s, 39 files, CanvasKit renderer)
+- Firebase deploy: 39 files to kjtcom-c78cd hosting
+- Added Google Analytics (GA4) via gtag.js (Measurement ID: G-JMVEJLW9PC)
+- Chrome smoke test: full SIEM UI render, 0 console errors
+- Firefox smoke test: page loads (correct title, 0 errors); canvas blank in headless (known CanvasKit limitation)
+- Security scan: Firebase Web API key only (public client key, expected)
+- Phase 6 (Flutter App) complete across all 5 sub-phases (6a-6e)
+- Claude Code interventions: 0
+
 **v6.18 (Phase 6d - QA)**
 - Executed multi-viewport visual audit (1440x900, 768x1024, 375x812) using Playwright MCP
 - Validated responsive layout shifts: query editor full-width on mobile, table columns hidden on tablet/mobile

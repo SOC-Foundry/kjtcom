@@ -16,7 +16,7 @@ The Thompson Indicator Fields are modeled after [Panther SIEM's](https://docs.pa
 
 Built entirely by LLM agents using IAO (Iterative Agentic Orchestration) - a methodology distilled from 48+ production iterations on [TripleDB](https://github.com/TachTech-Engineering/tripledb).
 
-**kylejeromethompson.com** | **Phase 6d v6.18** | **Status: Phase 6d QA DONE**
+**kylejeromethompson.com** | **Phase 6e v6.20** | **Status: Phase 6e Deploy DONE**
 
 ---
 
@@ -227,25 +227,32 @@ kjtcom uses a two-agent model validated across 5+ iterations with decreasing int
 
 Zero Gemini interventions across 4 consecutive iterations. Same model, better harness.
 
-### The Nine Pillars
+### The Eight Pillars
 
-**Pillar 1 - Artifact Loop.** Every iteration produces four artifacts: design doc (living architecture), plan (execution steps), build log (session transcript), report (metrics + orchestration). Previous artifacts archive to `docs/archive/`. Agents never see outdated instructions.
+**Pillar 1 - Artifact Loop.** Every iteration produces four artifacts: design doc (living architecture), plan (execution steps), build log (session transcript), report (metrics + recommendation). Previous artifacts archive to `docs/archive/`. Agents never see outdated instructions. Artifacts are the trace system - build is the trace, report is the analysis, design is the state, plan is the next action.
 
-**Pillar 2 - Agentic Orchestration.** The primary agent (Claude Code or Gemini CLI) orchestrates LLMs, MCP servers, scripts, APIs, and sub-agents. Agents CAN build and deploy. Agents CANNOT git commit or sudo. The human commits at phase boundaries.
+**Pillar 2 - Pre-Flight Verification.** Before execution begins, validate: previous docs archived, new design + plan in place, agent instructions updated, git clean, API keys set, build tools verified. Pre-flight failures are the cheapest failures. Catch them before the agent launches.
 
-**Pillar 3 - Zero-Intervention Target.** Every question the agent asks during execution is a failure in the plan document. Pre-answer every decision point. Measure plan quality by counting interventions - zero is the floor.
+**Pillar 3 - Agentic Harness Orchestration.** The primary agent (Claude Code or Gemini CLI) orchestrates LLMs, MCP servers, scripts, APIs, and sub-agents within a structured harness. Agent instructions are system prompts. Pipeline scripts are tools. Gotchas are middleware. Checkpoints are state persistence. Agents CAN build and deploy. Agents CANNOT git commit or sudo. The human commits at phase boundaries.
 
-**Pillar 4 - Pre-Flight Verification.** Before execution begins, validate: previous docs archived, new design + plan in place, agent instructions updated, git clean, API keys set, build tools verified.
+**Pillar 4 - Zero-Intervention Target.** Every question the agent asks during execution is a failure in the plan document. Pre-answer every decision point. Execute agents in YOLO mode, trust but verify. Measure plan quality by counting interventions - zero is the floor.
 
-**Pillar 5 - Self-Healing Execution.** Errors are inevitable. Diagnose -> fix -> re-run. Max 3 attempts per error, then log and skip. Checkpoint after every completed step for crash recovery.
+**Pillar 5 - Self-Healing Execution.** Errors are inevitable. Diagnose -> fix -> re-run. Max 3 attempts per error, then log and skip. Checkpoint after every completed step for crash recovery. Gotcha registry documents known failure patterns with prevention rules so the same error never causes an intervention twice.
 
-**Pillar 6 - Progressive Batching.** Start small. Graduate to production scale only after the small batch achieves zero interventions. 30 -> 100 -> 250 -> full dataset.
+**Pillar 6 - Phase Graduation.** Four iterative phases progressively harden the pipeline harness until production requires zero agent intervention. Each phase increases batch size while decreasing interventions. When validation achieves zero interventions, the production run executes as a non-agentic process (tmux, bash, cron) - same scripts, no agent reasoning. The agent built the harness; the harness runs the work.
+```
+Discovery (30)     -> learn failure modes, write gotchas
+Calibration (60)   -> tune prompts, fix edge cases
+Stress Test (90)   -> prove stability at scale
+Validation (120)   -> lock schema, lock prompts, zero interventions
+                        |
+                        v
+Production (full)  -> tmux, unattended, no agent needed
+```
 
 **Pillar 7 - Post-Flight Functional Testing.** Three tiers: Tier 1 (app bootstraps, console clean, changelog verified), Tier 2 (iteration-specific automated playbook), Tier 3 (hardening audit - Lighthouse, security headers, browser compat).
 
-**Pillar 8 - Platform Constraints.** Flutter Web + Firebase (Blaze) + Cloud Functions. Google Places enrichment. Nominatim geocoding. CachyOS / fish shell. The non-negotiable architectural decisions that shape every tool choice.
-
-**Pillar 9 - Continuous Improvement.** The methodology evolves alongside the project. Archive reviews, tool efficacy reports, technology radar, retrospectives. Static processes atrophy.
+**Pillar 8 - Continuous Improvement.** The methodology evolves alongside the project. Retrospectives, gotcha registry reviews, tool efficacy reports. The harness that worked for 30 videos may not work for 1,800. Static processes atrophy.
 
 ---
 
@@ -263,7 +270,7 @@ Zero Gemini interventions across 4 consecutive iterations. Same model, better ha
 | 6b | Flutter App - Design Contract | DONE | v6.16 |
 | 6c | Flutter App - Implementation | DONE | v6.17 |
 | 6d | Flutter App - QA | DONE | v6.18 |
-| 6e | Flutter App - Deploy | Pending | - |
+| 6e | Flutter App - Deploy | DONE | v6.19 |
 | 7 | Firestore Load | Pending | - |
 | 8 | Enrichment Hardening | Pending | - |
 | 9 | App Optimization | Pending | - |
@@ -327,6 +334,21 @@ OS:   CachyOS (Arch-based) / KDE Plasma 6.6.2 / Wayland
 ---
 
 ## Changelog
+
+**v6.20 (Phase 6e - Visual Polish)**
+- Closed 5 visual gaps between HTML mockup and deployed Flutter app
+- Globe hero background (globe_hero.jpg at 15% opacity), rotating example queries, blinking cursor
+- Animated count-up for entity/country counts, all 5 syntax highlight colors visible on load
+- Claude Code interventions: 0
+
+**v6.19 (Phase 6e - Deploy)**
+- Deployed Flutter Web app to Firebase Hosting at kylejeromethompson.com
+- Build: flutter build web --release (16.9s, 39 files, CanvasKit renderer)
+- Added Google Analytics (GA4) via gtag.js (Measurement ID: G-JMVEJLW9PC)
+- Chrome smoke test: full SIEM UI render, 0 console errors
+- Firefox smoke test: page loads (correct title, 0 errors); canvas blank in headless (known CanvasKit limitation)
+- Phase 6 (Flutter App) complete across all 5 sub-phases (6a-6e)
+- Claude Code interventions: 0
 
 **v6.18 (Phase 6d - QA)**
 - Executed multi-viewport visual audit (1440x900, 768x1024, 375x812) using Playwright MCP
