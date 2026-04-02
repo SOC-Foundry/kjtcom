@@ -16,7 +16,7 @@ The Thompson Indicator Fields are modeled after [Panther SIEM's](https://docs.pa
 
 Built entirely by LLM agents using IAO (Iterative Agentic Orchestration) - a methodology distilled from 48+ production iterations on [TripleDB](https://github.com/TachTech-Engineering/tripledb).
 
-**kylejeromethompson.com** | **Phase 6e v6.20** | **Status: Phase 6e Deploy DONE**
+**kylejeromethompson.com** | **Phase 7 v7.21** | **Status: Phase 7 Firestore Load DONE**
 
 ---
 
@@ -115,9 +115,9 @@ The Thompson Indicator Fields provide universal indicator fields across all pipe
 
 | Pipeline (`t_log_type`) | Source | Entity Type | Videos | Entities | Status |
 |-------------------------|--------|-------------|--------|----------|--------|
-| `calgold` | California's Gold (Huell Howser) | landmark | 390 | 899 | Phase 5 Production Run DONE |
-| `ricksteves` | Rick Steves' Europe | destination | 1,865 | 1,035 | Phase 4 Validation Complete (Schema v3) |
-| `tripledb` | Diners, Drive-Ins and Dives | restaurant | 805 | - | Migration candidate |
+| `calgold` | California's Gold (Huell Howser) | landmark | 390 | 899 | Phase 7 Production DONE |
+| `ricksteves` | Rick Steves' Europe | destination | 1,865 | 4,182 | Phase 7 Production DONE |
+| `tripledb` | Diners, Drive-Ins and Dives | restaurant | 805 | 1,100 | Phase 7 Production DONE |
 | `bourdain` | Anthony Bourdain: Parts Unknown | destination | 104 | - | Pending onboarding |
 
 Each pipeline requires only 4 config files - no code changes to shared scripts:
@@ -271,7 +271,7 @@ Production (full)  -> tmux, unattended, no agent needed
 | 6c | Flutter App - Implementation | DONE | v6.17 |
 | 6d | Flutter App - QA | DONE | v6.18 |
 | 6e | Flutter App - Deploy | DONE | v6.19 |
-| 7 | Firestore Load | Pending | - |
+| 7 | Firestore Load | DONE | v7.21 |
 | 8 | Enrichment Hardening | Pending | - |
 | 9 | App Optimization | Pending | - |
 | 10 | Retrospective + Template | Pending | - |
@@ -334,6 +334,13 @@ OS:   CachyOS (Arch-based) / KDE Plasma 6.6.2 / Wayland
 ---
 
 ## Changelog
+
+**v7.21 (Phase 7 - Firestore Load + TripleDB Migration)**
+- 3 pipelines live in production: 6,181 entities (899 CalGold + 4,182 RickSteves + 1,100 TripleDB)
+- TripleDB: cross-project Admin SDK migration from tripledb-e0f77, full schema v3 mapping
+- TripleDB field rates: cuisines 100%, dishes 100%, actors 100%, coordinates 91%
+- 14 Google Places enrichment fields carried forward (G31), deterministic dedup (G33)
+- Claude Code interventions: 0
 
 **v6.20 (Phase 6e - Visual Polish)**
 - Closed 5 visual gaps between HTML mockup and deployed Flutter app

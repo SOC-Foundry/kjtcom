@@ -5,7 +5,7 @@
 **Iteration:** 21 (global counter)
 **Executor:** Claude Code (schema mapping script + staging migration)
 **Machine:** tsP3-cos (ThinkStation P3 Ultra SFF G2)
-**Date:** March 2026
+**Date:** April 2026
 
 ---
 
@@ -13,10 +13,10 @@
 
 Populate the production (default) Firestore `locations` collection with data from two sources:
 
-1. **CalGold + RickSteves (staging -> production):** Copy 1,934 entities already in Thompson Indicator Fields format from the staging database to the production (default) database.
+1. **CalGold + RickSteves (staging -> production):** Copy 5,081 entities already in Thompson Indicator Fields format from the staging database to the production (default) database.
 2. **TripleDB (cross-project import):** Read ~1,100 restaurant documents from TripleDB's Firestore project, transform to Thompson Indicator Fields schema v3, and write to kjtcom's production `locations` collection.
 
-After this iteration, kylejeromethompson.com will display ~3,000+ entities from 3 pipelines (CalGold, RickSteves, TripleDB) with zero app-side changes. The live Firestore frontend decision from v6.15 makes this possible - new data surfaces immediately.
+After this iteration, kylejeromethompson.com will display ~6,200+ entities from 3 pipelines (CalGold, RickSteves, TripleDB) with zero app-side changes. The live Firestore frontend decision from v6.15 makes this possible - new data surfaces immediately.
 
 ---
 
@@ -36,7 +36,7 @@ After this iteration, kylejeromethompson.com will display ~3,000+ entities from 
 
 ## Source: TripleDB Firestore Schema
 
-**Project:** TachTech-Engineering/tripledb (separate Firebase project)
+**Project:** TachTech-Engineering/tripledb-e0f77 (separate Firebase project)
 **Collection:** `restaurants`
 **Document count:** ~1,100+
 **Pipeline status:** v6.28 (production run complete, enrichment done)
@@ -152,7 +152,7 @@ After this iteration, kylejeromethompson.com will display ~3,000+ entities from 
 
 **Database:** kjtcom-c78cd, database "staging"
 **Collection:** `locations`
-**Document count:** 1,934 (899 CalGold + 1,035 RickSteves)
+**Document count:** 5,081 (899 CalGold + 4,182 RickSteves)
 **Schema:** Thompson Indicator Fields v3 (no transformation needed)
 
 Migration is a direct copy: read from staging, write to production (default). Preserve all fields exactly.
@@ -181,9 +181,9 @@ Firestore auto-creates single-field indexes. Composite indexes are created via `
 | Criteria | Target |
 |----------|--------|
 | CalGold entities in production | 899 |
-| RickSteves entities in production | 1,035 |
+| RickSteves entities in production | 4,182 |
 | TripleDB entities in production | ~1,100+ |
-| Total entities in production | ~3,034+ |
+| Total entities in production | ~6,281+ |
 | t_log_type values | calgold, ricksteves, tripledb |
 | t_schema_version | 3 on all entities |
 | t_any_shows values | California's Gold, Rick Steves' Europe, Diners Drive-Ins and Dives |

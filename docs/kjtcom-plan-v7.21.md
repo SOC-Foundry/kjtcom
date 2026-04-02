@@ -5,7 +5,7 @@
 **Iteration:** 21 (global counter)
 **Executor:** Claude Code (migration script)
 **Machine:** tsP3-cos (ThinkStation P3 Ultra SFF G2)
-**Date:** March 2026
+**Date:** April 2026
 
 ---
 
@@ -37,7 +37,7 @@ grep "project_id" ~/.config/gcloud/tripledb-sa.json
 # Expected: something like "tripledb-xxxxx" or the actual project ID
 ```
 
-Record the project ID - the plan references it as `TRIPLEDB_PROJECT_ID` throughout.
+Record the project ID - the plan references it as `tripledb-e0f77` throughout.
 
 ### A3: Install Python Dependencies
 
@@ -81,13 +81,13 @@ if docs:
 
 ```fish
 # Read 3 sample documents from TripleDB to verify actual schema
-# REPLACE TRIPLEDB_PROJECT_ID with actual project ID from A2
+# REPLACE tripledb-e0f77 with actual project ID from A2
 python3 -c "
 from google.cloud import firestore
 import json
 
 db = firestore.Client(
-    project='TRIPLEDB_PROJECT_ID',
+    project='tripledb-e0f77',
     credentials_file='~/.config/gcloud/tripledb-sa.json'
 )
 # Try 'restaurants' collection first (expected from schema docs)
@@ -115,7 +115,7 @@ for doc in db.collection('restaurants').limit(3).stream():
 python3 -c "
 from google.cloud import firestore
 db = firestore.Client(
-    project='TRIPLEDB_PROJECT_ID',
+    project='tripledb-e0f77',
     credentials_file='~/.config/gcloud/tripledb-sa.json'
 )
 count = 0
@@ -189,14 +189,14 @@ The script must:
 **Script flags:**
 - `--dry-run`: Print mapping for first 5 docs without writing
 - `--limit N`: Process only N documents (for testing)
-- `--project TRIPLEDB_PROJECT_ID`: Source project ID
+- `--project tripledb-e0f77`: Source project ID
 - `--sa-path PATH`: Path to TripleDB SA JSON
 
 ### Step 3: Dry Run (5 Documents)
 
 ```fish
 python3 pipeline/scripts/migrate_tripledb.py \
-  --project TRIPLEDB_PROJECT_ID \
+  --project tripledb-e0f77 \
   --sa-path ~/.config/gcloud/tripledb-sa.json \
   --dry-run --limit 5
 ```
@@ -207,7 +207,7 @@ Review the output. Verify all Thompson fields are populated correctly. Check for
 
 ```fish
 python3 pipeline/scripts/migrate_tripledb.py \
-  --project TRIPLEDB_PROJECT_ID \
+  --project tripledb-e0f77 \
   --sa-path ~/.config/gcloud/tripledb-sa.json
 ```
 
@@ -223,7 +223,7 @@ python3 pipeline/scripts/migrate_staging_to_production.py
 
 The script reads ALL documents from kjtcom staging database `locations` collection and writes them to the production (default) database `locations` collection. No transformation - direct field copy. Batch writes (500 per batch).
 
-Expected: 1,934 documents (899 CalGold + 1,035 RickSteves) copied to production.
+Expected: 5,081 documents (899 CalGold + 4,182 RickSteves) copied to production.
 
 ### Step 6: Post-Load Verification
 
@@ -317,7 +317,7 @@ firebase deploy --only firestore:indexes --project kjtcom-c78cd
 ```
 CHECKLIST:
 [ ] Security: grep -rnI "AIzaSy" . -> only expected references
-[ ] Total entities in production (target: ~3,034+)
+[ ] Total entities in production (target: ~6,281+)
 [ ] All entities at t_schema_version: 3
 [ ] 3 distinct t_log_type values
 [ ] kylejeromethompson.com displays results from all 3 pipelines
@@ -350,11 +350,11 @@ Do NOT git commit or push.
 Phase 7 Firestore Load. Two tasks:
 1. Migrate ~1,100 TripleDB restaurants from external Firestore project
    to kjtcom production locations collection (Option 4: schema mapping)
-2. Copy 1,934 CalGold + RickSteves entities from staging to production
+2. Copy 5,081 CalGold + RickSteves entities from staging to production
 
 TripleDB SA credentials are at ~/.config/gcloud/tripledb-sa.json
 kjtcom SA credentials are at $GOOGLE_APPLICATION_CREDENTIALS
-TripleDB project ID: TRIPLEDB_PROJECT_ID (replace with actual)
+TripleDB project ID: tripledb-e0f77
 kjtcom project ID: kjtcom-c78cd
 
 ## Shell - MANDATORY
@@ -421,7 +421,7 @@ Read CLAUDE.md, then read the full design doc at docs/kjtcom-design-v7.21.md for
 
 ## After v7.21
 
-1. Commit: `git add . && git commit -m "KT 7.21 Phase 7 complete - 3 pipelines loaded, ~3,034 entities in production" && git push`
+1. Commit: `git add . && git commit -m "KT 7.21 Phase 7 complete - 3 pipelines loaded, ~6,281 entities in production" && git push`
 2. Visit kylejeromethompson.com - verify live cross-pipeline queries
 3. RickSteves Phase 5 (v5.15) still running on NZXTcos - when complete, run Phase 7 load for the expanded RickSteves dataset
 4. Phase 8 (Enrichment Hardening) - backfill any sparse fields identified in v7.21 field audit

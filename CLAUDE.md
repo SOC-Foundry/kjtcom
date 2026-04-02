@@ -10,11 +10,11 @@
 Phase 7 Firestore Load. Two tasks:
 1. Migrate ~1,100 TripleDB restaurants from external Firestore project
    to kjtcom production locations collection (Option 4: schema mapping)
-2. Copy 1,934 CalGold + RickSteves entities from staging to production
+2. Copy 5,081 CalGold + RickSteves entities from staging to production
 
 TripleDB SA credentials are at ~/.config/gcloud/tripledb-sa.json
 kjtcom SA credentials are at $GOOGLE_APPLICATION_CREDENTIALS
-TripleDB project ID: TRIPLEDB_PROJECT_ID (replace with actual)
+TripleDB project ID: tripledb-e0f77
 kjtcom project ID: kjtcom-c78cd
 
 ## Shell - MANDATORY

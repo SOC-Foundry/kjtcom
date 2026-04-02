@@ -1,5 +1,17 @@
 # kjtcom - Unified Changelog
 
+**v7.21 (Phase 7 - Firestore Load + TripleDB Migration)**
+- Migrated 1,102 TripleDB restaurants from external Firestore project (tripledb-e0f77) to kjtcom production
+- Cross-project Admin SDK with two SA credentials (TachTech-Engineering + socfoundry.com)
+- Full Thompson Indicator Fields v3 schema mapping with 14 Google Places enrichment fields carried forward (G31)
+- Deterministic t_row_id for dedup safety: 1,102 written, 1,100 unique in production (G33)
+- Copied 5,081 CalGold + RickSteves entities from staging to production (no transformation)
+- Production totals: 6,181 entities (899 CalGold + 4,182 RickSteves + 1,100 TripleDB)
+- TripleDB field rates: cuisines 100%, dishes 100%, actors 100%, coordinates 91%, shows 100%
+- Schema v3: 94% overall (323 pre-existing v1/v2 entities from earlier phases)
+- Security scan clean: no leaked credentials
+- Claude Code interventions: 0
+
 **v6.20 (Phase 6e - Visual Polish)**
 - Closed 5 visual gaps between HTML mockup and deployed Flutter app
 - Added globe_hero.jpg background at 15% opacity (replaces gradient placeholder)
