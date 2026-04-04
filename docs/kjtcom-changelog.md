@@ -1,5 +1,15 @@
 # kjtcom - Unified Changelog
 
+**v8.26 (Phase 8 - Gotcha Registry + Query UX Fix)**
+- Removed rotating example queries from query editor: Timer.periodic (6s cycle), 5-query list, initial query population all removed
+- Query editor now starts empty - no more overwriting user input mid-typing (G42 resolved)
+- Added static help text below editor showing example query syntax (Geist Mono, secondary color, not injected into input)
+- Established gotcha registry standard: full G1-G42 registry with status in every design doc and report going forward
+- 1 production deploy. flutter analyze: 0 issues. flutter test: 9/9 pass
+- Security scan clean: no leaked credentials
+- Phase 8 (Enrichment Hardening) COMPLETE across v8.22-v8.26
+- Claude Code interventions: 0
+
 **v8.25 (Phase 8 - Filter Fix + README Overhaul)**
 - Fixed +filter/-exclude duplicate bug in query_provider.dart: dedup check prevents identical clauses, guard flag prevents rebuild-triggered re-entry
 - Root cause: appendClause modified queryProvider state, triggering widget rebuild, which re-fired the handler (1-4 duplicate lines per click)

@@ -1,15 +1,11 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-/// First example query - shared between provider and editor for sync.
-const initialExampleQuery =
-    'locations\n| where t_any_cuisines contains "french"\n';
-
 /// Holds the current query text in the editor.
 class QueryNotifier extends Notifier<String> {
   bool _isAppending = false;
 
   @override
-  String build() => initialExampleQuery;
+  String build() => '';
 
   void setText(String text) => state = text;
 

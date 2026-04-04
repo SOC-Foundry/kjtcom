@@ -1,22 +1,11 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/query_clause.dart';
 import '../theme/tokens.dart';
 import '../providers/query_provider.dart';
 
-/// Example queries that rotate on idle to showcase syntax highlighting.
-const _exampleQueries = [
-  'locations\n| where t_any_cuisines contains "french"\n',
-  'locations\n| where t_any_actors contains "huell howser"\n',
-  'locations\n| where t_any_countries contains "italy"\n',
-  'locations\n| where t_any_dishes contains "gelato"\n',
-  'locations\n| where t_any_keywords contains "medieval"\n',
-];
-
 /// Component-patterns.md Section 2 - Query Editor.
 /// Dark input area with line-numbered, syntax-highlighted query text.
-/// Features: blinking cursor, rotating example queries on idle.
 class QueryEditor extends ConsumerStatefulWidget {
   const QueryEditor({super.key});
 
@@ -26,33 +15,15 @@ class QueryEditor extends ConsumerStatefulWidget {
 
 class _QueryEditorState extends ConsumerState<QueryEditor> {
   late TextEditingController _controller;
-  bool _userHasEdited = false;
-  int _exampleIndex = 0;
-  Timer? _rotationTimer;
 
   @override
   void initState() {
     super.initState();
-    // Provider starts with initialExampleQuery, so controller matches.
     _controller = TextEditingController(text: ref.read(queryProvider));
-    _startRotation();
-  }
-
-  void _startRotation() {
-    _rotationTimer = Timer.periodic(const Duration(seconds: 6), (_) {
-      if (_userHasEdited) return;
-      setState(() {
-        _exampleIndex = (_exampleIndex + 1) % _exampleQueries.length;
-        final query = _exampleQueries[_exampleIndex];
-        _controller.text = query;
-        ref.read(queryProvider.notifier).setText(query);
-      });
-    });
   }
 
   @override
   void dispose() {
-    _rotationTimer?.cancel();
     _controller.dispose();
     super.dispose();
   }
@@ -62,16 +33,12 @@ class _QueryEditorState extends ConsumerState<QueryEditor> {
   }
 
   void _onUserEdit(String text) {
-    if (!_userHasEdited) {
-      _userHasEdited = true;
-      _rotationTimer?.cancel();
-    }
     setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
-    // Sync controller when query changes externally (+filter/-exclude, rotation)
+    // Sync controller when query changes externally (+filter/-exclude)
     ref.listen(queryProvider, (_, next) {
       if (_controller.text != next) {
         _controller.text = next;
@@ -166,6 +133,7 @@ class _QueryEditorState extends ConsumerState<QueryEditor> {
             ],
           ),
           _buildFeedback(),
+          _buildHelpText(),
         ],
       ),
     );
@@ -219,6 +187,23 @@ class _QueryEditorState extends ConsumerState<QueryEditor> {
           fontFamily: Tokens.fontMono,
           fontSize: Tokens.sizeSm,
           color: color,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildHelpText() {
+    if (_controller.text.trim().isNotEmpty) return const SizedBox.shrink();
+    return Padding(
+      padding: const EdgeInsets.only(top: Tokens.space2),
+      child: Text(
+        'Examples: t_any_cuisines contains "french"  |  '
+        't_any_countries contains "italy"  |  '
+        't_any_country_codes contains-any ["fr", "it"]',
+        style: TextStyle(
+          fontFamily: Tokens.fontMono,
+          fontSize: Tokens.sizeSm,
+          color: Tokens.textSecondary,
         ),
       ),
     );

@@ -14,7 +14,7 @@ kjtcom extracts entities from YouTube playlists - landmarks, trails, restaurants
 
 The same normalization patterns power production SIEM migrations at [TachTech Engineering](https://tachtech.net). Built entirely by LLM agents using IAO (Iterative Agentic Orchestration) - a methodology distilled from 48+ production iterations on [TripleDB](https://github.com/TachTech-Engineering/tripledb).
 
-**[kylejeromethompson.com](https://kylejeromethompson.com)** | **Phase 8 v8.25** | **Status: Phase 8 Enrichment Hardening DONE**
+**[kylejeromethompson.com](https://kylejeromethompson.com)** | **Phase 8 v8.26** | **Status: Phase 8 Enrichment Hardening DONE**
 
 ---
 
@@ -221,7 +221,7 @@ IAO maps directly to the "harness engineering" pattern formalized by LangChain, 
 |-----------|---------|----------------|
 | Agent Instructions | System prompt per agent | CLAUDE.md, GEMINI.md |
 | Pipeline Scripts | Tool definitions | phase1_acquire.py through phase7_load.py |
-| Gotcha Registry | Executable middleware (failure prevention) | G1-G25 documented patterns |
+| Gotcha Registry | Executable middleware (failure prevention) | G1-G42 documented patterns |
 | Checkpoint Files | State persistence across agent handoffs | .checkpoint_enrich.json, handoff JSON |
 | 4-Artifact Output | Trace analysis and improvement loop | build log, report, changelog, README |
 | Split-Agent Model | Cross-provider subagent delegation | Gemini CLI (phases 1-5) + Claude Code (phases 6-7) |
@@ -294,7 +294,7 @@ graph BT
 | 5 | Production Run (full datasets) | DONE | v5.14 |
 | 6 | Flutter App | DONE | v6.15-v6.20 |
 | 7 | Firestore Load | DONE | v7.21 |
-| 8 | Enrichment Hardening | DONE | v8.22-v8.25 |
+| 8 | Enrichment Hardening | DONE | v8.22-v8.26 |
 | 9 | App Optimization | Pending | - |
 | 10 | Retrospective + Template | Pending | - |
 
@@ -363,10 +363,15 @@ OS:   CachyOS (Arch-based) / fish shell
 
 ## Changelog
 
+**v8.26 (Phase 8 - Gotcha Registry + Query UX Fix)**
+- Removed rotating example queries: editor starts empty, static help text below editor
+- Gotcha registry standard established (G1-G42 with status in all future docs)
+- Phase 8 COMPLETE across v8.22-v8.26
+- Claude Code interventions: 0
+
 **v8.25 (Phase 8 - Filter Fix + README Overhaul)**
 - Fixed +filter/-exclude duplicate bug: dedup check + guard flag prevent multiple clauses per click
 - Comprehensive README overhaul: Live App section, Query System section, updated project status
-- Phase 8 (Enrichment Hardening) COMPLETE - all workstreams delivered
 - Claude Code interventions: 0
 
 **v8.24 (Phase 8 - UI Fixes + Country Codes)**
