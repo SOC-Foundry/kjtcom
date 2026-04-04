@@ -14,7 +14,7 @@ kjtcom extracts entities from YouTube playlists - landmarks, trails, restaurants
 
 The same normalization patterns power production SIEM migrations at [TachTech Engineering](https://tachtech.net). Built entirely by LLM agents using IAO (Iterative Agentic Orchestration) - a methodology distilled from 48+ production iterations on [TripleDB](https://github.com/TachTech-Engineering/tripledb).
 
-**[kylejeromethompson.com](https://kylejeromethompson.com)** | **Phase 9 v9.28** | **Status: Phase 9 App Optimization IN PROGRESS**
+**[kylejeromethompson.com](https://kylejeromethompson.com)** | **Phase 9 v9.29** | **Status: Phase 9 App Optimization IN PROGRESS**
 
 ---
 
@@ -78,7 +78,7 @@ Parsed Clauses (field, operator, value)
 Server-side Query (first clause -> arrayContains / arrayContainsAny)
     | Cloud Firestore
     v
-Up to 1,000 Results
+All Matching Results
     | Client-side filtering (additional clauses)
     v
 Results Table + Detail Panel
@@ -179,8 +179,8 @@ The NoSQL query editor supports structured queries against Thompson Indicator Fi
 **Features:**
 - Case-insensitive search (all values lowercased before dispatch)
 - Syntax highlighting (5-color tokenizer: field/operator/value/keyword/collection)
-- Result count badge with truncation indicator
-- Multi-clause queries (first clause server-side, additional client-side from 1,000 results)
+- Result count badge showing true total (no query limit)
+- Multi-clause queries (first clause server-side, additional client-side)
 - Field validation against 22 known fields
 - Parse error feedback for malformed input
 - +filter/-exclude buttons in detail panel append to query (dedup prevents duplicate clauses)
@@ -259,9 +259,9 @@ Zero Gemini interventions across 4 consecutive iterations. Same model, better ha
 ```mermaid
 graph BT
     IAO["<b>I A O</b><br/><i>Iterative Agentic Orchestration</i>"]:::shaft
-    IAO --- COST["◆ Minimal cost"]:::prong
-    IAO --- SPEED["◆ Speed of delivery"]:::prong
-    IAO --- PERF["◆ Optimized performance"]:::prong
+    IAO --- COST["◆ Cost"]:::prong
+    IAO --- SPEED["◆ Delivery"]:::prong
+    IAO --- PERF["◆ Performance"]:::prong
     classDef shaft fill:#0D9488,stroke:#0D9488,color:#fff
     classDef prong fill:#161B22,stroke:#4ADE80,color:#4ADE80
 ```
@@ -301,7 +301,7 @@ graph BT
 | 6 | Flutter App | DONE | v6.15-v6.20 |
 | 7 | Firestore Load | DONE | v7.21 |
 | 8 | Enrichment Hardening | DONE | v8.22-v8.26 |
-| 9 | App Optimization | IN PROGRESS | v9.27, v9.28 |
+| 9 | App Optimization | IN PROGRESS | v9.27-v9.29 |
 | 10 | Retrospective + Template | Pending | - |
 
 ---
@@ -368,6 +368,13 @@ OS:   CachyOS (Arch-based) / fish shell
 ---
 
 ## Changelog
+
+**v9.29 (Phase 9 - App Optimization: UX Polish - Trident, Limits, Schema, Quotes)**
+- Removed Firestore .limit(1000): all matching entities returned, full result counts
+- Fixed schema builder quote placement: clause appended without closing quote (G45 resolved)
+- Shortened trident labels for mobile: "Cost", "Delivery", "Performance"
+- All 22 schema fields confirmed present
+- Claude Code interventions: 0
 
 **v9.28 (Phase 9 - App Optimization: Gotcha Tab + Schema Builder + JSON Copy)**
 - 6 tabs: Results | Map | Globe | IAO | Gotcha | Schema

@@ -1,5 +1,18 @@
 # kjtcom - Unified Changelog
 
+**v9.29 (Phase 9 - App Optimization: UX Polish - Trident, Limits, Schema, Quotes)**
+- Removed Firestore .limit(1000): all matching entities returned, pagination handles display (20/50/100)
+- Simplified QueryResult class: removed isTruncated, removed truncation indicator widget
+- Fixed schema builder quote placement (G45): clause appended without closing quote, user types value naturally
+- Updated query_clause.dart parser to accept unclosed quotes at end of line
+- Shortened trident prong labels for mobile: "Cost", "Delivery", "Performance"
+- Schema field audit: all 22 fields confirmed present (t_any_cuisines already added in v9.28)
+- Updated stats footer: 29 iterations, 28 zero-intervention
+- 5 modified files. 1 production deploy
+- flutter analyze: 0 issues. flutter test: 9/9 pass
+- Security scan clean: no leaked credentials
+- Claude Code interventions: 0
+
 **v9.28 (Phase 9 - App Optimization: Gotcha Tab + Schema Builder + JSON Copy)**
 - New Gotcha tab: 25 gotchas (G1-G44) displayed as styled cards with status badges (ACTIVE/RESOLVED/DOCUMENTED)
 - Gotcha filter toggle: All | Active | Resolved

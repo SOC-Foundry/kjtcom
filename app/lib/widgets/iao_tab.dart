@@ -43,9 +43,9 @@ class _TridentGraphic extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              _buildProng('\u25C6 Minimal cost'),
-              _buildProng('\u25C6 Speed of delivery'),
-              _buildProng('\u25C6 Optimized performance'),
+              _buildProng('\u25C6 Cost'),
+              _buildProng('\u25C6 Delivery'),
+              _buildProng('\u25C6 Performance'),
             ],
           ),
           const SizedBox(height: Tokens.space3),
@@ -252,9 +252,9 @@ class _StatsFooter extends StatelessWidget {
           _divider(),
           _stat('3', 'Pipelines'),
           _divider(),
-          _stat('27', 'Iterations'),
+          _stat('29', 'Iterations'),
           _divider(),
-          _stat('26', 'Zero-Intervention'),
+          _stat('28', 'Zero-Intervention'),
         ],
       ),
     );

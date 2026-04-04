@@ -74,9 +74,9 @@ class QueryClause {
       );
     }
 
-    // Standard: field operator "value"
+    // Standard: field operator "value" (closing quote optional at EOL per G45)
     final regex = RegExp(
-      r'''(?:\|\s*where\s+)?(\w[\w.]*)\s+(contains|==|!=)\s+"([^"]*)"''',
+      r'''(?:\|\s*where\s+)?(\w[\w.]*)\s+(contains|==|!=)\s+"([^"]*)"?''',
       caseSensitive: false,
     );
     final match = regex.firstMatch(trimmed);

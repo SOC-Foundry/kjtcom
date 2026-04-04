@@ -13,10 +13,10 @@ class QueryNotifier extends Notifier<String> {
     if (_isAppending) return;
     _isAppending = true;
     try {
-      final clause = '| where $field $op "$value"';
-      // Dedup: if this exact clause already exists, no-op
-      if (state.contains(clause)) return;
-      state = '${state.trimRight()}\n$clause\n';
+      // Append clause WITHOUT closing quote so the user types their value
+      // after the open quote (G45). Parser accepts unclosed quotes at EOL.
+      final clause = '| where $field $op "';
+      state = '${state.trimRight()}\n$clause';
     } finally {
       Future.microtask(() => _isAppending = false);
     }

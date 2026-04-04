@@ -82,7 +82,6 @@ class ResultsTable extends ConsumerWidget {
 
   Widget _buildResultBar(QueryResult queryResult, WidgetRef ref, int pageSize) {
     final count = queryResult.entities.length;
-    final isTruncated = queryResult.isTruncated;
 
     return Container(
       width: double.infinity,
@@ -116,17 +115,6 @@ class ResultsTable extends ConsumerWidget {
               ),
             ]),
           ),
-          if (isTruncated) ...[
-            const SizedBox(width: Tokens.space3),
-            Text(
-              'Showing ${queryResult.limit} of ${queryResult.limit}+ results',
-              style: const TextStyle(
-                fontFamily: Tokens.fontMono,
-                fontSize: Tokens.sizeSm,
-                color: Tokens.accentOrange,
-              ),
-            ),
-          ],
           const Spacer(),
           // Pagination dropdown
           const Text(

@@ -4,23 +4,16 @@ import '../models/location_entity.dart';
 import '../models/query_clause.dart';
 import 'query_provider.dart';
 
-/// Query result metadata: entities + truncation info.
+/// Query result metadata.
 class QueryResult {
   final List<LocationEntity> entities;
-  final int serverCount;
-  final int limit;
+  final int totalCount;
 
   const QueryResult({
     required this.entities,
-    required this.serverCount,
-    required this.limit,
+    required this.totalCount,
   });
-
-  bool get isTruncated => serverCount >= limit;
 }
-
-/// The Firestore query limit.
-const _queryLimit = 1000;
 
 /// Streams results from the Firestore `locations` collection on the
 /// production (default) database. Translates parsed query clauses into
@@ -58,11 +51,7 @@ final queryResultProvider = StreamProvider<QueryResult>((ref) {
     }
   }
 
-  query = query.limit(_queryLimit);
-
   return query.snapshots().map((snapshot) {
-    final serverCount = snapshot.docs.length;
-
     var entities = snapshot.docs
         .map((doc) => LocationEntity.fromFirestore(doc))
         .toList();
@@ -90,8 +79,7 @@ final queryResultProvider = StreamProvider<QueryResult>((ref) {
 
     return QueryResult(
       entities: entities,
-      serverCount: serverCount,
-      limit: _queryLimit,
+      totalCount: entities.length,
     );
   });
 });
