@@ -2,29 +2,22 @@
 
 ## Read Order
 
-1. docs/kjtcom-design-v8.24.md (4 work items with diagnostics)
-2. docs/kjtcom-plan-v8.24.md (execute Section B)
+1. docs/kjtcom-design-v8.25.md (filter fix + README overhaul spec)
+2. docs/kjtcom-plan-v8.25.md (execute Section B)
 
 ## Context
 
-Phase 8 UI Fixes + Country Codes. Four work items:
-- W1 (P0): Fix detail panel - clicking a result row must open entity detail with t_any_* fields
-- W2 (P0): Remove "staging" badge from app_shell
-- W3 (P1): Fix cursor alignment in query editor (multiple cursors, misaligned position)
-- W4 (P1): Backfill t_any_country_codes (ISO 3166-1 alpha-2) on all 6,181 entities
-
-Deploy TWICE: after P0 fixes (Step 4), after all fixes (Step 7).
+Phase 8 final cleanup. Two workstreams:
+- W-A: Fix +filter/-exclude duplicate bug in detail_panel.dart (adds 1-4 lines per click, should add exactly 1)
+- W-B: Comprehensive README overhaul - full rewrite to reflect current state
 
 kjtcom project ID: kjtcom-c78cd
-SA credentials: $GOOGLE_APPLICATION_CREDENTIALS
-Production database: (default)
-Production collection: locations
-Total entities: 6,181
+Production: 6,181 entities (899 CalGold + 4,182 RickSteves + 1,100 TripleDB)
+Live: kylejeromethompson.com
 
 ## Shell - MANDATORY
 
 - All commands in fish shell
-- Use python3 -u for unbuffered stdout
 - NEVER cat config.fish or SA JSON files (G20, G11)
 
 ## Security
@@ -40,23 +33,25 @@ Total entities: 6,181
 - Deploy: `cd ~/dev/projects/kjtcom && firebase deploy --only hosting`
 - Deploy from repo root, not app/ (G38)
 
-## Detail Panel Diagnostic (W1)
+## Filter Fix (W-A)
 
-Read these files first to trace the break:
-1. detail_panel.dart - what it renders
-2. results_table.dart - row tap handler
-3. selection_provider.dart - state management
-4. app_shell.dart - widget tree layout
-5. firestore_provider.dart - did v8.23 QueryResult refactor break selection?
+Root cause: +filter handler modifies queryProvider, which triggers a detail panel rebuild, which re-fires the handler. Fix with:
+1. Dedup: check if clause already exists in current query before appending
+2. Guard flag: prevent re-entry during same event loop tick
+3. May need to convert StatelessWidget to ConsumerStatefulWidget for the guard flag
 
-The detail panel MUST show: entity name, pipeline badge, all t_any_* field cards, +filter/-exclude buttons, enrichment data.
+Test: click +filter 3 times on same field -> only 1 line added (dedup). Click +filter on 3 different fields -> 3 lines added.
 
-## Data Fix Requirements
+## README Overhaul (W-B)
 
-- backfill_country_codes.py: --dry-run, --limit flags
-- Use pycountry library + hardcoded fallback for edge cases
-- Store codes as lowercase: ["fr", "it", "us"]
-- Dry-run before full run (G35)
+Complete rewrite following the exact structure in the design doc. Key requirements:
+- NEW "Live App" section with kylejeromethompson.com link and feature list
+- NEW "Query System" section documenting operators, features, examples
+- Add t_any_country_codes to indicator fields table
+- Update Project Status: Phase 8 DONE
+- Keep IAO section EXACTLY as-is (mermaid chart + 10 pillars verbatim)
+- Truncate changelog to last 5 iterations, link to full changelog
+- Add tsP3-cos to Hardware section
 
 ## Permissions
 
@@ -65,10 +60,10 @@ The detail panel MUST show: entity name, pipeline badge, all t_any_* field cards
 
 ## Artifact Rules - MANDATORY
 
-1. docs/kjtcom-build-v8.24.md
-2. docs/kjtcom-report-v8.24.md
-3. docs/kjtcom-changelog.md (append v8.24)
-4. README.md (Phase 8 DONE, add t_any_country_codes to field table)
+1. docs/kjtcom-build-v8.25.md
+2. docs/kjtcom-report-v8.25.md (include Phase 8 complete summary + Phase 9 recommendation)
+3. docs/kjtcom-changelog.md (append v8.25)
+4. README.md (COMPLETE OVERHAUL - this is the primary deliverable)
 
 ## Formatting
 

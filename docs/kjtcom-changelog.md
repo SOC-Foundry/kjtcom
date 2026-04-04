@@ -1,5 +1,21 @@
 # kjtcom - Unified Changelog
 
+**v8.25 (Phase 8 - Filter Fix + README Overhaul)**
+- Fixed +filter/-exclude duplicate bug in query_provider.dart: dedup check prevents identical clauses, guard flag prevents rebuild-triggered re-entry
+- Root cause: appendClause modified queryProvider state, triggering widget rebuild, which re-fired the handler (1-4 duplicate lines per click)
+- Fix: (1) check if clause already exists in query text before appending, (2) _isAppending guard flag with Future.microtask reset
+- Comprehensive README overhaul: complete rewrite with new Live App section, Query System section, updated project status
+- Added app query flow architecture diagram (Query Editor -> QueryClause Parser -> Firestore Provider -> Results)
+- Updated project status: Phase 8 DONE v8.22-v8.25
+- Added tsP3-cos to hardware section
+- Truncated README changelog to last 5 iterations with link to full changelog
+- Updated Future Directions with v8.22 assessment conclusions (HyperAgents deferred, Algolia deferred)
+- 1 production deploy (filter fix). Final deploy after README overhaul.
+- flutter analyze: 0 issues. flutter test: 9/9 pass
+- Security scan clean: no leaked credentials
+- Phase 8 (Enrichment Hardening) COMPLETE - all workstreams delivered across v8.22-v8.25
+- Claude Code interventions: 0
+
 **v8.24 (Phase 8 - UI Fixes + Country Codes)**
 - Fixed detail panel: clicking a result row now opens entity detail with t_any_* field cards at all viewport widths
 - Detail panel on mobile/tablet: overlay with scrim backdrop, animated width transition on desktop

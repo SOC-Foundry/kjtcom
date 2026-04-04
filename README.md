@@ -1,6 +1,6 @@
 # kjtcom
 
-**Multi-pipeline location intelligence platform built on Iterative Agentic Orchestration (IAO)**
+**Cross-pipeline location intelligence platform built on Iterative Agentic Orchestration (IAO)**
 
 [![Flutter](https://img.shields.io/badge/Flutter-02569B?style=for-the-badge&logo=flutter&logoColor=white)](https://flutter.dev)
 [![Firebase](https://img.shields.io/badge/Firebase-FFCA28?style=for-the-badge&logo=firebase&logoColor=black)](https://firebase.google.com)
@@ -10,13 +10,23 @@
 
 ---
 
-kjtcom processes YouTube playlists into structured, searchable, geocoded Firestore databases. Each pipeline extracts entities (landmarks, trails, routes, restaurants) from video transcripts using LLM-powered extraction, normalizes them into the Thompson Indicator Fields (`t_any_*` universal indicator fields), enriches with Google Places and Nominatim, and serves them through a unified Flutter Web frontend with cross-dataset search.
+kjtcom extracts entities from YouTube playlists - landmarks, trails, restaurants, destinations - and normalizes them into Thompson Indicator Fields (`t_any_*` universal indicator fields) modeled after [Panther SIEM's](https://docs.panther.com/search/panther-fields) `p_any_*` fields and [Elastic Common Schema](https://www.elastic.co/guide/en/ecs/current/index.html). Three live pipelines serve 6,181 geocoded entities through a unified Flutter Web frontend with a functional NoSQL query system, case-insensitive search, `contains` and `contains-any` operators, result counts, entity detail panel, and cross-dataset query at [kylejeromethompson.com](https://kylejeromethompson.com).
 
-The Thompson Indicator Fields are modeled after [Panther SIEM's](https://docs.panther.com/search/panther-fields) `p_any_*` indicator fields and [Elastic Common Schema](https://www.elastic.co/guide/en/ecs/current/index.html) - providing universal queryable fields across disparate data sources. The same normalization patterns power production SIEM migrations at [TachTech Engineering](https://tachtech.net).
+The same normalization patterns power production SIEM migrations at [TachTech Engineering](https://tachtech.net). Built entirely by LLM agents using IAO (Iterative Agentic Orchestration) - a methodology distilled from 48+ production iterations on [TripleDB](https://github.com/TachTech-Engineering/tripledb).
 
-Built entirely by LLM agents using IAO (Iterative Agentic Orchestration) - a methodology distilled from 48+ production iterations on [TripleDB](https://github.com/TachTech-Engineering/tripledb).
+**[kylejeromethompson.com](https://kylejeromethompson.com)** | **Phase 8 v8.25** | **Status: Phase 8 Enrichment Hardening DONE**
 
-**kylejeromethompson.com** | **Phase 8 v8.24** | **Status: Phase 8 Enrichment Hardening DONE - All UI fixes + country codes**
+---
+
+## Live App
+
+**[kylejeromethompson.com](https://kylejeromethompson.com)** - Search 6,181 geocoded entities across 3 pipelines:
+
+- **NoSQL query editor** with syntax highlighting, case-insensitive search, `contains` and `contains-any` operators
+- **Result counts** with truncation indicators for large result sets
+- **Entity detail panel** with t_any_* field cards, Google Places enrichment data, +filter/-exclude query builders
+- **Pipeline-colored results** - CalGold (gold), RickSteves (blue), TripleDB (red)
+- **Cross-pipeline search** - a single query spans all 3 datasets
 
 ---
 
@@ -48,6 +58,24 @@ Cloud Firestore (kjtcom-c78cd, Blaze)
     | Cloud Functions (search API) + Flutter Web
     v
 kylejeromethompson.com
+```
+
+### App Query Flow
+
+```
+Query Editor (syntax-highlighted input)
+    | QueryClause parser (tokenizer + field validation)
+    v
+Parsed Clauses (field, operator, value)
+    | Firestore Provider (Riverpod)
+    v
+Server-side Query (first clause -> arrayContains / arrayContainsAny)
+    | Cloud Firestore
+    v
+Up to 1,000 Results
+    | Client-side filtering (additional clauses)
+    v
+Results Table + Detail Panel
 ```
 
 ---
@@ -90,6 +118,7 @@ The Thompson Indicator Fields provide universal indicator fields across all pipe
 | `t_any_states` | array[string] | All state abbreviations | `["ca", "ny"]` |
 | `t_any_counties` | array[string] | All county names | `["los angeles county"]` |
 | `t_any_countries` | array[string] | All country names (v2) | `["france", "us"]` |
+| `t_any_country_codes` | array[string] | ISO 3166-1 alpha-2 codes (v8.24) | `["fr", "it", "us"]` |
 | `t_any_regions` | array[string] | Sub-country regions (v2) | `["bavaria", "tuscany"]` |
 | `t_any_coordinates` | array[map] | All lat/lon pairs | `[{"lat": 48.85, "lon": 2.29}]` |
 | `t_any_geohashes` | array[string] | Geohash prefixes for proximity | `["u09t", "u09tv"]` |
@@ -101,7 +130,6 @@ The Thompson Indicator Fields provide universal indicator fields across all pipe
 | `t_any_cuisines` | array[string] | Cuisine categories (v3) | `["french", "italian"]` |
 | `t_any_dishes` | array[string] | Specific food items (v3) | `["croissant", "paella"]` |
 | `t_any_eras` | array[string] | Historical periods mentioned (v3) | `["medieval", "roman"]` |
-| `t_any_country_codes` | array[string] | ISO 3166-1 alpha-2 codes (v8.24) | `["fr", "it", "us"]` |
 | `t_any_continents` | array[string] | Continent(s) (v3) | `["europe", "asia"]` |
 | `t_any_urls` | array[string] | Associated URLs | `["https://example.com"]` |
 | `t_any_video_ids` | array[string] | Source YouTube video IDs | `["dQw4w9WgXcQ"]` |
@@ -133,58 +161,50 @@ pipeline/config/{pipeline_id}/
 
 ---
 
-## Setup
+## Query System
 
-```fish
-# Clone
-git clone git@github.com:SOC-Foundry/kjtcom.git
-cd kjtcom
+The NoSQL query editor supports structured queries against Thompson Indicator Fields:
 
-# Environment (fish shell)
-set -x GEMINI_API_KEY "..."
-set -x GOOGLE_PLACES_API_KEY "..."
-set -x GOOGLE_APPLICATION_CREDENTIALS "$HOME/.config/gcloud/kjtcom-sa.json"
+**Operators:**
+- `contains` - array membership (e.g., `t_any_cuisines contains "french"`)
+- `contains-any` - array membership for multiple values (e.g., `t_any_cuisines contains-any ["mexican", "italian"]`)
+- `==` - equality (e.g., `t_log_type == "tripledb"`)
 
-# Firebase
-firebase use kjtcom-c78cd
-firebase deploy --only firestore:rules,firestore:indexes
+**Features:**
+- Case-insensitive search (all values lowercased before dispatch)
+- Syntax highlighting (5-color tokenizer: field/operator/value/keyword/collection)
+- Result count badge with truncation indicator
+- Multi-clause queries (first clause server-side, additional client-side from 1,000 results)
+- Field validation against 22 known fields
+- Parse error feedback for malformed input
+- +filter/-exclude buttons in detail panel append to query (dedup prevents duplicate clauses)
 
-# Validate
-yt-dlp --flat-playlist --print "%(id)s %(title)s" \
-  "https://www.youtube.com/playlist?list=PLr7fFk3JB5ic-nEyrqLj6MGDox5DO8oMl" | wc -l
-```
-
-## Running a Pipeline
-
-```fish
-# Phase 1-7: Process 30 videos through the full pipeline
-python3 pipeline/scripts/phase1_acquire.py    --pipeline calgold --limit 30
-python3 pipeline/scripts/phase2_transcribe.py --pipeline calgold --limit 30
-python3 pipeline/scripts/phase3_extract.py    --pipeline calgold --limit 30
-python3 pipeline/scripts/phase4_normalize.py  --pipeline calgold --limit 30
-python3 pipeline/scripts/phase5_geocode.py    --pipeline calgold --limit 30
-python3 pipeline/scripts/phase6_enrich.py     --pipeline calgold --limit 30
-python3 pipeline/scripts/phase7_load.py       --pipeline calgold --database staging
-```
-
-By default, data is saved in `pipeline/data/{pipeline_id}/` per stage.
-
----
-
-## File Structure
+**Example queries:**
 
 ```
-kjtcom/
-  app/                    Flutter Web frontend
-  pipeline/
-    scripts/              Shared pipeline stages (7 phases + utilities)
-    config/               Per-pipeline configuration (schema.json, prompts)
-    data/                 Per-pipeline data (gitignored)
-  functions/              Firebase Cloud Functions (search API)
-  docs/                   IAO artifacts (design, plan, build, report, changelog)
-  requirements/           Environment manifests + install script
-  CLAUDE.md               Agent instructions (Claude Code)
-  GEMINI.md               Agent instructions (Gemini CLI)
+locations
+| where t_any_cuisines contains "french"
+
+locations
+| where t_any_countries contains "italy"
+
+locations
+| where t_any_continents contains "europe"
+
+locations
+| where t_any_categories contains "restaurant"
+
+locations
+| where t_any_cuisines contains-any ["mexican", "italian"]
+
+locations
+| where t_log_type == "calgold"
+
+locations
+| where t_any_country_codes contains "fr"
+
+locations
+| where t_any_keywords contains "museum"
 ```
 
 ---
@@ -271,14 +291,10 @@ graph BT
 | 2 | Calibration (60 videos) | DONE | v2.8, v2.9 |
 | 3 | Stress Test (90 videos) | DONE | v3.10, v3.11 |
 | 4 | Validation + Schema v3 (120 videos) | DONE | v4.12, v4.13 |
-| 5 | Production Run (full datasets) | CalGold DONE | v5.14 |
-| 6a | Flutter App - Discovery | DONE | v6.15 |
-| 6b | Flutter App - Design Contract | DONE | v6.16 |
-| 6c | Flutter App - Implementation | DONE | v6.17 |
-| 6d | Flutter App - QA | DONE | v6.18 |
-| 6e | Flutter App - Deploy | DONE | v6.19 |
+| 5 | Production Run (full datasets) | DONE | v5.14 |
+| 6 | Flutter App | DONE | v6.15-v6.20 |
 | 7 | Firestore Load | DONE | v7.21 |
-| 8 | Enrichment Hardening | DONE | v8.22, v8.23, v8.24 |
+| 8 | Enrichment Hardening | DONE | v8.22-v8.25 |
 | 9 | App Optimization | Pending | - |
 | 10 | Retrospective + Template | Pending | - |
 
@@ -310,6 +326,10 @@ CPU:  Intel Core i9-13900K (24-core, 5.8 GHz)
 RAM:  64 GB DDR4
 GPU:  NVIDIA GeForce RTX 2080 SUPER (8 GB VRAM)
 OS:   CachyOS (Arch-based) / KDE Plasma 6.6.2 / Wayland
+
+tsP3-cos (Secondary Dev)
+CPU:  Intel Core i9 (ThinkStation P3 Ultra SFF G2)
+OS:   CachyOS (Arch-based) / fish shell
 ```
 
 ---
@@ -331,9 +351,11 @@ OS:   CachyOS (Arch-based) / KDE Plasma 6.6.2 / Wayland
 
 ## Future Directions
 
-**Meta/Hyperagents integration.** Evaluating [HyperAgents](https://github.com/facebookresearch/Hyperagents) (Meta FAIR) for self-improving pipeline optimization - letting a meta-agent evolve extraction prompts and schema mappings across iterations. The IAO artifact loop provides natural fitness signals (extraction success rate, geocoding hit rate, enrichment match rate) that a hyperagent could optimize against.
+**Meta/Hyperagents integration.** Evaluated in v8.22. HyperAgents (Meta FAIR) for self-improving pipeline optimization is premature at current scale - deferred to Phase 10 retrospective where the IAO artifact loop provides natural fitness signals (extraction success rate, geocoding hit rate, enrichment match rate) that a hyperagent could optimize against.
 
 **Multi-LLM pipeline stages.** Currently Gemini Flash handles extraction. Future iterations will benchmark extraction quality across Claude Sonnet, Gemini Flash, GPT-4o, and local models (Nemotron, Qwen) per pipeline. The schema.json already decouples extraction from normalization - swapping the LLM requires only changing the extraction prompt, not the normalization pipeline.
+
+**Search optimization.** Algolia and Typesense evaluated in v8.22 - deferred unless fuzzy search or full-text search requirements emerge. Firestore-native `arrayContains` and `arrayContainsAny` are sufficient for 6,181 entities with the current query system. Revisit in Phase 9 if query latency becomes an issue.
 
 **SIEM migration tooling.** The Thompson Indicator Fields normalization pipeline is structurally identical to SIEM log normalization. Each `schema.json` is a field mapping artifact - the same deliverable produced during Splunk-to-Panther or Splunk-to-CrowdStrike migrations. Future work explores generating these mappings automatically from source SIEM configurations.
 
@@ -341,161 +363,39 @@ OS:   CachyOS (Arch-based) / KDE Plasma 6.6.2 / Wayland
 
 ## Changelog
 
+**v8.25 (Phase 8 - Filter Fix + README Overhaul)**
+- Fixed +filter/-exclude duplicate bug: dedup check + guard flag prevent multiple clauses per click
+- Comprehensive README overhaul: Live App section, Query System section, updated project status
+- Phase 8 (Enrichment Hardening) COMPLETE - all workstreams delivered
+- Claude Code interventions: 0
+
 **v8.24 (Phase 8 - UI Fixes + Country Codes)**
 - Detail panel fixed: opens on row click at all viewports, shows t_any_* field cards with +filter/-exclude
 - Removed "staging" badge, fixed cursor alignment (single cursor, no drift)
 - Backfilled t_any_country_codes (ISO alpha-2) on 6,161/6,181 entities
 - 2 production deploys. flutter analyze: 0 issues. 9/9 tests pass
-- Phase 8 (Enrichment Hardening) COMPLETE
 - Claude Code interventions: 0
 
 **v8.23 (Phase 8 - NoSQL Query Remediation)**
 - All 12 query defects resolved (11 fixed, 1 deferred): case sensitivity, data casing, result counts, truncation, contains-any, validation
 - Query system fully operational: case-insensitive search, result counts, truncation transparency, error feedback
 - CalGold data fix: 899/899 t_any_shows lowercased. Result limit: 200 -> 1000
-- 2 production deploys. Regression: 11/12 PASS. flutter analyze: 0 issues. 6/6 tests pass
+- 2 production deploys. flutter analyze: 0 issues. 6/6 tests pass
 - Claude Code interventions: 0
 
 **v8.22 (Phase 8 - Enrichment Hardening + Query Assessment)**
 - Schema v3: 100% (6,181/6,181) - backfilled 323 non-v3 entities
 - TripleDB enrichment: 63% -> 98%, coordinates: 91% -> 99%, cities: 89% -> 93%
 - NoSQL query assessment: 12 defects identified, v8.23 remediation spec produced
-- Critical: 2/5 example queries broken (case sensitivity), 200-result limit silently truncates
-- MCP/HyperAgents/Algolia evaluated for v8.23+
 - Claude Code interventions: 0
 
 **v7.21 (Phase 7 - Firestore Load + TripleDB Migration)**
 - 3 pipelines live in production: 6,181 entities (899 CalGold + 4,182 RickSteves + 1,100 TripleDB)
 - TripleDB: cross-project Admin SDK migration from tripledb-e0f77, full schema v3 mapping
-- TripleDB field rates: cuisines 100%, dishes 100%, actors 100%, coordinates 91%
-- 14 Google Places enrichment fields carried forward (G31), deterministic dedup (G33)
+- 14 Google Places enrichment fields carried forward, deterministic dedup
 - Claude Code interventions: 0
 
-**v6.20 (Phase 6e - Visual Polish)**
-- Closed 5 visual gaps between HTML mockup and deployed Flutter app
-- Globe hero background (globe_hero.jpg at 15% opacity), rotating example queries, blinking cursor
-- Animated count-up for entity/country counts, all 5 syntax highlight colors visible on load
-- Claude Code interventions: 0
-
-**v6.19 (Phase 6e - Deploy)**
-- Deployed Flutter Web app to Firebase Hosting at kylejeromethompson.com
-- Build: flutter build web --release (16.9s, 39 files, CanvasKit renderer)
-- Added Google Analytics (GA4) via gtag.js (Measurement ID: G-JMVEJLW9PC)
-- Chrome smoke test: full SIEM UI render, 0 console errors
-- Firefox smoke test: page loads (correct title, 0 errors); canvas blank in headless (known CanvasKit limitation)
-- Phase 6 (Flutter App) complete across all 5 sub-phases (6a-6e)
-- Claude Code interventions: 0
-
-**v6.18 (Phase 6d - QA)**
-- Executed multi-viewport visual audit (1440x900, 768x1024, 375x812) using Playwright MCP
-- Validated responsive layout shifts: query editor full-width on mobile, table columns hidden on tablet/mobile
-- Completed Lighthouse compliance audit: Accessibility 0.92 (PASS >= 0.90), SEO 1.0 (PASS >= 0.90)
-- Confirmed design contract adherence: dark SIEM aesthetic (#0D1117), Geist font stack, green terminal accents
-- Verified SIEM-style information density and "Investigate"/"staging" status tone
-- Benchmarked initialization performance: 7.7s - 14.1s FCP (standard Flutter bootstrap overhead)
-- Produced Phase 6d mandatory artifacts: build, report, and screenshots
-- Gemini CLI interventions: 0
-
-**v6.17 (Phase 6c - Implementation)**
-- Built Flutter Web app: 12 Dart files, 8 widgets, Geist Sans/Mono bundled
-- Syntax-highlighted query editor, results table with pipeline dots, detail panel with +filter/-exclude
-- Riverpod state + Firestore stream provider (arrayContains + client-side filtering)
-- flutter analyze: 0 issues. flutter build web: success. 3/3 tests pass.
-- Firebase web app registered via flutterfire configure. 1 intervention (Firebase auth).
-
-**v6.16 (Phase 6b - Design Contract)**
-- Synthesized 8-site scrape archive + Panther SIEM into three-file design contract
-- 100+ design tokens, 10 component blueprints, 3 interaction patterns documented
-- Locked visual identity: dark SIEM aesthetic, Geist Sans/Mono, pipeline-colored dots
-- Zero Flutter code changes. Specification-only phase. 0 interventions.
-
-**v6.15 (Phase 6a - Discovery)**
-- Scraped 8 public competitor sites via Playwright MCP (Pipeline, Investigation, Concierge)
-- Selected Geist Sans/Mono as primary typographic reference (Scanner.dev)
-- Validated dark SIEM aesthetic across Panther, Monad, Scanner.dev, GreyNoise
-
-**v5.14 (CalGold Phase 5 - Production Run)**
-- Full production run: 390/431 videos, 829 entities, 899 unique in staging
-- Geocoding: 95%, Enrichment: 95%, Schema v3: 100%
-- tmux 2-pass execution (600s + 1200s). 1 intervention (CUDA OOM recovery)
-- Total platform: 1,934 entities (899 CalGold + 1,035 RickSteves)
-
-**v4.13 (RickSteves Phase 4 - Validation + Schema v3)**
-- Schema v3 migration: 7 new t_any_* fields including t_any_shows
-- 150 videos (30 new + ALL 150 re-extracted). 1,035 unique RickSteves entities
-- Schema v3 field rates: actors 100%, shows 100%, continents 99%, eras 73%
-- CalGold backfill: 412 entities updated with t_any_shows
-- Gemini: 0 interventions, Claude: 1. 33 countries
-- Total platform: 1,447 entities (412 CalGold + 1,035 RickSteves)
-
-**v4.12 (CalGold Phase 4 - Validation + Schema v3)**
-- Schema v3 migration: 6 new t_any_* fields (actors, roles, cuisines, dishes, eras, continents)
-- 120 videos, 300 unique CalGold entities. ALL re-extracted with v3 prompt
-- Schema v3 validation: actors 100%, continents 100%, counties 84.1%, eras 82.4%
-- Geocoding: 97.6%, Enrichment: 97.6%. Gemini: 0 interventions, Claude: 1
-- Total platform: 969 entities (300 CalGold + 669 RickSteves) across 30 countries
-
-**v3.11 (RickSteves Phase 3 - Stress Test)**
-- Videos 91-120 processed via split-agent model: Gemini CLI (phases 1-5) + Claude Code (phases 6-7)
-- 120 total videos, 669 unique RickSteves entities in Firestore staging
-- Geocoding: 99.3%, Enrichment: 99.3% via Google Places
-- New countries: Egypt, Ethiopia, Vatican City (30 total)
-- Zero interventions for both agents
-- Total platform: 887 entities (218 CalGold + 669 RickSteves) across 30 countries
-
-**v3.10 (CalGold Phase 3 - Stress Test)**
-- Videos 61-90 processed via split-agent model: Gemini CLI (phases 1-5) + Claude Code (phases 6-7)
-- 90 total videos, 218 unique CalGold entities in Firestore staging
-- Geocoding: 98% (Nominatim + Places backfill, 140 coords backfilled)
-- Enrichment: 98% via Google Places (222/226)
-- Zero interventions for both agents
-- Total platform: 777 entities (218 CalGold + 559 RickSteves) across 29 countries
-
-**v2.9 (RickSteves Phase 2 - Calibration)**
-- Videos 31-90 processed via Gemini CLI (first Gemini execution on kjtcom)
-- 494 new entities, 559 total RickSteves entities across 29 countries
-- Geocoding: 99% (Nominatim + Places backfill)
-- Enrichment: 99% via Google Places
-- Dedup merges: 95 entities with multiple visits (implemented array merge in phase7_load.py)
-- 3 interventions (LD_LIBRARY_PATH fix, transcription timeouts, load logic merge)
-- Total platform: 777 entities (218 CalGold + 559 RickSteves)
-
-**v2.8 (CalGold Phase 2 - Calibration)**
-- 60 videos processed: 218 unique CalGold entities in staging (up from 56)
-- Geocoding jumped from 43% to 97% via Google Places coordinate backfill
-- Enrichment: 97% via Google Places
-- Schema upgraded to v2 with t_any_countries: ["us"]
-- 3 dedup merges validated across Phase 1 + Phase 2
-- 418 total platform entities (218 CalGold + 200 RickSteves) across 24 countries
-
-**v1.7 (RickSteves Phase 1 - Discovery)**
-- Pipeline 2 live: Rick Steves' Europe, 30 videos, 200 unique destinations across 23 countries
-- Thompson Indicator Fields evolved to v2: added t_any_countries, t_any_regions
-- Geocoding: 98% (68% Nominatim + 66 backfilled from Google Places)
-- Enrichment: 98% via Google Places (197/200)
-- Cross-pipeline queries validated: keyword, country, geohash queries return results from both CalGold and RickSteves
-- CalGold entities backfilled to schema v2 (56/56)
-- Migrated phase3_extract.py from google.generativeai to google.genai
-- 256 total entities in staging (56 CalGold + 200 RickSteves)
-- 1 intervention (LD_LIBRARY_PATH for CUDA)
-
-**v1.6 (CalGold Phase 1 - Discovery)**
-- 30-video discovery batch: 30/30 acquired, 30/30 transcribed, 30/30 extracted
-- 57 unique California locations normalized via Thompson Indicator Fields
-- Geocoding: 43% via Nominatim (niche/historic locations missed)
-- Enrichment: 100% match rate via Google Places API (New)
-- 56 documents loaded to staging Firestore, all array-contains queries validated
-- 3 interventions resolved (CUDA path, pip install, Places API key)
-
-**v0.5 (Phase 0 - Scaffold)**
-- Repo: git@github.com:SOC-Foundry/kjtcom.git
-- Firebase: kjtcom (kjtcom-c78cd) under socfoundry.com, Blaze billing
-- Monorepo scaffolded: app/, pipeline/, functions/, docs/
-- Multi-database configured: (default) + staging, both us-central1
-- Thompson Indicator Fields (t_any_*) designed and validated with test entity
-- CalGold pipeline config: schema.json (14 indicator mappings), extraction_prompt.md
-- Cloud Functions search endpoint deployed
-- 431 CalGold playlist URLs validated via yt-dlp
+Full changelog: [docs/kjtcom-changelog.md](docs/kjtcom-changelog.md)
 
 ---
 
