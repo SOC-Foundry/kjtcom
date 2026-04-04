@@ -14,7 +14,7 @@ kjtcom extracts entities from YouTube playlists - landmarks, trails, restaurants
 
 The same normalization patterns power production SIEM migrations at [TachTech Engineering](https://tachtech.net). Built entirely by LLM agents using IAO (Iterative Agentic Orchestration) - a methodology distilled from 48+ production iterations on [TripleDB](https://github.com/TachTech-Engineering/tripledb).
 
-**[kylejeromethompson.com](https://kylejeromethompson.com)** | **Phase 8 v8.26** | **Status: Phase 8 Enrichment Hardening DONE**
+**[kylejeromethompson.com](https://kylejeromethompson.com)** | **Phase 9 v9.27** | **Status: Phase 9 App Optimization IN PROGRESS**
 
 ---
 
@@ -23,10 +23,13 @@ The same normalization patterns power production SIEM migrations at [TachTech En
 **[kylejeromethompson.com](https://kylejeromethompson.com)** - Search 6,181 geocoded entities across 3 pipelines:
 
 - **NoSQL query editor** with syntax highlighting, case-insensitive search, `contains` and `contains-any` operators
-- **Result counts** with truncation indicators for large result sets
+- **Paginated results** - 20/50/100 per page with page navigation (default 20)
 - **Entity detail panel** with t_any_* field cards, Google Places enrichment data, +filter/-exclude query builders
 - **Pipeline-colored results** - CalGold (gold), RickSteves (blue), TripleDB (red)
-- **Cross-pipeline search** - a single query spans all 3 datasets
+- **Map tab** - OpenStreetMap with pipeline-colored entity markers, click to open detail panel
+- **Globe tab** - Stats dashboard with continent cards + country grid, click to filter results
+- **IAO tab** - Methodology showcase with trident graphic and 10 pillar cards
+- **Gothic/cyber visual identity** - Cinzel font headers, green-glow borders, dark SIEM base
 
 ---
 
@@ -295,7 +298,7 @@ graph BT
 | 6 | Flutter App | DONE | v6.15-v6.20 |
 | 7 | Firestore Load | DONE | v7.21 |
 | 8 | Enrichment Hardening | DONE | v8.22-v8.26 |
-| 9 | App Optimization | Pending | - |
+| 9 | App Optimization | IN PROGRESS | v9.27 |
 | 10 | Retrospective + Template | Pending | - |
 
 ---
@@ -363,9 +366,18 @@ OS:   CachyOS (Arch-based) / fish shell
 
 ## Changelog
 
+**v9.27 (Phase 9 - App Optimization: Visual Refresh + Tab Wiring)**
+- All 4 tabs functional: Results | Map | Globe | IAO
+- Gothic/cyber visual refresh: Cinzel font, green-glow borders, hover effects
+- Map tab: OpenStreetMap + pipeline-colored markers, click to detail panel
+- Globe tab: continent cards + country grid, click to filter results
+- IAO tab: trident SVG + 10 pillar cards + stats footer
+- Pagination: 20/50/100 dropdown + page navigation
+- 2 production deploys. flutter analyze: 0 issues. 9/9 tests pass
+- Claude Code interventions: 0
+
 **v8.26 (Phase 8 - Gotcha Registry + Query UX Fix)**
 - Removed rotating example queries: editor starts empty, static help text below editor
-- Gotcha registry standard established (G1-G42 with status in all future docs)
 - Phase 8 COMPLETE across v8.22-v8.26
 - Claude Code interventions: 0
 
@@ -376,22 +388,11 @@ OS:   CachyOS (Arch-based) / fish shell
 
 **v8.24 (Phase 8 - UI Fixes + Country Codes)**
 - Detail panel fixed: opens on row click at all viewports, shows t_any_* field cards with +filter/-exclude
-- Removed "staging" badge, fixed cursor alignment (single cursor, no drift)
 - Backfilled t_any_country_codes (ISO alpha-2) on 6,161/6,181 entities
-- 2 production deploys. flutter analyze: 0 issues. 9/9 tests pass
 - Claude Code interventions: 0
 
 **v8.23 (Phase 8 - NoSQL Query Remediation)**
 - All 12 query defects resolved (11 fixed, 1 deferred): case sensitivity, data casing, result counts, truncation, contains-any, validation
-- Query system fully operational: case-insensitive search, result counts, truncation transparency, error feedback
-- CalGold data fix: 899/899 t_any_shows lowercased. Result limit: 200 -> 1000
-- 2 production deploys. flutter analyze: 0 issues. 6/6 tests pass
-- Claude Code interventions: 0
-
-**v8.22 (Phase 8 - Enrichment Hardening + Query Assessment)**
-- Schema v3: 100% (6,181/6,181) - backfilled 323 non-v3 entities
-- TripleDB enrichment: 63% -> 98%, coordinates: 91% -> 99%, cities: 89% -> 93%
-- NoSQL query assessment: 12 defects identified, v8.23 remediation spec produced
 - Claude Code interventions: 0
 
 **v7.21 (Phase 7 - Firestore Load + TripleDB Migration)**

@@ -100,4 +100,39 @@ abstract final class Tokens {
   // -- animation --
   static const Duration detailSlide = Duration(milliseconds: 200);
   static const Duration rowHighlight = Duration(milliseconds: 150);
+
+  // -- gothic/cyber tokens --
+  static const String fontGothic = 'Cinzel';
+  static const Color teal = Color(0xFF0D9488);
+
+  /// Green glow for hover on interactive elements.
+  static const List<BoxShadow> glowGreen = [
+    BoxShadow(color: Color(0x334ADE80), blurRadius: 8),
+  ];
+
+  /// Double-line border at 30% opacity for card containers.
+  static BoxDecoration gothicCardDecoration({
+    Color background = surfaceElevated,
+    double radius = radiusLg,
+  }) {
+    return BoxDecoration(
+      color: background,
+      borderRadius: BorderRadius.circular(radius),
+      border: Border.all(
+        color: const Color(0x4D4ADE80), // accentGreen at 30%
+        width: 1,
+      ),
+      boxShadow: const [
+        BoxShadow(
+          color: Color(0x1A4ADE80),
+          blurRadius: 1,
+          spreadRadius: 1,
+        ),
+      ],
+    );
+  }
+
+  /// Corner accent decoration for gothic cards.
+  static const Color cornerAccentColor = Color(0x4D4ADE80);
+  static const double cornerAccentSize = 8.0;
 }

@@ -35,6 +35,20 @@ class LocationEntity {
 
   List<String> get countryCodes => _stringList('t_any_country_codes');
 
+  /// Returns [lat, lng] if t_any_coordinates is present and valid.
+  (double, double)? get coordinates {
+    final val = raw['t_any_coordinates'];
+    if (val is List && val.length >= 2) {
+      final lat = val[0] is num ? (val[0] as num).toDouble() : double.tryParse(val[0].toString());
+      final lng = val[1] is num ? (val[1] as num).toDouble() : double.tryParse(val[1].toString());
+      if (lat != null && lng != null) return (lat, lng);
+    }
+    return null;
+  }
+
+  List<String> get continents => _stringList('t_any_continents');
+  List<String> get countries => _stringList('t_any_countries');
+
   String get show {
     final shows = _stringList('t_any_shows');
     return shows.isNotEmpty ? shows.first : '';

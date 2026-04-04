@@ -1,13 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../theme/tokens.dart';
 import '../providers/selection_provider.dart';
+import '../providers/tab_provider.dart';
 import 'globe_hero.dart';
 import 'query_editor.dart';
 import 'results_table.dart';
 import 'detail_panel.dart';
 import 'kjtcom_tab_bar.dart';
 import 'entity_count_row.dart';
+import 'map_tab.dart';
+import 'globe_tab.dart';
+import 'iao_tab.dart';
 
 /// Outermost container - component-patterns.md Section 1.
 /// Dark, full-bleed, 24px content padding, 12px outer radius.
@@ -46,7 +51,7 @@ class AppShell extends StatelessWidget {
                   ),
                 ],
               ),
-              // Tab bar + entity count + results
+              // Tab bar + content area
               Expanded(
                 child: Padding(
                   padding: const EdgeInsets.symmetric(
@@ -57,7 +62,7 @@ class AppShell extends StatelessWidget {
                     children: [
                       const KjtcomTabBar(),
                       const EntityCountRow(),
-                      const Expanded(child: _ResultsArea()),
+                      const Expanded(child: _TabContent()),
                     ],
                   ),
                 ),
@@ -72,26 +77,25 @@ class AppShell extends StatelessWidget {
   Widget _buildHeaderBar() {
     return Row(
       children: [
-        // Logo - token: color.accent.green, typography.size.2xl
-        const Text(
+        // Logo - Cinzel gothic font, tech green
+        Text(
           'kjtcom',
-          style: TextStyle(
-            fontFamily: Tokens.fontSans,
+          style: GoogleFonts.cinzel(
             fontSize: Tokens.size2xl,
-            fontWeight: FontWeight.w500,
+            fontWeight: FontWeight.w600,
             color: Tokens.accentGreen,
-            letterSpacing: 0.5,
+            letterSpacing: 1.0,
           ),
         ),
         const SizedBox(width: Tokens.space3),
-        // "Investigate" badge
+        // "Investigate" badge - gothic border
         Container(
           padding: const EdgeInsets.symmetric(
             horizontal: Tokens.space2,
             vertical: 2,
           ),
           decoration: BoxDecoration(
-            border: Border.all(color: Tokens.borderDefault),
+            border: Border.all(color: const Color(0x4D4ADE80)),
             borderRadius: BorderRadius.circular(Tokens.radiusMd),
           ),
           child: const Text(
@@ -109,20 +113,19 @@ class AppShell extends StatelessWidget {
   }
 
   Widget _buildSectionHeader() {
-    return const Column(
+    return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           'Search',
-          style: TextStyle(
-            fontFamily: Tokens.fontSans,
+          style: GoogleFonts.cinzel(
             fontSize: Tokens.sizeXl,
             fontWeight: FontWeight.w500,
             color: Tokens.textPrimary,
           ),
         ),
-        SizedBox(height: 2),
-        Text(
+        const SizedBox(height: 2),
+        const Text(
           'Query Thompson Indicator Fields across all pipelines',
           style: TextStyle(
             fontFamily: Tokens.fontSans,
@@ -132,6 +135,24 @@ class AppShell extends StatelessWidget {
         ),
       ],
     );
+  }
+}
+
+/// Switches content area based on active tab.
+class _TabContent extends ConsumerWidget {
+  const _TabContent();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final activeTab = ref.watch(activeTabProvider);
+
+    return switch (activeTab) {
+      0 => const _ResultsArea(),
+      1 => const _TabWithDetailPanel(child: MapTab()),
+      2 => const _TabWithDetailPanel(child: GlobeTab()),
+      3 => const IaoTab(),
+      _ => const _ResultsArea(),
+    };
   }
 }
 
@@ -160,6 +181,50 @@ class _ResultsArea extends ConsumerWidget {
     return Stack(
       children: [
         const Positioned.fill(child: ResultsTable()),
+        if (hasSelection) ...[
+          Positioned.fill(
+            child: GestureDetector(
+              onTap: () =>
+                  ref.read(selectedEntityProvider.notifier).state = null,
+              child: const ColoredBox(color: Color(0x80000000)),
+            ),
+          ),
+          const Positioned(
+            right: 0,
+            top: 0,
+            bottom: 0,
+            child: DetailPanel(),
+          ),
+        ],
+      ],
+    );
+  }
+}
+
+/// Wraps a tab widget (Map, Globe) with a side detail panel on desktop.
+class _TabWithDetailPanel extends ConsumerWidget {
+  final Widget child;
+  const _TabWithDetailPanel({required this.child});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final width = MediaQuery.sizeOf(context).width;
+    final isWide = width >= Tokens.bpDesktop;
+
+    if (isWide) {
+      return Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(child: child),
+          const DetailPanel(),
+        ],
+      );
+    }
+
+    final hasSelection = ref.watch(selectedEntityProvider) != null;
+    return Stack(
+      children: [
+        Positioned.fill(child: child),
         if (hasSelection) ...[
           Positioned.fill(
             child: GestureDetector(

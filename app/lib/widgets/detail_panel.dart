@@ -21,7 +21,10 @@ class DetailPanel extends ConsumerWidget {
       width: entity != null ? Tokens.sidebarWidth : 0,
       clipBehavior: Clip.hardEdge,
       decoration: const BoxDecoration(
-        border: Border(left: BorderSide(color: Tokens.borderSubtle)),
+        color: Tokens.surfaceBase,
+        border: Border(
+          left: BorderSide(color: Color(0x4D4ADE80), width: 1),
+        ),
       ),
       child: entity == null
           ? null
@@ -99,10 +102,7 @@ class _FieldCard extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.only(bottom: Tokens.space2),
       padding: const EdgeInsets.all(10),
-      decoration: BoxDecoration(
-        color: Tokens.surfaceElevated,
-        borderRadius: BorderRadius.circular(Tokens.radiusLg),
-      ),
+      decoration: Tokens.gothicCardDecoration(),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

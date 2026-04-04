@@ -1,5 +1,18 @@
 # kjtcom - Unified Changelog
 
+**v9.27 (Phase 9 - App Optimization: Visual Refresh + Tab Wiring)**
+- Gothic/cyberpunk visual refresh: Cinzel font for headers, gothic green borders (30% opacity) on card containers, hover glow effects
+- All 4 tabs now functional: Results | Map | Globe | IAO
+- Map tab: flutter_map + OpenStreetMap with pipeline-colored entity markers, marker tap opens detail panel
+- Globe tab: stats dashboard with continent cards, country grid, pipeline distribution bar. Click filters to Results tab
+- IAO Pillar tab: trident SVG graphic + 10 pillar cards (VERBATIM text) + project stats footer (6,181 / 3 / 27 / 26)
+- Search results pagination: dropdown (20/50/100, default 20) + page navigation (Previous | Page N of M | Next)
+- New dependencies: flutter_map ^7.0.2, latlong2 ^0.9.1
+- 5 new files, 7 modified files. 2 production deploys
+- flutter analyze: 0 issues. flutter test: 9/9 pass
+- Security scan clean: no leaked credentials
+- Claude Code interventions: 0
+
 **v8.26 (Phase 8 - Gotcha Registry + Query UX Fix)**
 - Removed rotating example queries from query editor: Timer.periodic (6s cycle), 5-query list, initial query population all removed
 - Query editor now starts empty - no more overwriting user input mid-typing (G42 resolved)

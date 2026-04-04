@@ -1,13 +1,16 @@
+import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../theme/tokens.dart';
 import '../models/location_entity.dart';
 import '../providers/firestore_provider.dart';
 import '../providers/selection_provider.dart';
+import '../providers/pagination_provider.dart';
 import 'pipeline_badge.dart';
 
 /// Component-patterns.md Section 4 - Results Table.
 /// Single-line rows, 5-column grid, pipeline-colored dots.
+/// Paginated with 20/50/100 dropdown and page navigation.
 class ResultsTable extends ConsumerWidget {
   const ResultsTable({super.key});
 
@@ -26,29 +29,58 @@ class ResultsTable extends ConsumerWidget {
           style: const TextStyle(color: Tokens.accentRed, fontSize: Tokens.sizeMd),
         ),
       ),
-      data: (queryResult) => Column(
-        children: [
-          // Result count + truncation indicator
-          _buildResultBar(queryResult),
-          // Column headers
-          _buildHeader(context),
-          // Data rows
-          Expanded(
-            child: ListView.builder(
-              itemCount: queryResult.entities.length,
-              itemBuilder: (context, index) {
-                final entity = queryResult.entities[index];
-                final isSelected = selected?.id == entity.id;
-                return _buildRow(context, ref, entity, isSelected);
-              },
+      data: (queryResult) {
+        final pageSize = ref.watch(pageSizeProvider);
+        final currentPage = ref.watch(currentPageProvider);
+        final totalEntities = queryResult.entities.length;
+        final totalPages = totalEntities == 0
+            ? 1
+            : (totalEntities / pageSize).ceil();
+        // Clamp current page to valid range.
+        final page = currentPage.clamp(0, totalPages - 1);
+        final start = page * pageSize;
+        final end = math.min(start + pageSize, totalEntities);
+        final pageEntities = totalEntities == 0
+            ? <LocationEntity>[]
+            : queryResult.entities.sublist(start, end);
+
+        return Container(
+          decoration: BoxDecoration(
+            border: Border.all(
+              color: const Color(0x4D4ADE80),
+              width: 1,
             ),
+            borderRadius: BorderRadius.circular(Tokens.radiusLg),
           ),
-        ],
-      ),
+          clipBehavior: Clip.antiAlias,
+          child: Column(
+            children: [
+              // Result count + pagination dropdown
+              _buildResultBar(queryResult, ref, pageSize),
+              // Column headers
+              _buildHeader(context),
+              // Data rows (paginated)
+              Expanded(
+                child: ListView.builder(
+                  itemCount: pageEntities.length,
+                  itemBuilder: (context, index) {
+                    final entity = pageEntities[index];
+                    final isSelected = selected?.id == entity.id;
+                    return _buildRow(context, ref, entity, isSelected);
+                  },
+                ),
+              ),
+              // Page navigation
+              if (totalEntities > 0)
+                _buildPageNav(ref, page, totalPages),
+            ],
+          ),
+        );
+      },
     );
   }
 
-  Widget _buildResultBar(QueryResult queryResult) {
+  Widget _buildResultBar(QueryResult queryResult, WidgetRef ref, int pageSize) {
     final count = queryResult.entities.length;
     final isTruncated = queryResult.isTruncated;
 
@@ -95,6 +127,57 @@ class ResultsTable extends ConsumerWidget {
               ),
             ),
           ],
+          const Spacer(),
+          // Pagination dropdown
+          const Text(
+            'Show: ',
+            style: TextStyle(
+              fontFamily: Tokens.fontMono,
+              fontSize: Tokens.sizeSm,
+              color: Tokens.textSecondary,
+            ),
+          ),
+          _PageSizeDropdown(pageSize: pageSize, ref: ref),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPageNav(WidgetRef ref, int page, int totalPages) {
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: Tokens.space2,
+        vertical: Tokens.space2,
+      ),
+      decoration: const BoxDecoration(
+        color: Tokens.surfaceElevated,
+        border: Border(top: BorderSide(color: Tokens.borderSubtle)),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          _PageButton(
+            label: '\u2039 Previous',
+            enabled: page > 0,
+            onTap: () =>
+                ref.read(currentPageProvider.notifier).state = page - 1,
+          ),
+          const SizedBox(width: Tokens.space4),
+          Text(
+            'Page ${page + 1} of $totalPages',
+            style: const TextStyle(
+              fontFamily: Tokens.fontMono,
+              fontSize: Tokens.sizeSm,
+              color: Tokens.textSecondary,
+            ),
+          ),
+          const SizedBox(width: Tokens.space4),
+          _PageButton(
+            label: 'Next \u203A',
+            enabled: page < totalPages - 1,
+            onTap: () =>
+                ref.read(currentPageProvider.notifier).state = page + 1,
+          ),
         ],
       ),
     );
@@ -239,4 +322,75 @@ class ResultsTable extends ConsumerWidget {
     fontSize: Tokens.sizeBase,
     color: Tokens.textSecondary,
   );
+}
+
+class _PageSizeDropdown extends StatelessWidget {
+  final int pageSize;
+  final WidgetRef ref;
+  const _PageSizeDropdown({required this.pageSize, required this.ref});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 24,
+      padding: const EdgeInsets.symmetric(horizontal: Tokens.space2),
+      decoration: BoxDecoration(
+        color: Tokens.surfaceOverlay,
+        borderRadius: BorderRadius.circular(Tokens.radiusMd),
+        border: Border.all(color: Tokens.borderDefault),
+      ),
+      child: DropdownButtonHideUnderline(
+        child: DropdownButton<int>(
+          value: pageSize,
+          dropdownColor: Tokens.surfaceElevated,
+          style: const TextStyle(
+            fontFamily: Tokens.fontMono,
+            fontSize: Tokens.sizeSm,
+            color: Tokens.accentGreen,
+          ),
+          icon: const Icon(Icons.expand_more, size: 14, color: Tokens.textMuted),
+          isDense: true,
+          items: const [
+            DropdownMenuItem(value: 20, child: Text('20')),
+            DropdownMenuItem(value: 50, child: Text('50')),
+            DropdownMenuItem(value: 100, child: Text('100')),
+          ],
+          onChanged: (value) {
+            if (value != null) {
+              ref.read(pageSizeProvider.notifier).state = value;
+            }
+          },
+        ),
+      ),
+    );
+  }
+}
+
+class _PageButton extends StatelessWidget {
+  final String label;
+  final bool enabled;
+  final VoidCallback onTap;
+  const _PageButton({
+    required this.label,
+    required this.enabled,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      cursor: enabled ? SystemMouseCursors.click : SystemMouseCursors.basic,
+      child: GestureDetector(
+        onTap: enabled ? onTap : null,
+        child: Text(
+          label,
+          style: TextStyle(
+            fontFamily: Tokens.fontMono,
+            fontSize: Tokens.sizeSm,
+            color: enabled ? Tokens.accentGreen : Tokens.textMuted,
+          ),
+        ),
+      ),
+    );
+  }
 }
