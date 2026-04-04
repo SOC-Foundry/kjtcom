@@ -132,6 +132,7 @@ class QueryAutocompleteOverlayState
       }
     }
 
+    debugPrint('[W3] overlay suggestions: mode=${ctx?.mode}, count=${suggestions.length}, prefix=${ctx?.prefix}');
     setState(() {
       _context = ctx;
       _suggestions = suggestions;
@@ -200,6 +201,14 @@ class QueryAutocompleteOverlayState
 
   @override
   Widget build(BuildContext context) {
+    // Re-trigger suggestions when value index finishes loading (W3 fix)
+    ref.listen(valueIndexProvider, (prev, next) {
+      if (prev?.valueOrNull == null && next.valueOrNull != null) {
+        debugPrint('[W3] Value index loaded, re-triggering suggestions');
+        _onTextChanged();
+      }
+    });
+
     if (_suggestions.isEmpty) return const SizedBox.shrink();
 
     return CompositedTransformFollower(

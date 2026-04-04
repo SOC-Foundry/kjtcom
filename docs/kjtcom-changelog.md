@@ -1,5 +1,18 @@
 # kjtcom - Unified Changelog
 
+**v9.31 (Phase 9 - Persistent Bug Fix + Playwright Verification)**
+- DIAGNOSTIC-FIRST approach: read every file, grep all patterns, add debugPrint before fixing
+- W1: 1000-result limit CONFIRMED RESOLVED via Playwright screenshot (6,181 entities shown, no limit in code)
+- W2: Quote cursor hardened with addPostFrameCallback to survive frame-timing edge cases (G45)
+- W3: Autocomplete value-mode fix: re-trigger suggestions when valueIndexProvider FutureProvider loads
+- W4: TripleDB verified via Python Firestore query (1,100 docs, correct schema, correct query parsing)
+- W5: Clear button added to query editor chrome bar (clears query, results, and selected entity)
+- Playwright verification: screenshots captured but CanvasKit blocks DOM interaction (G47 confirmed)
+- 3 modified files, 3 Playwright screenshots. 1 production deploy
+- flutter analyze: 0 issues. flutter test: 9/9 pass
+- Security scan clean: no leaked credentials
+- Claude Code interventions: 0
+
 **v9.30 (Phase 9 - App Optimization: Autocomplete + Quote Fix + Limit Verification)**
 - Query field autocomplete: type `t_any_c` to see matching fields, Tab to accept
 - Query value autocomplete: type inside quotes to see matching values from precomputed index (21 fields, 6,878 values)

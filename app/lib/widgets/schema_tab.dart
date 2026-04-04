@@ -277,12 +277,17 @@ class _FieldCard extends ConsumerWidget {
                     final clause = '| where ${field.name} $op ""';
                     final current = controller.text.trimRight();
                     final newText = current.isEmpty ? clause : '$current\n$clause';
+                    final cursorPos = newText.length - 1;
                     controller.text = newText;
-                    controller.selection = TextSelection.collapsed(
-                      offset: newText.length - 1,
-                    );
                     ref.read(queryProvider.notifier).setText(newText);
                     ref.read(activeTabProvider.notifier).state = 0;
+                    // Set cursor AFTER frame rebuilds to survive ref.listen (G45)
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      controller.selection = TextSelection.collapsed(
+                        offset: cursorPos,
+                      );
+                      debugPrint('[W2] Cursor set to $cursorPos (between quotes)');
+                    });
                   },
                   child: Container(
                     padding: const EdgeInsets.symmetric(

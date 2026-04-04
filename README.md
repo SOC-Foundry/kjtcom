@@ -14,7 +14,7 @@ kjtcom extracts entities from YouTube playlists - landmarks, trails, restaurants
 
 The same normalization patterns power production SIEM migrations at [TachTech Engineering](https://tachtech.net). Built entirely by LLM agents using IAO (Iterative Agentic Orchestration) - a methodology distilled from 48+ production iterations on [TripleDB](https://github.com/TachTech-Engineering/tripledb).
 
-**[kylejeromethompson.com](https://kylejeromethompson.com)** | **Phase 9 v9.30** | **Status: Phase 9 App Optimization IN PROGRESS**
+**[kylejeromethompson.com](https://kylejeromethompson.com)** | **Phase 9 v9.31** | **Status: Phase 9 App Optimization IN PROGRESS**
 
 ---
 
@@ -32,6 +32,7 @@ The same normalization patterns power production SIEM migrations at [TachTech En
 - **Gotcha tab** - Full gotcha registry (G1-G44) with status badges, filter toggle (All/Active/Resolved)
 - **Schema tab** - 22 Thompson Indicator Fields with query builder - click any field to add it to the query editor
 - **Query autocomplete** - Field name suggestions (type `t_any_`) and value suggestions (type inside quotes) from precomputed index
+- **Clear button** - Clear query, results, and selected entity with one click
 - **Copy JSON** - One-click copy of full entity JSON from detail panel with clipboard confirmation
 - **Gothic/cyber visual identity** - Cinzel font headers, green-glow borders, dark SIEM base
 
@@ -304,7 +305,7 @@ graph BT
 | 6 | Flutter App | DONE | v6.15-v6.20 |
 | 7 | Firestore Load | DONE | v7.21 |
 | 8 | Enrichment Hardening | DONE | v8.22-v8.26 |
-| 9 | App Optimization | IN PROGRESS | v9.27-v9.30 |
+| 9 | App Optimization | IN PROGRESS | v9.27-v9.31 |
 | 10 | Retrospective + Template | Pending | - |
 
 ---
@@ -371,6 +372,13 @@ OS:   CachyOS (Arch-based) / fish shell
 ---
 
 ## Changelog
+
+**v9.31 (Phase 9 - Persistent Bug Fix + Playwright Verification)**
+- Diagnostic-first approach: 4 persistent bugs investigated with full file reads + grep
+- 1000-result limit confirmed resolved via Playwright screenshot (6,181 entities)
+- Autocomplete value-mode fix, quote cursor hardened, clear button added
+- Playwright verification established (G47: CanvasKit blocks DOM interaction)
+- Claude Code interventions: 0
 
 **v9.30 (Phase 9 - App Optimization: Autocomplete + Quote Fix + Limit Verification)**
 - Query field + value autocomplete from precomputed index (21 fields, 6,878 values)

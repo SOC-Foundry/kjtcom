@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/query_clause.dart';
 import '../theme/tokens.dart';
 import '../providers/query_provider.dart';
+import '../providers/selection_provider.dart';
 import 'query_autocomplete.dart';
 
 /// Component-patterns.md Section 2 - Query Editor.
@@ -39,6 +40,7 @@ class _QueryEditorState extends ConsumerState<QueryEditor> {
     final text = _controller.text;
     final cursorPos = _controller.selection.baseOffset;
     final ctx = AutocompleteContext.detect(text, cursorPos);
+    debugPrint('[W3] autocomplete detect: cursor=$cursorPos, ctx=${ctx?.mode}, prefix=${ctx?.prefix}, field=${ctx?.fieldName}');
     if (ctx != null && _showAutocomplete) {
       _showOverlay();
     } else {
@@ -93,9 +95,12 @@ class _QueryEditorState extends ConsumerState<QueryEditor> {
     // Sync controller when query changes externally (+filter/-exclude)
     ref.listen(queryProvider, (_, next) {
       if (_controller.text != next) {
+        debugPrint('[W2] ref.listen: text differs, updating controller');
         _controller.text = next;
         _controller.selection = TextSelection.collapsed(offset: next.length);
         setState(() {});
+      } else {
+        debugPrint('[W2] ref.listen: text matches, preserving cursor at ${_controller.selection.baseOffset}');
       }
     });
 
@@ -267,6 +272,14 @@ class _QueryEditorState extends ConsumerState<QueryEditor> {
     );
   }
 
+  void _onClear() {
+    _removeOverlay();
+    _controller.clear();
+    ref.read(queryProvider.notifier).setText('');
+    ref.read(selectedEntityProvider.notifier).state = null;
+    setState(() {});
+  }
+
   Widget _buildChipRow() {
     return Row(
       children: [
@@ -276,6 +289,42 @@ class _QueryEditorState extends ConsumerState<QueryEditor> {
         const Spacer(),
         _chip('locations'),
         const SizedBox(width: Tokens.space2),
+        if (_controller.text.isNotEmpty)
+          Padding(
+            padding: const EdgeInsets.only(right: Tokens.space2),
+            child: MouseRegion(
+              cursor: SystemMouseCursors.click,
+              child: GestureDetector(
+                onTap: _onClear,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: Tokens.space2,
+                    vertical: 2,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Tokens.surfaceOverlay,
+                    borderRadius: BorderRadius.circular(Tokens.radiusMd),
+                    border: Border.all(color: Tokens.accentRed.withValues(alpha: 0.5)),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.close, size: 12, color: Tokens.accentRed),
+                      const SizedBox(width: 4),
+                      Text(
+                        'Clear',
+                        style: TextStyle(
+                          fontFamily: Tokens.fontSans,
+                          fontSize: Tokens.sizeSm,
+                          color: Tokens.accentRed,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
         _chip('All time'),
       ],
     );

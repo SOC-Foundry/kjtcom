@@ -2,20 +2,33 @@
 
 ## Read Order
 
-1. docs/kjtcom-design-v9.30.md (4 work items + gotcha registry)
-2. docs/kjtcom-plan-v9.30.md (execute Section B)
+1. docs/kjtcom-design-v9.31.md (DIAGNOSTIC-FIRST approach for persistent bugs)
+2. docs/kjtcom-plan-v9.31.md (execute Section B)
 
 ## Context
 
-Phase 9 iteration. Four work items:
-- W1 (P0): Remove Firestore 1000-result limit (2nd attempt - grep for ALL limit references)
-- W2 (P0): Fix quote cursor placement (3rd attempt - TextEditingController via provider)
-- W3 (P1): Query autocomplete (field names + values from precomputed index)
-- W4 (P1): Consistent trident labels ("Cost", "Delivery", "Performance" all viewports)
+Phase 9 bug fix iteration. FOUR PERSISTENT BUGS that failed 2-3 previous fix attempts:
+- W1: 1000-result limit (attempt #4) - grep EVERY file, not just firestore_provider
+- W2: Quote cursor (attempt #4) - trace ref.listen behavior, add debugPrint
+- W3: Autocomplete not showing - verify asset registration, overlay creation, detection logic
+- W4: TripleDB results not populating - verify data exists, query dispatches correctly
 
-kjtcom project ID: kjtcom-c78cd
-Production: 6,181 entities
-Live: kylejeromethompson.com
+Plus: W5 clear button, W6 dependency update (pre-flight only)
+
+## CRITICAL RULE: DIAGNOSTIC FIRST
+
+For EACH persistent bug:
+1. Read the ENTIRE relevant file (cat it, not just grep)
+2. grep ALL files in app/lib/ for related patterns
+3. Add debugPrint at decision points
+4. THEN write the fix based on what you found
+5. If you cannot verify the fix works on live site, mark it FAIL not PASS
+
+## CRITICAL RULE: POST-FLIGHT VERIFICATION
+
+After deploy, use Playwright MCP to navigate to kylejeromethompson.com and capture screenshots.
+If CanvasKit blocks DOM interaction (G47), document the limitation honestly.
+NEVER mark a fix as confirmed without live evidence (G48).
 
 ## Shell - MANDATORY
 
@@ -32,32 +45,6 @@ Live: kylejeromethompson.com
 - Build: cd app && flutter build web
 - Deploy: cd ~/dev/projects/kjtcom && firebase deploy --only hosting
 
-## Post-Flight Deploy (MANDATORY)
-
-1. flutter build web
-2. firebase deploy --only hosting
-3. Verify ALL 9 tests on live site
-4. Document in build log
-
-## CRITICAL: Limit Fix (W1)
-
-Run `grep -rn "limit\|\.limit\|_queryLimit\|1000" app/lib/providers/firestore_provider.dart` FIRST.
-Read the ENTIRE file. Remove EVERY limit. The result count must show the true total.
-Also verify with a Python Firestore query to confirm expected counts.
-
-## CRITICAL: Quote Fix (W2)
-
-Expose TextEditingController via provider. Schema builder and +filter/-exclude must use this controller to:
-1. Set controller.text with the new clause
-2. Set controller.selection to place cursor between quotes
-3. Sync queryProvider.state to match
-
-## Autocomplete (W3)
-
-Generate value_index.json via pipeline/scripts/generate_value_index.py first.
-Then build autocomplete overlay: field mode (t_any_ prefix) + value mode (inside quotes).
-Tab to accept, Escape to dismiss.
-
 ## Permissions
 
 - CANNOT: git add / commit / push
@@ -65,9 +52,9 @@ Tab to accept, Escape to dismiss.
 
 ## Artifact Rules - MANDATORY
 
-1. docs/kjtcom-build-v9.30.md (include live verification results)
-2. docs/kjtcom-report-v9.30.md
-3. docs/kjtcom-changelog.md (append v9.30)
+1. docs/kjtcom-build-v9.31.md (MUST include diagnostic grep output + Playwright screenshots)
+2. docs/kjtcom-report-v9.31.md (MUST honestly mark PASS/FAIL per bug)
+3. docs/kjtcom-changelog.md (append v9.31)
 4. README.md (update if needed)
 
 ## Formatting
