@@ -14,7 +14,7 @@ kjtcom extracts entities from YouTube playlists - landmarks, trails, restaurants
 
 The same normalization patterns power production SIEM migrations at [TachTech Engineering](https://tachtech.net). Built entirely by LLM agents using IAO (Iterative Agentic Orchestration) - a methodology distilled from 48+ production iterations on [TripleDB](https://github.com/TachTech-Engineering/tripledb).
 
-**[kylejeromethompson.com](https://kylejeromethompson.com)** | **Phase 9 v9.29** | **Status: Phase 9 App Optimization IN PROGRESS**
+**[kylejeromethompson.com](https://kylejeromethompson.com)** | **Phase 9 v9.30** | **Status: Phase 9 App Optimization IN PROGRESS**
 
 ---
 
@@ -31,6 +31,7 @@ The same normalization patterns power production SIEM migrations at [TachTech En
 - **IAO tab** - Methodology showcase with trident graphic and 10 pillar cards
 - **Gotcha tab** - Full gotcha registry (G1-G44) with status badges, filter toggle (All/Active/Resolved)
 - **Schema tab** - 22 Thompson Indicator Fields with query builder - click any field to add it to the query editor
+- **Query autocomplete** - Field name suggestions (type `t_any_`) and value suggestions (type inside quotes) from precomputed index
 - **Copy JSON** - One-click copy of full entity JSON from detail panel with clipboard confirmation
 - **Gothic/cyber visual identity** - Cinzel font headers, green-glow borders, dark SIEM base
 
@@ -184,6 +185,8 @@ The NoSQL query editor supports structured queries against Thompson Indicator Fi
 - Field validation against 22 known fields
 - Parse error feedback for malformed input
 - +filter/-exclude buttons in detail panel append to query (dedup prevents duplicate clauses)
+- Field name autocomplete (type `t_any_` for suggestions, Tab to accept)
+- Value autocomplete inside quotes (precomputed index with 21 fields, 6,878 distinct values)
 
 **Example queries:**
 
@@ -301,7 +304,7 @@ graph BT
 | 6 | Flutter App | DONE | v6.15-v6.20 |
 | 7 | Firestore Load | DONE | v7.21 |
 | 8 | Enrichment Hardening | DONE | v8.22-v8.26 |
-| 9 | App Optimization | IN PROGRESS | v9.27-v9.29 |
+| 9 | App Optimization | IN PROGRESS | v9.27-v9.30 |
 | 10 | Retrospective + Template | Pending | - |
 
 ---
@@ -369,9 +372,14 @@ OS:   CachyOS (Arch-based) / fish shell
 
 ## Changelog
 
+**v9.30 (Phase 9 - App Optimization: Autocomplete + Quote Fix + Limit Verification)**
+- Query field + value autocomplete from precomputed index (21 fields, 6,878 values)
+- Fixed quote cursor placement via shared TextEditingController provider (G45 resolved)
+- Confirmed Firestore limit removal, updated stats footer to 30 iterations
+- Claude Code interventions: 0
+
 **v9.29 (Phase 9 - App Optimization: UX Polish - Trident, Limits, Schema, Quotes)**
 - Removed Firestore .limit(1000): all matching entities returned, full result counts
-- Fixed schema builder quote placement: clause appended without closing quote (G45 resolved)
 - Shortened trident labels for mobile: "Cost", "Delivery", "Performance"
 - All 22 schema fields confirmed present
 - Claude Code interventions: 0

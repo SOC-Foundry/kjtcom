@@ -27,6 +27,7 @@ flutter:
   assets:
     - assets/fonts/
     - assets/globe_hero.jpg
+    - assets/value_index.json
 
   fonts:
     - family: GeistSans

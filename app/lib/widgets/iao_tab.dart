@@ -252,9 +252,9 @@ class _StatsFooter extends StatelessWidget {
           _divider(),
           _stat('3', 'Pipelines'),
           _divider(),
-          _stat('29', 'Iterations'),
+          _stat('30', 'Iterations'),
           _divider(),
-          _stat('28', 'Zero-Intervention'),
+          _stat('29', 'Zero-Intervention'),
         ],
       ),
     );

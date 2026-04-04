@@ -251,11 +251,15 @@ class _FieldCard extends StatelessWidget {
           textColor: Tokens.accentGreen,
           onTap: () {
             final val = (value as List).last.toString();
-            ref.read(queryProvider.notifier).appendClause(
-                  fieldName,
-                  'contains',
-                  val,
-                );
+            final controller = ref.read(queryTextControllerProvider);
+            final clause = '| where $fieldName contains "$val"';
+            final current = controller.text.trimRight();
+            final newText = current.isEmpty ? clause : '$current\n$clause';
+            controller.text = newText;
+            controller.selection = TextSelection.collapsed(
+              offset: newText.length,
+            );
+            ref.read(queryProvider.notifier).setText(newText);
           },
         ),
         _FilterButton(
@@ -264,11 +268,15 @@ class _FieldCard extends StatelessWidget {
           textColor: Tokens.accentRed,
           onTap: () {
             final val = (value as List).last.toString();
-            ref.read(queryProvider.notifier).appendClause(
-                  fieldName,
-                  '!=',
-                  val,
-                );
+            final controller = ref.read(queryTextControllerProvider);
+            final clause = '| where $fieldName != "$val"';
+            final current = controller.text.trimRight();
+            final newText = current.isEmpty ? clause : '$current\n$clause';
+            controller.text = newText;
+            controller.selection = TextSelection.collapsed(
+              offset: newText.length,
+            );
+            ref.read(queryProvider.notifier).setText(newText);
           },
         ),
       ],

@@ -2,16 +2,16 @@
 
 ## Read Order
 
-1. docs/kjtcom-design-v9.29.md (4 fixes + full gotcha registry)
-2. docs/kjtcom-plan-v9.29.md (execute Section B)
+1. docs/kjtcom-design-v9.30.md (4 work items + gotcha registry)
+2. docs/kjtcom-plan-v9.30.md (execute Section B)
 
 ## Context
 
-Phase 9 UX polish. Four fixes:
-- W1: Shorten trident labels for mobile ("Cost", "Delivery", "Performance")
-- W2: Remove Firestore .limit(1000) - fetch all results, paginate client-side
-- W3: Fix missing schema fields (audit against 22 known fields)
-- W4: Fix schema builder quote placement - append without closing quote, update parser
+Phase 9 iteration. Four work items:
+- W1 (P0): Remove Firestore 1000-result limit (2nd attempt - grep for ALL limit references)
+- W2 (P0): Fix quote cursor placement (3rd attempt - TextEditingController via provider)
+- W3 (P1): Query autocomplete (field names + values from precomputed index)
+- W4 (P1): Consistent trident labels ("Cost", "Delivery", "Performance" all viewports)
 
 kjtcom project ID: kjtcom-c78cd
 Production: 6,181 entities
@@ -36,14 +36,27 @@ Live: kylejeromethompson.com
 
 1. flutter build web
 2. firebase deploy --only hosting
-3. Verify on kylejeromethompson.com
-4. Document results in build log
+3. Verify ALL 9 tests on live site
+4. Document in build log
 
-## Key Fix Details
+## CRITICAL: Limit Fix (W1)
 
-W2 (limit removal): Remove .limit(1000) from firestore_provider.dart. Simplify or remove truncation indicator.
+Run `grep -rn "limit\|\.limit\|_queryLimit\|1000" app/lib/providers/firestore_provider.dart` FIRST.
+Read the ENTIRE file. Remove EVERY limit. The result count must show the true total.
+Also verify with a Python Firestore query to confirm expected counts.
 
-W4 (quotes): Schema builder appends `| where field contains "` (NO closing quote). Parser must accept unclosed quotes at end of line (G45). User types value and optionally closes quote.
+## CRITICAL: Quote Fix (W2)
+
+Expose TextEditingController via provider. Schema builder and +filter/-exclude must use this controller to:
+1. Set controller.text with the new clause
+2. Set controller.selection to place cursor between quotes
+3. Sync queryProvider.state to match
+
+## Autocomplete (W3)
+
+Generate value_index.json via pipeline/scripts/generate_value_index.py first.
+Then build autocomplete overlay: field mode (t_any_ prefix) + value mode (inside quotes).
+Tab to accept, Escape to dismiss.
 
 ## Permissions
 
@@ -52,9 +65,9 @@ W4 (quotes): Schema builder appends `| where field contains "` (NO closing quote
 
 ## Artifact Rules - MANDATORY
 
-1. docs/kjtcom-build-v9.29.md
-2. docs/kjtcom-report-v9.29.md
-3. docs/kjtcom-changelog.md (append v9.29)
+1. docs/kjtcom-build-v9.30.md (include live verification results)
+2. docs/kjtcom-report-v9.30.md
+3. docs/kjtcom-changelog.md (append v9.30)
 4. README.md (update if needed)
 
 ## Formatting

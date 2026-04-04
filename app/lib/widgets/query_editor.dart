@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/query_clause.dart';
 import '../theme/tokens.dart';
 import '../providers/query_provider.dart';
+import 'query_autocomplete.dart';
 
 /// Component-patterns.md Section 2 - Query Editor.
 /// Dark input area with line-numbered, syntax-highlighted query text.
@@ -15,25 +16,76 @@ class QueryEditor extends ConsumerStatefulWidget {
 
 class _QueryEditorState extends ConsumerState<QueryEditor> {
   late TextEditingController _controller;
+  final _layerLink = LayerLink();
+  final _autocompleteKey = GlobalKey<QueryAutocompleteOverlayState>();
+  OverlayEntry? _overlayEntry;
+  bool _showAutocomplete = true;
 
   @override
   void initState() {
     super.initState();
-    _controller = TextEditingController(text: ref.read(queryProvider));
+    _controller = ref.read(queryTextControllerProvider);
+    _controller.addListener(_updateAutocomplete);
   }
 
   @override
   void dispose() {
-    _controller.dispose();
+    _controller.removeListener(_updateAutocomplete);
+    _removeOverlay();
     super.dispose();
   }
 
+  void _updateAutocomplete() {
+    final text = _controller.text;
+    final cursorPos = _controller.selection.baseOffset;
+    final ctx = AutocompleteContext.detect(text, cursorPos);
+    if (ctx != null && _showAutocomplete) {
+      _showOverlay();
+    } else {
+      _removeOverlay();
+    }
+    setState(() {});
+  }
+
+  void _showOverlay() {
+    if (_overlayEntry != null) return;
+    _overlayEntry = OverlayEntry(
+      builder: (_) => QueryAutocompleteOverlay(
+        key: _autocompleteKey,
+        controller: _controller,
+        layerLink: _layerLink,
+        onDismiss: _removeOverlay,
+        onAccept: () {
+          _removeOverlay();
+          ref.read(queryProvider.notifier).setText(_controller.text);
+        },
+      ),
+    );
+    Overlay.of(context).insert(_overlayEntry!);
+  }
+
+  void _removeOverlay() {
+    _overlayEntry?.remove();
+    _overlayEntry = null;
+    _showAutocomplete = true;
+  }
+
   void _onSearch() {
+    _removeOverlay();
     ref.read(queryProvider.notifier).setText(_controller.text);
   }
 
   void _onUserEdit(String text) {
+    _showAutocomplete = true;
     setState(() {});
+  }
+
+  KeyEventResult _handleKeyEvent(FocusNode node, KeyEvent event) {
+    final acState = _autocompleteKey.currentState;
+    if (acState != null && acState.handleKey(event)) {
+      return KeyEventResult.handled;
+    }
+    return KeyEventResult.ignored;
   }
 
   @override
@@ -67,70 +119,76 @@ class _QueryEditorState extends ConsumerState<QueryEditor> {
         children: [
           _buildChipRow(),
           const SizedBox(height: Tokens.space2),
-          Stack(
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+          CompositedTransformTarget(
+            link: _layerLink,
+            child: Focus(
+              onKeyEvent: _handleKeyEvent,
+              child: Stack(
                 children: [
-                  for (int i = 0; i < lines.length; i++)
-                    _buildQueryLine(i + 1, lines[i]),
-                ],
-              ),
-              Positioned.fill(
-                child: TextField(
-                  controller: _controller,
-                  onChanged: _onUserEdit,
-                  onSubmitted: (_) => _onSearch(),
-                  maxLines: null,
-                  style: const TextStyle(
-                    fontFamily: Tokens.fontMono,
-                    fontSize: Tokens.sizeLg,
-                    color: Colors.transparent,
-                    height: 1.75,
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      for (int i = 0; i < lines.length; i++)
+                        _buildQueryLine(i + 1, lines[i]),
+                    ],
                   ),
-                  decoration: const InputDecoration(
-                    border: InputBorder.none,
-                    contentPadding: EdgeInsets.only(
-                      left: Tokens.lineNumberWidth + Tokens.space2,
+                  Positioned.fill(
+                    child: TextField(
+                      controller: _controller,
+                      onChanged: _onUserEdit,
+                      onSubmitted: (_) => _onSearch(),
+                      maxLines: null,
+                      style: const TextStyle(
+                        fontFamily: Tokens.fontMono,
+                        fontSize: Tokens.sizeLg,
+                        color: Colors.transparent,
+                        height: 1.75,
+                      ),
+                      decoration: const InputDecoration(
+                        border: InputBorder.none,
+                        contentPadding: EdgeInsets.only(
+                          left: Tokens.lineNumberWidth + Tokens.space2,
+                        ),
+                        isDense: true,
+                      ),
+                      cursorColor: Tokens.syntaxCursor,
                     ),
-                    isDense: true,
                   ),
-                  cursorColor: Tokens.syntaxCursor,
-                ),
-              ),
-              Positioned(
-                right: 0,
-                top: 0,
-                bottom: 0,
-                child: Center(
-                  child: MouseRegion(
-                    cursor: SystemMouseCursors.click,
-                    child: GestureDetector(
-                      onTap: _onSearch,
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: Tokens.space4,
-                          vertical: Tokens.space2 - 2,
-                        ),
-                        decoration: BoxDecoration(
-                          color: Tokens.surfaceCta,
-                          borderRadius: BorderRadius.circular(Tokens.radiusLg),
-                        ),
-                        child: const Text(
-                          'Search',
-                          style: TextStyle(
-                            fontFamily: Tokens.fontSans,
-                            fontSize: Tokens.sizeMd,
-                            fontWeight: FontWeight.w500,
-                            color: Tokens.textOnCta,
+                  Positioned(
+                    right: 0,
+                    top: 0,
+                    bottom: 0,
+                    child: Center(
+                      child: MouseRegion(
+                        cursor: SystemMouseCursors.click,
+                        child: GestureDetector(
+                          onTap: _onSearch,
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: Tokens.space4,
+                              vertical: Tokens.space2 - 2,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Tokens.surfaceCta,
+                              borderRadius: BorderRadius.circular(Tokens.radiusLg),
+                            ),
+                            child: const Text(
+                              'Search',
+                              style: TextStyle(
+                                fontFamily: Tokens.fontSans,
+                                fontSize: Tokens.sizeMd,
+                                fontWeight: FontWeight.w500,
+                                color: Tokens.textOnCta,
+                              ),
+                            ),
                           ),
                         ),
                       ),
                     ),
                   ),
-                ),
+                ],
               ),
-            ],
+            ),
           ),
           _buildFeedback(),
           _buildHelpText(),
@@ -170,7 +228,7 @@ class _QueryEditorState extends ConsumerState<QueryEditor> {
     if (arrayOps.length > 1) {
       return _feedbackRow(
         'Note: Multiple array queries are filtered client-side from '
-        'the first 1,000 results',
+        'the first array match',
         Tokens.textSecondary,
       );
     }

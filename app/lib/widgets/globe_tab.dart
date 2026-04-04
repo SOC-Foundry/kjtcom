@@ -265,11 +265,14 @@ class _ContinentCardState extends State<_ContinentCard> {
         onExit: (_) => setState(() => _hovering = false),
         child: GestureDetector(
           onTap: () {
-            widget.ref.read(queryProvider.notifier).appendClause(
-                  't_any_continents',
-                  'contains',
-                  widget.continent.toLowerCase(),
-                );
+            final controller = widget.ref.read(queryTextControllerProvider);
+            final val = widget.continent.toLowerCase();
+            final clause = '| where t_any_continents contains "$val"';
+            final current = controller.text.trimRight();
+            final newText = current.isEmpty ? clause : '$current\n$clause';
+            controller.text = newText;
+            controller.selection = TextSelection.collapsed(offset: newText.length);
+            widget.ref.read(queryProvider.notifier).setText(newText);
             widget.ref.read(activeTabProvider.notifier).state = 0;
           },
           child: AnimatedContainer(
@@ -352,11 +355,14 @@ class _CountryChipState extends State<_CountryChip> {
       onExit: (_) => setState(() => _hovering = false),
       child: GestureDetector(
         onTap: () {
-          widget.ref.read(queryProvider.notifier).appendClause(
-                't_any_countries',
-                'contains',
-                widget.country.toLowerCase(),
-              );
+          final controller = widget.ref.read(queryTextControllerProvider);
+          final val = widget.country.toLowerCase();
+          final clause = '| where t_any_countries contains "$val"';
+          final current = controller.text.trimRight();
+          final newText = current.isEmpty ? clause : '$current\n$clause';
+          controller.text = newText;
+          controller.selection = TextSelection.collapsed(offset: newText.length);
+          widget.ref.read(queryProvider.notifier).setText(newText);
           widget.ref.read(activeTabProvider.notifier).state = 0;
         },
         child: AnimatedContainer(

@@ -273,9 +273,15 @@ class _FieldCard extends ConsumerWidget {
                   onTap: () {
                     final op =
                         field.name == 't_log_type' ? '==' : 'contains';
-                    ref
-                        .read(queryProvider.notifier)
-                        .appendClause(field.name, op, '');
+                    final controller = ref.read(queryTextControllerProvider);
+                    final clause = '| where ${field.name} $op ""';
+                    final current = controller.text.trimRight();
+                    final newText = current.isEmpty ? clause : '$current\n$clause';
+                    controller.text = newText;
+                    controller.selection = TextSelection.collapsed(
+                      offset: newText.length - 1,
+                    );
+                    ref.read(queryProvider.notifier).setText(newText);
                     ref.read(activeTabProvider.notifier).state = 0;
                   },
                   child: Container(

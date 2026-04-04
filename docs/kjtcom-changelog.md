@@ -1,5 +1,18 @@
 # kjtcom - Unified Changelog
 
+**v9.30 (Phase 9 - App Optimization: Autocomplete + Quote Fix + Limit Verification)**
+- Query field autocomplete: type `t_any_c` to see matching fields, Tab to accept
+- Query value autocomplete: type inside quotes to see matching values from precomputed index (21 fields, 6,878 values)
+- Fixed quote cursor placement (3rd attempt, G45 resolved): shared TextEditingController via provider, cursor lands between quotes
+- Confirmed Firestore limit removal from v9.29 via grep + Python Firestore verification (G46 resolved)
+- Trident labels confirmed consistent ("Cost", "Delivery", "Performance") at all viewports
+- Updated stats footer: 30 iterations, 29 zero-intervention
+- New: generate_value_index.py, query_autocomplete.dart, value_index.json
+- 7 modified files, 3 new files. 1 production deploy
+- flutter analyze: 0 issues. flutter test: 9/9 pass
+- Security scan clean: no leaked credentials
+- Claude Code interventions: 0
+
 **v9.29 (Phase 9 - App Optimization: UX Polish - Trident, Limits, Schema, Quotes)**
 - Removed Firestore .limit(1000): all matching entities returned, pagination handles display (20/50/100)
 - Simplified QueryResult class: removed isTruncated, removed truncation indicator widget
