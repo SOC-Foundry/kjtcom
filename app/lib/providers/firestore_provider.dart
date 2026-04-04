@@ -46,6 +46,9 @@ final queryResultProvider = StreamProvider<QueryResult>((ref) {
     } else if (clause.operator == '==' && !clause.field.startsWith('t_any_')) {
       // Scalar field equality -> server-side
       query = query.where(clause.field, isEqualTo: clause.value.toLowerCase());
+    } else if (clause.operator == '!=' && !clause.field.startsWith('t_any_')) {
+      // Scalar field exclusion -> server-side
+      query = query.where(clause.field, isNotEqualTo: clause.value.toLowerCase());
     } else {
       clientSideClauses.add(clause);
     }

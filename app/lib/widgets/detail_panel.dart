@@ -97,7 +97,8 @@ class DetailPanel extends ConsumerWidget {
                       padding: const EdgeInsets.symmetric(
                           horizontal: Tokens.space3),
                       children: [
-                        for (final entry in fields!.entries)
+                        for (final entry in (fields!.entries.toList()
+                              ..sort((a, b) => a.key.compareTo(b.key))))
                           _FieldCard(
                             fieldName: entry.key,
                             value: entry.value,

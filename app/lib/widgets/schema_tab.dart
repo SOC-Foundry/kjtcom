@@ -274,19 +274,18 @@ class _FieldCard extends ConsumerWidget {
                     final op =
                         field.name == 't_log_type' ? '==' : 'contains';
                     final controller = ref.read(queryTextControllerProvider);
-                    final clause = '| where ${field.name} $op ""';
+                    final clause = '| where ${field.name} $op ';
                     final current = controller.text.trimRight();
                     final newText = current.isEmpty ? clause : '$current\n$clause';
-                    final cursorPos = newText.length - 1;
                     controller.text = newText;
                     ref.read(queryProvider.notifier).setText(newText);
                     ref.read(activeTabProvider.notifier).state = 0;
-                    // Set cursor AFTER frame rebuilds to survive ref.listen (G45)
+                    // Set cursor to end (after trailing space) so user types value
                     WidgetsBinding.instance.addPostFrameCallback((_) {
                       controller.selection = TextSelection.collapsed(
-                        offset: cursorPos,
+                        offset: newText.length,
                       );
-                      debugPrint('[W2] Cursor set to $cursorPos (between quotes)');
+                      debugPrint('[W4] Cursor set to end, user types value');
                     });
                   },
                   child: Container(

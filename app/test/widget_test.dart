@@ -68,4 +68,27 @@ void main() {
         QueryClause.parse('| where t_any_country_codez contains "fr"');
     expect(clause!.isValidField, false);
   });
+
+  test('QueryClause parses != operator', () {
+    final clause = QueryClause.parse('| where t_log_type != "calgold"');
+    expect(clause, isNotNull);
+    expect(clause!.field, 't_log_type');
+    expect(clause.operator, '!=');
+    expect(clause.value, 'calgold');
+  });
+
+  test('QueryClause parses unquoted value', () {
+    final clause = QueryClause.parse('| where t_any_cuisines contains french');
+    expect(clause, isNotNull);
+    expect(clause!.field, 't_any_cuisines');
+    expect(clause.operator, 'contains');
+    expect(clause.value, 'french');
+  });
+
+  test('QueryClause parses unquoted multi-word value', () {
+    final clause =
+        QueryClause.parse('| where t_any_cuisines contains french toast');
+    expect(clause, isNotNull);
+    expect(clause!.value, 'french toast');
+  });
 }

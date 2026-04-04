@@ -1,5 +1,17 @@
 # kjtcom - Unified Changelog
 
+**v9.32 (Phase 9 - Shows Fix + Operators + Detail Sort + Quote Rethink)**
+- W1: TripleDB t_any_shows lowercased (1,100 entities) - G37/G49 resolved
+- W6: Comprehensive lowercase ALL t_any_* data (1,286/6,181 entities updated) - G36 permanently resolved
+- W4: Schema builder appends without quotes, parser accepts unquoted values - G45 eliminated
+- W2: != operator added (server-side isNotEqualTo for scalar, client-side for array)
+- W3: Detail panel fields sorted alphabetically by key
+- W5: Autocomplete detection updated for no-quotes approach (unquoted + empty value modes)
+- 2 new pipeline scripts, 8 files modified, 3 new tests (12/12 pass)
+- 1 production deploy. flutter analyze: 0 issues
+- Security scan clean: no leaked credentials
+- Claude Code interventions: 0
+
 **v9.31 (Phase 9 - Persistent Bug Fix + Playwright Verification)**
 - DIAGNOSTIC-FIRST approach: read every file, grep all patterns, add debugPrint before fixing
 - W1: 1000-result limit CONFIRMED RESOLVED via Playwright screenshot (6,181 entities shown, no limit in code)

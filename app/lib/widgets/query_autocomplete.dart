@@ -34,19 +34,49 @@ class AutocompleteContext {
   static AutocompleteContext? detect(String text, int cursorPos) {
     if (cursorPos <= 0 || cursorPos > text.length) return null;
 
-    // Check value mode: cursor inside quotes after a field + operator
+    // Check value mode: cursor after field + operator, with or without quotes
     final beforeCursor = text.substring(0, cursorPos);
-    final valueMatch = RegExp(
+    // Quoted value: field op "partial
+    final quotedMatch = RegExp(
       r'(\w[\w.]*)\s+(?:contains|==|!=)\s+"([^"]*?)$',
     ).firstMatch(beforeCursor);
-    if (valueMatch != null) {
-      final field = valueMatch.group(1)!;
-      final partial = valueMatch.group(2)!;
+    if (quotedMatch != null) {
+      final field = quotedMatch.group(1)!;
+      final partial = quotedMatch.group(2)!;
       return AutocompleteContext(
         mode: AutocompleteMode.value,
         prefix: partial.toLowerCase(),
         fieldName: field,
         replaceStart: cursorPos - partial.length,
+        replaceEnd: cursorPos,
+      );
+    }
+    // Unquoted value: field op partial (no quote)
+    final unquotedMatch = RegExp(
+      r'(\w[\w.]*)\s+(?:contains|==|!=)\s+([^"\s].*?)$',
+    ).firstMatch(beforeCursor);
+    if (unquotedMatch != null) {
+      final field = unquotedMatch.group(1)!;
+      final partial = unquotedMatch.group(2)!;
+      return AutocompleteContext(
+        mode: AutocompleteMode.value,
+        prefix: partial.toLowerCase(),
+        fieldName: field,
+        replaceStart: cursorPos - partial.length,
+        replaceEnd: cursorPos,
+      );
+    }
+    // Empty value after operator + space (user just clicked schema field)
+    final emptyMatch = RegExp(
+      r'(\w[\w.]*)\s+(?:contains|==|!=)\s+$',
+    ).firstMatch(beforeCursor);
+    if (emptyMatch != null) {
+      final field = emptyMatch.group(1)!;
+      return AutocompleteContext(
+        mode: AutocompleteMode.value,
+        prefix: '',
+        fieldName: field,
+        replaceStart: cursorPos,
         replaceEnd: cursorPos,
       );
     }
@@ -150,8 +180,8 @@ class QueryAutocompleteOverlayState
     int newCursorPos;
 
     if (ctx.mode == AutocompleteMode.field) {
-      // Replace partial field name with full field + operator + open quote
-      final suffix = ' contains "';
+      // Replace partial field name with full field + operator + trailing space
+      final suffix = ' contains ';
       newText = text.substring(0, ctx.replaceStart) +
           suggestion +
           suffix +

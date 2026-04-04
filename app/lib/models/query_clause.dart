@@ -74,18 +74,32 @@ class QueryClause {
       );
     }
 
-    // Standard: field operator "value" (closing quote optional at EOL per G45)
-    final regex = RegExp(
+    // Standard: field operator "value" OR field operator value (unquoted to EOL)
+    final quotedRegex = RegExp(
       r'''(?:\|\s*where\s+)?(\w[\w.]*)\s+(contains|==|!=)\s+"([^"]*)"?''',
       caseSensitive: false,
     );
-    final match = regex.firstMatch(trimmed);
-    if (match == null) return null;
+    final qMatch = quotedRegex.firstMatch(trimmed);
+    if (qMatch != null) {
+      return QueryClause(
+        field: qMatch.group(1)!,
+        operator: qMatch.group(2)!,
+        value: qMatch.group(3)!,
+      );
+    }
+
+    // Unquoted: field operator value (to end of line)
+    final unquotedRegex = RegExp(
+      r'(?:\|\s*where\s+)?(\w[\w.]*)\s+(contains|==|!=)\s+(.+)',
+      caseSensitive: false,
+    );
+    final uMatch = unquotedRegex.firstMatch(trimmed);
+    if (uMatch == null) return null;
 
     return QueryClause(
-      field: match.group(1)!,
-      operator: match.group(2)!,
-      value: match.group(3)!,
+      field: uMatch.group(1)!,
+      operator: uMatch.group(2)!,
+      value: uMatch.group(3)!.trim(),
     );
   }
 
