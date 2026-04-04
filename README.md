@@ -16,7 +16,7 @@ The Thompson Indicator Fields are modeled after [Panther SIEM's](https://docs.pa
 
 Built entirely by LLM agents using IAO (Iterative Agentic Orchestration) - a methodology distilled from 48+ production iterations on [TripleDB](https://github.com/TachTech-Engineering/tripledb).
 
-**kylejeromethompson.com** | **Phase 7 v7.21** | **Status: Phase 7 Firestore Load DONE**
+**kylejeromethompson.com** | **Phase 8 v8.22** | **Status: Phase 8 Enrichment Hardening IN PROGRESS**
 
 ---
 
@@ -277,7 +277,7 @@ graph BT
 | 6d | Flutter App - QA | DONE | v6.18 |
 | 6e | Flutter App - Deploy | DONE | v6.19 |
 | 7 | Firestore Load | DONE | v7.21 |
-| 8 | Enrichment Hardening | Pending | - |
+| 8 | Enrichment Hardening | IN PROGRESS | v8.22 |
 | 9 | App Optimization | Pending | - |
 | 10 | Retrospective + Template | Pending | - |
 
@@ -339,6 +339,14 @@ OS:   CachyOS (Arch-based) / KDE Plasma 6.6.2 / Wayland
 ---
 
 ## Changelog
+
+**v8.22 (Phase 8 - Enrichment Hardening + Query Assessment)**
+- Schema v3: 100% (6,181/6,181) - backfilled 323 non-v3 entities
+- TripleDB enrichment: 63% -> 98%, coordinates: 91% -> 99%, cities: 89% -> 93%
+- NoSQL query assessment: 12 defects identified, v8.23 remediation spec produced
+- Critical: 2/5 example queries broken (case sensitivity), 200-result limit silently truncates
+- MCP/HyperAgents/Algolia evaluated for v8.23+
+- Claude Code interventions: 0
 
 **v7.21 (Phase 7 - Firestore Load + TripleDB Migration)**
 - 3 pipelines live in production: 6,181 entities (899 CalGold + 4,182 RickSteves + 1,100 TripleDB)

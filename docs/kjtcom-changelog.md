@@ -1,5 +1,21 @@
 # kjtcom - Unified Changelog
 
+**v8.22 (Phase 8 - Enrichment Hardening + Query Assessment)**
+- Backfilled 323 non-v3 entities (121 CalGold + 202 RickSteves) to schema v3: 100% coverage (6,181/6,181)
+- Enriched 391/405 TripleDB entities via Google Places API: enrichment rate 63% -> 98%
+- Backfilled 88 TripleDB coordinates (91% -> 99%) and 48 cities (89% -> 93%)
+- Comprehensive NoSQL query assessment: 12 defects identified across 6 categories
+- Critical finding: 2 of 5 rotating example queries return 0 results due to case-sensitive arrayContains (D1)
+- Critical finding: 200-result limit silently truncates compound queries (D6), hiding 50-69% of results
+- `contains-any` operator: Firestore supports natively but Flutter parser does not implement it (D7)
+- No result counts displayed in app UI (D8)
+- MCP registry: 4 Firebase MCP servers identified; gannonh/firebase-mcp recommended for v8.23
+- HyperAgents assessment: premature for v8.23 query fixes, defer to Phase 10 for extraction optimization
+- Algolia/Typesense assessment: defer to Phase 9 - Firestore-native fixes sufficient for 6,181 entities
+- v8.23 remediation spec produced: 10 work items (3 P0, 5 P1, 2 P2) with implementation order
+- Security scan clean: no leaked credentials
+- Claude Code interventions: 0
+
 **v7.21 (Phase 7 - Firestore Load + TripleDB Migration)**
 - Migrated 1,102 TripleDB restaurants from external Firestore project (tripledb-e0f77) to kjtcom production
 - Cross-project Admin SDK with two SA credentials (TachTech-Engineering + socfoundry.com)

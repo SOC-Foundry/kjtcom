@@ -1,57 +1,27 @@
-# kjtcom - Agent Instructions (Gemini CLI)
+# kjtcom - Agent Instructions
 
 ## Read Order
+1. docs/ricksteves-design-v1.7.md
+2. docs/ricksteves-plan-v1.7.md
 
-1. docs/kjtcom-design-v6.15.md
-2. docs/kjtcom-plan-v6.15.md (execute Section C)
-
-## Context
-
-Phase 6a Discovery. Scrape 8 public competitor sites via Playwright MCP.
-
-PRIMARY DESIGN REFERENCE: Panther SIEM (tachtech.runpanther.net).
-Pre-staged in app/design-brief/panther/ with 3 screenshots + 1 HTML mockup.
-Do NOT attempt to scrape Panther (Okta MFA, wrong landing page). Review the
-pre-staged materials and use them as the #1 comparison point for all scrapes.
-
-This is the first kjtcom run on tsP3-cos (P3 Ultra).
-
-## Shell - MANDATORY
-
-- All commands in fish shell via fish -c wrappers
-- NEVER cat config.fish (G20)
-
-## Security
-
-- grep -rnI "AIzaSy" . before completion
-- Print only SET/NOT SET for key checks
-
-## MCP Tools
-
-- Playwright: screenshots + accessibility snapshots
-- Do NOT use Firecrawl (cert issues - G28)
-- Do NOT scrape Panther (G29)
-
-## Scraping Parameters
-
-- Desktop: 1440x900 viewport
-- Mobile: 375x812 viewport
-- Timeout: 10s per page (networkidle)
-- Max 3 min per blocked site before moving on
+## Security - ABSOLUTE RULES
+- NEVER write API keys, tokens, or credentials into ANY file in the repo
+- NEVER include API keys in build logs, reports, or changelog artifacts
+- NEVER echo or print API key values in commands that get logged
+- Read keys from environment variables ONLY
+- If a key needs to be tested, print only "SET" or "NOT SET", never the value
+- Violation of these rules is a BLOCKING failure - stop and alert Kyle
 
 ## Permissions
-
+- CAN: flutter build web, firebase deploy --only hosting/firestore/functions
+- CAN: pip install, npm install (project-level)
 - CANNOT: git add / commit / push
-- CANNOT: sudo
+- CANNOT: sudo (ask Kyle)
 
-## Artifact Rules - MANDATORY
-
-1. docs/kjtcom-build-v6.15.md
-2. docs/kjtcom-report-v6.15.md
-3. docs/kjtcom-changelog.md (append v6.15)
-4. README.md (Phase 6a DONE)
+## Database Rules
+- Load to "staging" database only
+- NEVER write to "(default)" without Kyle approval
 
 ## Formatting
-
 - No em-dashes. Use " - " instead.
 - Use "->" for arrows.

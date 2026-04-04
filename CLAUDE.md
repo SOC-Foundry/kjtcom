@@ -1,54 +1,27 @@
-# kjtcom - Agent Instructions (Claude Code)
+# kjtcom - Agent Instructions
 
 ## Read Order
+1. docs/ricksteves-design-v1.7.md
+2. docs/ricksteves-plan-v1.7.md
 
-1. docs/kjtcom-design-v7.21.md (schema mapping specification)
-2. docs/kjtcom-plan-v7.21.md (execute Section B)
-
-## Context
-
-Phase 7 Firestore Load. Two tasks:
-1. Migrate ~1,100 TripleDB restaurants from external Firestore project
-   to kjtcom production locations collection (Option 4: schema mapping)
-2. Copy 5,081 CalGold + RickSteves entities from staging to production
-
-TripleDB SA credentials are at ~/.config/gcloud/tripledb-sa.json
-kjtcom SA credentials are at $GOOGLE_APPLICATION_CREDENTIALS
-TripleDB project ID: tripledb-e0f77
-kjtcom project ID: kjtcom-c78cd
-
-## Shell - MANDATORY
-
-- All commands in fish shell
-- NEVER cat config.fish or SA JSON files (G20, G11)
-
-## Security
-
-- grep -rnI "AIzaSy" . before completion
-- NEVER print SA credentials or API keys
-- Print only SET/NOT SET for key checks
-
-## Migration Script Requirements
-
-- migrate_tripledb.py: --dry-run, --limit, --project, --sa-path flags
-- migrate_staging_to_production.py: simple copy, no transformation
-- Batch writes (500 docs per batch) for both scripts
-- Deterministic t_row_id for dedup safety (G33)
-- Print summary with field population rates after each migration
+## Security - ABSOLUTE RULES
+- NEVER write API keys, tokens, or credentials into ANY file in the repo
+- NEVER include API keys in build logs, reports, or changelog artifacts
+- NEVER echo or print API key values in commands that get logged
+- Read keys from environment variables ONLY
+- If a key needs to be tested, print only "SET" or "NOT SET", never the value
+- Violation of these rules is a BLOCKING failure - stop and alert Kyle
 
 ## Permissions
-
+- CAN: flutter build web, firebase deploy --only hosting/firestore/functions
+- CAN: pip install, npm install (project-level)
 - CANNOT: git add / commit / push
-- CANNOT: sudo
+- CANNOT: sudo (ask Kyle)
 
-## Artifact Rules - MANDATORY
-
-1. docs/kjtcom-build-v7.21.md
-2. docs/kjtcom-report-v7.21.md
-3. docs/kjtcom-changelog.md (append v7.21)
-4. README.md (Phase 7 DONE, updated entity counts)
+## Database Rules
+- Load to "staging" database only
+- NEVER write to "(default)" without Kyle approval
 
 ## Formatting
-
 - No em-dashes. Use " - " instead.
 - Use "->" for arrows.
