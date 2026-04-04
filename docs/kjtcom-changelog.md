@@ -1,5 +1,19 @@
 # kjtcom - Unified Changelog
 
+**v9.28 (Phase 9 - App Optimization: Gotcha Tab + Schema Builder + JSON Copy)**
+- New Gotcha tab: 25 gotchas (G1-G44) displayed as styled cards with status badges (ACTIVE/RESOLVED/DOCUMENTED)
+- Gotcha filter toggle: All | Active | Resolved
+- New Schema tab: 22 Thompson Indicator Fields with type badges, descriptions, examples
+- Schema query builder: "+ Add to query" button appends clause to query editor and switches to Results tab
+- t_log_type uses == operator; all t_any_* use contains; coordinates and geohashes are view-only
+- Copy JSON button on entity detail panel: copies full entity rawData as indented JSON with SnackBar confirmation
+- Tab bar expanded to 6 tabs: Results | Map | Globe | IAO | Gotcha | Schema
+- Post-flight deploy testing established as MANDATORY standard for all future iterations
+- 2 new files (gotcha_tab.dart, schema_tab.dart), 4 modified files
+- 1 production deploy. flutter analyze: 0 issues. flutter test: 9/9 pass
+- Security scan clean: no leaked credentials
+- Claude Code interventions: 0
+
 **v9.27 (Phase 9 - App Optimization: Visual Refresh + Tab Wiring)**
 - Gothic/cyberpunk visual refresh: Cinzel font for headers, gothic green borders (30% opacity) on card containers, hover glow effects
 - All 4 tabs now functional: Results | Map | Globe | IAO

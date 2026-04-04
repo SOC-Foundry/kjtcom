@@ -1,4 +1,6 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../theme/tokens.dart';
 import '../providers/selection_provider.dart';
@@ -46,6 +48,31 @@ class DetailPanel extends ConsumerWidget {
                           ),
                         ),
                         const Spacer(),
+                        MouseRegion(
+                          cursor: SystemMouseCursors.click,
+                          child: GestureDetector(
+                            onTap: () {
+                              final json = const JsonEncoder.withIndent('  ')
+                                  .convert(entity.raw);
+                              Clipboard.setData(ClipboardData(text: json));
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('JSON copied to clipboard'),
+                                  duration: Duration(seconds: 2),
+                                  backgroundColor: Tokens.surfaceCta,
+                                ),
+                              );
+                            },
+                            child: const Padding(
+                              padding: EdgeInsets.only(right: Tokens.space2),
+                              child: Icon(
+                                Icons.copy,
+                                size: 14,
+                                color: Tokens.textMuted,
+                              ),
+                            ),
+                          ),
+                        ),
                         MouseRegion(
                           cursor: SystemMouseCursors.click,
                           child: GestureDetector(

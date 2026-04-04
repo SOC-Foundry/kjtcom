@@ -13,6 +13,8 @@ import 'entity_count_row.dart';
 import 'map_tab.dart';
 import 'globe_tab.dart';
 import 'iao_tab.dart';
+import 'gotcha_tab.dart';
+import 'schema_tab.dart';
 
 /// Outermost container - component-patterns.md Section 1.
 /// Dark, full-bleed, 24px content padding, 12px outer radius.
@@ -151,6 +153,8 @@ class _TabContent extends ConsumerWidget {
       1 => const _TabWithDetailPanel(child: MapTab()),
       2 => const _TabWithDetailPanel(child: GlobeTab()),
       3 => const IaoTab(),
+      4 => const GotchaTab(),
+      5 => const SchemaTab(),
       _ => const _ResultsArea(),
     };
   }

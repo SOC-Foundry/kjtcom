@@ -14,7 +14,7 @@ kjtcom extracts entities from YouTube playlists - landmarks, trails, restaurants
 
 The same normalization patterns power production SIEM migrations at [TachTech Engineering](https://tachtech.net). Built entirely by LLM agents using IAO (Iterative Agentic Orchestration) - a methodology distilled from 48+ production iterations on [TripleDB](https://github.com/TachTech-Engineering/tripledb).
 
-**[kylejeromethompson.com](https://kylejeromethompson.com)** | **Phase 9 v9.27** | **Status: Phase 9 App Optimization IN PROGRESS**
+**[kylejeromethompson.com](https://kylejeromethompson.com)** | **Phase 9 v9.28** | **Status: Phase 9 App Optimization IN PROGRESS**
 
 ---
 
@@ -29,6 +29,9 @@ The same normalization patterns power production SIEM migrations at [TachTech En
 - **Map tab** - OpenStreetMap with pipeline-colored entity markers, click to open detail panel
 - **Globe tab** - Stats dashboard with continent cards + country grid, click to filter results
 - **IAO tab** - Methodology showcase with trident graphic and 10 pillar cards
+- **Gotcha tab** - Full gotcha registry (G1-G44) with status badges, filter toggle (All/Active/Resolved)
+- **Schema tab** - 22 Thompson Indicator Fields with query builder - click any field to add it to the query editor
+- **Copy JSON** - One-click copy of full entity JSON from detail panel with clipboard confirmation
 - **Gothic/cyber visual identity** - Cinzel font headers, green-glow borders, dark SIEM base
 
 ---
@@ -224,7 +227,7 @@ IAO maps directly to the "harness engineering" pattern formalized by LangChain, 
 |-----------|---------|----------------|
 | Agent Instructions | System prompt per agent | CLAUDE.md, GEMINI.md |
 | Pipeline Scripts | Tool definitions | phase1_acquire.py through phase7_load.py |
-| Gotcha Registry | Executable middleware (failure prevention) | G1-G42 documented patterns |
+| Gotcha Registry | Executable middleware (failure prevention) | G1-G44 documented patterns |
 | Checkpoint Files | State persistence across agent handoffs | .checkpoint_enrich.json, handoff JSON |
 | 4-Artifact Output | Trace analysis and improvement loop | build log, report, changelog, README |
 | Split-Agent Model | Cross-provider subagent delegation | Gemini CLI (phases 1-5) + Claude Code (phases 6-7) |
@@ -298,7 +301,7 @@ graph BT
 | 6 | Flutter App | DONE | v6.15-v6.20 |
 | 7 | Firestore Load | DONE | v7.21 |
 | 8 | Enrichment Hardening | DONE | v8.22-v8.26 |
-| 9 | App Optimization | IN PROGRESS | v9.27 |
+| 9 | App Optimization | IN PROGRESS | v9.27, v9.28 |
 | 10 | Retrospective + Template | Pending | - |
 
 ---
@@ -365,6 +368,14 @@ OS:   CachyOS (Arch-based) / fish shell
 ---
 
 ## Changelog
+
+**v9.28 (Phase 9 - App Optimization: Gotcha Tab + Schema Builder + JSON Copy)**
+- 6 tabs: Results | Map | Globe | IAO | Gotcha | Schema
+- Gotcha tab with 25 documented failure patterns, status badges, filter toggle
+- Schema tab with 22 Thompson Indicator Fields and click-to-query builder
+- Copy JSON button on entity detail panel with SnackBar confirmation
+- Post-flight deploy testing standard established
+- Claude Code interventions: 0
 
 **v9.27 (Phase 9 - App Optimization: Visual Refresh + Tab Wiring)**
 - All 4 tabs functional: Results | Map | Globe | IAO

@@ -3,12 +3,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../theme/tokens.dart';
 import '../providers/tab_provider.dart';
 
-/// Tab bar: Results | Map | Globe | IAO.
+/// Tab bar: Results | Map | Globe | IAO | Gotcha | Schema.
 /// Active tab controlled via activeTabProvider.
 class KjtcomTabBar extends ConsumerWidget {
   const KjtcomTabBar({super.key});
 
-  static const _labels = ['Results', 'Map', 'Globe', 'IAO'];
+  static const _labels = ['Results', 'Map', 'Globe', 'IAO', 'Gotcha', 'Schema'];
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
