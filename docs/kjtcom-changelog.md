@@ -1,5 +1,23 @@
 # kjtcom - Unified Changelog
 
+**v8.23 (Phase 8 - NoSQL Query Remediation)**
+- Resolved all 12 query defects from v8.22 assessment (3 P0, 5 P1, 2 P2, 1 P3 deferred)
+- Case sensitivity fix: all query values lowercased before Firestore dispatch (D1, D3, D4)
+- CalGold data fix: 899/899 t_any_shows values lowercased (D2)
+- Updated 5 example queries - all validated against production, all return >0 results
+- Added result count badge in tech green above results table (D8)
+- Added truncation indicator when results hit limit (D9)
+- Implemented `contains-any` operator -> Firestore `arrayContainsAny` (D7)
+- Increased result limit from 200 to 1000 - no more silent truncation (D6)
+- Added field name validation against 21 known t_any_* fields (D10)
+- Added parse error feedback for malformed queries (D11)
+- Added informational note for multi-array-contains queries about client-side filtering (D5)
+- 2 production deploys: mid-iteration (P0 fix) + final (all fixes)
+- Regression: 11/12 PASS (D12 deferred to Phase 9)
+- flutter analyze: 0 issues. flutter test: 6/6 pass
+- Security scan clean: no leaked credentials
+- Claude Code interventions: 0
+
 **v8.22 (Phase 8 - Enrichment Hardening + Query Assessment)**
 - Backfilled 323 non-v3 entities (121 CalGold + 202 RickSteves) to schema v3: 100% coverage (6,181/6,181)
 - Enriched 391/405 TripleDB entities via Google Places API: enrichment rate 63% -> 98%

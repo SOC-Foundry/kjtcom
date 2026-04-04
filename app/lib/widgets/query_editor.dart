@@ -1,16 +1,17 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../models/query_clause.dart';
 import '../theme/tokens.dart';
 import '../providers/query_provider.dart';
 
 /// Example queries that rotate on idle to showcase syntax highlighting.
 const _exampleQueries = [
-  'locations\n| where t_any_cuisines contains "French"\n| where t_any_shows == "Rick Steves\' Europe"\n',
-  'locations\n| where t_any_actors contains "Huell Howser"\n| where t_any_states contains "ca"\n',
-  'locations\n| where t_any_dishes contains "gelato"\n| where t_any_continents == "Europe"\n',
-  'locations\n| where t_any_categories contains "landmark"\n| where t_any_countries == "France"\n',
-  'locations\n| where t_any_keywords contains "medieval"\n| where t_any_eras contains "roman"\n',
+  'locations\n| where t_any_cuisines contains "french"\n',
+  'locations\n| where t_any_actors contains "huell howser"\n',
+  'locations\n| where t_any_countries contains "italy"\n',
+  'locations\n| where t_any_dishes contains "gelato"\n',
+  'locations\n| where t_any_keywords contains "medieval"\n',
 ];
 
 /// Component-patterns.md Section 2 - Query Editor.
@@ -180,7 +181,61 @@ class _QueryEditorState extends ConsumerState<QueryEditor> {
               ),
             ],
           ),
+          _buildFeedback(),
         ],
+      ),
+    );
+  }
+
+  Widget _buildFeedback() {
+    final text = _controller.text;
+    final clauses = QueryClause.parseAll(text);
+    final hasContent = text.split('\n').any(
+        (l) => l.trim().isNotEmpty && l.trim() != 'locations');
+
+    // Parse error: non-empty input but no clauses parsed
+    if (hasContent && clauses.isEmpty) {
+      return _feedbackRow(
+        'Could not parse query. Expected: field_name operator value '
+        '(e.g., t_any_keywords contains "barbecue")',
+        Tokens.accentRed,
+      );
+    }
+
+    // Invalid field name
+    final invalidFields = clauses.where((c) => !c.isValidField).toList();
+    if (invalidFields.isNotEmpty) {
+      final names = invalidFields.map((c) => c.field).join(', ');
+      return _feedbackRow(
+        'Unknown field: $names',
+        Tokens.accentOrange,
+      );
+    }
+
+    // Multi-array-contains note (D5)
+    final arrayOps = clauses.where(
+        (c) => c.operator == 'contains' || c.operator == 'contains-any');
+    if (arrayOps.length > 1) {
+      return _feedbackRow(
+        'Note: Multiple array queries are filtered client-side from '
+        'the first 1,000 results',
+        Tokens.textSecondary,
+      );
+    }
+
+    return const SizedBox.shrink();
+  }
+
+  Widget _feedbackRow(String message, Color color) {
+    return Padding(
+      padding: const EdgeInsets.only(top: Tokens.space2),
+      child: Text(
+        message,
+        style: TextStyle(
+          fontFamily: Tokens.fontMono,
+          fontSize: Tokens.sizeSm,
+          color: color,
+        ),
       ),
     );
   }
@@ -284,7 +339,7 @@ class _QueryEditorState extends ConsumerState<QueryEditor> {
       spans.add(const TextSpan(text: ' '));
     } else {
       final regex = RegExp(
-        r'''(\|)|(\bwhere\b|\band\b|\bor\b)|(t_\w[\w.]*)|(\bcontains\b|==|!=)|("[^"]*")|(\S+)''',
+        r'''(\|)|(\bwhere\b|\band\b|\bor\b)|(t_\w[\w.]*)|(\bcontains-any\b|\bcontains\b|==|!=)|("[^"]*")|(\[.*?\])|(\S+)''',
         caseSensitive: false,
       );
       for (final match in regex.allMatches(trimmed)) {
@@ -299,6 +354,8 @@ class _QueryEditorState extends ConsumerState<QueryEditor> {
         } else if (match.group(4) != null) {
           color = Tokens.syntaxOperator;
         } else if (match.group(5) != null) {
+          color = Tokens.syntaxValue;
+        } else if (match.group(6) != null) {
           color = Tokens.syntaxValue;
         } else {
           color = Tokens.textPrimary;

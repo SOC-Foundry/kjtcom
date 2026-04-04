@@ -13,10 +13,10 @@ class ResultsTable extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final asyncResults = ref.watch(resultsProvider);
+    final asyncResult = ref.watch(queryResultProvider);
     final selected = ref.watch(selectedEntityProvider);
 
-    return asyncResults.when(
+    return asyncResult.when(
       loading: () => const Center(
         child: CircularProgressIndicator(color: Tokens.accentGreen),
       ),
@@ -26,16 +26,18 @@ class ResultsTable extends ConsumerWidget {
           style: const TextStyle(color: Tokens.accentRed, fontSize: Tokens.sizeMd),
         ),
       ),
-      data: (entities) => Column(
+      data: (queryResult) => Column(
         children: [
+          // Result count + truncation indicator
+          _buildResultBar(queryResult),
           // Column headers
           _buildHeader(context),
           // Data rows
           Expanded(
             child: ListView.builder(
-              itemCount: entities.length,
+              itemCount: queryResult.entities.length,
               itemBuilder: (context, index) {
-                final entity = entities[index];
+                final entity = queryResult.entities[index];
                 final isSelected = selected?.id == entity.id;
                 return _buildRow(context, ref, entity, isSelected);
               },
@@ -44,6 +46,66 @@ class ResultsTable extends ConsumerWidget {
         ],
       ),
     );
+  }
+
+  Widget _buildResultBar(QueryResult queryResult) {
+    final count = queryResult.entities.length;
+    final isTruncated = queryResult.isTruncated;
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(
+        horizontal: Tokens.space2,
+        vertical: Tokens.space2 - 2,
+      ),
+      decoration: const BoxDecoration(
+        border: Border(bottom: BorderSide(color: Tokens.borderSubtle)),
+      ),
+      child: Row(
+        children: [
+          Text.rich(
+            TextSpan(children: [
+              TextSpan(
+                text: _formatCount(count),
+                style: const TextStyle(
+                  fontFamily: Tokens.fontMono,
+                  fontSize: Tokens.sizeMd,
+                  color: Tokens.accentGreen,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              const TextSpan(
+                text: ' results',
+                style: TextStyle(
+                  fontFamily: Tokens.fontMono,
+                  fontSize: Tokens.sizeMd,
+                  color: Tokens.textSecondary,
+                ),
+              ),
+            ]),
+          ),
+          if (isTruncated) ...[
+            const SizedBox(width: Tokens.space3),
+            Text(
+              'Showing ${queryResult.limit} of ${queryResult.limit}+ results',
+              style: const TextStyle(
+                fontFamily: Tokens.fontMono,
+                fontSize: Tokens.sizeSm,
+                color: Tokens.accentOrange,
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  String _formatCount(int count) {
+    if (count < 1000) return '$count';
+    final thousands = count ~/ 1000;
+    final remainder = count % 1000;
+    if (remainder == 0) return '$thousands,000';
+    return '$thousands,${remainder.toString().padLeft(3, '0')}';
   }
 
   Widget _buildHeader(BuildContext context) {

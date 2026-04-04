@@ -20,4 +20,29 @@ void main() {
     expect(clauses.length, 1);
     expect(clauses.first.operator, '==');
   });
+
+  test('QueryClause parses contains-any with JSON array', () {
+    final clause = QueryClause.parse(
+        '| where t_any_cuisines contains-any ["mexican", "italian"]');
+    expect(clause, isNotNull);
+    expect(clause!.field, 't_any_cuisines');
+    expect(clause.operator, 'contains-any');
+    expect(clause.values, ['mexican', 'italian']);
+  });
+
+  test('QueryClause parses contains-any with comma list', () {
+    final clause = QueryClause.parse(
+        '| where t_any_cuisines contains-any "mexican", "italian"');
+    expect(clause, isNotNull);
+    expect(clause!.operator, 'contains-any');
+    expect(clause.values, ['mexican', 'italian']);
+  });
+
+  test('QueryClause validates known fields', () {
+    final valid = QueryClause.parse('| where t_any_cuisines contains "french"');
+    expect(valid!.isValidField, true);
+
+    final invalid = QueryClause.parse('| where t_any_nonexistent contains "test"');
+    expect(invalid!.isValidField, false);
+  });
 }

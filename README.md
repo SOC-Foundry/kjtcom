@@ -16,7 +16,7 @@ The Thompson Indicator Fields are modeled after [Panther SIEM's](https://docs.pa
 
 Built entirely by LLM agents using IAO (Iterative Agentic Orchestration) - a methodology distilled from 48+ production iterations on [TripleDB](https://github.com/TachTech-Engineering/tripledb).
 
-**kylejeromethompson.com** | **Phase 8 v8.22** | **Status: Phase 8 Enrichment Hardening IN PROGRESS**
+**kylejeromethompson.com** | **Phase 8 v8.23** | **Status: Phase 8 Enrichment Hardening DONE - Query system operational**
 
 ---
 
@@ -277,7 +277,7 @@ graph BT
 | 6d | Flutter App - QA | DONE | v6.18 |
 | 6e | Flutter App - Deploy | DONE | v6.19 |
 | 7 | Firestore Load | DONE | v7.21 |
-| 8 | Enrichment Hardening | IN PROGRESS | v8.22 |
+| 8 | Enrichment Hardening | DONE | v8.22, v8.23 |
 | 9 | App Optimization | Pending | - |
 | 10 | Retrospective + Template | Pending | - |
 
@@ -339,6 +339,14 @@ OS:   CachyOS (Arch-based) / KDE Plasma 6.6.2 / Wayland
 ---
 
 ## Changelog
+
+**v8.23 (Phase 8 - NoSQL Query Remediation)**
+- All 12 query defects resolved (11 fixed, 1 deferred): case sensitivity, data casing, result counts, truncation, contains-any, validation
+- Query system fully operational: case-insensitive search, result counts, truncation transparency, error feedback
+- CalGold data fix: 899/899 t_any_shows lowercased. Result limit: 200 -> 1000
+- 2 production deploys. Regression: 11/12 PASS. flutter analyze: 0 issues. 6/6 tests pass
+- Phase 8 (Enrichment Hardening) complete
+- Claude Code interventions: 0
 
 **v8.22 (Phase 8 - Enrichment Hardening + Query Assessment)**
 - Schema v3: 100% (6,181/6,181) - backfilled 323 non-v3 entities
