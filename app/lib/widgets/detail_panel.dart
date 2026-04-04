@@ -253,14 +253,18 @@ class _FieldCard extends StatelessWidget {
           onTap: () {
             final val = (value as List).last.toString();
             final controller = ref.read(queryTextControllerProvider);
-            final clause = '| where $fieldName contains "$val"';
+            final clause = '| where $fieldName == "$val"';
             final current = controller.text.trimRight();
             final newText = current.isEmpty ? clause : '$current\n$clause';
+            ref.read(programmaticUpdateProvider.notifier).state = true;
             controller.text = newText;
             controller.selection = TextSelection.collapsed(
               offset: newText.length,
             );
             ref.read(queryProvider.notifier).setText(newText);
+            Future.microtask(() {
+              ref.read(programmaticUpdateProvider.notifier).state = false;
+            });
           },
         ),
         _FilterButton(
@@ -273,11 +277,15 @@ class _FieldCard extends StatelessWidget {
             final clause = '| where $fieldName != "$val"';
             final current = controller.text.trimRight();
             final newText = current.isEmpty ? clause : '$current\n$clause';
+            ref.read(programmaticUpdateProvider.notifier).state = true;
             controller.text = newText;
             controller.selection = TextSelection.collapsed(
               offset: newText.length,
             );
             ref.read(queryProvider.notifier).setText(newText);
+            Future.microtask(() {
+              ref.read(programmaticUpdateProvider.notifier).state = false;
+            });
           },
         ),
       ],

@@ -14,7 +14,7 @@ kjtcom extracts entities from YouTube playlists - landmarks, trails, restaurants
 
 The same normalization patterns power production SIEM migrations at [TachTech Engineering](https://tachtech.net). Built entirely by LLM agents using IAO (Iterative Agentic Orchestration) - a methodology distilled from 48+ production iterations on [TripleDB](https://github.com/TachTech-Engineering/tripledb).
 
-**[kylejeromethompson.com](https://kylejeromethompson.com)** | **Phase 9 v9.32** | **Status: Phase 9 App Optimization IN PROGRESS**
+**[kylejeromethompson.com](https://kylejeromethompson.com)** | **Phase 9 v9.33** | **Status: Phase 9 App Optimization IN PROGRESS**
 
 ---
 
@@ -176,8 +176,8 @@ The NoSQL query editor supports structured queries against Thompson Indicator Fi
 **Operators:**
 - `contains` - array membership (e.g., `t_any_cuisines contains "french"`)
 - `contains-any` - array membership for multiple values (e.g., `t_any_cuisines contains-any ["mexican", "italian"]`)
-- `==` - equality (e.g., `t_log_type == "tripledb"`)
-- `!=` - exclusion (e.g., `t_log_type != "calgold"`) - server-side for scalar, client-side for array
+- `==` - equality (e.g., `t_log_type == "tripledb"`) - also used by +filter button
+- `!=` - exclusion (e.g., `t_log_type != "calgold"`) - server-side for scalar, client-side for array, used by -exclude button
 
 **Features:**
 - Case-insensitive search (all values lowercased before dispatch)
@@ -306,7 +306,7 @@ graph BT
 | 6 | Flutter App | DONE | v6.15-v6.20 |
 | 7 | Firestore Load | DONE | v7.21 |
 | 8 | Enrichment Hardening | DONE | v8.22-v8.26 |
-| 9 | App Optimization | IN PROGRESS | v9.27-v9.32 |
+| 9 | App Optimization | IN PROGRESS | v9.27-v9.33 |
 | 10 | Retrospective + Template | Pending | - |
 
 ---
@@ -373,6 +373,14 @@ OS:   CachyOS (Arch-based) / fish shell
 ---
 
 ## Changelog
+
+**v9.33 (Phase 9 - Parser Regression + Quotes + Operators)**
+- Parser regression fix: quoted values parse correctly again, 3 new regression tests (15 total)
+- Quotes restored in schema builder with cursor between quotes (programmaticUpdateProvider flag)
+- +filter uses == operator, -exclude uses != operator
+- Dependency upgrade deferred: Riverpod 3 requires >50 lines migration
+- 15/15 tests pass, 0 analyzer issues, 2 production deploys
+- Claude Code interventions: 0
 
 **v9.32 (Phase 9 - Shows Fix + Operators + Detail Sort + Quote Rethink)**
 - TripleDB t_any_shows lowercased (1,100 entities), comprehensive t_any_* lowercase (1,286/6,181) - G36 permanently resolved

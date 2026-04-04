@@ -94,13 +94,14 @@ class _QueryEditorState extends ConsumerState<QueryEditor> {
   Widget build(BuildContext context) {
     // Sync controller when query changes externally (+filter/-exclude)
     ref.listen(queryProvider, (_, next) {
+      debugPrint('[W2] ref.listen: programmatic=${ref.read(programmaticUpdateProvider)}, textMatch=${_controller.text == next}');
+      // SKIP if this update was triggered programmatically (schema builder, +filter, -exclude)
+      if (ref.read(programmaticUpdateProvider)) return;
       if (_controller.text != next) {
         debugPrint('[W2] ref.listen: text differs, updating controller');
         _controller.text = next;
         _controller.selection = TextSelection.collapsed(offset: next.length);
         setState(() {});
-      } else {
-        debugPrint('[W2] ref.listen: text matches, preserving cursor at ${_controller.selection.baseOffset}');
       }
     });
 

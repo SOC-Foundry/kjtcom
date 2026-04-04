@@ -274,19 +274,23 @@ class _FieldCard extends ConsumerWidget {
                     final op =
                         field.name == 't_log_type' ? '==' : 'contains';
                     final controller = ref.read(queryTextControllerProvider);
-                    final clause = '| where ${field.name} $op ';
+                    final clause = '| where ${field.name} $op ""';
                     final current = controller.text.trimRight();
                     final newText = current.isEmpty ? clause : '$current\n$clause';
+                    // Set flag BEFORE any changes to prevent ref.listen override
+                    ref.read(programmaticUpdateProvider.notifier).state = true;
                     controller.text = newText;
+                    // Cursor between the quotes (one char before end of clause)
+                    controller.selection = TextSelection.collapsed(
+                      offset: newText.length - 1,
+                    );
                     ref.read(queryProvider.notifier).setText(newText);
                     ref.read(activeTabProvider.notifier).state = 0;
-                    // Set cursor to end (after trailing space) so user types value
-                    WidgetsBinding.instance.addPostFrameCallback((_) {
-                      controller.selection = TextSelection.collapsed(
-                        offset: newText.length,
-                      );
-                      debugPrint('[W4] Cursor set to end, user types value');
+                    // Clear flag after microtask (next event loop tick)
+                    Future.microtask(() {
+                      ref.read(programmaticUpdateProvider.notifier).state = false;
                     });
+                    debugPrint('[W2] Schema builder: cursor set between quotes at ${newText.length - 1}');
                   },
                   child: Container(
                     padding: const EdgeInsets.symmetric(

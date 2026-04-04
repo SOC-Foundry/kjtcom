@@ -2,22 +2,40 @@
 
 ## Read Order
 
-1. docs/kjtcom-design-v9.32.md (6 work items + gotcha registry)
-2. docs/kjtcom-plan-v9.32.md (execute Section B)
+1. docs/kjtcom-design-v9.33.md (CRITICAL: parser regression + quotes + operators)
+2. docs/kjtcom-plan-v9.33.md (execute Section B in STRICT order)
 
 ## Context
 
-Phase 9 iteration. Six work items:
-- W1 (P0): Lowercase TripleDB t_any_shows (data fix - same as CalGold v8.23 W3)
-- W2 (P1): Add == and != operators to parser + provider
-- W3 (P1): Sort detail panel fields alphabetically
-- W4 (P0): Schema builder appends WITHOUT quotes (user types their own)
-- W5 (P1): Fix autocomplete overlay (diagnostic first)
-- W6 (P1): Comprehensive lowercase ALL t_any_* data across all entities
+v9.32 introduced a PARSER REGRESSION: unquoted value regex broke quoted parsing. t_any_keywords contains "geology" returns parse error. This is the #1 priority.
 
-kjtcom project ID: kjtcom-c78cd
-Production: 6,181 entities
-Live: kylejeromethompson.com
+Phase 9 iteration. Five work items in strict order:
+- W1 (P0): Fix parser regex - quoted first, unquoted fallback. DEPLOY IMMEDIATELY.
+- W2 (P0): Restore quotes in schema builder + fix cursor via programmaticUpdateProvider flag
+- W3 (P0): +filter uses ==, -exclude uses !=
+- W4 (P1): Fix feedback message
+- W5 (P1): Flutter dependency upgrade (defer if >50 breaking changes)
+
+## CRITICAL: PARSER FIX FIRST
+
+1. cat query_clause.dart COMPLETELY
+2. Write a test for `t_any_keywords contains "geology"` that FAILS (proving regression)
+3. Fix regex: quoted pattern FIRST, unquoted as FALLBACK
+4. Test passes
+5. Build + deploy IMMEDIATELY
+6. Verify on live site BEFORE proceeding to W2
+
+## CRITICAL: QUOTES CURSOR FIX
+
+Create programmaticUpdateProvider (StateProvider<bool>).
+ref.listen in query_editor: if (ref.read(programmaticUpdateProvider)) return;
+Schema builder: set flag true, set controller.text, set controller.selection, sync provider, clear flag via Future.microtask.
+Add debugPrint in ref.listen to trace.
+
+## +filter/exclude OPERATORS
+
++filter: append `== "value"` (not contains)
+-exclude: append `!= "value"` (not contains)
 
 ## Shell - MANDATORY
 
@@ -34,32 +52,21 @@ Live: kylejeromethompson.com
 - Build: cd app && flutter build web
 - Deploy: cd ~/dev/projects/kjtcom && firebase deploy --only hosting
 
-## Post-Flight Deploy (MANDATORY)
+## Post-Flight (MANDATORY)
 
-1. flutter build web
-2. firebase deploy --only hosting
-3. Verify ALL 6 tests on live site
-4. HONEST pass/fail in report (G48)
-
-## Key Fix Details
-
-W1: Create fix_tripledb_shows_case.py. --dry-run first. Lowercase 1,100 entities.
-
-W4: Schema builder appends `| where field contains ` (NO QUOTES, trailing space). User types value with their own quotes. Update parser to accept unquoted values too.
-
-W6: Create fix_all_lowercase.py. Lowercase ALL string values in ALL t_any_* arrays across ALL 6,181 entities. Permanent G36 resolution.
+Verify ALL 7 tests on live site. If quotes cursor doesn't work, mark FAIL.
 
 ## Permissions
 
 - CANNOT: git add / commit / push
 - CANNOT: sudo
 
-## Artifact Rules - MANDATORY
+## Artifact Rules
 
-1. docs/kjtcom-build-v9.32.md
-2. docs/kjtcom-report-v9.32.md (honest pass/fail)
-3. docs/kjtcom-changelog.md (append v9.32)
-4. README.md (update if needed)
+1. docs/kjtcom-build-v9.33.md (include parser regression diagnosis + live verification)
+2. docs/kjtcom-report-v9.33.md (HONEST pass/fail)
+3. docs/kjtcom-changelog.md
+4. README.md
 
 ## Formatting
 

@@ -1,5 +1,15 @@
 # kjtcom - Unified Changelog
 
+**v9.33 (Phase 9 - Parser Regression + Quotes + Operators)**
+- W1: Parser regression fix deployed - quoted regex confirmed first, unquoted fallback. 3 new regression tests (15 total)
+- W2: Quotes restored in schema builder (`| where field contains ""`), cursor placed between quotes via programmaticUpdateProvider flag (G45 attempt #6)
+- W3: +filter uses == operator, -exclude uses != operator. Both use programmaticUpdateProvider flag
+- W4: Feedback message already correct, no change needed
+- W5: DEFERRED - Riverpod 3 removes StateProvider, requires >50 lines migration across 13 files
+- 5 files modified, 2 production deploys. flutter analyze: 0 issues. flutter test: 15/15 pass
+- Security scan clean: no leaked credentials
+- Claude Code interventions: 0
+
 **v9.32 (Phase 9 - Shows Fix + Operators + Detail Sort + Quote Rethink)**
 - W1: TripleDB t_any_shows lowercased (1,100 entities) - G37/G49 resolved
 - W6: Comprehensive lowercase ALL t_any_* data (1,286/6,181 entities updated) - G36 permanently resolved

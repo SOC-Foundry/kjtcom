@@ -91,4 +91,30 @@ void main() {
     expect(clause, isNotNull);
     expect(clause!.value, 'french toast');
   });
+
+  // v9.33 regression test: exact query that failed on live site
+  test('QueryClause parses quoted geology keyword query', () {
+    final clause =
+        QueryClause.parse('| where t_any_keywords contains "geology"');
+    expect(clause, isNotNull);
+    expect(clause!.field, 't_any_keywords');
+    expect(clause.operator, 'contains');
+    expect(clause.value, 'geology');
+  });
+
+  test('QueryClause parses == with quoted value', () {
+    final clause =
+        QueryClause.parse('| where t_any_cuisines == "french"');
+    expect(clause, isNotNull);
+    expect(clause!.operator, '==');
+    expect(clause.value, 'french');
+  });
+
+  test('QueryClause parses != with quoted value', () {
+    final clause =
+        QueryClause.parse('| where t_log_type != "calgold"');
+    expect(clause, isNotNull);
+    expect(clause!.operator, '!=');
+    expect(clause.value, 'calgold');
+  });
 }
