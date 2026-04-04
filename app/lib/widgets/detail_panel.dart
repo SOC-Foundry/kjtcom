@@ -157,7 +157,8 @@ class _FieldCard extends StatelessWidget {
   }
 
   bool get _isFilterable =>
-      fieldName.startsWith('t_any_') && value is List && (value as List).isNotEmpty;
+      (fieldName.startsWith('t_any_') && value is List && (value as List).isNotEmpty) ||
+      fieldName == 't_log_type';
 
   Widget _buildValue() {
     if (value is List) {
@@ -251,16 +252,23 @@ class _FieldCard extends StatelessWidget {
           bgColor: Tokens.surfaceFilterPositive,
           textColor: Tokens.accentGreen,
           onTap: () {
-            final val = (value as List).last.toString();
+            final isArray = fieldName.startsWith('t_any_');
+            final val = isArray ? (value as List).last.toString() : value.toString();
+            final op = isArray ? 'contains' : '==';
             final controller = ref.read(queryTextControllerProvider);
-            final clause = '| where $fieldName == "$val"';
+            final clause = '| where $fieldName $op "$val"';
             final current = controller.text.trimRight();
             final newText = current.isEmpty ? clause : '$current\n$clause';
+            
             ref.read(programmaticUpdateProvider.notifier).state = true;
             controller.text = newText;
-            controller.selection = TextSelection.collapsed(
-              offset: newText.length,
-            );
+            
+            final cursorPos = newText.length;
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              controller.selection = TextSelection.collapsed(offset: cursorPos);
+              debugPrint('[W1] Detail panel: deferred cursor set to end at $cursorPos');
+            });
+
             ref.read(queryProvider.notifier).setText(newText);
             Future.microtask(() {
               ref.read(programmaticUpdateProvider.notifier).state = false;
@@ -272,16 +280,23 @@ class _FieldCard extends StatelessWidget {
           bgColor: Tokens.surfaceFilterNegative,
           textColor: Tokens.accentRed,
           onTap: () {
-            final val = (value as List).last.toString();
+            final isArray = fieldName.startsWith('t_any_');
+            final val = isArray ? (value as List).last.toString() : value.toString();
+            const op = '!=';
             final controller = ref.read(queryTextControllerProvider);
-            final clause = '| where $fieldName != "$val"';
+            final clause = '| where $fieldName $op "$val"';
             final current = controller.text.trimRight();
             final newText = current.isEmpty ? clause : '$current\n$clause';
+            
             ref.read(programmaticUpdateProvider.notifier).state = true;
             controller.text = newText;
-            controller.selection = TextSelection.collapsed(
-              offset: newText.length,
-            );
+            
+            final cursorPos = newText.length;
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              controller.selection = TextSelection.collapsed(offset: cursorPos);
+              debugPrint('[W1] Detail panel: deferred cursor set to end at $cursorPos');
+            });
+
             ref.read(queryProvider.notifier).setText(newText);
             Future.microtask(() {
               ref.read(programmaticUpdateProvider.notifier).state = false;

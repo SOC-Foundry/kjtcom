@@ -1,5 +1,13 @@
 # kjtcom - Unified Changelog
 
+**v9.34 (Phase 9 - Gemini: Quote Cursor + Inline Autocomplete)**
+- W1: Fix quote cursor in query editor (G45 resolved). Used `WidgetsBinding.instance.addPostFrameCallback` to ensure selection survives the build cycle in `schema_tab.dart`, `query_editor.dart`, and `detail_panel.dart`.
+- W2: Replaced overlay-based autocomplete with inline Panther-style suggestions. Suggestions appear in a compact Column below query text with keyboard navigation (Tab/Enter/Arrows/Escape).
+- W3: Fix +filter/-exclude operators. Array fields (`t_any_*`) use `contains`, scalar fields (`t_log_type`) use `==`. Both use `!=` for exclude. `t_log_type` is now filterable from the detail panel.
+- 5 modified files, 1 production deploy. flutter analyze: 0 issues. flutter test: 15/15 pass
+- Security scan clean: no leaked credentials
+- Gemini CLI interventions: 0
+
 **v9.33 (Phase 9 - Parser Regression + Quotes + Operators)**
 - W1: Parser regression fix deployed - quoted regex confirmed first, unquoted fallback. 3 new regression tests (15 total)
 - W2: Quotes restored in schema builder (`| where field contains ""`), cursor placed between quotes via programmaticUpdateProvider flag (G45 attempt #6)

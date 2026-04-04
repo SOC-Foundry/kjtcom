@@ -280,17 +280,24 @@ class _FieldCard extends ConsumerWidget {
                     // Set flag BEFORE any changes to prevent ref.listen override
                     ref.read(programmaticUpdateProvider.notifier).state = true;
                     controller.text = newText;
+                    
                     // Cursor between the quotes (one char before end of clause)
-                    controller.selection = TextSelection.collapsed(
-                      offset: newText.length - 1,
-                    );
+                    // Use addPostFrameCallback to ensure selection survives the rebuild (G45)
+                    final cursorPos = newText.length - 1;
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      controller.selection = TextSelection.collapsed(
+                        offset: cursorPos,
+                      );
+                      debugPrint('[W2] Schema builder: deferred cursor set between quotes at $cursorPos');
+                    });
+                    
                     ref.read(queryProvider.notifier).setText(newText);
                     ref.read(activeTabProvider.notifier).state = 0;
+                    
                     // Clear flag after microtask (next event loop tick)
                     Future.microtask(() {
                       ref.read(programmaticUpdateProvider.notifier).state = false;
                     });
-                    debugPrint('[W2] Schema builder: cursor set between quotes at ${newText.length - 1}');
                   },
                   child: Container(
                     padding: const EdgeInsets.symmetric(

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/query_clause.dart';
 import '../theme/tokens.dart';
@@ -17,88 +18,155 @@ class QueryEditor extends ConsumerStatefulWidget {
 
 class _QueryEditorState extends ConsumerState<QueryEditor> {
   late TextEditingController _controller;
-  final _layerLink = LayerLink();
-  final _autocompleteKey = GlobalKey<QueryAutocompleteOverlayState>();
-  OverlayEntry? _overlayEntry;
+  int _selectedIndex = 0;
+  List<String> _suggestions = [];
+  AutocompleteContext? _acContext;
   bool _showAutocomplete = true;
 
   @override
   void initState() {
     super.initState();
     _controller = ref.read(queryTextControllerProvider);
-    _controller.addListener(_updateAutocomplete);
+    _controller.addListener(_onTextChanged);
   }
 
   @override
   void dispose() {
-    _controller.removeListener(_updateAutocomplete);
-    _removeOverlay();
+    _controller.removeListener(_onTextChanged);
     super.dispose();
   }
 
-  void _updateAutocomplete() {
+  void _onTextChanged() {
     final text = _controller.text;
     final cursorPos = _controller.selection.baseOffset;
     final ctx = AutocompleteContext.detect(text, cursorPos);
-    debugPrint('[W3] autocomplete detect: cursor=$cursorPos, ctx=${ctx?.mode}, prefix=${ctx?.prefix}, field=${ctx?.fieldName}');
+    
+    List<String> suggestions = [];
     if (ctx != null && _showAutocomplete) {
-      _showOverlay();
-    } else {
-      _removeOverlay();
+      if (ctx.mode == AutocompleteMode.field) {
+        suggestions = QueryClause.knownFields
+            .where((f) => f.startsWith(ctx.prefix) && f != ctx.prefix)
+            .toList()
+          ..sort();
+        if (suggestions.length > 5) suggestions = suggestions.take(5).toList();
+      } else if (ctx.mode == AutocompleteMode.value && ctx.fieldName != null) {
+        final valueIndex = ref.read(valueIndexProvider).valueOrNull ?? {};
+        final values = valueIndex[ctx.fieldName] ?? [];
+        suggestions = values
+            .where((v) =>
+                v.startsWith(ctx.prefix) &&
+                (ctx.prefix.isEmpty || v != ctx.prefix))
+            .take(5)
+            .toList();
+      }
     }
-    setState(() {});
+
+    if (suggestions.length != _suggestions.length || 
+        (suggestions.isNotEmpty && suggestions[0] != (_suggestions.isNotEmpty ? _suggestions[0] : ''))) {
+      setState(() {
+        _acContext = ctx;
+        _suggestions = suggestions;
+        _selectedIndex = 0;
+      });
+    } else {
+      // Still update context even if suggestions are same (cursor moved)
+      _acContext = ctx;
+    }
   }
 
-  void _showOverlay() {
-    if (_overlayEntry != null) return;
-    _overlayEntry = OverlayEntry(
-      builder: (_) => QueryAutocompleteOverlay(
-        key: _autocompleteKey,
-        controller: _controller,
-        layerLink: _layerLink,
-        onDismiss: _removeOverlay,
-        onAccept: () {
-          _removeOverlay();
-          ref.read(queryProvider.notifier).setText(_controller.text);
-        },
-      ),
-    );
-    Overlay.of(context).insert(_overlayEntry!);
-  }
+  void _acceptSuggestion(int index) {
+    if (_acContext == null || index >= _suggestions.length) return;
+    final suggestion = _suggestions[index];
+    final text = _controller.text;
+    final ctx = _acContext!;
 
-  void _removeOverlay() {
-    _overlayEntry?.remove();
-    _overlayEntry = null;
-    _showAutocomplete = true;
+    String newText;
+    int newCursorPos;
+
+    if (ctx.mode == AutocompleteMode.field) {
+      final suffix = ' contains ';
+      newText = text.substring(0, ctx.replaceStart) +
+          suggestion +
+          suffix +
+          text.substring(ctx.replaceEnd);
+      newCursorPos = ctx.replaceStart + suggestion.length + suffix.length;
+    } else {
+      newText = text.substring(0, ctx.replaceStart) +
+          suggestion +
+          text.substring(ctx.replaceEnd);
+      newCursorPos = ctx.replaceStart + suggestion.length;
+    }
+
+    // Use addPostFrameCallback for cursor placement (W1)
+    _controller.text = newText;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _controller.selection = TextSelection.collapsed(offset: newCursorPos);
+    });
+    
+    ref.read(queryProvider.notifier).setText(newText);
+    setState(() {
+      _suggestions = [];
+      _showAutocomplete = false;
+    });
   }
 
   void _onSearch() {
-    _removeOverlay();
+    setState(() {
+      _suggestions = [];
+      _showAutocomplete = false;
+    });
     ref.read(queryProvider.notifier).setText(_controller.text);
   }
 
   void _onUserEdit(String text) {
     _showAutocomplete = true;
-    setState(() {});
+    // _onTextChanged is already called by the listener
   }
 
   KeyEventResult _handleKeyEvent(FocusNode node, KeyEvent event) {
-    final acState = _autocompleteKey.currentState;
-    if (acState != null && acState.handleKey(event)) {
-      return KeyEventResult.handled;
+    if (event is! KeyDownEvent && event is! KeyRepeatEvent) return KeyEventResult.ignored;
+    
+    if (_suggestions.isNotEmpty) {
+      if (event.logicalKey == LogicalKeyboardKey.tab || event.logicalKey == LogicalKeyboardKey.enter) {
+        _acceptSuggestion(_selectedIndex);
+        return KeyEventResult.handled;
+      }
+      if (event.logicalKey == LogicalKeyboardKey.arrowDown) {
+        setState(() {
+          _selectedIndex = (_selectedIndex + 1) % _suggestions.length;
+        });
+        return KeyEventResult.handled;
+      }
+      if (event.logicalKey == LogicalKeyboardKey.arrowUp) {
+        setState(() {
+          _selectedIndex = (_selectedIndex - 1 + _suggestions.length) % _suggestions.length;
+        });
+        return KeyEventResult.handled;
+      }
+      if (event.logicalKey == LogicalKeyboardKey.escape) {
+        setState(() {
+          _suggestions = [];
+          _showAutocomplete = false;
+        });
+        return KeyEventResult.handled;
+      }
     }
     return KeyEventResult.ignored;
   }
 
   @override
   Widget build(BuildContext context) {
+    // Re-trigger suggestions when value index finishes loading (W3 fix)
+    ref.listen(valueIndexProvider, (prev, next) {
+      if (prev?.valueOrNull == null && next.valueOrNull != null) {
+        _onTextChanged();
+      }
+    });
+
     // Sync controller when query changes externally (+filter/-exclude)
     ref.listen(queryProvider, (_, next) {
-      debugPrint('[W2] ref.listen: programmatic=${ref.read(programmaticUpdateProvider)}, textMatch=${_controller.text == next}');
-      // SKIP if this update was triggered programmatically (schema builder, +filter, -exclude)
       if (ref.read(programmaticUpdateProvider)) return;
       if (_controller.text != next) {
-        debugPrint('[W2] ref.listen: text differs, updating controller');
         _controller.text = next;
         _controller.selection = TextSelection.collapsed(offset: next.length);
         setState(() {});
@@ -125,80 +193,160 @@ class _QueryEditorState extends ConsumerState<QueryEditor> {
         children: [
           _buildChipRow(),
           const SizedBox(height: Tokens.space2),
-          CompositedTransformTarget(
-            link: _layerLink,
-            child: Focus(
-              onKeyEvent: _handleKeyEvent,
-              child: Stack(
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      for (int i = 0; i < lines.length; i++)
-                        _buildQueryLine(i + 1, lines[i]),
-                    ],
-                  ),
-                  Positioned.fill(
-                    child: TextField(
-                      controller: _controller,
-                      onChanged: _onUserEdit,
-                      onSubmitted: (_) => _onSearch(),
-                      maxLines: null,
-                      style: const TextStyle(
-                        fontFamily: Tokens.fontMono,
-                        fontSize: Tokens.sizeLg,
-                        color: Colors.transparent,
-                        height: 1.75,
-                      ),
-                      decoration: const InputDecoration(
-                        border: InputBorder.none,
-                        contentPadding: EdgeInsets.only(
-                          left: Tokens.lineNumberWidth + Tokens.space2,
-                        ),
-                        isDense: true,
-                      ),
-                      cursorColor: Tokens.syntaxCursor,
+          Focus(
+            onKeyEvent: _handleKeyEvent,
+            child: Stack(
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    for (int i = 0; i < lines.length; i++)
+                      _buildQueryLine(i + 1, lines[i]),
+                  ],
+                ),
+                Positioned.fill(
+                  child: TextField(
+                    controller: _controller,
+                    onChanged: _onUserEdit,
+                    onSubmitted: (_) => _onSearch(),
+                    maxLines: null,
+                    style: const TextStyle(
+                      fontFamily: Tokens.fontMono,
+                      fontSize: Tokens.sizeLg,
+                      color: Colors.transparent,
+                      height: 1.75,
                     ),
+                    decoration: const InputDecoration(
+                      border: InputBorder.none,
+                      contentPadding: EdgeInsets.only(
+                        left: Tokens.lineNumberWidth + Tokens.space2,
+                      ),
+                      isDense: true,
+                    ),
+                    cursorColor: Tokens.syntaxCursor,
                   ),
-                  Positioned(
-                    right: 0,
-                    top: 0,
-                    bottom: 0,
-                    child: Center(
-                      child: MouseRegion(
-                        cursor: SystemMouseCursors.click,
-                        child: GestureDetector(
-                          onTap: _onSearch,
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: Tokens.space4,
-                              vertical: Tokens.space2 - 2,
-                            ),
-                            decoration: BoxDecoration(
-                              color: Tokens.surfaceCta,
-                              borderRadius: BorderRadius.circular(Tokens.radiusLg),
-                            ),
-                            child: const Text(
-                              'Search',
-                              style: TextStyle(
-                                fontFamily: Tokens.fontSans,
-                                fontSize: Tokens.sizeMd,
-                                fontWeight: FontWeight.w500,
-                                color: Tokens.textOnCta,
-                              ),
+                ),
+                Positioned(
+                  right: 0,
+                  top: 0,
+                  bottom: 0,
+                  child: Center(
+                    child: MouseRegion(
+                      cursor: SystemMouseCursors.click,
+                      child: GestureDetector(
+                        onTap: _onSearch,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: Tokens.space4,
+                            vertical: Tokens.space2 - 2,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Tokens.surfaceCta,
+                            borderRadius: BorderRadius.circular(Tokens.radiusLg),
+                          ),
+                          child: const Text(
+                            'Search',
+                            style: TextStyle(
+                              fontFamily: Tokens.fontSans,
+                              fontSize: Tokens.sizeMd,
+                              fontWeight: FontWeight.w500,
+                              color: Tokens.textOnCta,
                             ),
                           ),
                         ),
                       ),
                     ),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
+          if (_suggestions.isNotEmpty) _buildInlineSuggestions(),
           _buildFeedback(),
           _buildHelpText(),
         ],
+      ),
+    );
+  }
+
+  Widget _buildInlineSuggestions() {
+    return Container(
+      margin: const EdgeInsets.only(
+        top: Tokens.space2,
+        left: Tokens.lineNumberWidth + Tokens.space2,
+      ),
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      decoration: BoxDecoration(
+        color: const Color(0xFF1C2128),
+        border: Border.all(color: Tokens.accentGreen.withValues(alpha: 0.5), width: 1),
+        borderRadius: BorderRadius.circular(Tokens.radiusMd),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          for (int i = 0; i < _suggestions.length; i++)
+            _buildSuggestionRow(i),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(8, 4, 8, 2),
+            child: Row(
+              children: [
+                Text(
+                  'Tab to insert',
+                  style: TextStyle(
+                    fontFamily: Tokens.fontSans,
+                    fontSize: 10,
+                    color: Tokens.textMuted,
+                  ),
+                ),
+                const Spacer(),
+                if (_acContext?.mode == AutocompleteMode.field)
+                  const Text(
+                    'field',
+                    style: TextStyle(
+                      fontFamily: Tokens.fontMono,
+                      fontSize: 10,
+                      color: Tokens.syntaxField,
+                    ),
+                  )
+                else
+                  const Text(
+                    'value',
+                    style: TextStyle(
+                      fontFamily: Tokens.fontMono,
+                      fontSize: 10,
+                      color: Tokens.syntaxValue,
+                    ),
+                  ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSuggestionRow(int index) {
+    final isSelected = index == _selectedIndex;
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      child: GestureDetector(
+        onTap: () => _acceptSuggestion(index),
+        child: Container(
+          width: double.infinity,
+          padding: const EdgeInsets.symmetric(
+            horizontal: Tokens.space3,
+            vertical: 4,
+          ),
+          color: isSelected ? const Color(0xFF2D333B) : Colors.transparent,
+          child: Text(
+            _suggestions[index],
+            style: TextStyle(
+              fontFamily: Tokens.fontMono,
+              fontSize: Tokens.sizeMd,
+              color: isSelected ? Tokens.accentGreen : Tokens.textPrimary,
+            ),
+          ),
+        ),
       ),
     );
   }
@@ -274,7 +422,6 @@ class _QueryEditorState extends ConsumerState<QueryEditor> {
   }
 
   void _onClear() {
-    _removeOverlay();
     _controller.clear();
     ref.read(queryProvider.notifier).setText('');
     ref.read(selectedEntityProvider.notifier).state = null;

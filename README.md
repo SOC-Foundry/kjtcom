@@ -14,7 +14,7 @@ kjtcom extracts entities from YouTube playlists - landmarks, trails, restaurants
 
 The same normalization patterns power production SIEM migrations at [TachTech Engineering](https://tachtech.net). Built entirely by LLM agents using IAO (Iterative Agentic Orchestration) - a methodology distilled from 48+ production iterations on [TripleDB](https://github.com/TachTech-Engineering/tripledb).
 
-**[kylejeromethompson.com](https://kylejeromethompson.com)** | **Phase 9 v9.33** | **Status: Phase 9 App Optimization IN PROGRESS**
+**[kylejeromethompson.com](https://kylejeromethompson.com)** | **Phase 9 v9.34** | **Status: Phase 9 App Optimization IN PROGRESS**
 
 ---
 
@@ -31,7 +31,7 @@ The same normalization patterns power production SIEM migrations at [TachTech En
 - **IAO tab** - Methodology showcase with trident graphic and 10 pillar cards
 - **Gotcha tab** - Full gotcha registry (G1-G44) with status badges, filter toggle (All/Active/Resolved)
 - **Schema tab** - 22 Thompson Indicator Fields with query builder - click any field to add it to the query editor
-- **Query autocomplete** - Field name suggestions (type `t_any_`) and value suggestions (type inside quotes) from precomputed index
+- **Inline autocomplete** - Panther-style suggestions rendered below the query text for field names (type `t_any_`) and values (type inside quotes)
 - **Clear button** - Clear query, results, and selected entity with one click
 - **Copy JSON** - One-click copy of full entity JSON from detail panel with clipboard confirmation
 - **Gothic/cyber visual identity** - Cinzel font headers, green-glow borders, dark SIEM base
