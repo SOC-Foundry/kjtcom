@@ -33,6 +33,8 @@ class LocationEntity {
     return countries.isNotEmpty ? countries.first : '';
   }
 
+  List<String> get countryCodes => _stringList('t_any_country_codes');
+
   String get show {
     final shows = _stringList('t_any_shows');
     return shows.isNotEmpty ? shows.first : '';

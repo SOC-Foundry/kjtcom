@@ -1,5 +1,18 @@
 # kjtcom - Unified Changelog
 
+**v8.24 (Phase 8 - UI Fixes + Country Codes)**
+- Fixed detail panel: clicking a result row now opens entity detail with t_any_* field cards at all viewport widths
+- Detail panel on mobile/tablet: overlay with scrim backdrop, animated width transition on desktop
+- Removed "staging" badge from app header - app queries production since v7.21
+- Fixed cursor alignment in query editor: removed custom cursor (duplicate cursors), removed per-line padding drift
+- Backfilled t_any_country_codes (ISO 3166-1 alpha-2) on 6,161/6,181 entities (99.7% coverage)
+- Added t_any_country_codes to knownFields and LocationEntity model
+- 2 production deploys: mid-iteration (P0 fixes) + final (all fixes)
+- flutter analyze: 0 issues. flutter test: 9/9 pass (3 new country code tests)
+- Security scan clean: no leaked credentials
+- Phase 8 (Enrichment Hardening) COMPLETE
+- Claude Code interventions: 0
+
 **v8.23 (Phase 8 - NoSQL Query Remediation)**
 - Resolved all 12 query defects from v8.22 assessment (3 P0, 5 P1, 2 P2, 1 P3 deferred)
 - Case sensitivity fix: all query values lowercased before Firestore dispatch (D1, D3, D4)

@@ -16,7 +16,7 @@ The Thompson Indicator Fields are modeled after [Panther SIEM's](https://docs.pa
 
 Built entirely by LLM agents using IAO (Iterative Agentic Orchestration) - a methodology distilled from 48+ production iterations on [TripleDB](https://github.com/TachTech-Engineering/tripledb).
 
-**kylejeromethompson.com** | **Phase 8 v8.23** | **Status: Phase 8 Enrichment Hardening DONE - Query system operational**
+**kylejeromethompson.com** | **Phase 8 v8.24** | **Status: Phase 8 Enrichment Hardening DONE - All UI fixes + country codes**
 
 ---
 
@@ -101,6 +101,7 @@ The Thompson Indicator Fields provide universal indicator fields across all pipe
 | `t_any_cuisines` | array[string] | Cuisine categories (v3) | `["french", "italian"]` |
 | `t_any_dishes` | array[string] | Specific food items (v3) | `["croissant", "paella"]` |
 | `t_any_eras` | array[string] | Historical periods mentioned (v3) | `["medieval", "roman"]` |
+| `t_any_country_codes` | array[string] | ISO 3166-1 alpha-2 codes (v8.24) | `["fr", "it", "us"]` |
 | `t_any_continents` | array[string] | Continent(s) (v3) | `["europe", "asia"]` |
 | `t_any_urls` | array[string] | Associated URLs | `["https://example.com"]` |
 | `t_any_video_ids` | array[string] | Source YouTube video IDs | `["dQw4w9WgXcQ"]` |
@@ -277,7 +278,7 @@ graph BT
 | 6d | Flutter App - QA | DONE | v6.18 |
 | 6e | Flutter App - Deploy | DONE | v6.19 |
 | 7 | Firestore Load | DONE | v7.21 |
-| 8 | Enrichment Hardening | DONE | v8.22, v8.23 |
+| 8 | Enrichment Hardening | DONE | v8.22, v8.23, v8.24 |
 | 9 | App Optimization | Pending | - |
 | 10 | Retrospective + Template | Pending | - |
 
@@ -340,12 +341,19 @@ OS:   CachyOS (Arch-based) / KDE Plasma 6.6.2 / Wayland
 
 ## Changelog
 
+**v8.24 (Phase 8 - UI Fixes + Country Codes)**
+- Detail panel fixed: opens on row click at all viewports, shows t_any_* field cards with +filter/-exclude
+- Removed "staging" badge, fixed cursor alignment (single cursor, no drift)
+- Backfilled t_any_country_codes (ISO alpha-2) on 6,161/6,181 entities
+- 2 production deploys. flutter analyze: 0 issues. 9/9 tests pass
+- Phase 8 (Enrichment Hardening) COMPLETE
+- Claude Code interventions: 0
+
 **v8.23 (Phase 8 - NoSQL Query Remediation)**
 - All 12 query defects resolved (11 fixed, 1 deferred): case sensitivity, data casing, result counts, truncation, contains-any, validation
 - Query system fully operational: case-insensitive search, result counts, truncation transparency, error feedback
 - CalGold data fix: 899/899 t_any_shows lowercased. Result limit: 200 -> 1000
 - 2 production deploys. Regression: 11/12 PASS. flutter analyze: 0 issues. 6/6 tests pass
-- Phase 8 (Enrichment Hardening) complete
 - Claude Code interventions: 0
 
 **v8.22 (Phase 8 - Enrichment Hardening + Query Assessment)**

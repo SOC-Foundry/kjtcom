@@ -30,17 +30,12 @@ class _QueryEditorState extends ConsumerState<QueryEditor> {
   int _exampleIndex = 0;
   Timer? _rotationTimer;
 
-  // Blinking cursor state
-  bool _cursorVisible = true;
-  Timer? _cursorTimer;
-
   @override
   void initState() {
     super.initState();
     // Provider starts with initialExampleQuery, so controller matches.
     _controller = TextEditingController(text: ref.read(queryProvider));
     _startRotation();
-    _startCursorBlink();
   }
 
   void _startRotation() {
@@ -55,16 +50,9 @@ class _QueryEditorState extends ConsumerState<QueryEditor> {
     });
   }
 
-  void _startCursorBlink() {
-    _cursorTimer = Timer.periodic(const Duration(milliseconds: 530), (_) {
-      if (mounted) setState(() => _cursorVisible = !_cursorVisible);
-    });
-  }
-
   @override
   void dispose() {
     _rotationTimer?.cancel();
-    _cursorTimer?.cancel();
     _controller.dispose();
     super.dispose();
   }
@@ -118,11 +106,7 @@ class _QueryEditorState extends ConsumerState<QueryEditor> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   for (int i = 0; i < lines.length; i++)
-                    _buildQueryLine(
-                      i + 1,
-                      lines[i],
-                      isLast: i == lines.length - 1,
-                    ),
+                    _buildQueryLine(i + 1, lines[i]),
                 ],
               ),
               Positioned.fill(
@@ -272,61 +256,34 @@ class _QueryEditorState extends ConsumerState<QueryEditor> {
     );
   }
 
-  Widget _buildQueryLine(int lineNumber, String content, {bool isLast = false}) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 3),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.baseline,
-        textBaseline: TextBaseline.alphabetic,
-        children: [
-          SizedBox(
-            width: Tokens.lineNumberWidth,
-            child: Text(
-              '$lineNumber',
-              textAlign: TextAlign.right,
-              style: const TextStyle(
-                fontFamily: Tokens.fontMono,
-                fontSize: Tokens.sizeMd,
-                color: Tokens.textMuted,
-              ),
+  Widget _buildQueryLine(int lineNumber, String content) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.baseline,
+      textBaseline: TextBaseline.alphabetic,
+      children: [
+        SizedBox(
+          width: Tokens.lineNumberWidth,
+          child: Text(
+            '$lineNumber',
+            textAlign: TextAlign.right,
+            style: const TextStyle(
+              fontFamily: Tokens.fontMono,
+              fontSize: Tokens.sizeMd,
+              color: Tokens.textMuted,
+              height: 1.75,
             ),
           ),
-          const SizedBox(width: Tokens.space2),
-          Expanded(
-            child: isLast && content.trim().isEmpty
-                ? _buildCursorLine()
-                : _syntaxHighlight(content, showCursor: isLast),
-          ),
-        ],
-      ),
-    );
-  }
-
-  /// Empty last line with blinking green underscore cursor.
-  Widget _buildCursorLine() {
-    return Text.rich(
-      TextSpan(children: [
-        const TextSpan(
-          text: '|',
-          style: TextStyle(color: Tokens.textMuted),
         ),
-        TextSpan(
-          text: '_',
-          style: TextStyle(
-            color: _cursorVisible ? Tokens.syntaxCursor : Colors.transparent,
-          ),
+        const SizedBox(width: Tokens.space2),
+        Expanded(
+          child: _syntaxHighlight(content),
         ),
-      ]),
-      style: const TextStyle(
-        fontFamily: Tokens.fontMono,
-        fontSize: Tokens.sizeLg,
-        height: 1.75,
-      ),
+      ],
     );
   }
 
   /// Syntax highlighting per component-patterns.md Section 2.
-  Widget _syntaxHighlight(String line, {bool showCursor = false}) {
+  Widget _syntaxHighlight(String line) {
     final spans = <TextSpan>[];
     final trimmed = line.trim();
 

@@ -45,4 +45,27 @@ void main() {
     final invalid = QueryClause.parse('| where t_any_nonexistent contains "test"');
     expect(invalid!.isValidField, false);
   });
+
+  test('QueryClause recognizes t_any_country_codes as valid field', () {
+    final clause =
+        QueryClause.parse('| where t_any_country_codes contains "fr"');
+    expect(clause, isNotNull);
+    expect(clause!.field, 't_any_country_codes');
+    expect(clause.isValidField, true);
+  });
+
+  test('QueryClause parses country code contains-any', () {
+    final clause = QueryClause.parse(
+        '| where t_any_country_codes contains-any ["fr", "it"]');
+    expect(clause, isNotNull);
+    expect(clause!.operator, 'contains-any');
+    expect(clause.values, ['fr', 'it']);
+    expect(clause.isValidField, true);
+  });
+
+  test('QueryClause rejects unknown field with country_codes-like name', () {
+    final clause =
+        QueryClause.parse('| where t_any_country_codez contains "fr"');
+    expect(clause!.isValidField, false);
+  });
 }

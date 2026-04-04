@@ -13,66 +13,72 @@ class DetailPanel extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final entity = ref.watch(selectedEntityProvider);
-    if (entity == null) return const SizedBox.shrink();
-
-    final fields = entity.displayFields;
+    final fields = entity?.displayFields;
 
     return AnimatedContainer(
       duration: Tokens.detailSlide,
       curve: Curves.easeOut,
-      width: Tokens.sidebarWidth,
+      width: entity != null ? Tokens.sidebarWidth : 0,
+      clipBehavior: Clip.hardEdge,
       decoration: const BoxDecoration(
         border: Border(left: BorderSide(color: Tokens.borderSubtle)),
       ),
-      child: Column(
-        children: [
-          // Header
-          Padding(
-            padding: const EdgeInsets.all(Tokens.space3),
-            child: Row(
-              children: [
-                const Text(
-                  'Entity detail',
-                  style: TextStyle(
-                    fontFamily: Tokens.fontSans,
-                    fontWeight: FontWeight.w500,
-                    color: Tokens.textPrimary,
-                  ),
-                ),
-                const Spacer(),
-                MouseRegion(
-                  cursor: SystemMouseCursors.click,
-                  child: GestureDetector(
-                    onTap: () =>
-                        ref.read(selectedEntityProvider.notifier).state = null,
-                    child: const Text(
-                      '\u00D7',
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Tokens.textMuted,
-                      ),
+      child: entity == null
+          ? null
+          : SizedBox(
+              width: Tokens.sidebarWidth,
+              child: Column(
+                children: [
+                  // Header
+                  Padding(
+                    padding: const EdgeInsets.all(Tokens.space3),
+                    child: Row(
+                      children: [
+                        const Text(
+                          'Entity detail',
+                          style: TextStyle(
+                            fontFamily: Tokens.fontSans,
+                            fontWeight: FontWeight.w500,
+                            color: Tokens.textPrimary,
+                          ),
+                        ),
+                        const Spacer(),
+                        MouseRegion(
+                          cursor: SystemMouseCursors.click,
+                          child: GestureDetector(
+                            onTap: () => ref
+                                .read(selectedEntityProvider.notifier)
+                                .state = null,
+                            child: const Text(
+                              '\u00D7',
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: Tokens.textMuted,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                ),
-              ],
-            ),
-          ),
-          // Field cards
-          Expanded(
-            child: ListView(
-              padding: const EdgeInsets.symmetric(horizontal: Tokens.space3),
-              children: [
-                for (final entry in fields.entries)
-                  _FieldCard(
-                    fieldName: entry.key,
-                    value: entry.value,
-                    ref: ref,
+                  // Field cards
+                  Expanded(
+                    child: ListView(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: Tokens.space3),
+                      children: [
+                        for (final entry in fields!.entries)
+                          _FieldCard(
+                            fieldName: entry.key,
+                            value: entry.value,
+                            ref: ref,
+                          ),
+                      ],
+                    ),
                   ),
-              ],
+                ],
+              ),
             ),
-          ),
-        ],
-      ),
     );
   }
 }

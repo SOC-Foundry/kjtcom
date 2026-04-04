@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../theme/tokens.dart';
+import '../providers/selection_provider.dart';
 import 'globe_hero.dart';
 import 'query_editor.dart';
 import 'results_table.dart';
@@ -102,26 +104,6 @@ class AppShell extends StatelessWidget {
           ),
         ),
         const Spacer(),
-        // "staging" badge
-        Container(
-          padding: const EdgeInsets.symmetric(
-            horizontal: Tokens.space2,
-            vertical: 2,
-          ),
-          decoration: BoxDecoration(
-            color: const Color(0xFF0D2818),
-            border: Border.all(color: Tokens.surfaceFilterPositive),
-            borderRadius: BorderRadius.circular(Tokens.radiusMd),
-          ),
-          child: const Text(
-            'staging',
-            style: TextStyle(
-              fontFamily: Tokens.fontSans,
-              fontSize: Tokens.sizeBase,
-              color: Tokens.accentGreen,
-            ),
-          ),
-        ),
       ],
     );
   }
@@ -154,19 +136,45 @@ class AppShell extends StatelessWidget {
 }
 
 /// Results table + optional detail panel side-by-side.
-class _ResultsArea extends StatelessWidget {
+class _ResultsArea extends ConsumerWidget {
   const _ResultsArea();
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final width = MediaQuery.sizeOf(context).width;
     final isWide = width >= Tokens.bpDesktop;
 
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
+    if (isWide) {
+      // Desktop: side-by-side with animated detail panel
+      return Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Expanded(child: ResultsTable()),
+          const DetailPanel(),
+        ],
+      );
+    }
+
+    // Mobile/tablet: overlay detail panel from right
+    final hasSelection = ref.watch(selectedEntityProvider) != null;
+    return Stack(
       children: [
-        const Expanded(child: ResultsTable()),
-        if (isWide) const DetailPanel(),
+        const Positioned.fill(child: ResultsTable()),
+        if (hasSelection) ...[
+          Positioned.fill(
+            child: GestureDetector(
+              onTap: () =>
+                  ref.read(selectedEntityProvider.notifier).state = null,
+              child: const ColoredBox(color: Color(0x80000000)),
+            ),
+          ),
+          const Positioned(
+            right: 0,
+            top: 0,
+            bottom: 0,
+            child: DetailPanel(),
+          ),
+        ],
       ],
     );
   }

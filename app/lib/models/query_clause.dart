@@ -37,6 +37,7 @@ class QueryClause {
     't_any_cuisines',
     't_any_dishes',
     't_any_eras',
+    't_any_country_codes',
     't_any_continents',
     't_any_urls',
     't_any_video_ids',
