@@ -227,32 +227,37 @@ kjtcom uses a two-agent model validated across 5+ iterations with decreasing int
 
 Zero Gemini interventions across 4 consecutive iterations. Same model, better harness.
 
-### The Eight Pillars
+---
 
-**Pillar 1 - Artifact Loop.** Every iteration produces four artifacts: design doc (living architecture), plan (execution steps), build log (session transcript), report (metrics + recommendation). Previous artifacts archive to `docs/archive/`. Agents never see outdated instructions. Artifacts are the trace system - build is the trace, report is the analysis, design is the state, plan is the next action.
-
-**Pillar 2 - Pre-Flight Verification.** Before execution begins, validate: previous docs archived, new design + plan in place, agent instructions updated, git clean, API keys set, build tools verified. Pre-flight failures are the cheapest failures. Catch them before the agent launches.
-
-**Pillar 3 - Agentic Harness Orchestration.** The primary agent (Claude Code or Gemini CLI) orchestrates LLMs, MCP servers, scripts, APIs, and sub-agents within a structured harness. Agent instructions are system prompts. Pipeline scripts are tools. Gotchas are middleware. Checkpoints are state persistence. Agents CAN build and deploy. Agents CANNOT git commit or sudo. The human commits at phase boundaries.
-
-**Pillar 4 - Zero-Intervention Target.** Every question the agent asks during execution is a failure in the plan document. Pre-answer every decision point. Execute agents in YOLO mode, trust but verify. Measure plan quality by counting interventions - zero is the floor.
-
-**Pillar 5 - Self-Healing Execution.** Errors are inevitable. Diagnose -> fix -> re-run. Max 3 attempts per error, then log and skip. Checkpoint after every completed step for crash recovery. Gotcha registry documents known failure patterns with prevention rules so the same error never causes an intervention twice.
-
-**Pillar 6 - Phase Graduation.** Four iterative phases progressively harden the pipeline harness until production requires zero agent intervention. Each phase increases batch size while decreasing interventions. When validation achieves zero interventions, the production run executes as a non-agentic process (tmux, bash, cron) - same scripts, no agent reasoning. The agent built the harness; the harness runs the work.
-```
-Discovery (30)     -> learn failure modes, write gotchas
-Calibration (60)   -> tune prompts, fix edge cases
-Stress Test (90)   -> prove stability at scale
-Validation (120)   -> lock schema, lock prompts, zero interventions
-                        |
-                        v
-Production (full)  -> tmux, unattended, no agent needed
+```mermaid
+graph BT
+    IAO["<b>I A O</b><br/><i>Iterative Agentic Orchestration</i>"]:::shaft
+    IAO --- COST["◆ Minimal cost"]:::prong
+    IAO --- SPEED["◆ Speed of delivery"]:::prong
+    IAO --- PERF["◆ Optimized performance"]:::prong
+    classDef shaft fill:#0D9488,stroke:#0D9488,color:#fff
+    classDef prong fill:#161B22,stroke:#4ADE80,color:#4ADE80
 ```
 
-**Pillar 7 - Post-Flight Functional Testing.** Three tiers: Tier 1 (app bootstraps, console clean, changelog verified), Tier 2 (iteration-specific automated playbook), Tier 3 (hardening audit - Lighthouse, security headers, browser compat).
+**Pillar 1 - The IAO Trident.** Every decision is governed by three competing objectives: minimal cost (free-tier LLMs over paid, API scripts over SaaS add-ons, no infrastructure that outlives its purpose), optimized performance (right-size the solution, performance from discovery and proof-of-value testing, not premature abstraction), and speed of delivery (code and objectives become stale, P0 ships, P1 ships if time allows, P2 is post-launch). Cheapest is rarely fastest. Fastest is rarely most optimized. The methodology finds the triangle's center of gravity for each decision.
 
-**Pillar 8 - Continuous Improvement.** The methodology evolves alongside the project. Retrospectives, gotcha registry reviews, tool efficacy reports. The harness that worked for 30 videos may not work for 1,800. Static processes atrophy.
+**Pillar 2 - Artifact Loop.** Every iteration produces four artifacts: design doc (living architecture), plan (execution steps), build log (session transcript), report (metrics + recommendation). Previous artifacts archive to docs/archive/. Agents never see outdated instructions. If an artifact has no consumer, it should not exist.
+
+**Pillar 3 - Diligence.** The methodology does not work if you do not read. Before any iteration touches code, the plan goes through revision - often several revisions. Diligence is investing 30 minutes in plan revision to save 3 hours of misdirected agent execution. The fastest path is the one that doesn't require rework.
+
+**Pillar 4 - Pre-Flight Verification.** Before execution begins, validate: previous docs archived, new design + plan in place, agent instructions updated, git clean, API keys set, build tools verified. Pre-flight failures are the cheapest failures.
+
+**Pillar 5 - Agentic Harness Orchestration.** The primary agent (Claude Code or Gemini CLI) orchestrates LLMs, MCP servers, scripts, APIs, and sub-agents within a structured harness. Agent instructions are system prompts (CLAUDE.md / GEMINI.md). Pipeline scripts are tools. Gotchas are middleware. Agents CAN build and deploy. Agents CANNOT git commit or sudo. The human commits at phase boundaries.
+
+**Pillar 6 - Zero-Intervention Target.** Every question the agent asks during execution is a failure in the plan document. Pre-answer every decision point. Execute agents in YOLO mode, trust but verify. Measure plan quality by counting interventions - zero is the floor.
+
+**Pillar 7 - Self-Healing Execution.** Errors are inevitable. Diagnose -> fix -> re-run. Max 3 attempts per error, then log and skip. Checkpoint after every completed step for crash recovery. Gotcha registry documents known failure patterns so the same error never causes an intervention twice.
+
+**Pillar 8 - Phase Graduation.** Four iterative phases progressively harden the pipeline harness until production requires zero agent intervention. The agent built the harness; the harness runs the work.
+
+**Pillar 9 - Post-Flight Functional Testing.** Three tiers: Tier 1 (app bootstraps, console clean, artifacts produced), Tier 2 (iteration-specific playbook), Tier 3 (hardening audit - Lighthouse, security headers, browser compat).
+
+**Pillar 10 - Continuous Improvement.** The methodology evolves alongside the project. Retrospectives, gotcha registry reviews, tool efficacy reports, trident rebalancing. Static processes atrophy.
 
 ---
 
