@@ -14,6 +14,7 @@ import chromadb
 
 sys.path.insert(0, os.path.dirname(__file__))
 from utils.iao_logger import log_event
+from utils.ollama_config import merge_batch_defaults
 
 CHROMA_DIR = os.path.join(os.path.dirname(__file__), '..', 'data', 'chromadb')
 REGISTRY_PATH = os.path.join(os.path.dirname(__file__), '..', 'iteration_registry.json')
@@ -131,17 +132,16 @@ def score_with_qwen(version, phase, chunks):
         chunks=chunks[:3500]
     )
 
-    payload = {
+    payload = merge_batch_defaults({
         'model': SCORE_MODEL,
         'messages': [{'role': 'user', 'content': prompt}],
-        'stream': False,
-        'options': {'num_predict': 2048}
-    }
+    })
+    timeout_secs = payload.pop('timeout', 2700)
 
     start_time = time.time()
     result = subprocess.run(
         ['curl', '-s', OLLAMA_CHAT_URL, '-d', json.dumps(payload)],
-        capture_output=True, text=True, timeout=300
+        capture_output=True, text=True, timeout=timeout_secs
     )
 
     response = json.loads(result.stdout)

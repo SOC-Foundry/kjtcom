@@ -4,8 +4,11 @@
 Reads event log, agent_scores, git diff, and templates to produce draft artifacts
 in docs/drafts/ for human review before promotion.
 """
+import argparse
+import glob
 import json
 import os
+import shutil
 import subprocess
 import sys
 import time
@@ -18,6 +21,7 @@ from utils.ollama_logged import chat_logged
 PROJECT_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..')
 TEMPLATE_DIR = os.path.join(PROJECT_DIR, 'template', 'artifacts')
 DRAFTS_DIR = os.path.join(PROJECT_DIR, 'docs', 'drafts')
+DOCS_DIR = os.path.join(PROJECT_DIR, 'docs')
 EVENT_LOG = os.path.join(PROJECT_DIR, 'data', 'iao_event_log.jsonl')
 SCORES_PATH = os.path.join(PROJECT_DIR, 'agent_scores.json')
 
@@ -229,8 +233,181 @@ def generate_changelog_entry(iteration):
     return out_path
 
 
+def cross_check_workstreams(iteration):
+    """Cross-check workstream outcomes against actual execution signals.
+
+    Returns dict of workstream_id -> {claimed_outcome, verified_outcome, signals}.
+    Checks: exit codes (timeout=124/137), file existence, error patterns in event log.
+    """
+    results = {}
+
+    # Load agent_scores for this iteration
+    scores_entry = get_agent_scores(iteration)
+    if not scores_entry or 'workstreams' not in scores_entry:
+        print("No workstream data to cross-check.")
+        return results
+
+    # Load event log for signals
+    events = []
+    try:
+        with open(EVENT_LOG) as f:
+            for line in f:
+                line = line.strip()
+                if not line:
+                    continue
+                ev = json.loads(line)
+                if ev.get('iteration') == iteration:
+                    events.append(ev)
+    except FileNotFoundError:
+        pass
+
+    timeout_events = [e for e in events if e.get('status') in ('timeout', 'error')]
+    error_sources = set(e.get('source_agent', '') for e in timeout_events)
+
+    for ws in scores_entry['workstreams']:
+        ws_id = ws.get('id', '?')
+        claimed = ws.get('outcome', 'unknown')
+        signals = []
+        verified = claimed
+
+        # Check for timeout exit codes in events related to this workstream
+        ws_name_lower = ws.get('name', '').lower()
+        has_timeout = any(
+            ws_name_lower in str(e.get('input_summary', '')).lower() or
+            ws_name_lower in str(e.get('output_summary', '')).lower()
+            for e in timeout_events
+        )
+        if has_timeout and claimed == 'complete':
+            verified = 'partial'
+            signals.append('timeout/error events found but claimed complete')
+
+        # Check file existence for expected outputs
+        # (Heuristic: if workstream mentions a new file, check it exists)
+        expected_files = _guess_expected_files(ws)
+        for fpath in expected_files:
+            full = os.path.join(PROJECT_DIR, fpath)
+            exists = os.path.exists(full)
+            signals.append(f"{'EXISTS' if exists else 'MISSING'}: {fpath}")
+            if not exists and claimed == 'complete':
+                verified = 'partial'
+
+        results[ws_id] = {
+            'claimed_outcome': claimed,
+            'verified_outcome': verified,
+            'signals': signals,
+            'mismatch': claimed != verified
+        }
+
+    mismatches = sum(1 for r in results.values() if r['mismatch'])
+    print(f"Cross-check: {len(results)} workstreams, {mismatches} mismatches found.")
+    for ws_id, r in results.items():
+        if r['mismatch']:
+            print(f"  {ws_id}: claimed={r['claimed_outcome']} -> verified={r['verified_outcome']}")
+            for s in r['signals']:
+                print(f"    {s}")
+
+    return results
+
+
+def _guess_expected_files(ws):
+    """Heuristic: extract likely output file paths from workstream notes/name."""
+    files = []
+    name = ws.get('name', '').lower()
+    notes = ws.get('notes', '').lower()
+    combined = name + ' ' + notes
+
+    # Common patterns
+    if 'county' in combined or 'enrich' in combined:
+        files.append('scripts/enrich_counties.py')
+    if 'systemd' in combined or 'bot resil' in combined:
+        files.append('kjtcom-telegram-bot.service')
+    if 'gotcha' in combined:
+        files.append('data/gotcha_archive.json')
+    if 'registry' in combined and 'middleware' in combined:
+        files.append('data/middleware_registry.json')
+    if 'internet' in combined or 'brave' in combined or 'web route' in combined:
+        files.append('scripts/brave_search.py')
+    if 'intranet' in combined:
+        files.append('docs/cross-project/intranet-update-v9.42.md')
+
+    return files
+
+
+def promote_drafts(iteration):
+    """Copy validated drafts from docs/drafts/ to docs/."""
+    if not os.path.isdir(DRAFTS_DIR):
+        print(f"No drafts directory: {DRAFTS_DIR}")
+        return False
+
+    pattern = os.path.join(DRAFTS_DIR, f'kjtcom-*-{iteration}.md')
+    drafts = glob.glob(pattern)
+    # Also grab changelog
+    cl_pattern = os.path.join(DRAFTS_DIR, f'changelog-{iteration}.md')
+    cl_drafts = glob.glob(cl_pattern)
+    drafts.extend(cl_drafts)
+
+    if not drafts:
+        print(f"No drafts found for {iteration} in {DRAFTS_DIR}")
+        return False
+
+    promoted = []
+    for draft in drafts:
+        basename = os.path.basename(draft)
+        dest = os.path.join(DOCS_DIR, basename)
+        shutil.copy2(draft, dest)
+        promoted.append(basename)
+        print(f"  Promoted: {basename}")
+
+    log_event("command", "generate-artifacts", "local", "promote",
+              input_summary=f"Promote {len(promoted)} drafts for {iteration}",
+              output_summary=", ".join(promoted),
+              status="success")
+
+    print(f"Promoted {len(promoted)} drafts to docs/")
+    return True
+
+
+def validate_only(iteration):
+    """Validate drafts against execution reality without generating new ones."""
+    print(f"Validating drafts for {iteration}...")
+    results = cross_check_workstreams(iteration)
+
+    if not results:
+        print("No workstream data available for validation.")
+        return False
+
+    mismatches = [ws_id for ws_id, r in results.items() if r['mismatch']]
+    if mismatches:
+        print(f"\nWARNING: {len(mismatches)} workstream outcome mismatches detected:")
+        for ws_id in mismatches:
+            r = results[ws_id]
+            print(f"  {ws_id}: Qwen said '{r['claimed_outcome']}', verified as '{r['verified_outcome']}'")
+        print("\nDrafts may contain inaccurate workstream assessments.")
+        return False
+    else:
+        print("\nAll workstream outcomes verified. Drafts are safe to promote.")
+        return True
+
+
 def main():
+    parser = argparse.ArgumentParser(description='Generate or manage iteration artifacts.')
+    parser.add_argument('--promote', action='store_true',
+                        help='Promote validated drafts from docs/drafts/ to docs/')
+    parser.add_argument('--validate-only', action='store_true',
+                        help='Cross-check draft accuracy against execution signals')
+    args = parser.parse_args()
+
     iteration = get_iteration()
+
+    if args.validate_only:
+        validate_only(iteration)
+        return
+
+    if args.promote:
+        promote_drafts(iteration)
+        return
+
+    # Default: generate drafts
     print(f"Generating artifacts for {iteration}...")
 
     log_event("command", "generate-artifacts", "local", "generate",
@@ -240,8 +417,12 @@ def main():
     report_path = generate_report(iteration)
     changelog_path = generate_changelog_entry(iteration)
 
+    # Run cross-check automatically after generation
+    print("\nRunning execution cross-check...")
+    cross_check_workstreams(iteration)
+
     print(f"\nDrafts generated in {DRAFTS_DIR}/")
-    print("Review and promote to docs/ when ready.")
+    print("Run with --validate-only to verify, then --promote to finalize.")
 
     log_event("command", "generate-artifacts", "local", "generate",
               output_summary=f"Generated build, report, changelog for {iteration}",

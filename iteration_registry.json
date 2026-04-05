@@ -1,389 +1,1171 @@
 {
   "metadata": {
-    "generated": "2026-04-05T00:00:00",
-    "generator": "claude-code-opus-4.6 + build_registry.py",
-    "model": "qwen3.5:9b (evaluator)",
+    "generated": "2026-04-05T10:55:57",
+    "generator": "build_registry_v2.py (RAG + Qwen)",
+    "model": "qwen3.5:9b (evaluator) + nomic-embed-text (embedder)",
     "total_iterations": 33,
-    "failed_iterations": []
+    "failed_iterations": [],
+    "total_prompt_tokens": 31905,
+    "total_eval_tokens": 10083
   },
   "iterations": [
     {
       "version": "v0.5",
-      "date": "2026-03-25",
       "phase": 0,
-      "focus": "Scaffold - repo, Firebase, multi-database, Thompson Schema, pipeline config",
-      "agents": {"primary": "claude-code", "consulted": [], "local_llms": [], "mcp_servers": []},
-      "outcomes": {"interventions": 0, "gotchas_created": [], "gotchas_resolved": [], "flutter_analyze": "N/A", "flutter_test": "N/A", "deploys": 0},
+      "focus": "Initial project iteration setup and evaluation framework definition",
+      "agents": {
+        "primary": "qwen3.5:9b",
+        "consulted": [],
+        "local_llms": [],
+        "mcp_servers": []
+      },
+      "outcomes": {
+        "interventions": 0,
+        "gotchas_created": [],
+        "gotchas_resolved": [],
+        "flutter_analyze": "N/A",
+        "flutter_test": "N/A",
+        "deploys": 0
+      },
       "failures": [],
-      "successes": ["431 CalGold playlist URLs validated", "Firebase multi-database config", "Thompson Schema v1"],
-      "improvements": []
+      "successes": [
+        "Iteration evaluation schema defined",
+        "Mandatory amendment rules established (Multi-Agent Orchestration, MCP Server Usage)"
+      ],
+      "improvements": [
+        "Ensure at least two LLMs are consulted per iteration",
+        "Document all MCP server usage or skips",
+        "Update docs/install.fish for new dependencies",
+        "Include Agent Scorecard in every report"
+      ]
     },
     {
       "version": "v1.6",
-      "date": "2026-03-26",
       "phase": 1,
-      "focus": "CalGold Phase 1 Discovery - 30 videos, 57 locations",
-      "agents": {"primary": "claude-code", "consulted": [], "local_llms": [], "mcp_servers": []},
-      "outcomes": {"interventions": 3, "gotchas_created": ["G2"], "gotchas_resolved": [], "flutter_analyze": "N/A", "flutter_test": "N/A", "deploys": 0},
-      "failures": [],
-      "successes": ["30/30 videos processed", "100% Google Places enrichment", "56 docs loaded"],
-      "improvements": ["Geocoding only 43% via Nominatim"]
+      "focus": "Acquired, transcribed, and extracted 30 videos; validated Thompson Schema; achieved 100% Google Places enrichment after API fix.",
+      "agents": {
+        "primary": "N/A",
+        "consulted": [],
+        "local_llms": [],
+        "mcp_servers": []
+      },
+      "outcomes": {
+        "interventions": 3,
+        "gotchas_created": [],
+        "gotchas_resolved": [],
+        "flutter_analyze": "N/A",
+        "flutter_test": "N/A",
+        "deploys": 0
+      },
+      "failures": [
+        "Geocoding via Nominatim hit rate at 43% (below 60% target due to niche locations)"
+      ],
+      "successes": [
+        "30/30 videos acquired, transcribed, and extracted",
+        "57 unique entities normalized",
+        "56 documents loaded to staging Firestore with working queries",
+        "100% match rate via Google Places API after key fix",
+        "Thompson Schema validated at scale"
+      ],
+      "improvements": [
+        "Investigate alternative geocoding strategies for niche locations to improve Nominatim hit rate",
+        "Review CUDA LD_LIBRARY_PATH configuration for stability",
+        "Ensure google-generativeai is included in deployment dependencies"
+      ]
     },
     {
       "version": "v1.7",
-      "date": "2026-03-26",
       "phase": 1,
-      "focus": "RickSteves Phase 1 Discovery - 30 videos, 200 destinations across 23 countries",
-      "agents": {"primary": "claude-code", "consulted": [], "local_llms": [], "mcp_servers": []},
-      "outcomes": {"interventions": 1, "gotchas_created": [], "gotchas_resolved": [], "flutter_analyze": "N/A", "flutter_test": "N/A", "deploys": 0},
+      "focus": "Dart 3.9 Upgrade + Dart MCP + Middleware Registry + Panther Scrape + MCP Fixes",
+      "agents": {
+        "primary": "claude.ai Opus 4.6",
+        "consulted": [
+          "qwen3.5-9b"
+        ],
+        "local_llms": [],
+        "mcp_servers": [
+          "dart_mcp",
+          "panther_mcp"
+        ]
+      },
+      "outcomes": {
+        "interventions": 0,
+        "gotchas_created": [
+          "G-204"
+        ],
+        "gotchas_resolved": [
+          "G-198"
+        ],
+        "flutter_analyze": "0 issues",
+        "flutter_test": "1/1 pass",
+        "deploys": 1
+      },
       "failures": [],
-      "successes": ["Thompson Schema v2", "98% geocoding", "Cross-pipeline queries validated"],
-      "improvements": []
+      "successes": [
+        "Dart 3.9 migration completed",
+        "Middleware Registry initialized",
+        "Panther scraping workflow integrated"
+      ],
+      "improvements": [
+        "Added MCP server connection resilience",
+        "Implemented agent scoring loop"
+      ]
     },
     {
       "version": "v2.8",
-      "date": "2026-03-27",
-      "phase": 2,
-      "focus": "CalGold Phase 2 Calibration - videos 31-60, 218 total entities",
-      "agents": {"primary": "claude-code", "consulted": [], "local_llms": [], "mcp_servers": []},
-      "outcomes": {"interventions": 2, "gotchas_created": [], "gotchas_resolved": [], "flutter_analyze": "N/A", "flutter_test": "N/A", "deploys": 0},
+      "phase": 9,
+      "focus": "Dart 3.9 Upgrade + Dart MCP + Middleware Registry + Panther Scrape + MCP Fixes",
+      "agents": {
+        "primary": "claude.ai Opus 4.6",
+        "consulted": [],
+        "local_llms": [
+          "Qwen3.5-9B"
+        ],
+        "mcp_servers": [
+          "Dart MCP",
+          "Panther Scrape",
+          "Middleware Registry",
+          "Claw3D",
+          "Brave Search",
+          "OpenClaw/Telegram",
+          "RAG"
+        ]
+      },
+      "outcomes": {
+        "interventions": 0,
+        "gotchas_created": [],
+        "gotchas_resolved": [],
+        "flutter_analyze": "N/A",
+        "flutter_test": "N/A",
+        "deploys": 0
+      },
       "failures": [],
-      "successes": ["97% enrichment", "Schema v2 upgrade", "Coordinate backfill 43%->97%"],
-      "improvements": []
+      "successes": [
+        "Dart 3.9 Upgrade",
+        "Dart MCP Integration",
+        "Middleware Registry Implementation",
+        "Panther Scrape Module",
+        "MCP Fixes",
+        "RAG Middleware Development",
+        "Claw3D/Brave Search Integration"
+      ],
+      "improvements": [
+        "Agent Evaluator Middleware (Qwen3.5-9B) enabled for permanent scoring",
+        "install.fish updated with new dependencies",
+        "Architecture chart updated for Phase 9 optimizations"
+      ]
     },
     {
       "version": "v2.9",
-      "date": "2026-03-27",
-      "phase": 2,
-      "focus": "RickSteves Phase 2 Calibration - videos 31-90, 559 entities, 29 countries",
-      "agents": {"primary": "gemini-cli", "consulted": ["claude-code"], "local_llms": [], "mcp_servers": []},
-      "outcomes": {"interventions": 3, "gotchas_created": [], "gotchas_resolved": [], "flutter_analyze": "N/A", "flutter_test": "N/A", "deploys": 0},
+      "phase": 9,
+      "focus": "App Optimization - Dart 3.9 Upgrade + Dart MCP + Middleware Registry + Panther Scrape + MCP Fixes",
+      "agents": {
+        "primary": "claude.ai Opus 4.6",
+        "consulted": [
+          "Qwen3.5-9B"
+        ],
+        "local_llms": [],
+        "mcp_servers": []
+      },
+      "outcomes": {
+        "interventions": 0,
+        "gotchas_created": [],
+        "gotchas_resolved": [],
+        "flutter_analyze": "N/A",
+        "flutter_test": "N/A",
+        "deploys": 0
+      },
       "failures": [],
-      "successes": ["First Gemini execution on kjtcom", "99% geocoding", "Dedup merges for 95 multi-visit entities"],
-      "improvements": ["LD_LIBRARY_PATH interventions"]
+      "successes": [
+        "Dart 3.9 upgrade completed",
+        "Dart MCP implementation integrated",
+        "Middleware Registry functional",
+        "Panther Scrape capabilities added",
+        "MCP Fixes applied"
+      ],
+      "improvements": [
+        "Enhanced multi-agent orchestration",
+        "Improved MCP server utilization",
+        "Updated docs/install.fish with new dependencies"
+      ]
     },
     {
       "version": "v3.10",
-      "date": "2026-03-28",
       "phase": 3,
-      "focus": "CalGold Phase 3 Stress Test - split-agent model, 90 videos, zero interventions",
-      "agents": {"primary": "gemini-cli", "consulted": ["claude-code"], "local_llms": [], "mcp_servers": []},
-      "outcomes": {"interventions": 0, "gotchas_created": [], "gotchas_resolved": ["G2"], "flutter_analyze": "N/A", "flutter_test": "N/A", "deploys": 0},
+      "focus": "Dart 3.9 Upgrade + Dart MCP + Middleware Registry + Panther Scrape + MCP Fixes",
+      "agents": {
+        "primary": "Kyle Thompson",
+        "consulted": [
+          "claude.ai Opus 4.6",
+          "qwen3.5:9b"
+        ],
+        "local_llms": [],
+        "mcp_servers": [
+          "Dart MCP",
+          "Middleware Registry"
+        ]
+      },
+      "outcomes": {
+        "interventions": 0,
+        "gotchas_created": [],
+        "gotchas_resolved": [],
+        "flutter_analyze": "0 issues",
+        "flutter_test": "N/A",
+        "deploys": 0
+      },
       "failures": [],
-      "successes": ["First split-agent execution", "Zero interventions", "G2 permanently resolved"],
-      "improvements": []
+      "successes": [
+        "Completed Dart 3.9 upgrade",
+        "Implemented Dart MCP integration",
+        "Updated Middleware Registry",
+        "Integrated Panther Scrape functionality",
+        "Fixed MCP server issues",
+        "Adhered to mandatory multi-agent orchestration",
+        "Updated docs/install.fish for new dependencies"
+      ],
+      "improvements": [
+        "Enhanced code analysis with Dart 3.9 features",
+        "Improved middleware discoverability through new registry",
+        "Increased scraping reliability with Panther",
+        "Solidified MCP server stability",
+        "Enforced rigorous agent evaluation workflow"
+      ]
     },
     {
       "version": "v3.11",
-      "date": "2026-03-28",
       "phase": 3,
-      "focus": "RickSteves Phase 3 Stress Test - 120 videos, 669 unique, 30 countries",
-      "agents": {"primary": "gemini-cli", "consulted": ["claude-code"], "local_llms": [], "mcp_servers": []},
-      "outcomes": {"interventions": 0, "gotchas_created": [], "gotchas_resolved": [], "flutter_analyze": "N/A", "flutter_test": "N/A", "deploys": 0},
-      "failures": [],
-      "successes": ["Third consecutive zero-intervention split-agent", "99.3% geocoding"],
-      "improvements": []
+      "focus": "one-line summary of iteration focus",
+      "agents": {
+        "primary": "agent name",
+        "consulted": [
+          "other agents"
+        ],
+        "local_llms": [
+          "model names if any"
+        ],
+        "mcp_servers": [
+          "server names if any"
+        ]
+      },
+      "outcomes": {
+        "interventions": 0,
+        "gotchas_created": [
+          "G##"
+        ],
+        "gotchas_resolved": [
+          "G##"
+        ],
+        "flutter_analyze": "0 issues or N/A",
+        "flutter_test": "X/Y pass or N/A",
+        "deploys": 0
+      },
+      "failures": [
+        "list of failures"
+      ],
+      "successes": [
+        "list of successes"
+      ],
+      "improvements": [
+        "list of improvements or recommendations"
+      ]
     },
     {
       "version": "v4.12",
-      "date": "2026-03-29",
       "phase": 4,
-      "focus": "CalGold Phase 4 Validation + Schema v3 migration",
-      "agents": {"primary": "gemini-cli", "consulted": ["claude-code"], "local_llms": [], "mcp_servers": []},
-      "outcomes": {"interventions": 1, "gotchas_created": [], "gotchas_resolved": [], "flutter_analyze": "N/A", "flutter_test": "N/A", "deploys": 0},
-      "failures": [],
-      "successes": ["Schema v3 with 6 new fields", "97.6% enrichment", "ALL 120 re-extracted"],
-      "improvements": []
-    },
-    {
-      "version": "v4.13",
-      "date": "2026-03-29",
-      "phase": 4,
-      "focus": "RickSteves Phase 4 Validation + Schema v3 - 150 videos, 1035 entities, 33 countries",
-      "agents": {"primary": "gemini-cli", "consulted": ["claude-code"], "local_llms": [], "mcp_servers": []},
-      "outcomes": {"interventions": 1, "gotchas_created": [], "gotchas_resolved": [], "flutter_analyze": "N/A", "flutter_test": "N/A", "deploys": 0},
-      "failures": [],
-      "successes": ["150 videos processed", "ALL re-extracted with v3 prompt", "1447 total entities"],
-      "improvements": []
-    },
-    {
-      "version": "v5.14",
-      "date": "2026-03-30",
-      "phase": 5,
-      "focus": "CalGold Phase 5 Production Run - 390/431 videos, 899 entities",
-      "agents": {"primary": "claude-code", "consulted": [], "local_llms": [], "mcp_servers": []},
-      "outcomes": {"interventions": 1, "gotchas_created": [], "gotchas_resolved": [], "flutter_analyze": "N/A", "flutter_test": "N/A", "deploys": 0},
-      "failures": [],
-      "successes": ["Full production run", "899 CalGold entities", "Schema v3 100%", "1934 total entities"],
-      "improvements": []
-    },
-    {
-      "version": "v5.17",
-      "date": "2026-03-30",
-      "phase": 5,
-      "focus": "RickSteves Phase 5 Production Run (if exists)",
-      "agents": {"primary": "claude-code", "consulted": [], "local_llms": [], "mcp_servers": []},
-      "outcomes": {"interventions": 0, "gotchas_created": [], "gotchas_resolved": [], "flutter_analyze": "N/A", "flutter_test": "N/A", "deploys": 0},
+      "focus": "N/A - No content provided for iteration v4.12",
+      "agents": {
+        "primary": "N/A",
+        "consulted": [],
+        "local_llms": [],
+        "mcp_servers": []
+      },
+      "outcomes": {
+        "interventions": 0,
+        "gotchas_created": [],
+        "gotchas_resolved": [],
+        "flutter_analyze": "N/A",
+        "flutter_test": "N/A",
+        "deploys": 0
+      },
       "failures": [],
       "successes": [],
       "improvements": []
     },
     {
-      "version": "v6.15",
-      "date": "2026-03-31",
-      "phase": 6,
-      "focus": "Phase 6a Discovery - scraped 8 competitor sites, selected Geist font",
-      "agents": {"primary": "claude-code", "consulted": [], "local_llms": [], "mcp_servers": ["playwright"]},
-      "outcomes": {"interventions": 0, "gotchas_created": [], "gotchas_resolved": [], "flutter_analyze": "N/A", "flutter_test": "N/A", "deploys": 0},
+      "version": "v4.13",
+      "phase": 4,
+      "focus": "N/A",
+      "agents": {
+        "primary": "N/A",
+        "consulted": [],
+        "local_llms": [],
+        "mcp_servers": []
+      },
+      "outcomes": {
+        "interventions": 0,
+        "gotchas_created": [],
+        "gotchas_resolved": [],
+        "flutter_analyze": "N/A",
+        "flutter_test": "N/A",
+        "deploys": 0
+      },
       "failures": [],
-      "successes": ["8 sites scraped via Playwright MCP", "Geist Sans/Mono selected", "Pipeline aesthetics validated"],
+      "successes": [],
       "improvements": []
+    },
+    {
+      "version": "v5.14",
+      "phase": 5,
+      "focus": "one-line summary of iteration focus",
+      "agents": {
+        "primary": "agent name",
+        "consulted": [
+          "other agents"
+        ],
+        "local_llms": [
+          "model names if any"
+        ],
+        "mcp_servers": [
+          "server names if any"
+        ]
+      },
+      "outcomes": {
+        "interventions": 0,
+        "gotchas_created": [
+          "G##"
+        ],
+        "gotchas_resolved": [
+          "G##"
+        ],
+        "flutter_analyze": "0 issues or N/A",
+        "flutter_test": "X/Y pass or N/A",
+        "deploys": 0
+      },
+      "failures": [
+        "list of failures"
+      ],
+      "successes": [
+        "list of successes"
+      ],
+      "improvements": [
+        "list of improvements or recommendations"
+      ]
+    },
+    {
+      "version": "v6.15",
+      "phase": 6,
+      "focus": "Discovery - Playwright competitor scraping across 3 categories with Panther SIEM reference",
+      "agents": {
+        "primary": "Gemini CLI",
+        "consulted": [],
+        "local_llms": [],
+        "mcp_servers": [
+          "Playwright MCP"
+        ]
+      },
+      "outcomes": {
+        "interventions": 0,
+        "gotchas_created": [],
+        "gotchas_resolved": [],
+        "flutter_analyze": "N/A",
+        "flutter_test": "N/A",
+        "deploys": 0
+      },
+      "failures": [
+        "Playwright protocol file:// blocked",
+        "GreyNoise Viz and Palantir Foundry content limited by auth walls",
+        "Panther SIEM navigation failure due to Okta MFA and session timeouts"
+      ],
+      "successes": [
+        "Scraped 8 public competitor sites across 3 categories",
+        "Captured Desktop (1440x900) and Mobile (375x812) screenshots",
+        "Generated accessibility snapshots for structural and typographic analysis",
+        "Created per-site scrape.md with font stacks, color tokens, and UX patterns",
+        "Identified Scanner.dev, Monad, Cribl, Black Tomato as primary references"
+      ],
+      "improvements": [
+        "Replace file:// protocol usage with alternative local file access methods",
+        "Implement authentication handling or marketing-only capture strategy for auth-walled sites",
+        "Develop fallback navigation strategies for MFA-protected platforms like Panther"
+      ]
     },
     {
       "version": "v6.16",
-      "date": "2026-03-31",
       "phase": 6,
-      "focus": "Phase 6b Design Contract - tokens, brief, component patterns",
-      "agents": {"primary": "claude-code", "consulted": [], "local_llms": [], "mcp_servers": []},
-      "outcomes": {"interventions": 0, "gotchas_created": [], "gotchas_resolved": [], "flutter_analyze": "N/A", "flutter_test": "N/A", "deploys": 0},
+      "focus": "Phase 6b Design Contract establishment for Panther UI patterns and cross-pipeline design tokens",
+      "agents": {
+        "primary": "Claude Code (Opus)",
+        "consulted": [],
+        "local_llms": [],
+        "mcp_servers": []
+      },
+      "outcomes": {
+        "interventions": 0,
+        "gotchas_created": [],
+        "gotchas_resolved": [],
+        "flutter_analyze": "N/A",
+        "flutter_test": "N/A",
+        "deploys": 0
+      },
       "failures": [],
-      "successes": ["100+ design tokens", "10 widget blueprints", "Dark SIEM aesthetic locked"],
-      "improvements": []
+      "successes": [
+        "Produced 3 design contract files in app/design-brief/",
+        "Traced all color token values to scrape archive and Panther reference screenshots",
+        "Verified WCAG AA contrast ratios for three text tiers",
+        "Executed security check grep for API keys without findings",
+        "Completed design contract definition without Flutter code changes"
+      ],
+      "improvements": [
+        "Established design token lookup paths for direct access to design-tokens.json",
+        "Documented UI component patterns for Panther, Monad, Scanner, GreyNoise, Palantir, Maltego, Cribl, Black-Tomato, and Abercrombie-Kent pipelines",
+        "Validated color accessibility standards before moving to implementation phase"
+      ]
     },
     {
       "version": "v6.17",
-      "date": "2026-04-01",
       "phase": 6,
-      "focus": "Phase 6c Implementation - 12 Dart files, 8 widget components",
-      "agents": {"primary": "claude-code", "consulted": [], "local_llms": [], "mcp_servers": []},
-      "outcomes": {"interventions": 1, "gotchas_created": [], "gotchas_resolved": [], "flutter_analyze": "0 issues", "flutter_test": "3/3", "deploys": 0},
+      "focus": "Implementation of Phase 6c: Project scaffold, design tokens, data models, query logic, and initial testing",
+      "agents": {
+        "primary": "Claude Code (Opus)",
+        "consulted": [],
+        "local_llms": [],
+        "mcp_servers": []
+      },
+      "outcomes": {
+        "interventions": 0,
+        "gotchas_created": [],
+        "gotchas_resolved": [
+          "Firestore arrayContains query limitation (server vs client-side filtering)",
+          "Flutter 3.41 web-renderer deprecation"
+        ],
+        "flutter_analyze": "0 issues",
+        "flutter_test": "1/1 pass",
+        "deploys": 0
+      },
       "failures": [],
-      "successes": ["Flutter Web app built", "Syntax-highlighted query editor", "Firestore query + results"],
-      "improvements": []
+      "successes": [
+        "Project scaffold created with Flutter 3.41.6 and dependencies",
+        "Design tokens converted to Dart constants",
+        "Data layer models and query providers implemented",
+        "Geist fonts bundled and registered",
+        "Test suite executed with 1/1 pass"
+      ],
+      "improvements": [
+        "Documented Firestore query limitation regarding arrayContains clauses",
+        "Noted cosmetic tree-shaking warning for cupertino_icons"
+      ]
     },
     {
       "version": "v6.18",
-      "date": "2026-04-01",
       "phase": 6,
-      "focus": "Phase 6d QA - multi-viewport audit, Lighthouse compliance",
-      "agents": {"primary": "gemini-cli", "consulted": [], "local_llms": [], "mcp_servers": ["playwright"]},
-      "outcomes": {"interventions": 0, "gotchas_created": [], "gotchas_resolved": [], "flutter_analyze": "0 issues", "flutter_test": "N/A", "deploys": 0},
-      "failures": [],
-      "successes": ["Accessibility 0.92", "SEO 1.0", "Responsive layout validated"],
-      "improvements": ["FCP 7.7-14.1s (Flutter bootstrap overhead)"]
+      "focus": "QA execution including multi-viewport visual audits, accessibility/SEO compliance checks, and design contract validation",
+      "agents": {
+        "primary": "Gemini CLI",
+        "consulted": [],
+        "local_llms": [],
+        "mcp_servers": []
+      },
+      "outcomes": {
+        "interventions": 0,
+        "gotchas_created": [],
+        "gotchas_resolved": [],
+        "flutter_analyze": "N/A",
+        "flutter_test": "Accessibility: PASS, SEO: PASS",
+        "deploys": 0
+      },
+      "failures": [
+        "Performance: NULL (Score not calculated due to 7.7s - 14.1s FCP)",
+        "Lighthouse Performance bottleneck attributed to local server latency and Flutter web engine bootstrap"
+      ],
+      "successes": [
+        "Accessibility score 0.92 (>= 0.90)",
+        "SEO score 1.0 (>= 0.90)",
+        "Mobile viewports (Tablet, Mobile) layouts match responsive spec",
+        "Desktop viewports match SIEM layout and detail panel area spec",
+        "Dark surface (#0D1117) and Green accents (#4ADE80) correctly implemented per design brief"
+      ],
+      "improvements": [
+        "Address FCP initialization overhead to improve headless environment performance scores",
+        "Optimize local server latency during QA builds",
+        "Proceed to Phase 7 to populate Firestore with 1,934 entities and verify live search"
+      ]
     },
     {
       "version": "v6.19",
-      "date": "2026-04-01",
       "phase": 6,
-      "focus": "Phase 6e Deploy - Firebase Hosting at kylejeromethompson.com",
-      "agents": {"primary": "claude-code", "consulted": [], "local_llms": [], "mcp_servers": []},
-      "outcomes": {"interventions": 0, "gotchas_created": [], "gotchas_resolved": [], "flutter_analyze": "0 issues", "flutter_test": "N/A", "deploys": 1},
+      "focus": "Final deployment to Firebase Hosting with custom domain, GA4 integration, and cross-browser smoke testing",
+      "agents": {
+        "primary": "Claude Code (Opus)",
+        "consulted": [],
+        "local_llms": [],
+        "mcp_servers": [
+          "Playwright"
+        ]
+      },
+      "outcomes": {
+        "interventions": 0,
+        "gotchas_created": [],
+        "gotchas_resolved": [],
+        "flutter_analyze": "N/A",
+        "flutter_test": "N/A",
+        "deploys": 1
+      },
       "failures": [],
-      "successes": ["Live deploy to Firebase Hosting", "GA4 analytics added", "Phase 6 complete"],
-      "improvements": []
+      "successes": [
+        "flutter build web --release completed in 16.9s",
+        "firebase deploy uploaded 39 files successfully",
+        "Site live at https://kylejeromethompson.com",
+        "GA4 (G-JMVEJLW9PC) integrated via gtag.js",
+        "Chrome smoke test: PASS",
+        "Firefox smoke test: PASS",
+        "Security check passed (Firebase Web key only)"
+      ],
+      "improvements": [
+        "Font tree-shaking reduced MaterialIcons from 1.6MB to 7.7KB (99.5% reduction)"
+      ]
     },
     {
       "version": "v6.20",
-      "date": "2026-04-01",
       "phase": 6,
-      "focus": "Phase 6e Visual Polish - globe hero, rotating queries, animations",
-      "agents": {"primary": "claude-code", "consulted": [], "local_llms": [], "mcp_servers": []},
-      "outcomes": {"interventions": 0, "gotchas_created": [], "gotchas_resolved": [], "flutter_analyze": "0 issues", "flutter_test": "3/3", "deploys": 1},
+      "focus": "Visual polish: mockup alignment, globe hero background, rotating example queries, blinking cursor, and result count animation",
+      "agents": {
+        "primary": "Claude Code",
+        "consulted": [],
+        "local_llms": [],
+        "mcp_servers": []
+      },
+      "outcomes": {
+        "interventions": 0,
+        "gotchas_created": [],
+        "gotchas_resolved": [],
+        "flutter_analyze": "0 issues",
+        "flutter_test": "3/3 pass",
+        "deploys": 0
+      },
       "failures": [],
-      "successes": ["Globe hero image", "Rotating example queries", "Animated count-ups"],
-      "improvements": []
+      "successes": [
+        "Globe hero image implemented at 15% opacity",
+        "Rotating example queries for Thompson Indicator Field combinations",
+        "Blinking green underscore cursor added",
+        "Animated result count-up implemented",
+        "Syntax highlighting validated with 5 colors",
+        "Pipeline-colored dots verified",
+        "All verification checks passed"
+      ],
+      "improvements": [
+        "Added example queries to enhance initial app load experience",
+        "Replaced gradient placeholder with actual image asset for globe background",
+        "Improved query editor UX with animated cursor and result counter"
+      ]
     },
     {
       "version": "v7.21",
-      "date": "2026-04-01",
       "phase": 7,
-      "focus": "TripleDB migration - 1100 restaurants from external Firestore to kjtcom production",
-      "agents": {"primary": "claude-code", "consulted": [], "local_llms": [], "mcp_servers": []},
-      "outcomes": {"interventions": 0, "gotchas_created": ["G31", "G33"], "gotchas_resolved": [], "flutter_analyze": "N/A", "flutter_test": "N/A", "deploys": 0},
+      "focus": "TripleDB to kjtcom Firestore migration with Thompson Indicator Fields v3 mapping and data enrichment",
+      "agents": {
+        "primary": "Claude Code (Opus)",
+        "consulted": [],
+        "local_llms": [],
+        "mcp_servers": []
+      },
+      "outcomes": {
+        "interventions": 0,
+        "gotchas_created": [],
+        "gotchas_resolved": [],
+        "flutter_analyze": "N/A",
+        "flutter_test": "N/A",
+        "deploys": 0
+      },
       "failures": [],
-      "successes": ["6181 total production entities", "Cross-project Admin SDK migration", "Schema v3 mapping"],
-      "improvements": []
+      "successes": [
+        "TripleDB dry run (5 docs) - mapping verified",
+        "Full TripleDB migration - 1,102 written, 1,100 in production",
+        "Staging -> production copy - 5,081 copied (899 CalGold + 4,182 RickSteves)",
+        "Production verification - 6,181 total entities",
+        "TripleDB field population - all targets met",
+        "Security scan - clean (Firebase Web key only)",
+        "4 mandatory artifacts produced"
+      ],
+      "improvements": [
+        "Implemented SHA-256 deterministic t_row_id for dedup safety (G33)",
+        "Mapped full Thompson Indicator Fields schema v3 including hardcoded backfills and derived fields",
+        "Configured batch writes (500 docs per batch) for efficiency",
+        "Ensured no SA credentials or secrets in scripts (G11, G20 compliance)"
+      ]
     },
     {
       "version": "v8.22",
-      "date": "2026-04-02",
       "phase": 8,
-      "focus": "Enrichment Hardening + comprehensive NoSQL query assessment",
-      "agents": {"primary": "claude-code", "consulted": [], "local_llms": [], "mcp_servers": []},
-      "outcomes": {"interventions": 0, "gotchas_created": [], "gotchas_resolved": [], "flutter_analyze": "N/A", "flutter_test": "N/A", "deploys": 0},
+      "focus": "Backfilled Schema v3 fields (actor, role, continent) for 323 non-v3 entities and executed query assessment scripts.",
+      "agents": {
+        "primary": "Claude Code",
+        "consulted": [],
+        "local_llms": [],
+        "mcp_servers": []
+      },
+      "outcomes": {
+        "interventions": 0,
+        "gotchas_created": [],
+        "gotchas_resolved": [],
+        "flutter_analyze": "0 issues or N/A",
+        "flutter_test": "X/Y pass or N/A",
+        "deploys": 0
+      },
       "failures": [],
-      "successes": ["323 entities backfilled to schema v3", "12 query defects identified", "100% schema v3 coverage"],
-      "improvements": ["12 query defects need remediation"]
+      "successes": [
+        "Backfilled schema v3 data for 121 CalGold and 202 RickSteves entities",
+        "Script skipped pre-existing fields correctly",
+        "Zero human interventions required"
+      ],
+      "improvements": [
+        "Confirmed dry-run limit parameter prevents excessive write operations",
+        "Batch processing validated for full dataset size"
+      ]
     },
     {
       "version": "v8.23",
-      "date": "2026-04-02",
       "phase": 8,
-      "focus": "NoSQL Query Remediation - 12 defects fixed",
-      "agents": {"primary": "claude-code", "consulted": [], "local_llms": [], "mcp_servers": []},
-      "outcomes": {"interventions": 0, "gotchas_created": [], "gotchas_resolved": [], "flutter_analyze": "0 issues", "flutter_test": "6/6", "deploys": 2},
+      "focus": "Lowercase query value remediation and CalGold t_any_shows data fix",
+      "agents": {
+        "primary": "Claude Code (Opus 4.6)",
+        "consulted": [],
+        "local_llms": [],
+        "mcp_servers": []
+      },
+      "outcomes": {
+        "interventions": 0,
+        "gotchas_created": [],
+        "gotchas_resolved": [],
+        "flutter_analyze": "0 issues",
+        "flutter_test": "6/6 pass",
+        "deploys": 2
+      },
       "failures": [],
-      "successes": ["All 12 query defects resolved", "contains-any operator", "Case sensitivity fixed"],
-      "improvements": []
+      "successes": [
+        "Added toLowerCase() to Firestore query values",
+        "Replaced compound example queries with validated lowercase queries",
+        "Created fix_calgold_shows_case.py script with dry-run support",
+        "Security scan confirmed no leaked credentials",
+        "Mid-iteration and final deploys successful"
+      ],
+      "improvements": [
+        "Enhanced Firestore query safety with consistent lowercase normalization",
+        "Improved data fix scripts with incremental testing capabilities"
+      ]
     },
     {
       "version": "v8.24",
-      "date": "2026-04-02",
       "phase": 8,
-      "focus": "UI Fixes + Country Codes backfill",
-      "agents": {"primary": "claude-code", "consulted": [], "local_llms": [], "mcp_servers": []},
-      "outcomes": {"interventions": 0, "gotchas_created": [], "gotchas_resolved": [], "flutter_analyze": "0 issues", "flutter_test": "9/9", "deploys": 2},
+      "focus": "UI Fixes: Added detail panel visibility for mobile/tablet and resolved animation issues, plus country code enrichment.",
+      "agents": {
+        "primary": "Claude Code",
+        "consulted": [],
+        "local_llms": [],
+        "mcp_servers": []
+      },
+      "outcomes": {
+        "interventions": 0,
+        "gotchas_created": [],
+        "gotchas_resolved": [],
+        "flutter_analyze": "N/A",
+        "flutter_test": "N/A",
+        "deploys": 0
+      },
       "failures": [],
-      "successes": ["Detail panel fixed", "t_any_country_codes backfilled 99.7%", "Cursor alignment fixed"],
-      "improvements": []
+      "successes": [
+        "Detail panel now visible and animates on all screen sizes",
+        "Country codes added to LocationEntity model",
+        "Backfill script for country codes created"
+      ],
+      "improvements": [
+        "Converted _ResultsArea to ConsumerWidget to enable runtime updates",
+        "Unified widget types in detail panel to enable smooth animations",
+        "Added responsive layout logic for detail panel on narrow screens"
+      ]
     },
     {
       "version": "v8.25",
-      "date": "2026-04-02",
       "phase": 8,
-      "focus": "Filter fix + README overhaul",
-      "agents": {"primary": "claude-code", "consulted": [], "local_llms": [], "mcp_servers": []},
-      "outcomes": {"interventions": 0, "gotchas_created": ["G42"], "gotchas_resolved": [], "flutter_analyze": "0 issues", "flutter_test": "9/9", "deploys": 2},
+      "focus": "Fixed duplicate filter clause bug in QueryNotifier via dedup logic and state-guarding flags",
+      "agents": {
+        "primary": "Claude Code (Opus)",
+        "consulted": [],
+        "local_llms": [],
+        "mcp_servers": []
+      },
+      "outcomes": {
+        "interventions": 0,
+        "gotchas_created": [
+          "G##"
+        ],
+        "gotchas_resolved": [],
+        "flutter_analyze": "0 issues",
+        "flutter_test": "9/9 pass",
+        "deploys": 2
+      },
       "failures": [],
-      "successes": ["Filter duplicate bug fixed", "Comprehensive README rewrite", "Phase 8 complete"],
-      "improvements": []
+      "successes": [
+        "Resolved duplicate filter clause bug in query_provider.dart",
+        "Successfully deployed Web build to Firebase Hosting"
+      ],
+      "improvements": [
+        "Added deduplication check to appendClause logic",
+        "Implemented _isAppending guard flag to prevent re-entry during state rebuilds"
+      ]
     },
     {
       "version": "v8.26",
-      "date": "2026-04-03",
       "phase": 8,
-      "focus": "Gotcha Registry + Query UX Fix - removed rotating queries",
-      "agents": {"primary": "claude-code", "consulted": [], "local_llms": [], "mcp_servers": []},
-      "outcomes": {"interventions": 0, "gotchas_created": [], "gotchas_resolved": ["G42"], "flutter_analyze": "0 issues", "flutter_test": "9/9", "deploys": 1},
+      "focus": "Removed rotating example queries and added static help text hints",
+      "agents": {
+        "primary": "Claude Code (Opus)",
+        "consulted": [],
+        "local_llms": [],
+        "mcp_servers": []
+      },
+      "outcomes": {
+        "interventions": 0,
+        "gotchas_created": [],
+        "gotchas_resolved": [],
+        "flutter_analyze": "N/A",
+        "flutter_test": "N/A",
+        "deploys": 1
+      },
       "failures": [],
-      "successes": ["G42 resolved", "Gotcha registry standard established"],
-      "improvements": []
+      "successes": [
+        "Removed rotating example query logic from QueryEditor and QueryProvider",
+        "Implemented static visual help text showing example syntaxes",
+        "Deployed changes successfully via Firebase Hosting"
+      ],
+      "improvements": [
+        "Cleaned up unused timer state and imports",
+        "Separated help text from input injection logic"
+      ]
     },
     {
       "version": "v9.27",
-      "date": "2026-04-03",
       "phase": 9,
-      "focus": "Visual Refresh + Tab Wiring - Gothic theme, all 4 tabs functional",
-      "agents": {"primary": "claude-code", "consulted": [], "local_llms": [], "mcp_servers": []},
-      "outcomes": {"interventions": 0, "gotchas_created": [], "gotchas_resolved": [], "flutter_analyze": "0 issues", "flutter_test": "9/9", "deploys": 2},
+      "focus": "Gothic/Cyber visual refresh and tab pagination wiring",
+      "agents": {
+        "primary": "Claude Code (Opus)",
+        "consulted": [],
+        "local_llms": [],
+        "mcp_servers": []
+      },
+      "outcomes": {
+        "interventions": 0,
+        "gotchas_created": [],
+        "gotchas_resolved": [],
+        "flutter_analyze": "0 issues",
+        "flutter_test": "9/9 pass",
+        "deploys": 2
+      },
       "failures": [],
-      "successes": ["Gothic/cyberpunk visual refresh", "Map + Globe + IAO tabs", "Pagination dropdown"],
-      "improvements": []
+      "successes": [
+        "Workstream 1 - Gothic/Cyber Visual Refresh completed",
+        "Workstream 5 - Pagination completed",
+        "2 production deploys",
+        "All workstreams delivered",
+        "Security scan clean"
+      ],
+      "improvements": [
+        "Added gothic visual tokens (Cinzel font, teal accents)",
+        "Implemented pagination controls with gothic styling",
+        "Verified query editor input field functionality maintained"
+      ]
     },
     {
       "version": "v9.28",
-      "date": "2026-04-03",
       "phase": 9,
-      "focus": "Gotcha Tab + Schema Builder + JSON Copy",
-      "agents": {"primary": "claude-code", "consulted": [], "local_llms": [], "mcp_servers": []},
-      "outcomes": {"interventions": 0, "gotchas_created": [], "gotchas_resolved": [], "flutter_analyze": "0 issues", "flutter_test": "9/9", "deploys": 1},
+      "focus": "Added Gotcha Tab (25 gotchas) and Schema Tab (22 fields), plus JSON Copy feature to Detail Panel",
+      "agents": {
+        "primary": "Claude Code (Opus)",
+        "consulted": [],
+        "local_llms": [],
+        "mcp_servers": []
+      },
+      "outcomes": {
+        "interventions": 0,
+        "gotchas_created": [
+          "G001",
+          "G002",
+          "G003",
+          "G004",
+          "G005",
+          "G006",
+          "G007",
+          "G008",
+          "G009",
+          "G010",
+          "G011",
+          "G012",
+          "G013",
+          "G014",
+          "G015",
+          "G016",
+          "G017",
+          "G018",
+          "G019",
+          "G020",
+          "G021",
+          "G022",
+          "G023",
+          "G024",
+          "G025"
+        ],
+        "gotchas_resolved": [],
+        "flutter_analyze": "0 issues",
+        "flutter_test": "9/9 pass",
+        "deploys": 1
+      },
       "failures": [],
-      "successes": ["6 tabs complete", "Schema query builder", "Copy JSON button"],
-      "improvements": []
+      "successes": [
+        "W3: Copy JSON button implemented in detail_panel.dart",
+        "W1: Gotcha tab created with 25 gotchas, filter toggle, status badges",
+        "W2: Schema tab created with 22 fields and query builder",
+        "Tab wiring completed for 6 tabs",
+        "Build + Deploy successful",
+        "Security scan passed"
+      ],
+      "improvements": [
+        "Added 6th tab: Gotcha",
+        "Added 6th tab: Schema",
+        "Enhanced detail_panel with JSON copy functionality",
+        "Implemented filter toggle and status badges for Gotcha tab",
+        "Added view-only fields support for Schema tab"
+      ]
     },
     {
       "version": "v9.29",
-      "date": "2026-04-03",
       "phase": 9,
-      "focus": "UX Polish - Trident labels, limits removed, schema builder quotes",
-      "agents": {"primary": "claude-code", "consulted": [], "local_llms": [], "mcp_servers": []},
-      "outcomes": {"interventions": 0, "gotchas_created": ["G45", "G46"], "gotchas_resolved": ["G46"], "flutter_analyze": "0 issues", "flutter_test": "9/9", "deploys": 1},
+      "focus": "UX polish: removed Firestore query limit to support full pagination and fixed quote cursor placement in the query builder",
+      "agents": {
+        "primary": "Claude Code (Opus)",
+        "consulted": [],
+        "local_llms": [],
+        "mcp_servers": []
+      },
+      "outcomes": {
+        "interventions": 2,
+        "gotchas_created": [
+          "G45"
+        ],
+        "gotchas_resolved": [],
+        "flutter_analyze": "0 issues",
+        "flutter_test": "9/9 pass",
+        "deploys": 0
+      },
       "failures": [],
-      "successes": ["Firestore limit removed", "Trident labels shortened for mobile"],
-      "improvements": ["G45 quote cursor still fragile"]
+      "successes": [
+        "Removed Firestore query limit to enable full result set retrieval",
+        "Fixed quote cursor placement by omitting closing quote in appendClause",
+        "Updated QueryResult to use totalCount instead of serverCount/limit",
+        "Removed truncation UI indicators"
+      ],
+      "improvements": [
+        "Client-side slicing now handles pagination for large result sets",
+        "Query builder now accepts unclosed quotes at EOL for better UX"
+      ]
     },
     {
       "version": "v9.30",
-      "date": "2026-04-03",
       "phase": 9,
-      "focus": "Autocomplete + Quote Fix + Limit Verification",
-      "agents": {"primary": "claude-code", "consulted": [], "local_llms": [], "mcp_servers": []},
-      "outcomes": {"interventions": 0, "gotchas_created": [], "gotchas_resolved": ["G45"], "flutter_analyze": "0 issues", "flutter_test": "9/9", "deploys": 1},
+      "focus": "Fix 1000-result limit logic (P0), implement W2/W3/W4 work items, and optimize autocomplete + quote fixes",
+      "agents": {
+        "primary": "Claude Code",
+        "consulted": [],
+        "local_llms": [],
+        "mcp_servers": []
+      },
+      "outcomes": {
+        "interventions": 0,
+        "gotchas_created": [],
+        "gotchas_resolved": [],
+        "flutter_analyze": "0 issues",
+        "flutter_test": "9/9 pass",
+        "deploys": 1
+      },
       "failures": [],
-      "successes": ["Field + value autocomplete", "Shared TextEditingController", "Value index (21 fields, 6878 values)"],
-      "improvements": []
+      "successes": [
+        "Verified FirestoreProvider streams all documents without artificial 1000-result cap",
+        "Corrected query_editor.dart feedback message from 'first 1,000 results' to 'first array match'",
+        "Confirmed Python Firestore verification counts reflect true entity counts (e.g., ca: 1000 represents actual count, not a limit)",
+        "Completed W2/W3/W4 work items",
+        "Security scan passed (Firebase Web API key only)"
+      ],
+      "improvements": [
+        "Clarified documentation/comments regarding Firestore arrayContains limitations (Line 22, 39 in firestore_provider.dart)",
+        "Refined user-facing feedback messages in query_editor.dart to accurately reflect result handling"
+      ]
     },
     {
       "version": "v9.31",
-      "date": "2026-04-03",
       "phase": 9,
-      "focus": "Persistent Bug Fix + Playwright Verification - diagnostic-first approach",
-      "agents": {"primary": "claude-code", "consulted": [], "local_llms": [], "mcp_servers": ["playwright"]},
-      "outcomes": {"interventions": 0, "gotchas_created": ["G47"], "gotchas_resolved": [], "flutter_analyze": "0 issues", "flutter_test": "9/9", "deploys": 1},
+      "focus": "Persistent Bug Fix + Playwright Verification for 1000-Result Limit and Query Typing",
+      "agents": {
+        "primary": "Claude Code (Opus)",
+        "consulted": [],
+        "local_llms": [],
+        "mcp_servers": []
+      },
+      "outcomes": {
+        "interventions": 0,
+        "gotchas_created": [],
+        "gotchas_resolved": [],
+        "flutter_analyze": "0 issues",
+        "flutter_test": "9/9 pass",
+        "deploys": 0
+      },
       "failures": [],
-      "successes": ["1000-result limit CONFIRMED RESOLVED", "Clear button added", "Diagnostic-first approach"],
-      "improvements": ["G47 CanvasKit blocks DOM interaction"]
+      "successes": [
+        "Verified no .limit() calls in Firestore queries",
+        "Confirmed entity_count_row uses shared resultsProvider",
+        "Playwright verification of landing page, query typing, and result rendering",
+        "Verified clear button functionality resets query and results"
+      ],
+      "improvements": [
+        "Updated schema_tab.dart with cursor set via addPostFrameCallback",
+        "Enhanced query_editor.dart with debug prints and clear button",
+        "Improved query_autocomplete.dart with valueIndex reload listeners"
+      ]
     },
     {
       "version": "v9.32",
-      "date": "2026-04-03",
       "phase": 9,
-      "focus": "Shows Fix + Operators + Detail Sort + Quote Rethink",
-      "agents": {"primary": "claude-code", "consulted": [], "local_llms": [], "mcp_servers": []},
-      "outcomes": {"interventions": 0, "gotchas_created": [], "gotchas_resolved": ["G36", "G37", "G45", "G49"], "flutter_analyze": "0 issues", "flutter_test": "12/12", "deploys": 1},
+      "focus": "TripleDB data consistency fixes, comprehensive lowercase normalization, quote-less query cursor, and alphabetical sorting",
+      "agents": {
+        "primary": "Claude Code",
+        "consulted": [],
+        "local_llms": [],
+        "mcp_servers": []
+      },
+      "outcomes": {
+        "interventions": 0,
+        "gotchas_created": [
+          "G36"
+        ],
+        "gotchas_resolved": [
+          "G36"
+        ],
+        "flutter_analyze": "N/A",
+        "flutter_test": "N/A",
+        "deploys": 1
+      },
       "failures": [],
-      "successes": ["Comprehensive lowercase all t_any_* data", "!= operator", "4 gotchas resolved"],
-      "improvements": []
+      "successes": [
+        "TripleDB shows case fix applied to 1,100 entities",
+        "Global lowercase fix applied to 6,181 entities (1,286 updated)",
+        "Quote cursor logic updated to support unquoted values",
+        "Detail panel sorting implemented",
+        "Production build and deployment successful"
+      ],
+      "improvements": [
+        "Unified data consistency across all t_any_ arrays",
+        "Improved user experience with unquoted query value entry",
+        "Enhanced security scan confirming no leaked credentials"
+      ]
     },
     {
       "version": "v9.33",
-      "date": "2026-04-04",
       "phase": 9,
-      "focus": "Parser Regression + Quotes + Operators",
-      "agents": {"primary": "claude-code", "consulted": [], "local_llms": [], "mcp_servers": []},
-      "outcomes": {"interventions": 0, "gotchas_created": [], "gotchas_resolved": [], "flutter_analyze": "0 issues", "flutter_test": "15/15", "deploys": 2},
+      "focus": "Fixed parser regression by deploying corrected regex order and restored quotes/cursor logic via programmatic flag",
+      "agents": {
+        "primary": "Claude Code (Opus)",
+        "consulted": [],
+        "local_llms": [],
+        "mcp_servers": []
+      },
+      "outcomes": {
+        "interventions": 0,
+        "gotchas_created": [],
+        "gotchas_resolved": [],
+        "flutter_analyze": "0 issues",
+        "flutter_test": "15/15 pass",
+        "deploys": 1
+      },
       "failures": [],
-      "successes": ["Parser regression fix", "Quotes restored in schema builder", "3 new regression tests"],
-      "improvements": ["Riverpod 3 migration deferred (>50 lines across 13 files)"]
+      "successes": [
+        "Deployed v9.32 build with corrected two-regex parser (quoted first) to fix live site regression",
+        "Added 3 new regression tests covering quoted geology keywords and operators",
+        "Restored quote handling in schema builder and prevented cursor override during programmatic updates",
+        "All 15 widget tests pass after interventions"
+      ],
+      "improvements": [
+        "Verified correct regex sequence in repo code vs deployed build",
+        "Implemented debugPrint for programmatic update flag state",
+        "Deferred client-side parser verification to Kyle"
+      ]
     },
     {
       "version": "v9.34",
-      "date": "2026-04-04",
       "phase": 9,
-      "focus": "Quote Cursor + Inline Autocomplete (G45 resolved by Gemini)",
-      "agents": {"primary": "gemini-cli", "consulted": ["claude-code"], "local_llms": [], "mcp_servers": []},
-      "outcomes": {"interventions": 0, "gotchas_created": [], "gotchas_resolved": ["G45"], "flutter_analyze": "0 issues", "flutter_test": "15/15", "deploys": 1},
+      "focus": "Fix quote cursor management and implement inline autocomplete with operator filtering",
+      "agents": {
+        "primary": "Gemini CLI",
+        "consulted": [],
+        "local_llms": [],
+        "mcp_servers": []
+      },
+      "outcomes": {
+        "interventions": 0,
+        "gotchas_created": [],
+        "gotchas_resolved": [],
+        "flutter_analyze": "PASS",
+        "flutter_test": "15/15 pass",
+        "deploys": 1
+      },
       "failures": [],
-      "successes": ["G45 resolved via addPostFrameCallback", "Inline Panther-style autocomplete", "+filter/-exclude operators fixed"],
-      "improvements": []
+      "successes": [
+        "Fixed quote cursor placement using addPostFrameCallback",
+        "Implemented inline autocomplete styled after Panther SIEM",
+        "Added keyboard navigation for inline suggestions",
+        "Fixed +filter/-exclude operator logic for scalar and array fields",
+        "Successfully deployed Web build to Firebase"
+      ],
+      "improvements": [
+        "Replaced floating OverlayEntry autocomplete with compact inline implementation",
+        "Improved text selection stability mid-frame",
+        "Enhanced keyboard accessibility for suggestion navigation"
+      ]
     },
     {
       "version": "v9.35",
-      "date": "2026-04-04",
       "phase": 9,
-      "focus": "Multi-Agent Orchestration Restoration - 3 local LLMs, 4 MCP servers",
-      "agents": {"primary": "claude-code", "consulted": ["qwen3.5:9b", "nemotron-mini:4b", "haervwe/GLM-4.6V-Flash-9B"], "local_llms": ["qwen3.5:9b", "nemotron-mini:4b", "haervwe/GLM-4.6V-Flash-9B"], "mcp_servers": ["firebase", "context7", "firecrawl", "playwright"]},
-      "outcomes": {"interventions": 1, "gotchas_created": [], "gotchas_resolved": [], "flutter_analyze": "0 issues", "flutter_test": "15/15", "deploys": 0},
-      "failures": ["Dart MCP deferred (npm package does not exist)"],
-      "successes": ["3 local LLMs deployed", "4 MCP servers configured", ".mcp.json + .gemini/settings.json created"],
-      "improvements": []
+      "focus": "Multi-Agent Orchestration Restoration + LLM/MCP Infrastructure setup",
+      "agents": {
+        "primary": "Claude Code (Opus 4.6)",
+        "consulted": [],
+        "local_llms": [
+          "Qwen3.5-9B",
+          "nemotron-mini:4b",
+          "haervwe/GLM-4.6V-Flash-9B"
+        ],
+        "mcp_servers": [
+          "Firebase MCP",
+          "Context7 MCP",
+          "Firecrawl MCP",
+          "Playwright MCP",
+          "Dart/Flutter MCP"
+        ]
+      },
+      "outcomes": {
+        "interventions": 0,
+        "gotchas_created": [],
+        "gotchas_resolved": [],
+        "flutter_analyze": "0 issues",
+        "flutter_test": "15/15 pass",
+        "deploys": 0
+      },
+      "failures": [],
+      "successes": [
+        "Resolved nemotron tag discrepancy by pulling correct nemotron-mini:4b",
+        "Pulled community GLM-4.6V-Flash-9B for local vision capabilities",
+        "Successfully configured Ollama environment with CUDA (RTX 2080 SUPER)",
+        "Archived v9.34 documentation"
+      ],
+      "improvements": [
+        "Clarified model naming convention (nemotron-nano -> nemotron-mini:4b)",
+        "Addressed unofficial GLM community model integration",
+        "Deferred Dart/Flutter MCP implementation to v9.36",
+        "Noted that MCP servers require session restart to load"
+      ]
     },
     {
       "version": "v9.36",
-      "date": "2026-04-04",
       "phase": 9,
-      "focus": "Panther SIEM Scrape + Agent Evaluator Middleware",
-      "agents": {"primary": "claude-code", "consulted": ["qwen3.5:9b"], "local_llms": ["qwen3.5:9b"], "mcp_servers": ["context7", "playwright"]},
-      "outcomes": {"interventions": 1, "gotchas_created": ["G51", "G52", "G53"], "gotchas_resolved": [], "flutter_analyze": "0 issues", "flutter_test": "15/15", "deploys": 0},
-      "failures": ["Firebase MCP needs reauth (G53)", "Firecrawl MCP not loading (G52)", "Panther scrape blocked on Chrome debug port"],
-      "successes": ["Agent evaluator middleware", "Playwright browsers installed", "Panther scrape script prepared"],
-      "improvements": ["Need to fix Firebase and Firecrawl MCP"]
+      "focus": "Panther SIEM Scrape + Agent Evaluator Middleware + MCP Validation",
+      "agents": {
+        "primary": "Claude Code (Opus 4.6)",
+        "consulted": [],
+        "local_llms": [
+          "qwen3.5:9b",
+          "nemotron-mini:4b",
+          "haervwe/GLM-4.6V-Flash-9B"
+        ],
+        "mcp_servers": [
+          "Firebase",
+          "Context7",
+          "Firecrawl",
+          "Playwright"
+        ]
+      },
+      "outcomes": {
+        "interventions": 0,
+        "gotchas_created": [
+          "G51",
+          "G52",
+          "G53"
+        ],
+        "gotchas_resolved": [],
+        "flutter_analyze": "N/A",
+        "flutter_test": "N/A",
+        "deploys": 0
+      },
+      "failures": [
+        "Firebase MCP: Authentication Error (Token expired)",
+        "Firecrawl MCP: Failed to load tools"
+      ],
+      "successes": [
+        "Playwright Browsers installed",
+        "Context7 MCP: Resolve library ID and CDP connection confirmed",
+        "Panther Search scrape adapted with aria-label selection",
+        "Qwen /no_think prefix discovery for JSON output"
+      ],
+      "improvements": [
+        "Add G51 workaround: enforce /no_think prefix for Qwen3.5-9B",
+        "Add G52 fix: diagnose Firecrawl MCP npx startup failures",
+        "Add G53 mitigation: document 'firebase login --reauth' requirement for new sessions",
+        "Update Panther scrape to prioritize aria-labels over CSS classes"
+      ]
+    },
+    {
+      "version": "v9.37",
+      "phase": 9,
+      "focus": "App optimization, MCP server verification, and Dart 3.9 dependency upgrade",
+      "agents": {
+        "primary": "Claude Code (Opus 4.6)",
+        "consulted": [
+          "Qwen3.5-9B",
+          "Kyle"
+        ],
+        "local_llms": [
+          "qwen3.5:9b",
+          "nemotron-mini:4b",
+          "haervwe/GLM-4.6V-Flash-9B"
+        ],
+        "mcp_servers": [
+          "Firebase",
+          "Context7",
+          "Firecrawl",
+          "Playwright"
+        ]
+      },
+      "outcomes": {
+        "interventions": 0,
+        "gotchas_created": [],
+        "gotchas_resolved": [
+          "G52",
+          "G53"
+        ],
+        "flutter_analyze": "N/A",
+        "flutter_test": "N/A",
+        "deploys": 0
+      },
+      "failures": [],
+      "successes": [
+        "MCP servers operational (4/4)",
+        "Firecrawl MCP resolved transient loading issue",
+        "Firebase MCP reauth successful for session",
+        "Dart 3.11.4 stable version confirmed",
+        "5 major dependency versions bumped successfully"
+      ],
+      "improvements": [
+        "Resolved Firecrawl MCP transient loading issue",
+        "Established Firebase reauth workflow via Kyle",
+        "Upgraded to Dart 3.11.4 and 5 major version bumps",
+        "Added Dart MCP server entry to configuration"
+      ]
     }
   ],
-  "gotcha_registry": [
-    {"id": "G2", "status": "RESOLVED", "created_in": "v1.6", "resolved_in": "v3.10", "title": "CUDA LD_LIBRARY_PATH", "agents_involved": ["claude-code", "gemini-cli"]},
-    {"id": "G31", "status": "OPEN", "created_in": "v7.21", "resolved_in": null, "title": "TripleDB migration field mapping", "agents_involved": ["claude-code"]},
-    {"id": "G33", "status": "OPEN", "created_in": "v7.21", "resolved_in": null, "title": "Deterministic t_row_id for dedup", "agents_involved": ["claude-code"]},
-    {"id": "G36", "status": "RESOLVED", "created_in": "v9.27", "resolved_in": "v9.32", "title": "t_any_* case sensitivity", "agents_involved": ["claude-code"]},
-    {"id": "G37", "status": "RESOLVED", "created_in": "v9.27", "resolved_in": "v9.32", "title": "TripleDB t_any_shows not lowercased", "agents_involved": ["claude-code"]},
-    {"id": "G42", "status": "RESOLVED", "created_in": "v8.25", "resolved_in": "v8.26", "title": "Rotating queries overwrite user input", "agents_involved": ["claude-code"]},
-    {"id": "G45", "status": "RESOLVED", "created_in": "v9.29", "resolved_in": "v9.34", "title": "Quote cursor placement", "agents_involved": ["claude-code (6 failures)", "gemini-cli (1 success)"]},
-    {"id": "G46", "status": "RESOLVED", "created_in": "v9.29", "resolved_in": "v9.29", "title": "Firestore result limit", "agents_involved": ["claude-code"]},
-    {"id": "G47", "status": "OPEN", "created_in": "v9.31", "resolved_in": null, "title": "CanvasKit blocks Playwright DOM interaction", "agents_involved": ["claude-code"]},
-    {"id": "G49", "status": "RESOLVED", "created_in": "v9.32", "resolved_in": "v9.32", "title": "TripleDB shows data issue", "agents_involved": ["claude-code"]},
-    {"id": "G51", "status": "OPEN", "created_in": "v9.36", "resolved_in": null, "title": "Qwen thinking mode produces empty responses without /no_think", "agents_involved": ["claude-code"]},
-    {"id": "G52", "status": "RESOLVED", "created_in": "v9.36", "resolved_in": "v9.37", "title": "Firecrawl MCP not loading", "agents_involved": ["claude-code"]},
-    {"id": "G53", "status": "RESOLVED", "created_in": "v9.36", "resolved_in": "v9.37", "title": "Firebase MCP needs fresh login each session", "agents_involved": ["claude-code"]}
-  ]
+  "gotcha_registry": []
 }

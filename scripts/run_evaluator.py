@@ -116,11 +116,72 @@ def append_to_scores(entry, tokens):
     print(f'\nAppended to {SCORES_PATH}')
 
 
+def load_gotcha_archive():
+    """Load resolved gotchas for evaluator context."""
+    archive_path = os.path.join(os.path.dirname(__file__), '..', 'data', 'gotcha_archive.json')
+    try:
+        with open(archive_path) as f:
+            data = json.load(f)
+        return data.get('resolved_gotchas', [])
+    except (FileNotFoundError, json.JSONDecodeError):
+        return []
+
+
+def build_execution_context(version):
+    """Build ground-truth execution context from event log and file system.
+
+    Returns a string describing what actually happened during execution.
+    """
+    project_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..')
+    event_log_path = os.path.join(project_dir, 'data', 'iao_event_log.jsonl')
+
+    lines = []
+    events = []
+    try:
+        with open(event_log_path) as f:
+            for line in f:
+                line = line.strip()
+                if not line:
+                    continue
+                ev = json.loads(line)
+                if ev.get('iteration') == version:
+                    events.append(ev)
+    except FileNotFoundError:
+        lines.append("No event log found.")
+        return "\n".join(lines)
+
+    # Summarize events
+    errors = [e for e in events if e.get('status') in ('error', 'timeout')]
+    successes = [e for e in events if e.get('status') == 'success']
+    lines.append(f"Total events: {len(events)}, successes: {len(successes)}, errors/timeouts: {len(errors)}")
+
+    if errors:
+        lines.append("Errors/timeouts:")
+        for e in errors[:10]:
+            lines.append(f"  - {e.get('source_agent', '?')}: {e.get('action', '?')} -> {e.get('status')} ({e.get('error', 'N/A')[:80]})")
+
+    # Check key file existence
+    key_files = [
+        'scripts/enrich_counties.py',
+        'kjtcom-telegram-bot.service',
+        'data/gotcha_archive.json',
+        'data/middleware_registry.json',
+        'docs/cross-project/intranet-update-v9.42.md',
+    ]
+    lines.append("Key file existence:")
+    for kf in key_files:
+        full = os.path.join(project_dir, kf)
+        lines.append(f"  {'EXISTS' if os.path.exists(full) else 'MISSING'}: {kf}")
+
+    return "\n".join(lines)
+
+
 def run_workstream_evaluator(version, design_doc_path):
     """Score individual workstreams from the design doc.
 
     Reads workstream definitions from design doc, asks Qwen to score each one,
     returns list of workstream score dicts for agent_scores.json.
+    v9.42: includes execution context for ground-truth cross-check.
     """
     try:
         with open(design_doc_path) as f:
@@ -129,10 +190,28 @@ def run_workstream_evaluator(version, design_doc_path):
         print(f"Design doc not found: {design_doc_path}")
         return []
 
+    # Build execution context for ground-truth scoring
+    exec_context = build_execution_context(version)
+
+    # Load gotcha archive for context
+    gotchas = load_gotcha_archive()
+    gotcha_summary = ""
+    if gotchas:
+        recent = [g for g in gotchas if g.get('iteration_resolved', '').startswith('v9.')]
+        if recent:
+            gotcha_summary = "\nRecently resolved gotchas:\n" + "\n".join(
+                f"  {g['id']}: {g['description']} (resolved {g['iteration_resolved']})"
+                for g in recent[:5]
+            )
+
     prompt = f"""/no_think
 You are evaluating workstreams for kjtcom iteration {version}.
 
-Based on the design document below, score each workstream (W1-W5).
+IMPORTANT: Use the EXECUTION CONTEXT below as ground truth. If the execution context
+shows errors/timeouts for a workstream, do NOT mark it as "complete". If files exist
+that a workstream was supposed to create, that is evidence of completion.
+
+Based on the design document and execution context, score each workstream (W1-W6).
 Return ONLY a JSON array of objects with these fields:
 - id: "W1", "W2", etc.
 - name: workstream name
@@ -146,6 +225,10 @@ Return ONLY a JSON array of objects with these fields:
 
 Design document (first 3000 chars):
 {design_content[:3000]}
+
+EXECUTION CONTEXT (ground truth):
+{exec_context}
+{gotcha_summary}
 
 Return ONLY the JSON array, no explanation."""
 

@@ -1,5 +1,24 @@
 # kjtcom - Unified Changelog
 
+**v9.42 (Phase 9 - County Enrichment + Bot Resiliency + Web Route + Gotcha Archive + Middleware Registry)**
+- NEW: scripts/enrich_counties.py - reverse geocode TripleDB coordinates to counties via Nominatim (1 req/sec)
+- NEW: kjtcom-telegram-bot.service - systemd service with WatchdogSec=600, Type=notify, auto-restart
+- NEW: data/gotcha_archive.json - 15 resolved gotchas with root cause categories and prevention patterns
+- NEW: data/middleware_registry.json - middleware component catalog with version tracking and dependencies
+- NEW: docs/cross-project/intranet-update-v9.42.md - RBAC approach, middleware adoption guide, mermaid chart
+- UPDATED: scripts/intent_router.py - 3rd route "web" for external questions via Brave Search
+- UPDATED: scripts/telegram_bot.py - web route handler (Brave -> Gemini synthesis), systemd watchdog (sdnotify)
+- UPDATED: scripts/generate_artifacts.py - --promote, --validate-only flags, execution cross-check for Qwen accuracy
+- UPDATED: scripts/run_evaluator.py - execution context (exit codes, file existence) for ground-truth scoring, gotcha archive query
+- UPDATED: scripts/utils/ollama_config.py - OLLAMA_BATCH_DEFAULTS with 45-min timeout, merge_batch_defaults()
+- UPDATED: scripts/build_registry_v2.py - uses batch defaults (45-min timeout vs previous 5-min)
+- UPDATED: data/schema_reference.json - t_any_counties now covers calgold + tripledb
+- UPDATED: docs/kjtcom-architecture.mmd - added GOTCHA_ARCHIVE, HARNESS_REGISTRY, COUNTY_ENRICHMENT, SYSTEMD_SVC, web route
+- UPDATED: docs/install.fish - added sdnotify pip package and systemd setup instructions
+- Flutter: analyze 0 issues, 15/15 tests pass, deployed to kjtcom-c78cd.web.app
+- Multi-agent: Claude Code (primary) + Qwen3.5-9B (evaluator) + Gemini 2.5 Flash (intent routing, synthesis)
+- Kyle interventions: 1 expected (bot.env API keys + systemd install via sudo)
+
 **v9.41 (Phase 9 - Firestore Dual Retrieval + Archive Re-embed + Artifact Automation)**
 - NEW: Dual retrieval path for /ask - Gemini Flash intent router classifies questions as entity (Firestore) or dev history (ChromaDB)
 - NEW: scripts/intent_router.py - Gemini 2.5 Flash routes /ask queries against schema reference (22 fields, 3 pipelines)

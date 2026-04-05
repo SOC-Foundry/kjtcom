@@ -1,12 +1,13 @@
 %% kjtcom Architecture - Living Document
-%% Updated: v9.41 - Dual Retrieval (Intent Router + Firestore) + Artifact Automation
+%% Updated: v9.42 - County Enrichment + systemd Bot + Web Search Route + Gotcha Archive + Middleware Registry
 %% Maintainer: Update every iteration that changes architecture
 
 graph TB
     subgraph USER["User Layer"]
         WEB["kylejeromethompson.com<br/>Flutter Web"]
-        TELEGRAM["Telegram Bot<br/>@kjtcom_iao_bot"]
+        TELEGRAM["Telegram Bot<br/>@kjtcom_iao_bot<br/>systemd managed"]
         CLAW3D["Claw3D Viewer<br/>Three.js Prototype"]
+        SYSTEMD_SVC["systemd Service<br/>WatchdogSec=600<br/>Auto-restart"]
     end
 
     subgraph FRONTEND["Flutter Web App (6 tabs)"]
@@ -82,8 +83,11 @@ graph TB
         EVENT_LOG["Event Log<br/>data/iao_event_log.jsonl<br/>P3 Diligence"]
         ANALYZER["analyze_events.py<br/>Event Log Summary"]
         SCHEMA_REF["Schema Reference<br/>data/schema_reference.json<br/>22 Fields + 3 Pipelines"]
-        INTENT_ROUTER["Intent Router<br/>Gemini Flash<br/>Firestore vs ChromaDB"]
-        ARTIFACT_GEN["Artifact Generator<br/>generate_artifacts.py<br/>Qwen + Templates"]
+        INTENT_ROUTER["Intent Router<br/>Gemini Flash<br/>3 Routes: Firestore/ChromaDB/Web"]
+        ARTIFACT_GEN["Artifact Generator<br/>generate_artifacts.py<br/>--promote --validate-only"]
+        GOTCHA_ARCHIVE["Gotcha Archive<br/>data/gotcha_archive.json<br/>15 Resolved Patterns"]
+        HARNESS_REGISTRY["Middleware Registry<br/>data/middleware_registry.json<br/>Component Catalog"]
+        COUNTY_ENRICHMENT["County Enrichment<br/>enrich_counties.py<br/>Nominatim Reverse Geocode"]
     end
 
     subgraph ARTIFACTS["Artifact Loop (per iteration)"]
@@ -98,8 +102,10 @@ graph TB
     %% User layer connections
     WEB --> FRONTEND
     TELEGRAM --> INTENT_ROUTER
+    SYSTEMD_SVC --> TELEGRAM
     INTENT_ROUTER --> FIRESTORE
     INTENT_ROUTER --> CHROMADB
+    INTENT_ROUTER --> BRAVE
     TELEGRAM --> BRAVE
 
     %% Frontend connections
@@ -137,6 +143,10 @@ graph TB
     ARTIFACT_GEN --> REPORT
     EVALUATOR --> EVENT_LOG
     BRAVE --> EVENT_LOG
+    COUNTY_ENRICHMENT --> FIRESTORE
+    COUNTY_ENRICHMENT --> EVENT_LOG
+    GOTCHA_ARCHIVE --> EVALUATOR
+    HARNESS_REGISTRY --> ARTIFACT_GEN
 
     %% MCP connections
     MCP_FIREBASE --> FIRESTORE

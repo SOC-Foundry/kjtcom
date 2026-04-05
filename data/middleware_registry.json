@@ -1,0 +1,130 @@
+{
+  "metadata": {
+    "version": "v9.42",
+    "updated": "2026-04-05",
+    "description": "Middleware component catalog - the IP that stamps onto new projects"
+  },
+  "harnesses": [
+    {"name": "CLAUDE.md", "version": "v9.42", "type": "agent_instructions", "target": "claude-code"},
+    {"name": "GEMINI.md", "version": "v9.42", "type": "agent_instructions", "target": "gemini-cli"}
+  ],
+  "scripts": [
+    {
+      "name": "scripts/intent_router.py",
+      "version": "v9.42",
+      "type": "routing",
+      "description": "Gemini Flash intent classification - 3 routes: firestore, chromadb, web",
+      "dependencies": ["litellm", "data/schema_reference.json"]
+    },
+    {
+      "name": "scripts/firestore_query.py",
+      "version": "v9.41",
+      "type": "data_access",
+      "description": "Firestore query execution with G34 post-filter workaround",
+      "dependencies": ["firebase-admin"]
+    },
+    {
+      "name": "scripts/telegram_bot.py",
+      "version": "v9.42",
+      "type": "bot",
+      "description": "Telegram bot with 3-route retrieval, systemd watchdog, P3 logging",
+      "dependencies": ["python-telegram-bot", "sdnotify", "litellm", "chromadb", "requests"]
+    },
+    {
+      "name": "scripts/generate_artifacts.py",
+      "version": "v9.42",
+      "type": "automation",
+      "description": "Draft artifact generator with --promote, --validate-only, cross-check",
+      "dependencies": ["scripts/utils/ollama_config.py", "scripts/utils/iao_logger.py", "scripts/utils/ollama_logged.py"]
+    },
+    {
+      "name": "scripts/run_evaluator.py",
+      "version": "v9.42",
+      "type": "evaluation",
+      "description": "Qwen workstream evaluator with execution context and gotcha archive query",
+      "dependencies": ["scripts/utils/ollama_config.py", "scripts/utils/iao_logger.py"]
+    },
+    {
+      "name": "scripts/build_registry_v2.py",
+      "version": "v9.42",
+      "type": "automation",
+      "description": "RAG-augmented iteration registry builder with 45-min batch timeout",
+      "dependencies": ["chromadb", "scripts/utils/ollama_config.py", "scripts/utils/iao_logger.py"]
+    },
+    {
+      "name": "scripts/enrich_counties.py",
+      "version": "v9.42",
+      "type": "enrichment",
+      "description": "Reverse geocode coordinates to counties via Nominatim for TripleDB entities",
+      "dependencies": ["firebase-admin", "requests", "scripts/utils/iao_logger.py"]
+    },
+    {
+      "name": "scripts/embed_archive.py",
+      "version": "v9.38",
+      "type": "rag",
+      "description": "Archive document embedder for ChromaDB vector store",
+      "dependencies": ["chromadb", "requests"]
+    },
+    {
+      "name": "scripts/query_rag.py",
+      "version": "v9.40",
+      "type": "rag",
+      "description": "ChromaDB semantic search for dev history retrieval",
+      "dependencies": ["chromadb", "requests"]
+    },
+    {
+      "name": "scripts/brave_search.py",
+      "version": "v9.38",
+      "type": "api_wrapper",
+      "description": "Brave Search API wrapper for web search route",
+      "dependencies": ["requests"]
+    },
+    {
+      "name": "scripts/analyze_events.py",
+      "version": "v9.39",
+      "type": "analytics",
+      "description": "Event log analyzer for P3 diligence reporting",
+      "dependencies": []
+    }
+  ],
+  "utils": [
+    {
+      "name": "scripts/utils/iao_logger.py",
+      "version": "v9.39",
+      "type": "logging",
+      "description": "Structured JSONL event logger for all agent communications"
+    },
+    {
+      "name": "scripts/utils/ollama_config.py",
+      "version": "v9.42",
+      "type": "config",
+      "description": "Ollama defaults (think:false), eval defaults, batch defaults (45-min timeout)"
+    },
+    {
+      "name": "scripts/utils/ollama_logged.py",
+      "version": "v9.39",
+      "type": "wrapper",
+      "description": "Auto-logging Ollama chat/embed wrapper"
+    }
+  ],
+  "templates": [
+    {"name": "template/artifacts/build-template.md", "version": "v9.41", "type": "artifact_template"},
+    {"name": "template/artifacts/report-template.md", "version": "v9.41", "type": "artifact_template"},
+    {"name": "template/artifacts/changelog-template.md", "version": "v9.41", "type": "artifact_template"}
+  ],
+  "data_stores": [
+    {"name": "data/chromadb/", "type": "vector_store", "records": 1419, "description": "RAG archive embeddings"},
+    {"name": "data/gotcha_archive.json", "type": "knowledge_base", "version": "v9.42", "description": "15 resolved gotchas with resolution patterns"},
+    {"name": "data/schema_reference.json", "type": "schema", "version": "v9.42", "description": "Thompson Schema field reference for intent routing"},
+    {"name": "data/iao_event_log.jsonl", "type": "event_log", "description": "P3 diligence event stream"},
+    {"name": "agent_scores.json", "type": "evaluation", "version": "v9.42", "description": "Agent and workstream scoring history"}
+  ],
+  "services": [
+    {
+      "name": "kjtcom-telegram-bot.service",
+      "version": "v9.42",
+      "type": "systemd_unit",
+      "description": "systemd service for Telegram bot with WatchdogSec=600"
+    }
+  ]
+}

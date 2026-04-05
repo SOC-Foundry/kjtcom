@@ -20,6 +20,7 @@ import logging
 import subprocess
 import time
 import requests
+import sdnotify
 from telegram import Update
 from telegram.ext import Application, CommandHandler, ContextTypes, MessageHandler, filters
 
@@ -35,6 +36,9 @@ KJTCOM_TELEGRAM_BOT_TOKEN = os.environ.get('KJTCOM_TELEGRAM_BOT_TOKEN')
 OLLAMA_URL = 'http://localhost:11434'
 AUTHORIZED_USERS = set()  # Empty = allow all. Add Telegram user IDs to restrict.
 PROJECT_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..')
+
+# systemd watchdog notifier (v9.42)
+sd_notifier = sdnotify.SystemdNotifier()
 
 logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
@@ -244,7 +248,54 @@ async def cmd_ask(update: Update, context: ContextTypes.DEFAULT_TYPE):
                   input_summary=question[:200],
                   output_summary=f"route={route}, filters={routing.get('filters', {})}"[:200])
 
-        if route == "firestore":
+        if route == "web":
+            # Stage 2c: Web search via Brave -> Gemini synthesis
+            try:
+                from brave_search import search as brave_search
+                search_results = brave_search(routing.get("query", question), count=5)
+                if 'error' in search_results:
+                    response_text = f"Search error: {search_results['error']}"
+                else:
+                    # Format raw results
+                    raw_lines = []
+                    for r in search_results.get('results', []):
+                        raw_lines.append(f"- {r['title']}\n  {r['url']}\n  {r['snippet'][:150]}")
+                    raw_text = "\n".join(raw_lines)
+
+                    # Synthesize with Gemini
+                    try:
+                        from litellm import completion as llm_completion
+                        synth_start = time.time()
+                        synth_resp = llm_completion(
+                            model="gemini/gemini-2.5-flash",
+                            messages=[{"role": "user", "content": (
+                                f"Based on these web search results:\n\n{raw_text[:3000]}\n\n"
+                                f"Answer this question concisely: {question}"
+                            )}],
+                            max_tokens=1024,
+                            thinking={"type": "disabled"},
+                        )
+                        synth_content = synth_resp.choices[0].message.content
+                        synth_latency = int((time.time() - synth_start) * 1000)
+                        log_event("llm_call", "telegram-bot", "gemini/gemini-2.5-flash", "synthesize-web",
+                                  input_summary=f"web synth: {question}"[:200],
+                                  output_summary=synth_content[:200],
+                                  latency_ms=synth_latency, status="success")
+                        response_text = f"[Web -> Gemini]\n\n{synth_content[:2000]}"
+                    except Exception:
+                        response_text = f"[Web]\n\n{raw_text[:2000]}"
+
+                log_event("api_call", "telegram-bot", "brave-search", "web-route",
+                          input_summary=question[:200],
+                          output_summary=response_text[:200],
+                          status="success")
+            except Exception as e:
+                log_event("api_call", "telegram-bot", "brave-search", "web-route",
+                          input_summary=question[:200],
+                          status="error", error=str(e))
+                response_text = f"Web search error: {e}"
+
+        elif route == "firestore":
             # Stage 2a: Firestore entity query
             filters = routing.get("filters", {})
             intent = routing.get("intent", "list")
@@ -433,6 +484,12 @@ async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(response_text)
 
 
+async def watchdog_ping(context: ContextTypes.DEFAULT_TYPE):
+    """Periodic watchdog ping for systemd WatchdogSec. Runs every 5 minutes."""
+    sd_notifier.notify("WATCHDOG=1")
+    logger.debug("Watchdog ping sent")
+
+
 def main():
     if not KJTCOM_TELEGRAM_BOT_TOKEN:
         print('ERROR: KJTCOM_TELEGRAM_BOT_TOKEN not set in environment')
@@ -452,6 +509,12 @@ def main():
     app.add_handler(CommandHandler('ask', cmd_ask))
     app.add_handler(CommandHandler('search', cmd_search))
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_text))
+
+    # systemd watchdog: ping every 5 min (WatchdogSec=600 = 10 min)
+    app.job_queue.run_repeating(watchdog_ping, interval=300, first=10)
+
+    # Notify systemd we're ready
+    sd_notifier.notify("READY=1")
 
     print('kjtcom IAO Bot starting...')
     print('Commands: /start /help /status /query /evaluate /gotcha /scores /ask /search')

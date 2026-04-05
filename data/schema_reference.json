@@ -17,7 +17,7 @@
       "t_any_people": {"desc": "associated people", "examples": ["guy fieri", "huell howser", "rick steves"]},
       "t_any_cities": {"desc": "cities (lowercased)", "examples": ["los angeles", "san francisco", "new york"]},
       "t_any_states": {"desc": "US states as 2-letter codes", "examples": ["ca", "tx", "ny", "fl"]},
-      "t_any_counties": {"desc": "US counties (full name lowercased, calgold only)", "examples": ["los angeles county", "orange county", "san diego county"]},
+      "t_any_counties": {"desc": "US counties (full name lowercased, calgold + tripledb)", "examples": ["los angeles county", "orange county", "san diego county", "cook county", "maricopa county"]},
       "t_any_countries": {"desc": "countries (ISO alpha-2 lowercase)", "examples": ["us", "it", "fr", "gb"]},
       "t_any_regions": {"desc": "geographic regions", "examples": ["midwest", "southeast", "southwest"]},
       "t_any_keywords": {"desc": "topic keywords"},

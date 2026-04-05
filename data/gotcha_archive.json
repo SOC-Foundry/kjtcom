@@ -1,0 +1,124 @@
+{
+  "resolved_gotchas": [
+    {
+      "id": "G2",
+      "description": "CUDA LD_LIBRARY_PATH not set in subprocess environment",
+      "resolution": "Source ~/.config/fish/config.fish before transcription; bake CUDA paths into config.fish",
+      "iteration_resolved": "v3.10",
+      "root_cause": "environment",
+      "prevention": "install.fish Step 8 sets CUDA paths automatically"
+    },
+    {
+      "id": "G23",
+      "description": "LD_LIBRARY_PATH CUDA environment variable missing in fish",
+      "resolution": "Configured in config.fish alongside G2 fix",
+      "iteration_resolved": "v3.10",
+      "root_cause": "environment",
+      "prevention": "install.fish ensures CUDA paths are persistent"
+    },
+    {
+      "id": "G31",
+      "description": "TripleDB schema drift during migration",
+      "resolution": "Inspect actual Firestore data before any schema migration; verify field consistency across all documents",
+      "iteration_resolved": "v7.21",
+      "root_cause": "firestore",
+      "prevention": "Always read sample docs before schema changes; validate with dry-run"
+    },
+    {
+      "id": "G36",
+      "description": "Firestore arrayContains queries are case-sensitive",
+      "resolution": "Lowercase ALL string values in ALL t_any_* arrays via fix_all_lowercase.py (1,286 entities updated)",
+      "iteration_resolved": "v9.32",
+      "root_cause": "firestore",
+      "prevention": "All pipeline ingestion normalizes to lowercase before Firestore write"
+    },
+    {
+      "id": "G37",
+      "description": "t_any_shows field contained mixed-case values in TripleDB",
+      "resolution": "fix_tripledb_shows_case.py lowercased all 1,100 t_any_shows values",
+      "iteration_resolved": "v9.32",
+      "root_cause": "pipeline",
+      "prevention": "Pipeline normalization step lowercases all array string values"
+    },
+    {
+      "id": "G39",
+      "description": "Detail panel provider not accessible at all viewport sizes",
+      "resolution": "Ensure DetailPanel NotifierProvider is always in widget tree at all viewport sizes",
+      "iteration_resolved": "v8.24",
+      "root_cause": "flutter",
+      "prevention": "Providers must be positioned above all breakpoint-sensitive widgets"
+    },
+    {
+      "id": "G41",
+      "description": "Widget rebuild triggers event handlers multiple times",
+      "resolution": "Added deduplication logic and guard flags to prevent handler re-execution",
+      "iteration_resolved": "v8.25",
+      "root_cause": "flutter",
+      "prevention": "All event handlers use guard flags or dedup checks"
+    },
+    {
+      "id": "G42",
+      "description": "Rotating queries feature overwrites user input",
+      "resolution": "Removed query rotation feature entirely from query_editor.dart",
+      "iteration_resolved": "v8.26",
+      "root_cause": "flutter",
+      "prevention": "Feature removal was the fix; do not re-add auto-rotation"
+    },
+    {
+      "id": "G46",
+      "description": "Query appeared to cap results at 1,000 entities",
+      "resolution": "Verified no .limit() calls; CA has exactly 1,000 entities - not a cap",
+      "iteration_resolved": "v9.30",
+      "root_cause": "firestore",
+      "prevention": "Updated feedback message to remove misleading 'first 1,000 results' text"
+    },
+    {
+      "id": "G49",
+      "description": "TripleDB results displaying show names in title case",
+      "resolution": "Data fix via fix_tripledb_shows_case.py (same as G37)",
+      "iteration_resolved": "v9.32",
+      "root_cause": "pipeline",
+      "prevention": "Pipeline normalization ensures lowercase on ingestion"
+    },
+    {
+      "id": "G50",
+      "description": "Parser regex order regression - unquoted matched before quoted values",
+      "resolution": "Redeployed with correct quoted-first regex order; added 3 regression tests",
+      "iteration_resolved": "v9.33",
+      "root_cause": "dependency",
+      "prevention": "Regression tests for quoted value parsing; verify deploy matches repo code"
+    },
+    {
+      "id": "G51",
+      "description": "Qwen3.5-9B returns empty responses - tokens consumed by internal thinking",
+      "resolution": "Add think:false to Ollama API payload via ollama_config.py",
+      "iteration_resolved": "v9.39",
+      "root_cause": "llm_config",
+      "prevention": "All Ollama calls go through ollama_config.py merge_defaults() which sets think:false"
+    },
+    {
+      "id": "G52",
+      "description": "Firecrawl MCP server not loading despite API key being set",
+      "resolution": "Transient npx startup delay; resolved by v9.37 with confirmed operational test",
+      "iteration_resolved": "v9.37",
+      "root_cause": "mcp",
+      "prevention": "Verify MCP servers load on session start; retry if transient failure"
+    },
+    {
+      "id": "G54",
+      "description": "open-interpreter 0.4.3 incompatible with Python 3.14 (pkg_resources removed)",
+      "resolution": "Patched 7 open-interpreter files with try/except ImportError guards around pkg_resources",
+      "iteration_resolved": "v9.39",
+      "root_cause": "dependency",
+      "prevention": "Pin open-interpreter; monitor for upstream fix; install.fish includes patches"
+    },
+    {
+      "id": "G55",
+      "description": "query_rag.py CLI --json flag parsed as positional argument",
+      "resolution": "Bypassed CLI; use direct import of query_rag functions in telegram_bot.py",
+      "iteration_resolved": "v9.40",
+      "root_cause": "pipeline",
+      "prevention": "Prefer direct Python imports over subprocess CLI calls for internal tools"
+    }
+  ]
+}

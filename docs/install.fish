@@ -192,8 +192,18 @@ echo ""
 echo "[5d/10] Installing RAG and middleware packages..."
 
 pip install chromadb --break-system-packages 2>&1 | tee -a $LOG_FILE
-pip install python-telegram-bot --break-system-packages 2>&1 | tee -a $LOG_FILE
+pip install "python-telegram-bot[job-queue]" --break-system-packages 2>&1 | tee -a $LOG_FILE
 pip install firebase-admin --break-system-packages 2>&1 | tee -a $LOG_FILE
+pip install sdnotify --break-system-packages 2>&1 | tee -a $LOG_FILE
+
+# v9.42: systemd service for Telegram bot
+echo ""
+echo "  Setting up Telegram bot systemd service..."
+echo "  Copy the service file and enable:"
+echo "    sudo cp kjtcom-telegram-bot.service /etc/systemd/system/"
+echo "    sudo systemctl daemon-reload"
+echo "    sudo systemctl enable kjtcom-telegram-bot"
+echo "  Fill in API keys: ~/.config/kjtcom/bot.env"
 
 # ---------------------------------------------------------------------------
 # Step 5e/10: OpenClaw + P3 Diligence packages (v9.39+)

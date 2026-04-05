@@ -1,0 +1,18 @@
+[Unit]
+Description=kjtcom IAO Telegram Bot
+After=network.target ollama.service
+Wants=ollama.service
+
+[Service]
+Type=notify
+User=kthompson
+WorkingDirectory=/home/kthompson/dev/projects/kjtcom
+Environment=IAO_ITERATION=v9.42
+EnvironmentFile=/home/kthompson/.config/kjtcom/bot.env
+ExecStart=/usr/bin/python3 scripts/telegram_bot.py
+Restart=always
+RestartSec=30
+WatchdogSec=600
+
+[Install]
+WantedBy=multi-user.target

@@ -34,11 +34,14 @@ def build_routing_prompt(question):
 
 Given a user question, return ONLY a JSON object with one of these structures:
 
-For entity/data questions:
+For entity/data questions (restaurants, locations, shows, people in the database):
 {{"route": "firestore", "filters": {{"field": "value"}}, "intent": "count|list|detail"}}
 
-For development/project history questions:
+For development/project history questions (kjtcom iterations, gotchas, builds, agents):
 {{"route": "chromadb", "query": "search terms"}}
+
+For external/internet questions (companies, news, general knowledge, things NOT in the database):
+{{"route": "web", "query": "search terms"}}
 
 SCHEMA REFERENCE:
 {schema_str}
@@ -56,6 +59,7 @@ Rules:
 - "how many" -> intent: "count"
 - "list" or "show" or "where" -> intent: "list"
 - specific place name -> intent: "detail"
+- If the question is about external companies, products, news, or general knowledge NOT in the database, use "web" route
 - If unsure whether entity or dev question, default to firestore
 - Return ONLY valid JSON, no markdown, no explanation
 
@@ -109,10 +113,14 @@ def route_question(question):
         # Validate structure
         if "route" not in parsed:
             raise ValueError("Missing 'route' key")
+        if parsed["route"] not in ("firestore", "chromadb", "web"):
+            raise ValueError(f"Unknown route: {parsed['route']}")
         if parsed["route"] == "firestore" and "filters" not in parsed:
             parsed["filters"] = {}
         if parsed["route"] == "firestore" and "intent" not in parsed:
             parsed["intent"] = "list"
+        if parsed["route"] == "web" and "query" not in parsed:
+            parsed["query"] = question
 
         return parsed
 
