@@ -116,12 +116,142 @@ def append_to_scores(entry, tokens):
     print(f'\nAppended to {SCORES_PATH}')
 
 
+def run_workstream_evaluator(version, design_doc_path):
+    """Score individual workstreams from the design doc.
+
+    Reads workstream definitions from design doc, asks Qwen to score each one,
+    returns list of workstream score dicts for agent_scores.json.
+    """
+    try:
+        with open(design_doc_path) as f:
+            design_content = f.read()
+    except FileNotFoundError:
+        print(f"Design doc not found: {design_doc_path}")
+        return []
+
+    prompt = f"""/no_think
+You are evaluating workstreams for kjtcom iteration {version}.
+
+Based on the design document below, score each workstream (W1-W5).
+Return ONLY a JSON array of objects with these fields:
+- id: "W1", "W2", etc.
+- name: workstream name
+- priority: "P1", "P2", or "P3"
+- outcome: "complete", "partial", "failed", or "deferred"
+- agents: list of agent names used (e.g. ["claude-code"])
+- llms: list of LLM models used (e.g. ["gemini-2.5-flash"])
+- mcps: list of MCP servers used (e.g. ["firebase"])
+- score: 0-10 integer
+- notes: one sentence summary
+
+Design document (first 3000 chars):
+{design_content[:3000]}
+
+Return ONLY the JSON array, no explanation."""
+
+    payload = merge_defaults({
+        'model': 'qwen3.5:9b',
+        'messages': [{'role': 'user', 'content': prompt}],
+    }, evaluation=True)
+
+    start_time = time.time()
+    result = subprocess.run(
+        ['curl', '-s', OLLAMA_URL, '-d', json.dumps(payload)],
+        capture_output=True, text=True, timeout=180
+    )
+
+    response = json.loads(result.stdout)
+    content = response['message']['content']
+    latency = int((time.time() - start_time) * 1000)
+
+    tokens = {
+        'prompt_tokens': response.get('prompt_eval_count', 0),
+        'eval_tokens': response.get('eval_count', 0),
+        'total_tokens': response.get('prompt_eval_count', 0) + response.get('eval_count', 0)
+    }
+
+    log_event("llm_call", "qwen3.5-9b", "qwen3.5:9b", "evaluate-workstreams",
+              input_summary=prompt[:200],
+              output_summary=content[:200],
+              tokens={"prompt": tokens['prompt_tokens'], "eval": tokens['eval_tokens'],
+                      "total": tokens['total_tokens']},
+              latency_ms=latency,
+              status="success" if content.strip() else "empty_response")
+
+    # Parse JSON array from response
+    json_start = content.find('[')
+    json_end = content.rfind(']') + 1
+    if json_start >= 0 and json_end > json_start:
+        try:
+            workstreams = json.loads(content[json_start:json_end])
+            print(f"Workstream scores ({len(workstreams)} workstreams):")
+            for ws in workstreams:
+                print(f"  {ws.get('id', '?')}: {ws.get('name', '?')} - {ws.get('score', '?')}/10 ({ws.get('outcome', '?')})")
+            return workstreams
+        except json.JSONDecodeError:
+            pass
+
+    print("Failed to parse workstream scores from Qwen response.")
+    print(f"Raw: {content[:500]}")
+    return []
+
+
+def append_workstreams_to_scores(version, workstreams):
+    """Append workstream scores to the latest agent_scores.json entry."""
+    try:
+        with open(SCORES_PATH) as f:
+            scores = json.load(f)
+    except (FileNotFoundError, json.JSONDecodeError):
+        scores = []
+
+    # Find or create entry for this version
+    found = False
+    for entry in scores:
+        if entry.get('iteration') == version:
+            entry['workstreams'] = workstreams
+            found = True
+            break
+
+    if not found:
+        scores.append({
+            'iteration': version,
+            'date': time.strftime('%Y-%m-%d'),
+            'workstreams': workstreams,
+        })
+
+    with open(SCORES_PATH, 'w') as f:
+        json.dump(scores, f, indent=2)
+
+    print(f"Workstream scores saved to {SCORES_PATH}")
+
+
 if __name__ == '__main__':
     version = sys.argv[1] if len(sys.argv) > 1 else 'v9.38'
-    build_log_path = sys.argv[2] if len(sys.argv) > 2 else 'docs/kjtcom-build-v9.38.md'
-    gotchas = sys.argv[3] if len(sys.argv) > 3 else 'G47,G51,G52,G53'
 
-    entry, tokens = run_evaluator(version, build_log_path, gotchas)
+    # Handle --iteration flag
+    if '--iteration' in sys.argv:
+        idx = sys.argv.index('--iteration')
+        if idx + 1 < len(sys.argv):
+            version = sys.argv[idx + 1]
 
-    if '--append' in sys.argv:
-        append_to_scores(entry, tokens)
+    build_log_path = sys.argv[2] if len(sys.argv) > 2 and not sys.argv[2].startswith('-') else f'docs/kjtcom-build-{version}.md'
+    gotchas = sys.argv[3] if len(sys.argv) > 3 and not sys.argv[3].startswith('-') else 'G34,G47,G53'
+
+    # Standard evaluation
+    if os.path.exists(build_log_path):
+        entry, tokens = run_evaluator(version, build_log_path, gotchas)
+        if '--append' in sys.argv:
+            append_to_scores(entry, tokens)
+    else:
+        print(f"Build log not found: {build_log_path}, skipping standard evaluation.")
+        entry, tokens = None, {}
+
+    # Workstream evaluation
+    if '--workstreams' in sys.argv or '--iteration' in sys.argv:
+        design_path = f'docs/kjtcom-design-{version}.md'
+        if os.path.exists(design_path):
+            workstreams = run_workstream_evaluator(version, design_path)
+            if workstreams:
+                append_workstreams_to_scores(version, workstreams)
+        else:
+            print(f"Design doc not found: {design_path}, skipping workstream evaluation.")

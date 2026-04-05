@@ -2,8 +2,8 @@
 
 ## Read Order
 
-1. docs/kjtcom-design-v9.40.md
-2. docs/kjtcom-plan-v9.40.md
+1. docs/kjtcom-design-v9.41.md
+2. docs/kjtcom-plan-v9.41.md
 3. docs/kjtcom-architecture.mmd (living architecture chart)
 
 ## Context

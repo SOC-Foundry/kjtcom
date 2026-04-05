@@ -1,5 +1,23 @@
 # kjtcom - Unified Changelog
 
+**v9.41 (Phase 9 - Firestore Dual Retrieval + Archive Re-embed + Artifact Automation)**
+- NEW: Dual retrieval path for /ask - Gemini Flash intent router classifies questions as entity (Firestore) or dev history (ChromaDB)
+- NEW: scripts/intent_router.py - Gemini 2.5 Flash routes /ask queries against schema reference (22 fields, 3 pipelines)
+- NEW: scripts/firestore_query.py - Firebase Admin SDK query execution with G34 workaround (single array-contains + post-filter)
+- NEW: data/schema_reference.json - compact field reference for intent routing (<500 tokens)
+- NEW: scripts/generate_artifacts.py - post-iteration build log + report drafts from structured inputs (Qwen + templates)
+- NEW: template/artifacts/ - build, report, changelog templates with Workstream Scorecard
+- UPDATED: scripts/telegram_bot.py - /ask handler rewired for 3-stage dual retrieval (route -> execute -> synthesize)
+- UPDATED: scripts/run_evaluator.py - workstream-level scoring (per-W# outcome, agents, LLMs, MCPs, score 0-10)
+- UPDATED: scripts/embed_archive.py - re-embedded with v9.38-v9.40 docs (1,307 -> 1,419 chunks, 130 -> 142 files)
+- UPDATED: docs/kjtcom-architecture.mmd - added INTENT_ROUTER, SCHEMA_REF, ARTIFACT_GEN to middleware subgraph
+- UPDATED: docs/install.fish - added firebase-admin pip package
+- FIXED: gemini/gemini-2.0-flash deprecated - switched to gemini/gemini-2.5-flash with thinking disabled for routing
+- G34 active: Firestore single array-contains limit - post-filter workaround operational
+- Flutter: analyze 0 issues, 15/15 tests pass, deployed to kjtcom-c78cd.web.app
+- Multi-agent: Claude Code (primary) + Qwen3.5-9B (evaluator) + Gemini 2.5 Flash (intent routing, synthesis) + nomic-embed-text (embedding)
+- Kyle interventions: 0
+
 **v9.40 (Phase 9 - Telegram Bot Fixes + Dependency Freshness + Token Efficiency)**
 - FIXED: /ask RAG context injection - ChromaDB chunks now reach Gemini prompt (root cause: --json arg treated as version_filter)
 - Replaced subprocess query_rag.py call with direct import in telegram_bot.py

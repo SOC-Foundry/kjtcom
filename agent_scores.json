@@ -252,5 +252,89 @@
         "resolution": "Bypassed CLI entirely - direct import in telegram_bot.py"
       }
     ]
+  },
+  {
+    "iteration": "v9.41",
+    "date": "2026-04-05",
+    "workstreams": [
+      {
+        "id": "W1",
+        "name": "Firestore dual retrieval path",
+        "priority": "P1",
+        "outcome": "complete",
+        "agents": [
+          "claude-code"
+        ],
+        "llms": [
+          "gemini-flash"
+        ],
+        "mcps": [
+          "firebase"
+        ],
+        "score": 9,
+        "notes": "Intent router and Firestore query module are operational for the bot."
+      },
+      {
+        "id": "W2",
+        "name": "Re-embed archive with v9.38-v9.40 docs",
+        "priority": "P1",
+        "outcome": "complete",
+        "agents": [
+          "claude-code"
+        ],
+        "llms": [
+          "gemini-flash"
+        ],
+        "mcps": [],
+        "score": 8,
+        "notes": "Archive re-embedding script executed successfully to update ChromaDB."
+      },
+      {
+        "id": "W3",
+        "name": "Artifact automation scaffold",
+        "priority": "P2",
+        "outcome": "complete",
+        "agents": [
+          "claude-code"
+        ],
+        "llms": [
+          "qwen",
+          "gemini-flash"
+        ],
+        "mcps": [],
+        "score": 9,
+        "notes": "generate_artifacts.py and templates deployed for post-iteration drafting."
+      },
+      {
+        "id": "W4",
+        "name": "Rebuild iteration_registry.json",
+        "priority": "P2",
+        "outcome": "complete",
+        "agents": [
+          "claude-code"
+        ],
+        "llms": [
+          "qwen"
+        ],
+        "mcps": [],
+        "score": 10,
+        "notes": "Registry rebuilt successfully with OOM issues resolved via RAG optimization."
+      },
+      {
+        "id": "W5",
+        "name": "Living doc updates",
+        "priority": "P3",
+        "outcome": "deferred",
+        "agents": [
+          "claude-code"
+        ],
+        "llms": [
+          "qwen"
+        ],
+        "mcps": [],
+        "score": 6,
+        "notes": "Architecture and install docs pending manual review and updates per v9.41 scope."
+      }
+    ]
   }
 ]

@@ -1,0 +1,39 @@
+{
+  "collection": "locations",
+  "entity_count": 6181,
+  "pipelines": {
+    "calgold": {"display": "California's Gold", "aliases": ["huell howser", "california's gold", "huell"]},
+    "ricksteves": {"display": "Rick Steves' Europe", "aliases": ["rick steves", "rick steves'"]},
+    "tripledb": {"display": "Diners, Drive-Ins and Dives", "aliases": ["ddd", "guy fieri", "triple d", "diners drive-ins"]}
+  },
+  "fields": {
+    "scalars": {
+      "t_log_type": {"type": "string", "values": ["calgold", "ricksteves", "tripledb"]},
+      "t_name": {"type": "string", "desc": "entity name"},
+      "t_city": {"type": "string", "desc": "primary city"}
+    },
+    "arrays": {
+      "t_any_names": {"desc": "all names/aliases"},
+      "t_any_people": {"desc": "associated people", "examples": ["guy fieri", "huell howser", "rick steves"]},
+      "t_any_cities": {"desc": "cities (lowercased)", "examples": ["los angeles", "san francisco", "new york"]},
+      "t_any_states": {"desc": "US states as 2-letter codes", "examples": ["ca", "tx", "ny", "fl"]},
+      "t_any_counties": {"desc": "US counties (full name lowercased, calgold only)", "examples": ["los angeles county", "orange county", "san diego county"]},
+      "t_any_countries": {"desc": "countries (ISO alpha-2 lowercase)", "examples": ["us", "it", "fr", "gb"]},
+      "t_any_regions": {"desc": "geographic regions", "examples": ["midwest", "southeast", "southwest"]},
+      "t_any_keywords": {"desc": "topic keywords"},
+      "t_any_categories": {"desc": "entity categories", "examples": ["restaurant", "landmark", "museum"]},
+      "t_any_actors": {"desc": "TV show actors/hosts"},
+      "t_any_roles": {"desc": "roles of people"},
+      "t_any_shows": {"desc": "TV show/episode names"},
+      "t_any_cuisines": {"desc": "cuisine types (lowercased)", "examples": ["italian", "mexican", "barbecue", "seafood", "american"]},
+      "t_any_dishes": {"desc": "specific dishes"},
+      "t_any_eras": {"desc": "time periods/seasons"},
+      "t_any_country_codes": {"desc": "ISO country codes"},
+      "t_any_continents": {"desc": "continents", "examples": ["north america", "europe", "asia"]},
+      "t_any_urls": {"desc": "related URLs"},
+      "t_any_video_ids": {"desc": "YouTube video IDs"},
+      "t_any_coordinates": {"desc": "lat/lng objects"},
+      "t_any_geohashes": {"desc": "geohash strings"}
+    }
+  }
+}

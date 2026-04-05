@@ -7,7 +7,7 @@ Commands:
     /evaluate [version] - Run Qwen evaluator against an iteration
     /gotcha  - List active gotchas
     /scores  - Agent leaderboard
-    /ask [question] - RAG-powered Q&A via OpenClaw (Gemini) + ChromaDB
+    /ask [question] - Dual retrieval Q&A (Firestore entities + ChromaDB archive)
     /search [query] - Brave Search API -> OpenClaw (Gemini) for summary
 
 Requires: KJTCOM_TELEGRAM_BOT_TOKEN environment variable
@@ -27,6 +27,8 @@ sys.path.insert(0, os.path.dirname(__file__))
 from utils.iao_logger import log_event
 from utils.ollama_config import merge_defaults
 from query_rag import query as rag_query
+from intent_router import route_question
+from firestore_query import execute_query as firestore_execute
 
 # Config
 KJTCOM_TELEGRAM_BOT_TOKEN = os.environ.get('KJTCOM_TELEGRAM_BOT_TOKEN')
@@ -220,7 +222,7 @@ async def cmd_scores(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def cmd_ask(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """RAG-powered Q&A over archive."""
+    """Dual retrieval Q&A - routes to Firestore (entities) or ChromaDB (dev history)."""
     if not check_auth(update):
         return
     question = ' '.join(context.args) if context.args else ''
@@ -231,63 +233,105 @@ async def cmd_ask(update: Update, context: ContextTypes.DEFAULT_TYPE):
     log_event("agent_msg", "telegram-user", "telegram-bot", "ask",
               input_summary=f"/ask {question}"[:200])
 
-    await update.message.reply_text(f'Searching archive for: {question}...')
+    await update.message.reply_text(f'Routing: {question}...')
 
     try:
-        # RAG retrieval - direct import, no subprocess
-        start = time.time()
-        results = rag_query(question, n_results=3)
-        chunks = []
-        for i in range(len(results['ids'][0])):
-            doc = results['documents'][0][i]
-            meta = results['metadatas'][0][i]
-            score = 1 - results['distances'][0][i]
-            chunks.append(f"[{meta.get('filename', '?')} | {meta.get('version', '?')} | score={score:.3f}]\n{doc}")
-        rag_latency = int((time.time() - start) * 1000)
+        # Stage 1: Intent routing via Gemini Flash
+        routing = route_question(question)
+        route = routing.get("route", "chromadb")
 
-        if not chunks:
-            log_event("api_call", "telegram-bot", "chromadb", "query",
-                      input_summary=question[:200], output_summary="0 chunks",
-                      latency_ms=rag_latency, status="empty_response")
-            await update.message.reply_text('No matching chunks found in archive.')
-            return
-
-        context_text = "\n\n---\n\n".join(chunks)
-        log_event("api_call", "telegram-bot", "chromadb", "query",
+        log_event("agent_msg", "telegram-bot", "intent-router", "route",
                   input_summary=question[:200],
-                  output_summary=f"{len(chunks)} chunks, {len(context_text)} chars",
-                  latency_ms=rag_latency, status="success")
+                  output_summary=f"route={route}, filters={routing.get('filters', {})}"[:200])
 
-        # Synthesize with Gemini via OpenClaw
-        try:
-            from interpreter import interpreter
-            interpreter.llm.model = 'gemini/gemini-2.5-flash'
-            interpreter.llm.api_key = os.environ.get('GEMINI_API_KEY', '')
-            interpreter.auto_run = True
-            synth_prompt = (
-                f"Based on this context from the kjtcom project archive:\n\n"
-                f"{context_text[:3000]}\n\n"
-                f"Answer this question concisely: {question}"
-            )
-            synth_start = time.time()
-            answer = interpreter.chat(synth_prompt)
-            synth_content = answer[-1]['content'] if answer else 'No synthesis available.'
-            synth_latency = int((time.time() - synth_start) * 1000)
-            log_event("llm_call", "telegram-bot", "gemini/gemini-2.5-flash", "ask",
-                      input_summary=synth_prompt[:200], output_summary=synth_content[:200],
-                      latency_ms=synth_latency, status="success")
-            response_text = f'Answer:\n\n{synth_content[:2000]}'
-        except Exception:
-            # Fallback to formatted RAG results
-            response_text = f'RAG Results:\n\n{context_text[:2000]}'
+        if route == "firestore":
+            # Stage 2a: Firestore entity query
+            filters = routing.get("filters", {})
+            intent = routing.get("intent", "list")
+            result = firestore_execute(filters, intent)
+
+            # Stage 3: Optional synthesis for non-count/list intents
+            if intent not in ("count", "list") and result and not result.startswith("0 results"):
+                try:
+                    from litellm import completion as llm_completion
+                    synth_start = time.time()
+                    synth_resp = llm_completion(
+                        model="gemini/gemini-2.5-flash",
+                        messages=[{"role": "user", "content": (
+                            f"Based on these Firestore query results:\n\n{result[:3000]}\n\n"
+                            f"Answer this question naturally: {question}"
+                        )}],
+                        max_tokens=1024,
+                        thinking={"type": "disabled"},
+                    )
+                    synth_content = synth_resp.choices[0].message.content
+                    synth_latency = int((time.time() - synth_start) * 1000)
+                    log_event("llm_call", "telegram-bot", "gemini/gemini-2.5-flash", "synthesize",
+                              input_summary=f"synth: {question}"[:200],
+                              output_summary=synth_content[:200],
+                              latency_ms=synth_latency, status="success")
+                    response_text = f"[Firestore -> Gemini]\n\n{synth_content[:2000]}"
+                except Exception:
+                    response_text = f"[Firestore]\n\n{result[:2000]}"
+            else:
+                response_text = f"[Firestore]\n\n{result[:2000]}"
+
+        else:
+            # Stage 2b: ChromaDB RAG retrieval (existing path)
+            start = time.time()
+            results = rag_query(question, n_results=3)
+            chunks = []
+            for i in range(len(results['ids'][0])):
+                doc = results['documents'][0][i]
+                meta = results['metadatas'][0][i]
+                score = 1 - results['distances'][0][i]
+                chunks.append(f"[{meta.get('filename', '?')} | {meta.get('version', '?')} | score={score:.3f}]\n{doc}")
+            rag_latency = int((time.time() - start) * 1000)
+
+            if not chunks:
+                log_event("api_call", "telegram-bot", "chromadb", "query",
+                          input_summary=question[:200], output_summary="0 chunks",
+                          latency_ms=rag_latency, status="empty_response")
+                await update.message.reply_text('No matching chunks found in archive.')
+                return
+
+            context_text = "\n\n---\n\n".join(chunks)
+            log_event("api_call", "telegram-bot", "chromadb", "query",
+                      input_summary=question[:200],
+                      output_summary=f"{len(chunks)} chunks, {len(context_text)} chars",
+                      latency_ms=rag_latency, status="success")
+
+            # Synthesize with Gemini via litellm
+            try:
+                from litellm import completion as llm_completion
+                synth_prompt = (
+                    f"Based on this context from the kjtcom project archive:\n\n"
+                    f"{context_text[:3000]}\n\n"
+                    f"Answer this question concisely: {question}"
+                )
+                synth_start = time.time()
+                synth_resp = llm_completion(
+                    model="gemini/gemini-2.5-flash",
+                    messages=[{"role": "user", "content": synth_prompt}],
+                    max_tokens=1024,
+                    thinking={"type": "disabled"},
+                )
+                synth_content = synth_resp.choices[0].message.content
+                synth_latency = int((time.time() - synth_start) * 1000)
+                log_event("llm_call", "telegram-bot", "gemini/gemini-2.5-flash", "ask",
+                          input_summary=synth_prompt[:200], output_summary=synth_content[:200],
+                          latency_ms=synth_latency, status="success")
+                response_text = f'[ChromaDB -> Gemini]\n\n{synth_content[:2000]}'
+            except Exception:
+                response_text = f'[ChromaDB]\n\n{context_text[:2000]}'
 
         log_event("agent_msg", "telegram-bot", "telegram-user", "response",
                   output_summary=response_text[:200])
         await update.message.reply_text(response_text)
     except Exception as e:
-        log_event("api_call", "telegram-bot", "rag", "query",
+        log_event("api_call", "telegram-bot", "dual-retrieval", "ask",
                   input_summary=question[:200], status="error", error=str(e))
-        await update.message.reply_text(f'RAG error: {e}')
+        await update.message.reply_text(f'Error: {e}')
 
 
 async def cmd_search(update: Update, context: ContextTypes.DEFAULT_TYPE):

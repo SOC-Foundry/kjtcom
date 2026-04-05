@@ -14,7 +14,7 @@ kjtcom extracts entities from YouTube playlists - landmarks, trails, restaurants
 
 The same normalization patterns power production SIEM migrations at [TachTech Engineering](https://tachtech.net). Built entirely by LLM agents using IAO (Iterative Agentic Orchestration) - a methodology distilled from 48+ production iterations on [TripleDB](https://github.com/TachTech-Engineering/tripledb).
 
-**[kylejeromethompson.com](https://kylejeromethompson.com)** | **Phase 9 v9.40** | **Status: Phase 9 App Optimization IN PROGRESS**
+**[kylejeromethompson.com](https://kylejeromethompson.com)** | **Phase 9 v9.41** | **Status: Phase 9 App Optimization IN PROGRESS**
 
 ---
 
@@ -42,7 +42,7 @@ The same normalization patterns power production SIEM migrations at [TachTech En
 
 See the [living architecture chart](docs/kjtcom-architecture.mmd) for the full system diagram (Mermaid - renders natively on GitHub).
 
-Current state: v9.39 - 3 pipelines, 5 MCP servers, 4 local LLMs, RAG middleware, OpenClaw (Gemini Flash) + Telegram, P3 event logging, Claw3D prototype.
+Current state: v9.41 - 3 pipelines, 5 MCP servers, 4 local LLMs, RAG middleware, dual retrieval (Firestore + ChromaDB) via Gemini Flash intent router, Telegram bot, P3 event logging, artifact automation scaffold.
 
 ### Pipeline Flow
 
@@ -379,6 +379,22 @@ OS:   CachyOS (Arch-based) / fish shell
 ---
 
 ## Changelog
+
+**v9.41 (Phase 9 - Firestore Dual Retrieval + Archive Re-embed + Artifact Automation)**
+- Dual retrieval path: Gemini Flash intent router classifies /ask queries -> Firestore (entities) or ChromaDB (dev history)
+- scripts/intent_router.py routes against schema reference (22 fields, 3 pipelines)
+- scripts/firestore_query.py executes queries via Firebase Admin SDK with G34 post-filter workaround
+- Telegram bot /ask now returns real Firestore counts and entity lists
+- Archive re-embedded: 1,419 chunks from 142 files (v9.38-v9.40 docs added)
+- Artifact automation scaffold: generate_artifacts.py + templates produce draft build/report docs
+- Workstream-level evaluator scoring in run_evaluator.py and agent_scores.json
+- 15/15 tests pass, 0 analyzer issues, deployed to kjtcom-c78cd.web.app
+- Multi-agent: Claude Code + Qwen3.5-9B (evaluator) + Gemini 2.5 Flash (routing, synthesis) + nomic-embed-text
+
+**v9.40 (Phase 9 - Telegram Bot Fixes + Dependency Freshness + Token Efficiency)**
+- FIXED: /ask RAG context injection - ChromaDB chunks now reach Gemini prompt
+- G51 PERMANENT FIX: ollama_config.py with think:false + num_predict defaults
+- flutter pub upgrade, 15/15 tests pass, deployed
 
 **v9.39 (Phase 9 - OpenClaw/Gemini + P3 Diligence Event Logging + IAO Tab Update)**
 - OpenClaw (open-interpreter 0.4.3) installed with Gemini Flash as engine (G54 resolved)

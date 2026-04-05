@@ -193,6 +193,7 @@ echo "[5d/10] Installing RAG and middleware packages..."
 
 pip install chromadb --break-system-packages 2>&1 | tee -a $LOG_FILE
 pip install python-telegram-bot --break-system-packages 2>&1 | tee -a $LOG_FILE
+pip install firebase-admin --break-system-packages 2>&1 | tee -a $LOG_FILE
 
 # ---------------------------------------------------------------------------
 # Step 5e/10: OpenClaw + P3 Diligence packages (v9.39+)
