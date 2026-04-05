@@ -445,5 +445,119 @@
         "notes": "Registry updates verified through existence of docs/cross-project/intranet-update-v9.42.md."
       }
     ]
+  },
+  {
+    "iteration": "v9.43",
+    "date": "2026-04-05",
+    "workstreams": [
+      {
+        "id": "W1",
+        "name": "App Optimization",
+        "priority": "P1",
+        "outcome": "complete",
+        "evidence": "EXISTENCE: app/web/architecture.html, scripts/build_architecture_html.py",
+        "agents": [
+          "claude-code"
+        ],
+        "llms": [
+          "gemini-2.5-flash"
+        ],
+        "mcps": [
+          "-"
+        ],
+        "score": 10,
+        "notes": "Built architecture.html and registry files; no errors in core optimization tasks."
+      },
+      {
+        "id": "W2",
+        "name": "Bot Session Memory",
+        "priority": "P1",
+        "outcome": "failed",
+        "evidence": "error: litellm.AuthenticationError: GeminiException - { code: 400 }",
+        "agents": [
+          "claude-code"
+        ],
+        "llms": [
+          "gemini-2.5-flash"
+        ],
+        "mcps": [
+          "-"
+        ],
+        "score": 0,
+        "notes": "Failed due to AuthenticationError during route execution; required index not created per error context."
+      },
+      {
+        "id": "W3",
+        "name": "Rating Queries",
+        "priority": "P1",
+        "outcome": "failed",
+        "evidence": "error: 400 The query requires an index. You can create it here: https://console.firebas",
+        "agents": [
+          "claude-code"
+        ],
+        "llms": [
+          "gemini-2.5-flash"
+        ],
+        "mcps": [
+          "-"
+        ],
+        "score": 0,
+        "notes": "Failed because query returned 400 requiring Firebase index creation; count check failed."
+      },
+      {
+        "id": "W4",
+        "name": "Post-Flight Verification",
+        "priority": "P1",
+        "outcome": "deferred",
+        "evidence": "exists: data/gotcha_archive.json; status_check_status: missing",
+        "agents": [
+          "claude-code"
+        ],
+        "llms": [
+          "gemini-2.5-flash"
+        ],
+        "mcps": [
+          "-"
+        ],
+        "score": 0,
+        "notes": "Verification deferred due to prior workstream failures preventing /status and entity count checks."
+      },
+      {
+        "id": "W5",
+        "name": "Architecture HTML",
+        "priority": "P2",
+        "outcome": "complete",
+        "evidence": "EXISTENCE: app/web/architecture.html, scripts/build_architecture_html.py",
+        "agents": [
+          "claude-code"
+        ],
+        "llms": [
+          "gemini-2.5-flash"
+        ],
+        "mcps": [
+          "-"
+        ],
+        "score": 10,
+        "notes": "Generated architecture.html successfully using build_architecture_html.py script."
+      },
+      {
+        "id": "W6",
+        "name": "Qwen Report Quality",
+        "priority": "P2",
+        "outcome": "partial",
+        "evidence": "Total events: 87, errors/timeouts: 2; W2/W3 failed authentication/index errors",
+        "agents": [
+          "gemini-2.5-flash"
+        ],
+        "llms": [
+          "gemini-2.5-flash"
+        ],
+        "mcps": [
+          "-"
+        ],
+        "score": 5,
+        "notes": "Report quality compromised by 2 errors (W2/W3); evidence counts match execution context but completeness is low."
+      }
+    ]
   }
 ]

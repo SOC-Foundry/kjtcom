@@ -102,18 +102,22 @@ def get_agent_scores(iteration):
 
 
 def format_workstream_rows(scores_entry):
-    """Format workstream scorecard rows from agent_scores."""
+    """Format workstream scorecard rows from agent_scores (v9.43: Evidence column)."""
     if not scores_entry or 'workstreams' not in scores_entry:
-        return "| - | No workstream data | - | - | - | - | - | - |"
+        return "| - | No workstream data | - | - | - | - | - | - | - |"
 
     rows = []
     for ws in scores_entry['workstreams']:
         agents = ", ".join(ws.get('agents', []))
         llms = ", ".join(ws.get('llms', []))
-        mcps = ", ".join(ws.get('mcps', []))
+        mcps_raw = ws.get('mcps', [])
+        # MCP whitelist enforcement (v9.43)
+        valid_mcps = {"Firebase", "Context7", "Firecrawl", "Playwright", "Dart", "-"}
+        mcps = ", ".join(m for m in mcps_raw if m in valid_mcps) or "-"
+        evidence = ws.get('evidence', '-')
         rows.append(
             f"| {ws['id']} | {ws['name']} | {ws.get('priority', '-')} | "
-            f"{ws.get('outcome', '-')} | {agents} | {llms} | {mcps} | "
+            f"{ws.get('outcome', '-')} | {evidence} | {agents} | {llms} | {mcps} | "
             f"{ws.get('score', '-')}/10 |"
         )
     return "\n".join(rows)
@@ -157,7 +161,8 @@ def generate_build_log(iteration):
         files_changed=diff_stat,
         test_results="See flutter analyze and flutter test output.",
         gotcha_log="G34: Single array-contains limit - workaround active.\nG47: CanvasKit DOM - open.\nG53: Firebase MCP reauth - recurring.",
-        event_log_summary=event_summary
+        event_log_summary=event_summary,
+        post_flight_results="Run `python3 scripts/post_flight.py` - results pending."
     )
 
     out_path = os.path.join(DRAFTS_DIR, f'kjtcom-build-{iteration}.md')
@@ -189,15 +194,15 @@ def generate_report(iteration):
         summary=summary,
         workstream_rows=workstream_rows,
         cost_target="<50K Claude tokens, Gemini free tier",
-        cost_result="TBD - review token usage in event log",
-        delivery_target="5 workstreams complete",
-        delivery_result="TBD - review workstream scorecard",
-        performance_target="/ask returns real Firestore counts",
-        performance_result="TBD - verify from Telegram test",
+        cost_result="Review token usage in event log",
+        delivery_target="6 workstreams complete",
+        delivery_result="Review workstream scorecard above",
+        performance_target="/ask returns real Firestore counts with session memory",
+        performance_result="Verify from post-flight and Telegram test",
         agent_utilization="Claude Code (primary executor), Qwen3.5-9B (evaluator), Gemini Flash (intent routing, synthesis)",
         event_log_summary=event_summary,
         gotcha_summary="G34: Active - post-filter workaround\nG47: Open\nG53: Recurring",
-        next_candidates="TBD"
+        next_candidates="1. Persistent session storage (Redis/Firestore) for bot context\n2. Composite Firestore index for rating sort + filter\n3. Bourdain pipeline onboarding"
     )
 
     out_path = os.path.join(DRAFTS_DIR, f'kjtcom-report-{iteration}.md')
@@ -220,7 +225,7 @@ def generate_changelog_entry(iteration):
     filled = template.format(
         iteration=iteration,
         date=date,
-        changelog_entry="TBD - summarize after review",
+        changelog_entry="Bot session memory, rating-aware queries, post-flight verification, architecture HTML, Qwen evaluator overhaul",
         files_changed_count=files_count,
         agents_used="Claude Code, Qwen3.5-9B, Gemini Flash",
         llms_used="gemini-2.5-flash, qwen3.5:9b, nomic-embed-text"
@@ -329,6 +334,15 @@ def _guess_expected_files(ws):
         files.append('scripts/brave_search.py')
     if 'intranet' in combined:
         files.append('docs/cross-project/intranet-update-v9.42.md')
+    if 'session' in combined and 'memory' in combined:
+        files.append('scripts/telegram_bot.py')
+    if 'rating' in combined or 'sort' in combined:
+        files.append('data/schema_reference.json')
+    if 'post-flight' in combined or 'verification' in combined:
+        files.append('scripts/post_flight.py')
+    if 'architecture' in combined and 'html' in combined:
+        files.append('app/web/architecture.html')
+        files.append('scripts/build_architecture_html.py')
 
     return files
 

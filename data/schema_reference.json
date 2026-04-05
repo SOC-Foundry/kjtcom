@@ -35,5 +35,18 @@
       "t_any_coordinates": {"desc": "lat/lng objects"},
       "t_any_geohashes": {"desc": "geohash strings"}
     }
+  },
+  "sortable_fields": {
+    "t_enrichment.google_places.rating": {
+      "type": "number",
+      "range": "1.0-5.0",
+      "description": "Google Places star rating",
+      "aliases": ["rating", "rated", "stars", "best", "highest rated", "top"]
+    },
+    "t_enrichment.google_places.user_ratings_total": {
+      "type": "number",
+      "description": "Number of Google Places reviews",
+      "aliases": ["most reviewed", "popular", "most ratings"]
+    }
   }
 }

@@ -166,7 +166,10 @@ def build_execution_context(version):
         'kjtcom-telegram-bot.service',
         'data/gotcha_archive.json',
         'data/middleware_registry.json',
-        'docs/cross-project/intranet-update-v9.42.md',
+        'scripts/post_flight.py',
+        'scripts/build_architecture_html.py',
+        'app/web/architecture.html',
+        'data/schema_reference.json',
     ]
     lines.append("Key file existence:")
     for kf in key_files:
@@ -211,17 +214,25 @@ IMPORTANT: Use the EXECUTION CONTEXT below as ground truth. If the execution con
 shows errors/timeouts for a workstream, do NOT mark it as "complete". If files exist
 that a workstream was supposed to create, that is evidence of completion.
 
+MANDATORY RULES:
+1. Include specific numbers from the event log and execution output. NEVER write "TBD".
+2. The ONLY valid MCP servers are: Firebase, Context7, Firecrawl, Playwright, Dart. If a workstream did not use an MCP, write "-" in the mcps field. Do NOT invent MCP server names.
+3. The "evidence" field MUST contain a file path, command output, or test result that proves the outcome. "Complete" without evidence is reclassified as "unverified".
+4. Event counts in your response must match the execution context exactly.
+5. Do not use corporate language like "delivered a successful deployment." State what was built and what it does.
+
 Based on the design document and execution context, score each workstream (W1-W6).
 Return ONLY a JSON array of objects with these fields:
 - id: "W1", "W2", etc.
 - name: workstream name
 - priority: "P1", "P2", or "P3"
 - outcome: "complete", "partial", "failed", or "deferred"
+- evidence: file path, command output, or test result proving outcome
 - agents: list of agent names used (e.g. ["claude-code"])
 - llms: list of LLM models used (e.g. ["gemini-2.5-flash"])
-- mcps: list of MCP servers used (e.g. ["firebase"])
+- mcps: list of MCP servers used, or ["-"] if none. ONLY valid values: Firebase, Context7, Firecrawl, Playwright, Dart
 - score: 0-10 integer
-- notes: one sentence summary
+- notes: one sentence summary with specific numbers (entity counts, file counts, etc.)
 
 Design document (first 3000 chars):
 {design_content[:3000]}

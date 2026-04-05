@@ -37,6 +37,31 @@ OLLAMA_URL = 'http://localhost:11434'
 AUTHORIZED_USERS = set()  # Empty = allow all. Add Telegram user IDs to restrict.
 PROJECT_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..')
 
+# Session memory (v9.43) - stores last query context per Telegram user_id
+# Keys: user_id -> {"filters": {}, "results": [], "count": int, "timestamp": float}
+# TTL: 10 minutes. Lost on restart (acceptable).
+user_sessions = {}
+SESSION_TTL = 600  # 10 minutes
+
+
+def resolve_context(question, user_id):
+    """Detect references to previous results and inject context.
+
+    Returns the previous session dict if context words found and session is fresh,
+    else None.
+    """
+    context_words = ["those", "them", "the results", "that list", "from before",
+                     "out of those", "out of them", "from that", "of those"]
+    question_lower = question.lower()
+    if any(word in question_lower for word in context_words):
+        session = user_sessions.get(user_id)
+        if session and (time.time() - session["timestamp"]) < SESSION_TTL:
+            log_event("command", "telegram-bot", "session-memory", "resolve-context",
+                      input_summary=f"user={user_id}, context_count={session['count']}",
+                      status="success")
+            return session
+    return None
+
 # systemd watchdog notifier (v9.42)
 sd_notifier = sdnotify.SystemdNotifier()
 
@@ -234,8 +259,59 @@ async def cmd_ask(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_text('Usage: /ask <question>')
         return
 
+    user_id = update.effective_user.id
     log_event("agent_msg", "telegram-user", "telegram-bot", "ask",
               input_summary=f"/ask {question}"[:200])
+
+    # Session memory: check for context references (v9.43)
+    session = resolve_context(question, user_id)
+    if session:
+        await update.message.reply_text(f'Using previous context ({session["count"]} results)...')
+        try:
+            from litellm import completion as llm_completion
+            # Build context from previous results for Gemini follow-up
+            prev_results_text = ""
+            for doc in session["results"][:50]:
+                name = doc.get("t_any_names", ["Unknown"])[0] if doc.get("t_any_names") else doc.get("t_name", "Unknown")
+                rating = ""
+                enrichment = doc.get("t_enrichment", {})
+                if isinstance(enrichment, dict):
+                    gp = enrichment.get("google_places", {})
+                    if isinstance(gp, dict) and gp.get("rating"):
+                        rating = f" (rating: {gp['rating']}, reviews: {gp.get('user_ratings_total', 'N/A')})"
+                city = doc.get("t_any_cities", [""])[0] if doc.get("t_any_cities") else ""
+                state = doc.get("t_any_states", [""])[0] if doc.get("t_any_states") else ""
+                loc = ", ".join(filter(None, [city, state]))
+                prev_results_text += f"- {name}{' (' + loc + ')' if loc else ''}{rating}\n"
+
+            synth_start = time.time()
+            synth_resp = llm_completion(
+                model="gemini/gemini-2.5-flash",
+                messages=[{"role": "user", "content": (
+                    f"Previous query returned {session['count']} results:\n\n"
+                    f"{prev_results_text[:3000]}\n\n"
+                    f"Now answer this follow-up question: {question}"
+                )}],
+                max_tokens=1024,
+                thinking={"type": "disabled"},
+            )
+            synth_content = synth_resp.choices[0].message.content
+            synth_latency = int((time.time() - synth_start) * 1000)
+            log_event("llm_call", "telegram-bot", "gemini/gemini-2.5-flash", "session-followup",
+                      input_summary=f"followup: {question}"[:200],
+                      output_summary=synth_content[:200],
+                      latency_ms=synth_latency, status="success")
+            response_text = f"[Session Context -> Gemini]\n\n{synth_content[:2000]}"
+        except Exception as e:
+            log_event("llm_call", "telegram-bot", "gemini/gemini-2.5-flash", "session-followup",
+                      input_summary=f"followup: {question}"[:200],
+                      status="error", error=str(e))
+            response_text = f"Session follow-up error: {e}"
+
+        log_event("agent_msg", "telegram-bot", "telegram-user", "response",
+                  output_summary=response_text[:200])
+        await update.message.reply_text(response_text)
+        return
 
     await update.message.reply_text(f'Routing: {question}...')
 
@@ -299,7 +375,23 @@ async def cmd_ask(update: Update, context: ContextTypes.DEFAULT_TYPE):
             # Stage 2a: Firestore entity query
             filters = routing.get("filters", {})
             intent = routing.get("intent", "list")
-            result = firestore_execute(filters, intent)
+            sort_field = routing.get("sort")
+            sort_order = routing.get("sort_order", "desc")
+            limit = routing.get("limit")
+            result, raw_docs = firestore_execute(filters, intent,
+                                                   sort_field=sort_field,
+                                                   sort_order=sort_order,
+                                                   limit=limit,
+                                                   return_docs=True)
+
+            # Store session for follow-up queries (v9.43)
+            if raw_docs:
+                user_sessions[user_id] = {
+                    "filters": filters,
+                    "results": raw_docs,
+                    "count": len(raw_docs),
+                    "timestamp": time.time()
+                }
 
             # Stage 3: Optional synthesis for non-count/list intents
             if intent not in ("count", "list") and result and not result.startswith("0 results"):

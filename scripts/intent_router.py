@@ -36,6 +36,8 @@ Given a user question, return ONLY a JSON object with one of these structures:
 
 For entity/data questions (restaurants, locations, shows, people in the database):
 {{"route": "firestore", "filters": {{"field": "value"}}, "intent": "count|list|detail"}}
+Optionally add sort/limit for rating queries:
+{{"route": "firestore", "filters": {{"field": "value"}}, "intent": "list", "sort": "t_enrichment.google_places.rating", "sort_order": "desc", "limit": 3}}
 
 For development/project history questions (kjtcom iterations, gotchas, builds, agents):
 {{"route": "chromadb", "query": "search terms"}}
@@ -60,6 +62,8 @@ Rules:
 - "list" or "show" or "where" -> intent: "list"
 - specific place name -> intent: "detail"
 - If the question is about external companies, products, news, or general knowledge NOT in the database, use "web" route
+- If user asks for "highest rated", "best", "top N" -> add "sort": "t_enrichment.google_places.rating", "sort_order": "desc", and "limit": N to the response
+- If user asks for "most reviewed" or "most popular" -> add "sort": "t_enrichment.google_places.user_ratings_total", "sort_order": "desc", and "limit": N
 - If unsure whether entity or dev question, default to firestore
 - Return ONLY valid JSON, no markdown, no explanation
 

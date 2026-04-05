@@ -14,8 +14,8 @@
 
 ## WORKSTREAM SCORECARD
 
-| W# | Name | Priority | Outcome | Agents | LLMs | MCPs | Score |
-|----|------|----------|---------|--------|------|------|-------|
+| W# | Name | Priority | Outcome | Evidence | Agents | LLMs | MCPs | Score |
+|----|------|----------|---------|----------|--------|------|------|-------|
 {workstream_rows}
 
 ---

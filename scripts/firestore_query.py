@@ -33,20 +33,26 @@ def _get_db():
     return _db
 
 
-def execute_query(filters, intent):
+def execute_query(filters, intent, sort_field=None, sort_order="desc", limit=None,
+                  return_docs=False):
     """Execute a Firestore query with filters and return formatted results.
 
     Args:
         filters: dict of field->value pairs from intent router
         intent: "count", "list", or "detail"
+        sort_field: optional field path for orderBy (v9.43 rating-aware)
+        sort_order: "desc" or "asc" (default "desc")
+        limit: optional int to limit results
+        return_docs: if True, return (formatted_text, raw_docs) tuple
 
     Returns:
-        Formatted string response for Telegram
+        Formatted string response for Telegram, or (text, docs) if return_docs=True
     """
     start = time.time()
     try:
         db = _get_db()
         from google.cloud.firestore_v1.base_query import FieldFilter
+        from google.cloud import firestore as firestore_module
 
         query = db.collection("locations")
         array_filters = []
@@ -60,8 +66,29 @@ def execute_query(filters, intent):
             else:
                 query = query.where(filter=FieldFilter(field, "==", value))
 
-        results = query.stream()
-        docs = [doc.to_dict() for doc in results]
+        # Rating-aware sorting (v9.43) - try server-side, fall back to client-side
+        use_client_sort = False
+        if sort_field:
+            try:
+                direction = (firestore_module.Query.DESCENDING
+                             if sort_order == "desc"
+                             else firestore_module.Query.ASCENDING)
+                sorted_query = query.order_by(sort_field, direction=direction)
+                if limit and isinstance(limit, int):
+                    sorted_query = sorted_query.limit(limit)
+                results = sorted_query.stream()
+                docs = [doc.to_dict() for doc in results]
+            except Exception as sort_err:
+                # Composite index missing - fall back to client-side sort
+                log_event("command", "firestore-query", "firestore", "sort-fallback",
+                          input_summary=f"Server sort failed for {sort_field}: {sort_err}"[:200],
+                          status="success")
+                use_client_sort = True
+                results = query.stream()
+                docs = [doc.to_dict() for doc in results]
+        else:
+            results = query.stream()
+            docs = [doc.to_dict() for doc in results]
         latency = int((time.time() - start) * 1000)
 
         # G34 post-filter: additional array values beyond the first
@@ -72,26 +99,51 @@ def execute_query(filters, intent):
         for field, value in array_filters[1:]:
             docs = [d for d in docs if value[0] in d.get(field, [])]
 
+        # Client-side sort fallback when Firestore composite index is missing (v9.43)
+        if use_client_sort and sort_field:
+            def _get_nested(doc, path):
+                """Navigate nested dict by dot-separated path."""
+                parts = path.split('.')
+                val = doc
+                for p in parts:
+                    if isinstance(val, dict):
+                        val = val.get(p)
+                    else:
+                        return None
+                return val
+
+            docs.sort(key=lambda d: _get_nested(d, sort_field) or 0,
+                      reverse=(sort_order == "desc"))
+            if limit and isinstance(limit, int):
+                docs = docs[:limit]
+
         total = len(docs)
 
         log_event("api_call", "telegram-bot", "firestore", "query",
-                  input_summary=f"filters={filters}, intent={intent}"[:200],
+                  input_summary=f"filters={filters}, intent={intent}, sort={sort_field}, limit={limit}"[:200],
                   output_summary=f"{total} docs returned",
                   latency_ms=latency, status="success")
 
         if intent == "count":
-            return format_entity_count(docs, filters)
+            text = format_entity_count(docs, filters)
         elif intent == "list":
-            return format_entity_list(docs, limit=20)
+            text = format_entity_list(docs, limit=20)
         else:
-            return format_entity_detail(docs, limit=10)
+            text = format_entity_detail(docs, limit=10)
+
+        if return_docs:
+            return text, docs
+        return text
 
     except Exception as e:
         latency = int((time.time() - start) * 1000)
         log_event("api_call", "telegram-bot", "firestore", "query",
                   input_summary=f"filters={filters}"[:200],
                   status="error", error=str(e), latency_ms=latency)
-        return f"Firestore query error: {e}"
+        error_text = f"Firestore query error: {e}"
+        if return_docs:
+            return error_text, []
+        return error_text
 
 
 def format_entity_count(docs, filters=None):

@@ -1,5 +1,5 @@
 %% kjtcom Architecture - Living Document
-%% Updated: v9.42 - County Enrichment + systemd Bot + Web Search Route + Gotcha Archive + Middleware Registry
+%% Updated: v9.43 - Session Memory + Rating Queries + Post-Flight + Architecture HTML
 %% Maintainer: Update every iteration that changes architecture
 
 graph TB
@@ -88,6 +88,9 @@ graph TB
         GOTCHA_ARCHIVE["Gotcha Archive<br/>data/gotcha_archive.json<br/>15 Resolved Patterns"]
         HARNESS_REGISTRY["Middleware Registry<br/>data/middleware_registry.json<br/>Component Catalog"]
         COUNTY_ENRICHMENT["County Enrichment<br/>enrich_counties.py<br/>Nominatim Reverse Geocode"]
+        POST_FLIGHT["Post-Flight Verification<br/>post_flight.py<br/>Site + Bot + Query Checks"]
+        SESSION_MEM["Bot Session Memory<br/>user_sessions dict<br/>10-min TTL"]
+        ARCH_HTML["Architecture HTML<br/>build_architecture_html.py<br/>Mermaid JS Renderer"]
     end
 
     subgraph ARTIFACTS["Artifact Loop (per iteration)"]
@@ -147,6 +150,9 @@ graph TB
     COUNTY_ENRICHMENT --> EVENT_LOG
     GOTCHA_ARCHIVE --> EVALUATOR
     HARNESS_REGISTRY --> ARTIFACT_GEN
+    POST_FLIGHT --> EVENT_LOG
+    SESSION_MEM --> TELEGRAM
+    ARCH_HTML --> HOSTING
 
     %% MCP connections
     MCP_FIREBASE --> FIRESTORE

@@ -14,7 +14,7 @@ kjtcom extracts entities from YouTube playlists - landmarks, trails, restaurants
 
 The same normalization patterns power production SIEM migrations at [TachTech Engineering](https://tachtech.net). Built entirely by LLM agents using IAO (Iterative Agentic Orchestration) - a methodology distilled from 48+ production iterations on [TripleDB](https://github.com/TachTech-Engineering/tripledb).
 
-**[kylejeromethompson.com](https://kylejeromethompson.com)** | **Phase 9 v9.41** | **Status: Phase 9 App Optimization IN PROGRESS**
+**[kylejeromethompson.com](https://kylejeromethompson.com)** | **Phase 9 v9.43** | **Status: Phase 9 App Optimization IN PROGRESS**
 
 ---
 
@@ -40,9 +40,9 @@ The same normalization patterns power production SIEM migrations at [TachTech En
 
 ## Architecture
 
-See the [living architecture chart](docs/kjtcom-architecture.mmd) for the full system diagram (Mermaid - renders natively on GitHub).
+**[Interactive Architecture Diagram](https://kylejeromethompson.com/architecture.html)** | [Mermaid Source](docs/kjtcom-architecture.mmd)
 
-Current state: v9.41 - 3 pipelines, 5 MCP servers, 4 local LLMs, RAG middleware, dual retrieval (Firestore + ChromaDB) via Gemini Flash intent router, Telegram bot, P3 event logging, artifact automation scaffold.
+Current state: v9.43 - 3 pipelines, 5 MCP servers, 4 local LLMs, RAG middleware, dual retrieval (Firestore + ChromaDB) via Gemini Flash intent router, Telegram bot with session memory and rating-aware queries, P3 event logging, post-flight verification, artifact automation.
 
 ### Pipeline Flow
 
@@ -312,7 +312,7 @@ graph BT
 | 6 | Flutter App | DONE | v6.15-v6.20 |
 | 7 | Firestore Load | DONE | v7.21 |
 | 8 | Enrichment Hardening | DONE | v8.22-v8.26 |
-| 9 | App Optimization | IN PROGRESS | v9.27-v9.39 |
+| 9 | App Optimization | IN PROGRESS | v9.27-v9.43 |
 | 10 | Retrospective + Template | Pending | - |
 
 ---
@@ -379,6 +379,23 @@ OS:   CachyOS (Arch-based) / fish shell
 ---
 
 ## Changelog
+
+**v9.43 (Phase 9 - Bot Session Memory + Rating Queries + Post-Flight + Architecture HTML)**
+- Bot session memory: user_sessions dict keyed by Telegram user_id, 10-min TTL, "those 26" resolves to previous result set
+- Rating-aware queries: sortable_fields in schema_reference.json, intent router generates sort/limit, firestore_query.py orderBy support
+- Post-flight verification script (scripts/post_flight.py): site HTTP 200, bot status, entity count check
+- Interactive architecture HTML page deployed to kylejeromethompson.com/architecture.html (Mermaid JS dark theme)
+- Qwen evaluator prompt overhaul: Evidence column in scorecard, MCP whitelist enforcement, no TBD, specific numbers
+- v9.41 docs recovered from git history, v9.42 docs properly archived
+- Multi-agent: Claude Code + Qwen3.5-9B (evaluator) + Gemini Flash (routing, synthesis, session follow-up) + nomic-embed-text
+
+**v9.42 (Phase 9 - County Enrichment + systemd Bot + Web Route + Gotcha Archive)**
+- County enrichment: enrich_counties.py adds t_any_counties via Nominatim reverse geocode
+- Telegram bot migrated to systemd service with WatchdogSec=600, auto-restart
+- Web search route: Brave Search API -> Gemini Flash synthesis for /ask queries
+- Gotcha archive: data/gotcha_archive.json with 15 resolved patterns
+- Middleware registry: data/middleware_registry.json component catalog
+- Multi-agent: Claude Code + Qwen3.5-9B + Gemini Flash + nomic-embed-text
 
 **v9.41 (Phase 9 - Firestore Dual Retrieval + Archive Re-embed + Artifact Automation)**
 - Dual retrieval path: Gemini Flash intent router classifies /ask queries -> Firestore (entities) or ChromaDB (dev history)

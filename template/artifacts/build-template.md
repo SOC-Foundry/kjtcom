@@ -43,4 +43,10 @@
 
 ---
 
+## POST-FLIGHT VERIFICATION
+
+{post_flight_results}
+
+---
+
 *Build log {iteration}, {date}.*

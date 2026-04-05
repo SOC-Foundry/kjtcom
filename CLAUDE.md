@@ -1,13 +1,12 @@
 # kjtcom - Claude Code Agent Instructions
 
-## Current Iteration: v9.42
+## Current Iteration: v9.43
 
 IMPORTANT: Read documents in this EXACT order before executing:
 
 1. This file (CLAUDE.md)
-2. docs/kjtcom-design-v9.42.md - Workstreams, architecture, amendments
-3. docs/kjtcom-plan-v9.42.md - Step-by-step execution
-4. docs/kjtcom-kt-v9.40.md - Full project context (if available in archive)
+2. docs/kjtcom-design-v9.43.md - Workstreams, architecture, amendments
+3. docs/kjtcom-plan-v9.43.md - Step-by-step execution
 
 Do NOT begin execution until files 1-3 have been read.
 
@@ -15,47 +14,74 @@ Do NOT begin execution until files 1-3 have been read.
 
 ## Agent Session Best Practices (v9.42+ - PERMANENT)
 
-These are hard-won operational patterns from 41 iterations. Follow them every time.
-
 ### Pre-Launch Checklist
-1. CLAUDE.md and GEMINI.md MUST be saved to disk in the launch directory BEFORE starting the agent session. If stale or missing, the session runs on wrong context.
-2. /quit every session and start fresh between iterations. Token context degrades over long sessions - early tokens carry more weight than late ones. A fresh session with good harness files outperforms a stale session.
+1. CLAUDE.md and GEMINI.md MUST be saved to disk in the launch directory BEFORE starting.
+2. /quit every session and start fresh between iterations. Token context degrades over long sessions.
 3. `set -gx IAO_ITERATION v9.XX` BEFORE launching.
-4. Verify Ollama running: `ollama list` should show 4 models.
-5. Kill and restart Telegram bot between iterations (or restart systemd service).
+4. Verify Ollama: `ollama list` shows 4 models.
+5. Restart Telegram bot: `sudo systemctl restart kjtcom-telegram-bot`
 6. Verify Firebase SA: `test -f ~/.config/gcloud/kjtcom-sa.json`.
 
 ### Session Discipline
-- ONE iteration per session. Never chain iterations.
-- If session crashes or stalls, /quit and relaunch with same launch prompt. Do not recover mid-session.
-- Every session ends with artifact production. No exceptions.
-- Drafts in docs/drafts/ MUST be cross-checked against actual execution before promotion.
-- Use `--promote` flag on generate_artifacts.py to move validated drafts to docs/.
+- ONE iteration per session. Never chain.
+- If session crashes, /quit and relaunch. Do not recover mid-session.
+- Every session ends with: artifact production -> post-flight verification -> promotion.
+- Drafts cross-checked and promoted before session ends. NEVER leave unpromoted drafts.
+- Harness files GROW. Never abbreviate.
+- Previous iteration docs go to docs/archive/. NEVER delete them.
 
 ### Environment Architecture
-- GCP SA keys: ~/.config/gcloud/{project}-sa.json (NEVER in repo, NEVER in env vars as plaintext)
-- API keys: fish shell config, per-project prefixed (KJTCOM_*, TACHNET_*)
+- GCP SA keys: ~/.config/gcloud/{project}-sa.json (NEVER in repo)
+- API keys: fish shell config, per-project prefixed (KJTCOM_*)
 - Agent launches: `claude --dangerously-skip-permissions` / `gemini --yolo`
-- Persistent processes: tmux (legacy) or systemd services (v9.42+)
+- Bot: systemd service (kjtcom-telegram-bot.service), not tmux
 - Sleep mask: `systemctl mask suspend` on dev machines
 
-### Token Efficiency
-- Harness files (CLAUDE.md, GEMINI.md) should GROW over time. Never abbreviate.
-- The depth and specificity of these files is the primary competitive advantage of IAO.
-- Middleware is the IP. Every iteration should add to it.
+---
+
+## Post-Flight Verification - MANDATORY (v9.43+)
+
+After every iteration, BEFORE the session ends:
+
+1. `curl -s -o /dev/null -w "%{http_code}" https://kylejeromethompson.com` -> expect 200
+2. Verify bot: send /status to @kjtcom_iao_bot, verify response
+3. Verify query: send `/ask how many entities are in the database`, verify count >= 6,181
+4. Run: `python3 scripts/post_flight.py`
+5. Log results in build log under POST-FLIGHT VERIFICATION section
+6. If ANY check fails: log as gotcha, do NOT mark iteration complete
+
+---
+
+## Qwen Claim Audit - MANDATORY (v9.43+)
+
+Every workstream Qwen marks "complete" MUST have linked evidence:
+- File exists (ls -la)
+- Command output captured
+- Test passed (flutter test)
+- Bot responded (Telegram API)
+- Site loaded (curl HTTP 200)
+
+"Complete" without evidence = "unverified."
+
+Workstream Scorecard MUST include Evidence column.
+
+Qwen MCP whitelist (only valid values): Firebase, Context7, Firecrawl, Playwright, Dart. Anything else is hallucinated. If no MCP used, column is "-".
+
+No "TBD" in Trident evaluation. No corporate fluff. Specific numbers required.
 
 ---
 
 ## Rules That Never Change
 
-- Git WRITE commands FORBIDDEN (add, commit, push, checkout, branch, tag). Kyle handles ALL git.
-- firebase deploy is ALLOWED (hosting only). Kyle may also deploy manually.
+- Git WRITE commands FORBIDDEN. Kyle handles ALL git.
+- firebase deploy ALLOWED (hosting only).
 - NEVER ask permission. The plan IS the permission.
-- Self-heal errors: diagnose -> fix -> re-run (max 3 attempts, then log as gotcha and skip).
-- Fish shell throughout. pip --break-system-packages. python3 -u for unbuffered output.
-- No em-dashes anywhere. Use " - " for dashes. Use "->" for arrows.
+- Self-heal errors: diagnose -> fix -> re-run (max 3 attempts, then gotcha).
+- Fish shell. pip --break-system-packages. python3 -u.
+- No em-dashes. " - " for dashes. "->" for arrows.
 - "pipelines" and "log types," never "tables" or "datasets."
-- Build on existing code. Do NOT recreate scaffolds or overwrite working files without reading them first.
+- Build on existing code. Read files before overwriting.
+- Previous iteration docs archived to docs/archive/, NEVER deleted.
 
 ---
 
@@ -63,132 +89,71 @@ These are hard-won operational patterns from 41 iterations. Follow them every ti
 
 - Target: <50K Claude Code tokens per infrastructure iteration
 - ALL Ollama calls use scripts/utils/ollama_config.py (think:false mandatory, G51)
-- num_predict: 512 default, 2048 for evaluations, 2048 with 45-min timeout for batch ops (v9.42+)
-- Prefer direct file reads over LLM interpretation for structured data
-- Prefer local LLM (Qwen, Nemotron) for simple tasks
-- Log all token usage via scripts/utils/iao_logger.py
+- num_predict: 512 default, 2048 for evaluations, 2048 with 45-min timeout for batch ops
+- Prefer local LLM for simple tasks. Log all usage via iao_logger.py.
 
 ---
 
 ## Multi-Agent Orchestration (v9.35+)
 
-- Minimum 2 LLMs per iteration
-- Document which agents/LLMs/MCPs were used per workstream (v9.41+)
-- Agent evaluator: Qwen3.5-9B is permanent evaluator via scripts/run_evaluator.py
-- Agent scores with workstream-level detail appended to agent_scores.json
-- Evaluator MUST cross-check workstream outcomes against actual execution (exit codes, file existence) before scoring (v9.42+ fix)
+Minimum 2 LLMs per iteration. Document per workstream.
 
-Available agents:
 | Agent | Engine | Use For |
 |-------|--------|---------|
-| Claude Code | Claude API (this agent) | Primary executor, Flutter, architecture |
-| Qwen3.5-9B | Ollama local | Evaluation, code review, simple triage |
+| Claude Code | Claude API | Primary executor, Flutter, architecture |
+| Qwen3.5-9B | Ollama local | Evaluation, code review |
 | Nemotron Mini 4B | Ollama local | Fast triage |
 | GLM-4.6V-Flash | Ollama local | Vision, screenshots |
 | nomic-embed-text | Ollama local | Embeddings only |
-| Gemini Flash | Gemini API (litellm) | Intent routing, synthesis, OpenClaw |
+| Gemini Flash | Gemini API (litellm) | Intent routing, synthesis |
 
 ---
 
-## MCP Servers (v9.35+)
+## MCP Servers (5 total)
 
-5 servers in .mcp.json:
 | Server | Use For |
 |--------|---------|
 | Firebase MCP | Firestore queries |
-| Context7 MCP | API documentation lookup |
+| Context7 MCP | API documentation |
 | Firecrawl MCP | Web scraping |
 | Playwright MCP | Browser automation (G47: CanvasKit blocks DOM) |
 | Dart MCP | Code analysis |
 
-Use applicable servers. Document skips with rationale.
+These are the ONLY valid MCP server names. No others exist.
 
 ---
 
 ## Middleware as Primary IP (v9.42+)
 
-The middleware layer is the primary intellectual property. kjtcom is the lab; middleware stamps onto intranet, socalpha1, and customer deployments. Every iteration should ask: "what did we add to the middleware that makes the next project easier?"
+Middleware is the product. kjtcom is the lab. Every iteration adds to middleware.
 
-Middleware components:
-- **Harnesses:** CLAUDE.md, GEMINI.md (grow, never shrink)
-- **Harness Registry:** data/middleware_registry.json
-- **Evaluator:** run_evaluator.py, agent_scores.json
-- **RAG:** embed_archive.py, query_rag.py, ChromaDB
-- **Intent Router:** intent_router.py, schema_reference.json (3 routes: firestore, chromadb, web)
-- **Firestore Query:** firestore_query.py
-- **County Enrichment:** enrich_counties.py (cross-pipeline schema enrichment)
-- **Event Logging:** iao_logger.py, iao_event_log.jsonl, analyze_events.py
-- **Artifact Generator:** generate_artifacts.py, template/artifacts/ (with --promote, --validate-only)
-- **Gotcha Archive:** data/gotcha_archive.json (resolved gotchas with resolution patterns)
-- **Bot:** telegram_bot.py (systemd managed, 3-route retrieval: firestore, chromadb, web)
-- **Config:** ollama_config.py (defaults, batch defaults with 45-min timeout), ollama_logged.py
-
----
-
-## P3 Diligence Event Logging (v9.39+)
-
-- ALL scripts use scripts/utils/iao_logger.py
-- ALL Telegram bot messages logged (inbound + outbound)
-- ALL Ollama calls logged via scripts/utils/ollama_logged.py
-- Event types: llm_call, api_call, agent_msg, command
-- Events written to data/iao_event_log.jsonl
-- Report includes Event Log Summary section
-
----
-
-## Workstream-Level Tracking (v9.41+)
-
-- Qwen evaluator scores EACH workstream (W#) individually
-- Per workstream: outcome, agents, LLMs, MCPs, score (0-10), notes
-- Cross-check outcomes against exit codes and file existence BEFORE scoring (v9.42+ fix)
-- Workstreams array appended to agent_scores.json
-- Report MUST include Workstream Scorecard table
+Components: harnesses (CLAUDE.md/GEMINI.md - grow, never shrink), harness registry (middleware_registry.json), evaluator (run_evaluator.py + workstream scoring + claim audit), RAG (embed_archive.py + query_rag.py), intent router (3 routes: firestore/chromadb/web), Firestore query module, county enrichment, event logging, artifact generator (--promote/--validate-only), gotcha archive, bot (systemd managed, session memory v9.43+, rating-aware v9.43+), config (ollama_config.py with batch defaults), post-flight verification (v9.43+), architecture HTML renderer (v9.43+).
 
 ---
 
 ## Artifact Discipline (v9.42+)
 
 Every iteration produces:
-- kjtcom-design-v{X}.md (pre-staged from claude.ai)
-- kjtcom-plan-v{X}.md (pre-staged from claude.ai)
-- kjtcom-build-v{X}.md (generated, cross-checked, promoted)
-- kjtcom-report-v{X}.md (with Workstream Scorecard, cross-checked, promoted)
-- Updated CLAUDE.md + GEMINI.md
-- Changelog entry
+- kjtcom-design-v{X}.md (pre-staged)
+- kjtcom-plan-v{X}.md (pre-staged)
+- kjtcom-build-v{X}.md (generated, cross-checked, promoted; includes POST-FLIGHT VERIFICATION section)
+- kjtcom-report-v{X}.md (Workstream Scorecard with Evidence column, promoted)
+- CLAUDE.md + GEMINI.md (updated)
+- Changelog entry (specific numbers, not TBD)
 
-Post-execution workflow:
-1. generate_artifacts.py -> drafts to docs/drafts/
-2. run_evaluator.py --workstreams -> workstream scoring
-3. generate_artifacts.py --validate-only -> cross-check Qwen accuracy
-4. generate_artifacts.py --promote -> move validated drafts to docs/
-5. Verify docs/ has all 4 artifacts + updated changelog
-
-Drafts NEVER sit in docs/drafts/ unpromoted at end of session.
+Workflow: generate -> evaluate -> validate -> promote. Drafts never sit unpromoted.
 
 ---
 
-## Resolved Gotcha Archive (v9.42+)
+## Bot Session Memory (v9.43+)
 
-Resolved gotchas stored in data/gotcha_archive.json with resolution patterns. Evaluator queries this archive. When resolving a new gotcha, ALWAYS add it to the archive with: ID, description, resolution, iteration_resolved, root_cause category, prevention pattern.
-
-Root cause categories: environment, llm_config, dependency, firestore, flutter, pipeline, mcp, security, timeout
+Telegram bot stores last query context per user_id (in-memory dict, 10-min TTL). References like "those 26" or "out of them" resolve to previous result set. Context passed to Gemini Flash for follow-up analysis.
 
 ---
 
-## Cross-Pipeline Schema Enrichment (v9.42+)
+## Rating-Aware Queries (v9.43+)
 
-When a field is enriched on one pipeline, ALL pipelines must be audited for the same enrichment. Schema gaps must be logged and addressed. data/schema_reference.json flags per-pipeline field coverage.
-
----
-
-## Living Documents (v9.38+)
-
-Update every iteration that changes them:
-- docs/install.fish
-- docs/kjtcom-architecture.mmd
-- docs/kjtcom-changelog.md
-- data/middleware_registry.json (if middleware changes)
-- data/gotcha_archive.json (if gotchas resolved)
+schema_reference.json includes sortable_fields: t_enrichment.google_places.rating and user_ratings_total. Intent router recognizes "highest rated", "best", "top N", "most reviewed" and generates sort/limit parameters.
 
 ---
 
@@ -196,13 +161,13 @@ Update every iteration that changes them:
 
 | Fact | Value |
 |------|-------|
-| Machine | NZXTcos: i9-13900K, 64GB RAM, RTX 2080 SUPER, CachyOS, fish shell |
+| Machine | NZXTcos: i9-13900K, 64GB RAM, RTX 2080 SUPER, CachyOS, fish |
 | Path | ~/dev/projects/kjtcom |
 | Firebase | kjtcom-c78cd |
 | SA | ~/.config/gcloud/kjtcom-sa.json |
-| Flutter SDK | 3.41.6, Dart 3.11.4 |
-| Iteration Env | set -gx IAO_ITERATION v9.42 |
-| Telegram Bot | systemd: kjtcom-telegram-bot.service (v9.42+) |
+| Flutter | 3.41.6, Dart 3.11.4 |
+| Iteration | set -gx IAO_ITERATION v9.43 |
+| Bot | systemd: kjtcom-telegram-bot.service |
 | Bot Env | /home/kyle/.config/kjtcom/bot.env |
 
 ---
@@ -212,13 +177,12 @@ Update every iteration that changes them:
 | ID | Description | Status |
 |----|-------------|--------|
 | G1 | Heredocs in fish - use printf | ACTIVE |
-| G34 | Single array-contains per Firestore query | ACTIVE - post-filter workaround |
+| G34 | Single array-contains per Firestore query | ACTIVE |
 | G43 | Map tile CORS | ACTIVE |
-| G44 | flutter_map compat | ACTIVE |
-| G47 | CanvasKit blocks Playwright DOM interaction | Open |
+| G47 | CanvasKit blocks Playwright DOM | Open |
 | G53 | Firebase MCP reauth per session | Recurring |
 
-See data/gotcha_archive.json for all resolved gotchas and their resolution patterns.
+See data/gotcha_archive.json for resolved gotchas.
 
 ---
 
@@ -226,25 +190,20 @@ See data/gotcha_archive.json for all resolved gotchas and their resolution patte
 
 | File | Purpose |
 |------|---------|
-| scripts/telegram_bot.py | Bot (3-route retrieval: firestore, chromadb, web; systemd managed) |
-| scripts/intent_router.py | Gemini Flash intent classification (3 routes) |
-| scripts/firestore_query.py | Firestore query execution with G34 workaround |
-| scripts/enrich_counties.py | Cross-pipeline county enrichment (NEW v9.42) |
-| scripts/generate_artifacts.py | Artifact drafts with --promote and --validate-only |
-| scripts/run_evaluator.py | Qwen evaluation with workstream scoring + cross-check |
-| scripts/query_rag.py | ChromaDB semantic search |
-| scripts/embed_archive.py | Archive -> ChromaDB embedder |
-| scripts/brave_search.py | Brave Search API wrapper |
-| scripts/build_registry_v2.py | RAG-augmented registry builder (45-min timeout) |
+| scripts/telegram_bot.py | Bot (3-route, session memory, rating-aware, systemd) |
+| scripts/intent_router.py | Gemini Flash (3 routes, sort/limit) |
+| scripts/firestore_query.py | Firestore query (G34 workaround, orderBy) |
+| scripts/post_flight.py | Post-flight verification (NEW v9.43) |
+| scripts/build_architecture_html.py | MMD -> HTML renderer (NEW v9.43) |
+| scripts/enrich_counties.py | County enrichment |
+| scripts/generate_artifacts.py | Artifacts (--promote, --validate-only, Evidence column) |
+| scripts/run_evaluator.py | Qwen eval (workstreams, claim audit, MCP whitelist) |
+| scripts/query_rag.py | ChromaDB search |
+| scripts/embed_archive.py | Archive -> ChromaDB |
+| scripts/brave_search.py | Brave Search API |
 | scripts/utils/iao_logger.py | Event logger |
-| scripts/utils/ollama_config.py | Ollama defaults + batch defaults (45-min timeout) |
-| scripts/utils/ollama_logged.py | Auto-logging Ollama wrapper |
-| data/schema_reference.json | Thompson Schema reference for intent router |
-| data/gotcha_archive.json | Resolved gotchas with resolution patterns (NEW v9.42) |
-| data/middleware_registry.json | Middleware component catalog (NEW v9.42) |
-| data/chromadb/ | RAG vector store (1,419 chunks) |
-| data/iao_event_log.jsonl | P3 Diligence event stream |
-| agent_scores.json | Agent + workstream scoring |
-| template/artifacts/ | Build, report, changelog templates |
-| kjtcom-telegram-bot.service | systemd unit file (NEW v9.42) |
-| docs/cross-project/ | Cross-project update artifacts |
+| scripts/utils/ollama_config.py | Ollama defaults (batch: 45-min timeout) |
+| data/schema_reference.json | Schema ref (sortable_fields v9.43+) |
+| data/gotcha_archive.json | Resolved gotchas |
+| data/middleware_registry.json | Middleware catalog |
+| app/web/architecture.html | Interactive architecture diagram (NEW v9.43) |
