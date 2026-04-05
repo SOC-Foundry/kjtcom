@@ -1,9 +1,14 @@
 #!/usr/bin/env python3
-"""Run Qwen3.5-9B evaluator against a build log. v2: with token tracking."""
+"""Run Qwen3.5-9B evaluator against a build log. v2: with token tracking + P3 logging."""
 import json
+import os
 import subprocess
 import sys
 import time
+
+sys.path.insert(0, os.path.dirname(__file__))
+from utils.iao_logger import log_event
+from utils.ollama_config import merge_defaults
 
 OLLAMA_URL = 'http://localhost:11434/api/chat'
 SCORES_PATH = 'agent_scores.json'
@@ -21,13 +26,12 @@ def run_evaluator(version, build_log_path, active_gotchas):
         .replace('{active_gotchas}', active_gotchas)
         .replace('{build_log_content}', build_log[:4000]))
 
-    payload = {
+    payload = merge_defaults({
         'model': 'qwen3.5:9b',
         'messages': [{'role': 'user', 'content': prompt}],
-        'stream': False,
-        'options': {'num_predict': 2048}
-    }
+    }, evaluation=True)
 
+    start_time = time.time()
     result = subprocess.run(
         ['curl', '-s', OLLAMA_URL, '-d', json.dumps(payload)],
         capture_output=True, text=True, timeout=180
@@ -35,6 +39,7 @@ def run_evaluator(version, build_log_path, active_gotchas):
 
     response = json.loads(result.stdout)
     content = response['message']['content']
+    latency = int((time.time() - start_time) * 1000)
 
     # Token tracking from Ollama response metadata
     tokens = {
@@ -42,6 +47,14 @@ def run_evaluator(version, build_log_path, active_gotchas):
         'eval_tokens': response.get('eval_count', 0),
         'total_tokens': response.get('prompt_eval_count', 0) + response.get('eval_count', 0)
     }
+
+    log_event("llm_call", "qwen3.5-9b", "qwen3.5:9b", "evaluate",
+              input_summary=prompt[:200],
+              output_summary=content[:200],
+              tokens={"prompt": tokens['prompt_tokens'], "eval": tokens['eval_tokens'],
+                      "total": tokens['total_tokens']},
+              latency_ms=latency,
+              status="success" if content.strip() else "empty_response")
 
     print(f'Tokens: prompt={tokens["prompt_tokens"]}, '
           f'eval={tokens["eval_tokens"]}, '

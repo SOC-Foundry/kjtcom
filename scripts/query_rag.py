@@ -1,10 +1,14 @@
 #!/usr/bin/env python3
-"""Semantic search over kjtcom archive via ChromaDB + nomic-embed-text."""
+"""Semantic search over kjtcom archive via ChromaDB + nomic-embed-text. P3 logged."""
 import os
 import sys
 import json
+import time
 import requests
 import chromadb
+
+sys.path.insert(0, os.path.dirname(__file__))
+from utils.iao_logger import log_event
 
 CHROMA_DIR = os.path.join(os.path.dirname(__file__), '..', 'data', 'chromadb')
 OLLAMA_URL = 'http://localhost:11434/api/embed'
@@ -13,11 +17,17 @@ MODEL = 'nomic-embed-text'
 
 def get_embedding(text):
     """Get embedding for a single query."""
+    start = time.time()
     resp = requests.post(OLLAMA_URL, json={
         'model': MODEL,
         'input': [text]
     }, timeout=30)
     resp.raise_for_status()
+    latency = int((time.time() - start) * 1000)
+    log_event("llm_call", "claude-code", MODEL, "embed",
+              input_summary=text[:200],
+              output_summary="1 embedding returned",
+              latency_ms=latency, status="success")
     return resp.json()['embeddings'][0]
 
 
@@ -32,12 +42,18 @@ def query(text, n_results=5, version_filter=None):
     if version_filter:
         where_filter = {'version': version_filter}
 
+    start = time.time()
     results = collection.query(
         query_embeddings=[embedding],
         n_results=n_results,
         where=where_filter,
         include=['documents', 'metadatas', 'distances']
     )
+    latency = int((time.time() - start) * 1000)
+    log_event("api_call", "claude-code", "chromadb", "query",
+              input_summary=text[:200],
+              output_summary=f"{len(results['ids'][0])} results returned",
+              latency_ms=latency, status="success")
 
     return results
 

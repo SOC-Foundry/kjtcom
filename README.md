@@ -14,7 +14,7 @@ kjtcom extracts entities from YouTube playlists - landmarks, trails, restaurants
 
 The same normalization patterns power production SIEM migrations at [TachTech Engineering](https://tachtech.net). Built entirely by LLM agents using IAO (Iterative Agentic Orchestration) - a methodology distilled from 48+ production iterations on [TripleDB](https://github.com/TachTech-Engineering/tripledb).
 
-**[kylejeromethompson.com](https://kylejeromethompson.com)** | **Phase 9 v9.38** | **Status: Phase 9 App Optimization IN PROGRESS**
+**[kylejeromethompson.com](https://kylejeromethompson.com)** | **Phase 9 v9.40** | **Status: Phase 9 App Optimization IN PROGRESS**
 
 ---
 
@@ -42,7 +42,7 @@ The same normalization patterns power production SIEM migrations at [TachTech En
 
 See the [living architecture chart](docs/kjtcom-architecture.mmd) for the full system diagram (Mermaid - renders natively on GitHub).
 
-Current state: v9.38 - 3 pipelines, 5 MCP servers, 3 local LLMs, RAG middleware, OpenClaw + Telegram, Claw3D prototype.
+Current state: v9.39 - 3 pipelines, 5 MCP servers, 4 local LLMs, RAG middleware, OpenClaw (Gemini Flash) + Telegram, P3 event logging, Claw3D prototype.
 
 ### Pipeline Flow
 
@@ -281,11 +281,11 @@ graph BT
 
 **Pillar 2 - Artifact Loop.** Every iteration produces four artifacts: design doc (living architecture), plan (execution steps), build log (session transcript), report (metrics + recommendation). Previous artifacts archive to docs/archive/. Agents never see outdated instructions. If an artifact has no consumer, it should not exist.
 
-**Pillar 3 - Diligence.** The methodology does not work if you do not read. Before any iteration touches code, the plan goes through revision - often several revisions. Diligence is investing 30 minutes in plan revision to save 3 hours of misdirected agent execution. The fastest path is the one that doesn't require rework.
+**Pillar 3 - Diligence.** Verify assumptions before acting. Log all agent communications and system interactions to a structured event stream. Every LLM call, MCP tool call, API call, and system command is recorded to `data/iao_event_log.jsonl`. The methodology does not work if you do not read - and now it does not work if you do not log. Diligence is investing 30 minutes in plan revision to save 3 hours of misdirected agent execution. The fastest path is the one that doesn't require rework.
 
 **Pillar 4 - Pre-Flight Verification.** Before execution begins, validate: previous docs archived, new design + plan in place, agent instructions updated, git clean, API keys set, build tools verified. Pre-flight failures are the cheapest failures.
 
-**Pillar 5 - Agentic Harness Orchestration.** The primary agent (Claude Code or Gemini CLI) orchestrates LLMs, MCP servers, scripts, APIs, and sub-agents within a structured harness. Agent instructions are system prompts (CLAUDE.md / GEMINI.md). Pipeline scripts are tools. Gotchas are middleware. Agents CAN build and deploy. Agents CANNOT git commit or sudo. The human commits at phase boundaries.
+**Pillar 5 - Agentic Harness Orchestration.** The primary agent (Claude Code or Gemini CLI) orchestrates LLMs, MCP servers, scripts, APIs, and sub-agents within a structured harness. Agent instructions are system prompts (CLAUDE.md / GEMINI.md). OpenClaw (open-interpreter + Gemini Flash) handles autonomous tasks via the Telegram bot. Pipeline scripts are tools. Gotchas are middleware. Agents CAN build and deploy. Agents CANNOT git commit or sudo. The human commits at phase boundaries.
 
 **Pillar 6 - Zero-Intervention Target.** Every question the agent asks during execution is a failure in the plan document. Pre-answer every decision point. Execute agents in YOLO mode, trust but verify. Measure plan quality by counting interventions - zero is the floor.
 
@@ -293,9 +293,9 @@ graph BT
 
 **Pillar 8 - Phase Graduation.** Four iterative phases progressively harden the pipeline harness until production requires zero agent intervention. The agent built the harness; the harness runs the work.
 
-**Pillar 9 - Post-Flight Functional Testing.** Three tiers: Tier 1 (app bootstraps, console clean, artifacts produced), Tier 2 (iteration-specific playbook), Tier 3 (hardening audit - Lighthouse, security headers, browser compat).
+**Pillar 9 - Post-Flight Functional Testing.** Three tiers: Tier 1 (app bootstraps, console clean, artifacts produced), Tier 2 (iteration-specific playbook), Tier 3 (hardening audit - Lighthouse, security headers, browser compat). Event log analysis validates that all agent communications were recorded.
 
-**Pillar 10 - Continuous Improvement.** The methodology evolves alongside the project. Retrospectives, gotcha registry reviews, tool efficacy reports, trident rebalancing. Static processes atrophy.
+**Pillar 10 - Continuous Improvement.** The methodology evolves alongside the project. Evaluator middleware (Qwen3.5-9B) scores each iteration. Agent leaderboard tracks performance across iterations. Iteration registry provides structured history. Retrospectives, gotcha registry reviews, tool efficacy reports, trident rebalancing. Static processes atrophy.
 
 ---
 
@@ -312,7 +312,7 @@ graph BT
 | 6 | Flutter App | DONE | v6.15-v6.20 |
 | 7 | Firestore Load | DONE | v7.21 |
 | 8 | Enrichment Hardening | DONE | v8.22-v8.26 |
-| 9 | App Optimization | IN PROGRESS | v9.27-v9.37 |
+| 9 | App Optimization | IN PROGRESS | v9.27-v9.39 |
 | 10 | Retrospective + Template | Pending | - |
 
 ---
@@ -379,6 +379,18 @@ OS:   CachyOS (Arch-based) / fish shell
 ---
 
 ## Changelog
+
+**v9.39 (Phase 9 - OpenClaw/Gemini + P3 Diligence Event Logging + IAO Tab Update)**
+- OpenClaw (open-interpreter 0.4.3) installed with Gemini Flash as engine (G54 resolved)
+- G51 RESOLVED: Qwen empty responses fixed via think:false API option
+- P3 Diligence event logging: iao_logger.py, ollama_logged.py, all scripts wrapped
+- data/iao_event_log.jsonl structured event stream for all agent communications
+- analyze_events.py produces Event Log Summary (by type, agent, target, tokens, latency)
+- IAO tab updated: P3 expanded (logging mandate), P5 (OpenClaw), P9/P10 (evaluator)
+- Telegram bot updated: /ask and /search route through OpenClaw (Gemini) for synthesis
+- Telegram /status includes event log stats
+- 15/15 tests pass, 0 analyzer issues, 1 production deploy
+- Multi-agent: Claude Code + Qwen3.5-9B + Gemini Flash (OpenClaw)
 
 **v9.38 (Phase 9 - Middleware Development: RAG + Telegram + Claw3D + Template)**
 - RAG pipeline: nomic-embed-text + ChromaDB, 130 archive files -> 1,307 chunks, semantic search operational

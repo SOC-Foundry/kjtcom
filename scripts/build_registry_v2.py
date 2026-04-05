@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Rebuild iteration_registry.json using RAG (ChromaDB) + Qwen3.5-9B scoring.
+"""Rebuild iteration_registry.json using RAG (ChromaDB) + Qwen3.5-9B scoring. P3 logged.
 
 Key fix over v1: nomic-embed-text embeds (tiny, no OOM), Qwen scores with
 limited context (2-4K tokens per iteration, no OOM).
@@ -11,6 +11,9 @@ import time
 import subprocess
 import requests
 import chromadb
+
+sys.path.insert(0, os.path.dirname(__file__))
+from utils.iao_logger import log_event
 
 CHROMA_DIR = os.path.join(os.path.dirname(__file__), '..', 'data', 'chromadb')
 REGISTRY_PATH = os.path.join(os.path.dirname(__file__), '..', 'iteration_registry.json')
@@ -71,11 +74,17 @@ Context chunks for {version}:
 
 
 def get_embedding(text):
+    start = time.time()
     resp = requests.post(OLLAMA_EMBED_URL, json={
         'model': EMBED_MODEL,
         'input': [text]
     }, timeout=30)
     resp.raise_for_status()
+    latency = int((time.time() - start) * 1000)
+    log_event("llm_call", "claude-code", EMBED_MODEL, "embed",
+              input_summary=text[:200],
+              output_summary="1 embedding returned",
+              latency_ms=latency, status="success")
     return resp.json()['embeddings'][0]
 
 
@@ -129,6 +138,7 @@ def score_with_qwen(version, phase, chunks):
         'options': {'num_predict': 2048}
     }
 
+    start_time = time.time()
     result = subprocess.run(
         ['curl', '-s', OLLAMA_CHAT_URL, '-d', json.dumps(payload)],
         capture_output=True, text=True, timeout=300
@@ -136,10 +146,19 @@ def score_with_qwen(version, phase, chunks):
 
     response = json.loads(result.stdout)
     content = response['message']['content']
+    latency = int((time.time() - start_time) * 1000)
     tokens = {
         'prompt_tokens': response.get('prompt_eval_count', 0),
         'eval_tokens': response.get('eval_count', 0)
     }
+
+    log_event("llm_call", "qwen3.5-9b", SCORE_MODEL, "chat",
+              input_summary=prompt[:200],
+              output_summary=content[:200],
+              tokens={"prompt": tokens['prompt_tokens'], "eval": tokens['eval_tokens'],
+                      "total": tokens['prompt_tokens'] + tokens['eval_tokens']},
+              latency_ms=latency,
+              status="success" if content.strip() else "empty_response")
 
     # Strip markdown code fences if present
     import re

@@ -1,11 +1,15 @@
 #!/usr/bin/env python3
-"""Embed docs/archive/ files into ChromaDB using nomic-embed-text via Ollama."""
+"""Embed docs/archive/ files into ChromaDB using nomic-embed-text via Ollama. P3 logged."""
 import os
 import json
 import re
 import sys
+import time
 import requests
 import chromadb
+
+sys.path.insert(0, os.path.dirname(__file__))
+from utils.iao_logger import log_event
 
 ARCHIVE_DIR = os.path.join(os.path.dirname(__file__), '..', 'docs', 'archive')
 CHROMA_DIR = os.path.join(os.path.dirname(__file__), '..', 'data', 'chromadb')
@@ -45,11 +49,17 @@ def extract_metadata(filename):
 
 def get_embeddings(texts):
     """Get embeddings from Ollama nomic-embed-text."""
+    start = time.time()
     resp = requests.post(OLLAMA_URL, json={
         'model': MODEL,
         'input': texts
     }, timeout=120)
     resp.raise_for_status()
+    latency = int((time.time() - start) * 1000)
+    log_event("llm_call", "claude-code", MODEL, "embed",
+              input_summary=f"{len(texts)} texts, first: {texts[0][:100]}",
+              output_summary=f"{len(texts)} embeddings returned",
+              latency_ms=latency, status="success")
     return resp.json()['embeddings']
 
 

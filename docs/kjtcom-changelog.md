@@ -1,5 +1,36 @@
 # kjtcom - Unified Changelog
 
+**v9.40 (Phase 9 - Telegram Bot Fixes + Dependency Freshness + Token Efficiency)**
+- FIXED: /ask RAG context injection - ChromaDB chunks now reach Gemini prompt (root cause: --json arg treated as version_filter)
+- Replaced subprocess query_rag.py call with direct import in telegram_bot.py
+- P3 Diligence: all 10 Telegram handlers (9 commands + default text) now log inbound + outbound to iao_event_log.jsonl
+- Added /start, /help commands and default plain-text handler to Telegram bot
+- G51 PERMANENT FIX: scripts/utils/ollama_config.py with think:false + num_predict defaults
+- ollama_config.py integrated into: ollama_logged.py, telegram_bot.py, run_evaluator.py
+- flutter pub upgrade: all direct deps current, 0 analysis issues, 15/15 tests pass
+- SDK constraint ^3.11.4 verified (Dart MCP requires >=3.9, current SDK 3.11.4)
+- Firebase hosting deployed: 41 files to kjtcom-c78cd.web.app
+- Multi-agent: Claude Code (primary) + Qwen3.5-9B (evaluator) + Gemini Flash (OpenClaw) + nomic-embed-text (embedding)
+- Kyle interventions: 0
+
+**v9.39 (Phase 9 - OpenClaw/Gemini + P3 Diligence Event Logging + IAO Tab Update)**
+- G54 RESOLVED: OpenClaw installed via --no-deps + pkg_resources patches for Python 3.14
+- G51 RESOLVED: Qwen3.5-9B empty responses fixed via think:false API option (Ollama 0.20.2)
+- OpenClaw (open-interpreter 0.4.3) configured with Gemini Flash as LLM engine
+- P3 Diligence event logging: scripts/utils/iao_logger.py, scripts/utils/ollama_logged.py
+- All 7 scripts wrapped with log_event() calls: run_evaluator, query_rag, embed_archive, build_registry_v2, brave_search, telegram_bot, generate_leaderboard
+- scripts/analyze_events.py: Event Log Summary generator (by type, agent, target, tokens, latency percentiles)
+- data/iao_event_log.jsonl: structured append-only event stream
+- IAO tab (iao_tab.dart): P3 expanded (logging mandate), P5 (OpenClaw + Telegram), P9 (event log analysis), P10 (evaluator + leaderboard)
+- Stats footer updated: 39 iterations, 37 zero-intervention
+- Telegram bot: /ask routes through OpenClaw (Gemini) for RAG synthesis, /search through OpenClaw for summary, /status includes event log stats, /evaluate uses think:false
+- README.md: revised pillars (P3, P5, P9, P10), v9.39 status, changelog entry
+- docs/kjtcom-architecture.mmd: added Event Log, analyze_events.py, OpenClaw Gemini engine
+- docs/install.fish: added tiktoken 0.12.0, open-interpreter --no-deps, IAO_ITERATION note
+- Multi-agent: Claude Code (primary) + Qwen3.5-9B (consulted, think:false) + Gemini Flash (OpenClaw)
+- flutter analyze: 0 issues. flutter test: 15/15 pass. 1 production deploy.
+- Kyle interventions: 0
+
 **v9.38 (Phase 9 - Middleware Development: RAG + Telegram + Claw3D + Evaluator + Template)**
 - RAG pipeline operational: nomic-embed-text + ChromaDB, 130 archive files embedded as 1,307 chunks
 - scripts/embed_archive.py, query_rag.py, build_registry_v2.py created

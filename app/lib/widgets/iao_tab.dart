@@ -252,9 +252,9 @@ class _StatsFooter extends StatelessWidget {
           _divider(),
           _stat('3', 'Pipelines'),
           _divider(),
-          _stat('30', 'Iterations'),
+          _stat('39', 'Iterations'),
           _divider(),
-          _stat('29', 'Zero-Intervention'),
+          _stat('37', 'Zero-Intervention'),
         ],
       ),
     );
@@ -326,11 +326,14 @@ const _pillars = [
   _Pillar(
     3,
     'Diligence',
-    'The methodology does not work if you do not read. Before any iteration '
-        'touches code, the plan goes through revision - often several '
-        'revisions. Diligence is investing 30 minutes in plan revision to '
-        'save 3 hours of misdirected agent execution. The fastest path is '
-        "the one that doesn't require rework.",
+    'Verify assumptions before acting. Log all agent communications and '
+        'system interactions to a structured event stream. Every LLM call, '
+        'MCP tool call, API call, and system command is recorded to '
+        'iao_event_log.jsonl. The methodology does not work if you do not '
+        'read - and now it does not work if you do not log. Diligence is '
+        'investing 30 minutes in plan revision to save 3 hours of '
+        "misdirected agent execution. The fastest path is the one that "
+        "doesn't require rework.",
   ),
   _Pillar(
     4,
@@ -346,9 +349,10 @@ const _pillars = [
     'The primary agent (Claude Code or Gemini CLI) orchestrates LLMs, MCP '
         'servers, scripts, APIs, and sub-agents within a structured harness. '
         'Agent instructions are system prompts (CLAUDE.md / GEMINI.md). '
-        'Pipeline scripts are tools. Gotchas are middleware. Agents CAN '
-        'build and deploy. Agents CANNOT git commit or sudo. The human '
-        'commits at phase boundaries.',
+        'OpenClaw (open-interpreter + Gemini Flash) handles autonomous tasks '
+        'via the Telegram bot. Pipeline scripts are tools. Gotchas are '
+        'middleware. Agents CAN build and deploy. Agents CANNOT git commit '
+        'or sudo. The human commits at phase boundaries.',
   ),
   _Pillar(
     6,
@@ -378,13 +382,16 @@ const _pillars = [
     'Post-Flight Functional Testing',
     'Three tiers: Tier 1 (app bootstraps, console clean, artifacts '
         'produced), Tier 2 (iteration-specific playbook), Tier 3 (hardening '
-        'audit - Lighthouse, security headers, browser compat).',
+        'audit - Lighthouse, security headers, browser compat). Event log '
+        'analysis validates that all agent communications were recorded.',
   ),
   _Pillar(
     10,
     'Continuous Improvement',
-    'The methodology evolves alongside the project. Retrospectives, gotcha '
-        'registry reviews, tool efficacy reports, trident rebalancing. '
-        'Static processes atrophy.',
+    'The methodology evolves alongside the project. Evaluator middleware '
+        '(Qwen3.5-9B) scores each iteration. Agent leaderboard tracks '
+        'performance across iterations. Iteration registry provides '
+        'structured history. Retrospectives, gotcha registry reviews, tool '
+        'efficacy reports, trident rebalancing. Static processes atrophy.',
   ),
 ];

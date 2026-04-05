@@ -1,9 +1,13 @@
 #!/usr/bin/env python3
-"""Brave Search API wrapper - returns top 5 web results."""
+"""Brave Search API wrapper - returns top 5 web results. P3 logged."""
 import os
 import sys
 import json
+import time
 import requests
+
+sys.path.insert(0, os.path.dirname(__file__))
+from utils.iao_logger import log_event
 
 BRAVE_API_URL = 'https://api.search.brave.com/res/v1/web/search'
 
@@ -23,9 +27,11 @@ def search(query, count=5):
         'count': count
     }
 
+    start = time.time()
     resp = requests.get(BRAVE_API_URL, headers=headers, params=params, timeout=10)
     resp.raise_for_status()
     data = resp.json()
+    latency = int((time.time() - start) * 1000)
 
     results = []
     for item in data.get('web', {}).get('results', [])[:count]:
@@ -34,6 +40,11 @@ def search(query, count=5):
             'url': item.get('url', ''),
             'snippet': item.get('description', '')
         })
+
+    log_event("api_call", "claude-code", "brave-search", "search",
+              input_summary=query[:200],
+              output_summary=f"{len(results)} results returned",
+              latency_ms=latency, status="success")
 
     return {'query': query, 'count': len(results), 'results': results}
 

@@ -195,6 +195,23 @@ pip install chromadb --break-system-packages 2>&1 | tee -a $LOG_FILE
 pip install python-telegram-bot --break-system-packages 2>&1 | tee -a $LOG_FILE
 
 # ---------------------------------------------------------------------------
+# Step 5e/10: OpenClaw + P3 Diligence packages (v9.39+)
+# ---------------------------------------------------------------------------
+echo ""
+echo "[5e/10] Installing OpenClaw and P3 Diligence packages..."
+
+# Pre-install tiktoken 0.12.0 (has CP314 wheels) before open-interpreter
+pip install tiktoken==0.12.0 --break-system-packages 2>&1 | tee -a $LOG_FILE
+# Install open-interpreter without deps (pins tiktoken<0.8.0 which conflicts)
+pip install open-interpreter --no-deps --break-system-packages 2>&1 | tee -a $LOG_FILE
+pip install litellm rich --break-system-packages 2>&1 | tee -a $LOG_FILE
+
+echo ""
+echo "  NOTE: Set IAO_ITERATION before running any script:"
+echo "    set -gx IAO_ITERATION v9.39"
+echo "  This enables P3 Diligence event logging to data/iao_event_log.jsonl"
+
+# ---------------------------------------------------------------------------
 # Step 5c/10: Dart MCP server verification (v9.37+)
 # ---------------------------------------------------------------------------
 echo ""

@@ -1,5 +1,5 @@
 %% kjtcom Architecture - Living Document
-%% Updated: v9.38 - Middleware Development
+%% Updated: v9.39 - OpenClaw/Gemini + P3 Event Logging
 %% Maintainer: Update every iteration that changes architecture
 
 graph TB
@@ -70,15 +70,17 @@ graph TB
         MCP_DART["Dart MCP<br/>Code Analysis"]
     end
 
-    subgraph MIDDLEWARE["Middleware (v9.38+)"]
+    subgraph MIDDLEWARE["Middleware (v9.39+)"]
         RAG["RAG Pipeline<br/>ChromaDB + nomic-embed"]
-        CHROMADB["ChromaDB<br/>data/chromadb/<br/>145 archive docs"]
+        CHROMADB["ChromaDB<br/>data/chromadb/<br/>1,307 chunks"]
         EVALUATOR["Agent Evaluator<br/>Qwen3.5-9B Scorer"]
-        REGISTRY["iteration_registry.json<br/>37 iterations"]
+        REGISTRY["iteration_registry.json<br/>39 iterations"]
         SCORES["agent_scores.json<br/>Token Tracking"]
         LEADERBOARD["Leaderboard Generator"]
         BRAVE["Brave Search API<br/>Web Research"]
-        OPENCLAW["OpenClaw<br/>Sandbox Agent"]
+        OPENCLAW["OpenClaw<br/>open-interpreter 0.4.3<br/>Gemini Flash Engine"]
+        EVENT_LOG["Event Log<br/>data/iao_event_log.jsonl<br/>P3 Diligence"]
+        ANALYZER["analyze_events.py<br/>Event Log Summary"]
     end
 
     subgraph ARTIFACTS["Artifact Loop (per iteration)"]
@@ -121,6 +123,10 @@ graph TB
     LEADERBOARD --> SCORES
     REGISTRY --> RAG
     OPENCLAW --> LOCAL_LLMS
+    EVENT_LOG --> ANALYZER
+    ANALYZER --> REPORT
+    EVALUATOR --> EVENT_LOG
+    BRAVE --> EVENT_LOG
 
     %% MCP connections
     MCP_FIREBASE --> FIRESTORE
