@@ -1,205 +1,103 @@
 # kjtcom - Claude Code Agent Instructions
 
-## Current Iteration: v9.44
+## Current Iteration: v9.46
 
-IMPORTANT: Read documents in this EXACT order before executing:
-
-1. This file (CLAUDE.md)
-2. docs/kjtcom-design-v9.44.md - Workstreams, architecture, amendments
-3. docs/kjtcom-plan-v9.44.md - Step-by-step execution
-
-Do NOT begin execution until files 1-3 have been read.
+Read in order: (1) This file, (2) docs/kjtcom-design-v9.46.md, (3) docs/kjtcom-plan-v9.46.md.
 
 ---
 
-## Agent Session Best Practices (v9.42+ - PERMANENT)
+## Agent Session Best Practices (PERMANENT)
 
-### Pre-Launch Checklist
-1. CLAUDE.md and GEMINI.md MUST be saved to disk in the launch directory BEFORE starting.
-2. /quit every session and start fresh between iterations.
-3. `set -gx IAO_ITERATION v9.XX` BEFORE launching.
-4. Verify Ollama: `ollama list` shows 4 models.
-5. Restart bot: `sudo systemctl restart kjtcom-telegram-bot`
-6. Verify Firebase SA: `test -f ~/.config/gcloud/kjtcom-sa.json`.
-7. Verify archive integrity: `ls docs/archive/ | wc -l` (must be >= prior iteration count).
-
-### Session Discipline
-- ONE iteration per session. Never chain.
-- If session crashes, /quit and relaunch.
-- Every session ends with: artifact production -> post-flight verification -> promotion.
-- Drafts cross-checked and promoted. NEVER leave unpromoted drafts.
-- Harness files GROW. Never abbreviate.
-
-### CRITICAL: Document Archival
-- **NEVER run rm or git rm on ANY docs/kjtcom-*.md file.**
-- Use `mv docs/kjtcom-*-v{X}.md docs/archive/` instead.
-- If you find yourself about to delete a doc file, STOP. Archive it.
-- This rule has been violated in v9.42 and v9.43. It must not happen again.
-
-### Environment Architecture
-- GCP SA keys: ~/.config/gcloud/{project}-sa.json (NEVER in repo)
-- API keys: fish shell config, per-project prefixed (KJTCOM_*)
-- Agent launches: `claude --dangerously-skip-permissions` / `gemini --yolo`
-- Bot: systemd (kjtcom-telegram-bot.service)
-- Sleep mask: `systemctl mask suspend` on dev machines
+1. CLAUDE.md + GEMINI.md saved to disk BEFORE starting. ONE iteration per session.
+2. `set -gx IAO_ITERATION v9.XX`. Verify Ollama (4 models). Restart bot systemd. Verify SA.
+3. Verify archive: `ls docs/archive/ | wc -l` (>= prior count).
+4. **NEVER delete docs. Archive to docs/archive/.**
+5. Harness files GROW. Never abbreviate.
+6. Every session ends: artifacts -> post-flight -> promotion. No unpromoted drafts.
 
 ---
 
-## Post-Flight Verification - MANDATORY (v9.43+)
+## Qwen Evaluator Harness (v9.46+ - PERMANENT)
 
-After every iteration, BEFORE the session ends:
-
-1. `python3 scripts/post_flight.py` - all checks must pass
-2. Verify site: HTTP 200 from kylejeromethompson.com
-3. Verify bot: /status responds via Telegram
-4. Verify query: /ask returns correct entity count (>= 6,181)
-5. Verify architecture.html loads
-6. Log results in build log POST-FLIGHT VERIFICATION section
-7. If ANY check fails: fix, re-deploy, re-verify. Do NOT end session with failures.
+Qwen's evaluation personality and rules live in docs/evaluator-harness.md. This file is loaded by run_evaluator.py and generate_artifacts.py every time Qwen is invoked. Key rules:
+- Never 10/10. Max is 9/10 for exceptional work.
+- Evidence or it didn't happen. Every score cites a file, output, or test result.
+- Name 2 improvements per workstream, even successful ones.
+- No corporate fluff. Banned phrases enforced.
+- Trident: actual values, never "Review..." or "TBD."
+- "What Could Be Better" section mandatory with >= 3 items.
+- Contradict when warranted. Evaluator's job is truth.
 
 ---
 
-## Qwen Claim Audit - MANDATORY (v9.43+)
+## README Refresh Cadence (v9.46+ - PERMANENT)
 
-- Every "complete" workstream needs linked evidence in the scorecard
-- Scorecard includes Evidence column
-- Valid MCPs ONLY: Firebase, Context7, Firecrawl, Playwright, Dart
-- No "TBD" anywhere in report or changelog
-- Workstream names must EXACTLY match design doc W# labels (v9.44+ fix)
-- Specific numbers required (entity counts, chunk counts, test results)
+- **Every iteration:** update changelog section, version/phase number.
+- **Every 3 iterations:** FULL review and overhaul (content accuracy, stale descriptions, link verification, new features documented). Schedule: v9.46, v9.49, v10.52, etc.
+- README is the public face. It must reflect current state.
+
+---
+
+## Post-Flight Verification (MANDATORY)
+
+post_flight.py before ending. Site 200, bot /status, bot /ask >= 6,181, architecture.html. For dep upgrades: verify Map tab. If ANY fails: fix first.
+
+---
+
+## Qwen Claim Audit (MANDATORY)
+
+Evidence column. Valid MCPs: Firebase, Context7, Firecrawl, Playwright, Dart. No TBD/Review. Exact W# names. Specific numbers. Now enforced via evaluator harness.
 
 ---
 
 ## Rules That Never Change
 
-- Git WRITE commands FORBIDDEN. Kyle handles ALL git.
-- firebase deploy ALLOWED (hosting only).
-- NEVER ask permission. The plan IS the permission.
-- Self-heal errors: diagnose -> fix -> re-run (max 3 attempts, then gotcha).
-- Fish shell. pip --break-system-packages. python3 -u.
-- No em-dashes. " - " for dashes. "->" for arrows.
-- "pipelines" and "log types," never "tables" or "datasets."
-- Build on existing code. Read files before overwriting.
-- **NEVER delete docs. ALWAYS archive to docs/archive/.**
+Git WRITE forbidden. firebase deploy allowed. Never ask permission. Self-heal 3x. Fish shell. pip --break-system-packages. python3 -u. No em-dashes. NEVER delete docs.
 
 ---
 
-## Token Efficiency Mandate (v9.40+)
+## Dependency Upgrade Protocol (v9.45+)
 
-- Target: <50K Claude Code tokens per iteration
-- ALL Ollama calls use ollama_config.py (think:false, G51)
-- num_predict: 512 default, 2048 evaluations, 2048 batch (45-min timeout)
-- Gemini Flash model: use GEMINI_MODEL from ollama_config.py (v9.44+)
-- Log all usage via iao_logger.py
+ONE major version at a time. Read changelog first (Context7 MCP). analyze -> test -> build after each. Document breaking changes. v9.45 finding: 10 transitive deps locked by upstream (flutter_map, SDK). Not actionable.
 
 ---
 
-## Gemini Flash Model String (v9.44+)
+## Token Efficiency (v9.40+)
 
-The Gemini Flash model string is centralized in scripts/utils/ollama_config.py as GEMINI_MODEL. ALL litellm calls for Gemini must use this constant. History of model string issues:
-- v9.41: gemini/gemini-2.0-flash deprecated (404)
-- v9.43: litellm.AuthenticationError 400
-- v9.44: diagnosed and fixed, centralized as GEMINI_MODEL
-
-Never hardcode the model string in individual scripts.
+<50K. ollama_config.py (think:false, G51). GEMINI_MODEL constant. Log via iao_logger.py.
 
 ---
 
-## Multi-Agent Orchestration (v9.35+)
+## Phase Context
 
-Minimum 2 LLMs. Document per workstream.
-
-| Agent | Engine | Use For |
-|-------|--------|---------|
-| Claude Code | Claude API | Primary executor |
-| Qwen3.5-9B | Ollama local | Evaluation, code review |
-| Nemotron Mini 4B | Ollama local | Fast triage |
-| GLM-4.6V-Flash | Ollama local | Vision |
-| nomic-embed-text | Ollama local | Embeddings only |
-| Gemini Flash | Gemini API (litellm) | Intent routing, synthesis |
+Phase 9 (v9.27-v9.47): App Optimization. Final iterations. Phase 10: Bourdain pipeline (114 videos), IaC to GCP, middleware stamp. Bourdain dry run is 2-3 iterations into Phase 10.
 
 ---
 
-## MCP Servers (5 total - ONLY these names are valid)
+## Multi-Agent + MCP
 
-Firebase, Context7, Firecrawl, Playwright, Dart. No others exist.
-
----
-
-## Middleware as Primary IP (v9.42+)
-
-Middleware is the product. kjtcom is the lab. Every iteration adds to middleware.
-
-Components: harnesses (grow, never shrink), harness registry, evaluator (workstream scoring + claim audit), RAG, intent router (3 routes: firestore/chromadb/web), Firestore query (G34 workaround, Python-side sort v9.44+), county enrichment, event logging, artifact generator (--promote/--validate-only), gotcha archive, bot (systemd, session memory v9.43+, rating-aware v9.44+), config (ollama_config.py: defaults + batch + GEMINI_MODEL), post-flight verification, architecture HTML renderer.
+Minimum 2 LLMs. Valid MCPs: Firebase, Context7, Firecrawl, Playwright, Dart. No others.
 
 ---
 
-## Bot Session Memory (v9.43+)
+## Middleware as Primary IP
 
-In-memory dict keyed by user_id. 10-min TTL. "those 26" or "out of them" resolves to previous result set. Context passed to Gemini Flash for follow-up.
-
----
-
-## Rating-Aware Queries (v9.43+, fixed v9.44)
-
-schema_reference.json includes sortable_fields: t_enrichment.google_places.rating and user_ratings_total. Sort in Python (v9.44) to avoid composite index dependency. Intent router recognizes "highest rated", "best", "top N".
-
----
-
-## Artifact Discipline (v9.42+)
-
-Every iteration produces: design, plan, build (with POST-FLIGHT section), report (with Evidence column), CLAUDE.md, GEMINI.md, changelog entry (not a stub).
-
-Workflow: generate -> evaluate -> validate -> promote. Never leave unpromoted drafts.
-
-Changelog must use NEW/UPDATED/FIXED prefixes with specific numbers. "TBD" is banned.
+Components: harnesses (CLAUDE.md, GEMINI.md, evaluator-harness.md), harness registry, evaluator, RAG, intent router (3 routes), Firestore query (G34, Python sort), county enrichment, event logging, artifact generator, gotcha archive, bot (systemd, session memory, rating sort, 3-route), config, post-flight, architecture HTML.
 
 ---
 
 ## Environment
 
-| Fact | Value |
-|------|-------|
-| Machine | NZXTcos: i9-13900K, 64GB, RTX 2080 SUPER, CachyOS, fish |
-| Path | ~/dev/projects/kjtcom |
-| Firebase | kjtcom-c78cd |
-| SA | ~/.config/gcloud/kjtcom-sa.json |
-| Flutter | 3.41.6, Dart 3.11.4 |
-| Iteration | set -gx IAO_ITERATION v9.44 |
-| Bot | systemd: kjtcom-telegram-bot.service |
-| Bot Env | /home/kyle/.config/kjtcom/bot.env |
+NZXTcos: ~/dev/projects/kjtcom | Firebase: kjtcom-c78cd | SA: ~/.config/gcloud/kjtcom-sa.json | Bot: systemd kjtcom-telegram-bot.service | Flutter: 3.41.6
 
 ---
 
 ## Active Gotchas
 
-| ID | Description | Status |
-|----|-------------|--------|
-| G1 | Heredocs in fish - use printf | ACTIVE |
-| G34 | Single array-contains per Firestore query | ACTIVE |
-| G43 | Map tile CORS | ACTIVE |
-| G47 | CanvasKit blocks Playwright DOM | Open |
-| G53 | Firebase MCP reauth per session | Recurring |
-| G57 | Gemini Flash model string instability | RESOLVED (v9.44) - centralized in GEMINI_MODEL |
-
-See data/gotcha_archive.json for all resolved gotchas.
+G1 (heredocs), G34 (array-contains), G43 (CORS), G47 (CanvasKit), G53 (Firebase MCP reauth), G54 (transitive dep lock). See data/gotcha_archive.json for resolved.
 
 ---
 
 ## Key Files
 
-| File | Purpose |
-|------|---------|
-| scripts/telegram_bot.py | Bot (3-route, session memory, rating sort, systemd) |
-| scripts/intent_router.py | Gemini Flash intent (3 routes, sort/limit, uses GEMINI_MODEL) |
-| scripts/firestore_query.py | Firestore query (G34, Python-side sort v9.44+) |
-| scripts/post_flight.py | Post-flight verification |
-| scripts/build_architecture_html.py | MMD -> HTML renderer |
-| scripts/enrich_counties.py | County enrichment |
-| scripts/generate_artifacts.py | Artifacts (--promote, --validate-only, Evidence) |
-| scripts/run_evaluator.py | Qwen eval (claim audit, exact W# names) |
-| scripts/utils/ollama_config.py | Ollama defaults + batch + GEMINI_MODEL |
-| data/schema_reference.json | Schema ref (sortable_fields) |
-| data/gotcha_archive.json | Resolved gotchas |
-| data/middleware_registry.json | Middleware catalog |
-| app/web/architecture.html | Interactive architecture diagram |
+docs/evaluator-harness.md (NEW v9.46), scripts/run_evaluator.py, scripts/generate_artifacts.py, scripts/telegram_bot.py, scripts/intent_router.py, scripts/firestore_query.py, scripts/post_flight.py, scripts/build_architecture_html.py, scripts/utils/ollama_config.py, data/schema_reference.json, data/gotcha_archive.json, data/middleware_registry.json, app/web/architecture.html

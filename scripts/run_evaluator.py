@@ -215,12 +215,13 @@ shows errors/timeouts for a workstream, do NOT mark it as "complete". If files e
 that a workstream was supposed to create, that is evidence of completion.
 
 MANDATORY RULES:
-1. Include specific numbers from the event log and execution output. NEVER write "TBD".
+1. Include specific numbers from the event log and execution output. NEVER write "TBD", "Review...", or "Verify...". State the actual measured value.
 2. The ONLY valid MCP servers are: Firebase, Context7, Firecrawl, Playwright, Dart. If a workstream did not use an MCP, write "-" in the mcps field. Do NOT invent MCP server names.
 3. The "evidence" field MUST contain a file path, command output, or test result that proves the outcome. "Complete" without evidence is reclassified as "unverified".
 4. Event counts in your response must match the execution context exactly.
 5. Do not use corporate language like "delivered a successful deployment." State what was built and what it does.
 6. Use the EXACT workstream names from the design doc W# labels. Do not rename, reorder, or combine workstreams.
+7. TRIDENT VALUES: Cost must state actual token count or "within target"/"exceeded target". Delivery must state "X/Y workstreams complete". Performance must state the specific metric result. "Review..." is equivalent to "TBD" and is BANNED.
 
 Based on the design document and execution context, score each workstream (W1-W6).
 Return ONLY a JSON array of objects with these fields:

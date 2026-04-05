@@ -135,6 +135,14 @@
       "iteration_resolved": "v9.44",
       "root_cause": "llm_config",
       "prevention": "Never hardcode Gemini model string in individual scripts. Always use GEMINI_MODEL from ollama_config.py."
+    },
+    {
+      "id": "G58",
+      "description": "Flutter transitive dependency lock - 10 packages outdated but Resolvable=Current",
+      "resolution": "Investigated via flutter pub outdated, flutter pub deps, dart MCP pub.dev search. All 10 are transitive (flutter_map->proj4dart->mgrs_dart, Flutter SDK->meta/vector_math/test/analyzer). flutter_map 8.2.2 is latest. No action possible until upstream releases.",
+      "iteration_resolved": "v9.45",
+      "root_cause": "dependency",
+      "prevention": "Before planning dep upgrades, run flutter pub outdated and check Resolvable column. If Resolvable=Current, the dep is locked by parent constraints and cannot be upgraded directly."
     }
   ]
 }

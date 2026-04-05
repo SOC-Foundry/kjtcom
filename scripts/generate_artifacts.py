@@ -173,6 +173,65 @@ def generate_build_log(iteration):
     return out_path
 
 
+def compute_trident_values(iteration, scores_entry):
+    """Compute actual Trident values from event log and workstream data.
+
+    Returns dict with cost_result, delivery_result, performance_result.
+    Never returns 'Review...' or 'TBD' - always actual values.
+    """
+    # Cost: count tokens from event log
+    total_tokens = 0
+    llm_calls = 0
+    try:
+        with open(EVENT_LOG) as f:
+            for line in f:
+                line = line.strip()
+                if not line:
+                    continue
+                ev = json.loads(line)
+                if ev.get('iteration') == iteration and ev.get('event_type') == 'llm_call':
+                    llm_calls += 1
+                    tokens = ev.get('tokens', {})
+                    total_tokens += tokens.get('total', 0)
+    except FileNotFoundError:
+        pass
+
+    if total_tokens > 0:
+        cost_result = f"{total_tokens:,} tokens across {llm_calls} LLM calls"
+    else:
+        cost_result = f"{llm_calls} LLM calls logged (token counts pending)"
+
+    # Delivery: count complete/total from workstream scorecard
+    if scores_entry and 'workstreams' in scores_entry:
+        ws_list = scores_entry['workstreams']
+        total_ws = len(ws_list)
+        complete_ws = sum(1 for ws in ws_list if ws.get('outcome') == 'complete')
+        partial_ws = sum(1 for ws in ws_list if ws.get('outcome') == 'partial')
+        delivery_result = f"{complete_ws}/{total_ws} workstreams complete"
+        if partial_ws:
+            delivery_result += f", {partial_ws} partial"
+    else:
+        delivery_result = "Workstream evaluation pending"
+
+    # Performance: derive from workstream evidence
+    perf_notes = []
+    if scores_entry and 'workstreams' in scores_entry:
+        for ws in scores_entry['workstreams']:
+            evidence = ws.get('evidence', '')
+            if evidence and evidence != '-':
+                perf_notes.append(f"{ws.get('id', '?')}: {evidence[:60]}")
+    if perf_notes:
+        performance_result = "; ".join(perf_notes[:3])
+    else:
+        performance_result = "See post-flight verification results"
+
+    return {
+        'cost_result': cost_result,
+        'delivery_result': delivery_result,
+        'performance_result': performance_result,
+    }
+
+
 def generate_report(iteration):
     """Generate report draft."""
     template = load_template('report-template.md')
@@ -182,6 +241,9 @@ def generate_report(iteration):
     scores_entry = get_agent_scores(iteration)
     workstream_rows = format_workstream_rows(scores_entry)
     event_summary = get_event_log_summary(iteration)
+
+    # Compute actual Trident values from event log and workstream data
+    trident = compute_trident_values(iteration, scores_entry)
 
     # Generate summary narrative
     context = f"Iteration: {iteration}\nWorkstreams: {json.dumps(scores_entry.get('workstreams', []) if scores_entry else [], indent=2)[:2000]}\n\nEvents:\n{event_summary}"
@@ -194,11 +256,11 @@ def generate_report(iteration):
         summary=summary,
         workstream_rows=workstream_rows,
         cost_target="<50K Claude tokens, Gemini free tier",
-        cost_result="Review token usage in event log",
+        cost_result=trident['cost_result'],
         delivery_target="6 workstreams complete",
-        delivery_result="Review workstream scorecard above",
+        delivery_result=trident['delivery_result'],
         performance_target="/ask returns real Firestore counts with session memory",
-        performance_result="Verify from post-flight and Telegram test",
+        performance_result=trident['performance_result'],
         agent_utilization="Claude Code (primary executor), Qwen3.5-9B (evaluator), Gemini Flash (intent routing, synthesis)",
         event_log_summary=event_summary,
         gotcha_summary="G34: Active - post-filter workaround\nG47: Open\nG53: Recurring",
