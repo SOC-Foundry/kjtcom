@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "version": "v9.42",
+    "version": "v9.44",
     "updated": "2026-04-05",
     "description": "Middleware component catalog - the IP that stamps onto new projects"
   },
@@ -11,35 +11,35 @@
   "scripts": [
     {
       "name": "scripts/intent_router.py",
-      "version": "v9.42",
+      "version": "v9.44",
       "type": "routing",
       "description": "Gemini Flash intent classification - 3 routes: firestore, chromadb, web",
       "dependencies": ["litellm", "data/schema_reference.json"]
     },
     {
       "name": "scripts/firestore_query.py",
-      "version": "v9.41",
+      "version": "v9.44",
       "type": "data_access",
-      "description": "Firestore query execution with G34 post-filter workaround",
+      "description": "Firestore query execution with G34 post-filter and Python-side rating sort (v9.44)",
       "dependencies": ["firebase-admin"]
     },
     {
       "name": "scripts/telegram_bot.py",
-      "version": "v9.42",
+      "version": "v9.44",
       "type": "bot",
-      "description": "Telegram bot with 3-route retrieval, systemd watchdog, P3 logging",
+      "description": "Telegram bot with 3-route retrieval, session memory, rating sort, systemd watchdog, P3 logging",
       "dependencies": ["python-telegram-bot", "sdnotify", "litellm", "chromadb", "requests"]
     },
     {
       "name": "scripts/generate_artifacts.py",
-      "version": "v9.42",
+      "version": "v9.44",
       "type": "automation",
-      "description": "Draft artifact generator with --promote, --validate-only, cross-check",
+      "description": "Draft artifact generator with --promote, --validate-only, cross-check, changelog quality (no TBD)",
       "dependencies": ["scripts/utils/ollama_config.py", "scripts/utils/iao_logger.py", "scripts/utils/ollama_logged.py"]
     },
     {
       "name": "scripts/run_evaluator.py",
-      "version": "v9.42",
+      "version": "v9.44",
       "type": "evaluation",
       "description": "Qwen workstream evaluator with execution context and gotcha archive query",
       "dependencies": ["scripts/utils/ollama_config.py", "scripts/utils/iao_logger.py"]
@@ -96,9 +96,9 @@
     },
     {
       "name": "scripts/utils/ollama_config.py",
-      "version": "v9.42",
+      "version": "v9.44",
       "type": "config",
-      "description": "Ollama defaults (think:false), eval defaults, batch defaults (45-min timeout)"
+      "description": "Ollama defaults (think:false), eval defaults, batch defaults (45-min timeout), GEMINI_MODEL constant"
     },
     {
       "name": "scripts/utils/ollama_logged.py",
@@ -110,11 +110,11 @@
   "templates": [
     {"name": "template/artifacts/build-template.md", "version": "v9.41", "type": "artifact_template"},
     {"name": "template/artifacts/report-template.md", "version": "v9.41", "type": "artifact_template"},
-    {"name": "template/artifacts/changelog-template.md", "version": "v9.41", "type": "artifact_template"}
+    {"name": "template/artifacts/changelog-template.md", "version": "v9.44", "type": "artifact_template"}
   ],
   "data_stores": [
-    {"name": "data/chromadb/", "type": "vector_store", "records": 1419, "description": "RAG archive embeddings"},
-    {"name": "data/gotcha_archive.json", "type": "knowledge_base", "version": "v9.42", "description": "15 resolved gotchas with resolution patterns"},
+    {"name": "data/chromadb/", "type": "vector_store", "records": 1524, "description": "RAG archive embeddings"},
+    {"name": "data/gotcha_archive.json", "type": "knowledge_base", "version": "v9.44", "description": "17 resolved gotchas with resolution patterns"},
     {"name": "data/schema_reference.json", "type": "schema", "version": "v9.42", "description": "Thompson Schema field reference for intent routing"},
     {"name": "data/iao_event_log.jsonl", "type": "event_log", "description": "P3 diligence event stream"},
     {"name": "agent_scores.json", "type": "evaluation", "version": "v9.42", "description": "Agent and workstream scoring history"}

@@ -11,6 +11,7 @@ import time
 
 sys.path.insert(0, os.path.dirname(__file__))
 from utils.iao_logger import log_event
+from utils.ollama_config import GEMINI_MODEL
 
 # Load schema reference at import time
 _SCHEMA_REF = None
@@ -82,7 +83,7 @@ def route_question(question):
 
     try:
         response = completion(
-            model="gemini/gemini-2.5-flash",
+            model=GEMINI_MODEL,
             messages=[{"role": "user", "content": prompt}],
             temperature=0,
             max_tokens=1024,
@@ -99,7 +100,7 @@ def route_question(question):
             "total": getattr(usage, 'total_tokens', 0),
         }
 
-        log_event("llm_call", "telegram-bot", "gemini/gemini-2.5-flash", "route",
+        log_event("llm_call", "telegram-bot", GEMINI_MODEL, "route",
                   input_summary=f"route: {question}"[:200],
                   output_summary=content[:200],
                   tokens=tokens, latency_ms=latency, status="success")
@@ -130,7 +131,7 @@ def route_question(question):
 
     except Exception as e:
         latency = int((time.time() - start) * 1000)
-        log_event("llm_call", "telegram-bot", "gemini/gemini-2.5-flash", "route",
+        log_event("llm_call", "telegram-bot", GEMINI_MODEL, "route",
                   input_summary=f"route: {question}"[:200],
                   status="error", error=str(e), latency_ms=latency)
         # Fallback to ChromaDB

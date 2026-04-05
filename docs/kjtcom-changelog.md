@@ -1,5 +1,19 @@
 # kjtcom - Unified Changelog
 
+**v9.44 (Phase 9 - Fix v9.43 Failures: Gemini Auth + Rating Sort + Changelog Quality)**
+- FIXED: Gemini Flash auth error - litellm 1.83.3 + gemini/gemini-2.5-flash + thinking disabled. GEMINI_MODEL centralized in ollama_config.py. G57 resolved.
+- FIXED: Firestore rating sort - Python-side sort in firestore_query.py avoids composite index. Top 3 DDD LA: crush craft (4.9), el sazon (4.9), la unica birria (4.7). G56 resolved.
+- UPDATED: Bot session memory + rating queries - intent_router.py and telegram_bot.py use GEMINI_MODEL. All 5 routes verified (firestore count/list/sort, chromadb, web).
+- UPDATED: Changelog template - NEW/UPDATED/FIXED prefixes required, TBD banned, intervention count added.
+- UPDATED: Qwen evaluator - exact W# workstream naming enforced (rule 6).
+- FIXED: Doc archival - v9.43 docs archived (169 total). No docs deleted.
+- UPDATED: ChromaDB re-embedded - 1,524 chunks (up from 1,419).
+- UPDATED: Gotcha archive - 17 resolved gotchas (added G56, G57).
+- Flutter: analyze 0 issues, 15/15 tests pass, built web
+- Post-flight: 3/3 passed (site 200, bot alive, 6,181 entities)
+- Multi-agent: Claude Code (primary) + Qwen3.5-9B (evaluator) + Gemini 2.5 Flash (intent routing)
+- Kyle interventions: 0 (target: 0). Firebase deploy pending reauth (G53).
+
 **v9.42 (Phase 9 - County Enrichment + Bot Resiliency + Web Route + Gotcha Archive + Middleware Registry)**
 - NEW: scripts/enrich_counties.py - reverse geocode TripleDB coordinates to counties via Nominatim (1 req/sec)
 - NEW: kjtcom-telegram-bot.service - systemd service with WatchdogSec=600, Type=notify, auto-restart

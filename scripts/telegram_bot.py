@@ -26,7 +26,7 @@ from telegram.ext import Application, CommandHandler, ContextTypes, MessageHandl
 
 sys.path.insert(0, os.path.dirname(__file__))
 from utils.iao_logger import log_event
-from utils.ollama_config import merge_defaults
+from utils.ollama_config import merge_defaults, GEMINI_MODEL
 from query_rag import query as rag_query
 from intent_router import route_question
 from firestore_query import execute_query as firestore_execute
@@ -286,7 +286,7 @@ async def cmd_ask(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
             synth_start = time.time()
             synth_resp = llm_completion(
-                model="gemini/gemini-2.5-flash",
+                model=GEMINI_MODEL,
                 messages=[{"role": "user", "content": (
                     f"Previous query returned {session['count']} results:\n\n"
                     f"{prev_results_text[:3000]}\n\n"
@@ -297,13 +297,13 @@ async def cmd_ask(update: Update, context: ContextTypes.DEFAULT_TYPE):
             )
             synth_content = synth_resp.choices[0].message.content
             synth_latency = int((time.time() - synth_start) * 1000)
-            log_event("llm_call", "telegram-bot", "gemini/gemini-2.5-flash", "session-followup",
+            log_event("llm_call", "telegram-bot", GEMINI_MODEL, "session-followup",
                       input_summary=f"followup: {question}"[:200],
                       output_summary=synth_content[:200],
                       latency_ms=synth_latency, status="success")
             response_text = f"[Session Context -> Gemini]\n\n{synth_content[:2000]}"
         except Exception as e:
-            log_event("llm_call", "telegram-bot", "gemini/gemini-2.5-flash", "session-followup",
+            log_event("llm_call", "telegram-bot", GEMINI_MODEL, "session-followup",
                       input_summary=f"followup: {question}"[:200],
                       status="error", error=str(e))
             response_text = f"Session follow-up error: {e}"
@@ -343,7 +343,7 @@ async def cmd_ask(update: Update, context: ContextTypes.DEFAULT_TYPE):
                         from litellm import completion as llm_completion
                         synth_start = time.time()
                         synth_resp = llm_completion(
-                            model="gemini/gemini-2.5-flash",
+                            model=GEMINI_MODEL,
                             messages=[{"role": "user", "content": (
                                 f"Based on these web search results:\n\n{raw_text[:3000]}\n\n"
                                 f"Answer this question concisely: {question}"
@@ -353,7 +353,7 @@ async def cmd_ask(update: Update, context: ContextTypes.DEFAULT_TYPE):
                         )
                         synth_content = synth_resp.choices[0].message.content
                         synth_latency = int((time.time() - synth_start) * 1000)
-                        log_event("llm_call", "telegram-bot", "gemini/gemini-2.5-flash", "synthesize-web",
+                        log_event("llm_call", "telegram-bot", GEMINI_MODEL, "synthesize-web",
                                   input_summary=f"web synth: {question}"[:200],
                                   output_summary=synth_content[:200],
                                   latency_ms=synth_latency, status="success")
@@ -399,7 +399,7 @@ async def cmd_ask(update: Update, context: ContextTypes.DEFAULT_TYPE):
                     from litellm import completion as llm_completion
                     synth_start = time.time()
                     synth_resp = llm_completion(
-                        model="gemini/gemini-2.5-flash",
+                        model=GEMINI_MODEL,
                         messages=[{"role": "user", "content": (
                             f"Based on these Firestore query results:\n\n{result[:3000]}\n\n"
                             f"Answer this question naturally: {question}"
@@ -409,7 +409,7 @@ async def cmd_ask(update: Update, context: ContextTypes.DEFAULT_TYPE):
                     )
                     synth_content = synth_resp.choices[0].message.content
                     synth_latency = int((time.time() - synth_start) * 1000)
-                    log_event("llm_call", "telegram-bot", "gemini/gemini-2.5-flash", "synthesize",
+                    log_event("llm_call", "telegram-bot", GEMINI_MODEL, "synthesize",
                               input_summary=f"synth: {question}"[:200],
                               output_summary=synth_content[:200],
                               latency_ms=synth_latency, status="success")
@@ -454,14 +454,14 @@ async def cmd_ask(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 )
                 synth_start = time.time()
                 synth_resp = llm_completion(
-                    model="gemini/gemini-2.5-flash",
+                    model=GEMINI_MODEL,
                     messages=[{"role": "user", "content": synth_prompt}],
                     max_tokens=1024,
                     thinking={"type": "disabled"},
                 )
                 synth_content = synth_resp.choices[0].message.content
                 synth_latency = int((time.time() - synth_start) * 1000)
-                log_event("llm_call", "telegram-bot", "gemini/gemini-2.5-flash", "ask",
+                log_event("llm_call", "telegram-bot", GEMINI_MODEL, "ask",
                           input_summary=synth_prompt[:200], output_summary=synth_content[:200],
                           latency_ms=synth_latency, status="success")
                 response_text = f'[ChromaDB -> Gemini]\n\n{synth_content[:2000]}'
@@ -509,13 +509,13 @@ async def cmd_search(update: Update, context: ContextTypes.DEFAULT_TYPE):
         # Try OpenClaw synthesis
         try:
             from interpreter import interpreter
-            interpreter.llm.model = 'gemini/gemini-2.5-flash'
+            interpreter.llm.model = GEMINI_MODEL
             interpreter.llm.api_key = os.environ.get('GEMINI_API_KEY', '')
             interpreter.auto_run = True
             synth_start = time.time()
             answer = interpreter.chat(f'Summarize these search results for: {query_text}\n\n{raw_results}')
             synth_content = answer[-1]['content'] if answer else raw_results
-            log_event("llm_call", "telegram-bot", "gemini/gemini-2.5-flash", "chat",
+            log_event("llm_call", "telegram-bot", GEMINI_MODEL, "chat",
                       input_summary=f"Summarize search: {query_text}"[:200],
                       output_summary=synth_content[:200],
                       latency_ms=int((time.time() - synth_start) * 1000), status="success")

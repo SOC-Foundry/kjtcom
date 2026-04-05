@@ -52,7 +52,6 @@ def execute_query(filters, intent, sort_field=None, sort_order="desc", limit=Non
     try:
         db = _get_db()
         from google.cloud.firestore_v1.base_query import FieldFilter
-        from google.cloud import firestore as firestore_module
 
         query = db.collection("locations")
         array_filters = []
@@ -66,29 +65,9 @@ def execute_query(filters, intent, sort_field=None, sort_order="desc", limit=Non
             else:
                 query = query.where(filter=FieldFilter(field, "==", value))
 
-        # Rating-aware sorting (v9.43) - try server-side, fall back to client-side
-        use_client_sort = False
-        if sort_field:
-            try:
-                direction = (firestore_module.Query.DESCENDING
-                             if sort_order == "desc"
-                             else firestore_module.Query.ASCENDING)
-                sorted_query = query.order_by(sort_field, direction=direction)
-                if limit and isinstance(limit, int):
-                    sorted_query = sorted_query.limit(limit)
-                results = sorted_query.stream()
-                docs = [doc.to_dict() for doc in results]
-            except Exception as sort_err:
-                # Composite index missing - fall back to client-side sort
-                log_event("command", "firestore-query", "firestore", "sort-fallback",
-                          input_summary=f"Server sort failed for {sort_field}: {sort_err}"[:200],
-                          status="success")
-                use_client_sort = True
-                results = query.stream()
-                docs = [doc.to_dict() for doc in results]
-        else:
-            results = query.stream()
-            docs = [doc.to_dict() for doc in results]
+        # Always fetch without server-side orderBy (v9.44 - avoids composite index requirement)
+        results = query.stream()
+        docs = [doc.to_dict() for doc in results]
         latency = int((time.time() - start) * 1000)
 
         # G34 post-filter: additional array values beyond the first
@@ -99,8 +78,8 @@ def execute_query(filters, intent, sort_field=None, sort_order="desc", limit=Non
         for field, value in array_filters[1:]:
             docs = [d for d in docs if value[0] in d.get(field, [])]
 
-        # Client-side sort fallback when Firestore composite index is missing (v9.43)
-        if use_client_sort and sort_field:
+        # Python-side sort (v9.44 - always client-side, avoids composite index dependency)
+        if sort_field:
             def _get_nested(doc, path):
                 """Navigate nested dict by dot-separated path."""
                 parts = path.split('.')

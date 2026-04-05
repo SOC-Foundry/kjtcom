@@ -119,6 +119,22 @@
       "iteration_resolved": "v9.40",
       "root_cause": "pipeline",
       "prevention": "Prefer direct Python imports over subprocess CLI calls for internal tools"
+    },
+    {
+      "id": "G56",
+      "description": "Firestore composite index required for rating sort + filter combo",
+      "resolution": "Python-side sort in firestore_query.py - fetch all matching docs, sort by nested field in Python, apply limit. Avoids composite index dependency entirely.",
+      "iteration_resolved": "v9.44",
+      "root_cause": "firestore",
+      "prevention": "Always use Python-side sort for nested fields to avoid composite index requirements"
+    },
+    {
+      "id": "G57",
+      "description": "Gemini Flash model string instability across litellm versions",
+      "resolution": "Centralized model string as GEMINI_MODEL constant in scripts/utils/ollama_config.py. All litellm callers import from there. v9.44 confirmed gemini/gemini-2.5-flash works with litellm 1.83.3.",
+      "iteration_resolved": "v9.44",
+      "root_cause": "llm_config",
+      "prevention": "Never hardcode Gemini model string in individual scripts. Always use GEMINI_MODEL from ollama_config.py."
     }
   ]
 }

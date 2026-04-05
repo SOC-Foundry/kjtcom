@@ -220,6 +220,7 @@ MANDATORY RULES:
 3. The "evidence" field MUST contain a file path, command output, or test result that proves the outcome. "Complete" without evidence is reclassified as "unverified".
 4. Event counts in your response must match the execution context exactly.
 5. Do not use corporate language like "delivered a successful deployment." State what was built and what it does.
+6. Use the EXACT workstream names from the design doc W# labels. Do not rename, reorder, or combine workstreams.
 
 Based on the design document and execution context, score each workstream (W1-W6).
 Return ONLY a JSON array of objects with these fields:

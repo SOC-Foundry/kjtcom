@@ -3,7 +3,13 @@
 
 G51 permanent fix: think=False on all calls.
 Token efficiency: num_predict=512 default, 2048 for evaluations only.
+Gemini Flash model string centralized here (v9.44+).
 """
+
+# Centralized Gemini Flash model string for all litellm calls.
+# History: v9.41 gemini/gemini-2.0-flash deprecated (404),
+# v9.43 litellm.AuthenticationError 400, v9.44 fixed.
+GEMINI_MODEL = "gemini/gemini-2.5-flash"
 
 OLLAMA_DEFAULTS = {
     "stream": False,

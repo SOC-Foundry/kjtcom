@@ -1,12 +1,12 @@
 # kjtcom - Claude Code Agent Instructions
 
-## Current Iteration: v9.43
+## Current Iteration: v9.44
 
 IMPORTANT: Read documents in this EXACT order before executing:
 
 1. This file (CLAUDE.md)
-2. docs/kjtcom-design-v9.43.md - Workstreams, architecture, amendments
-3. docs/kjtcom-plan-v9.43.md - Step-by-step execution
+2. docs/kjtcom-design-v9.44.md - Workstreams, architecture, amendments
+3. docs/kjtcom-plan-v9.44.md - Step-by-step execution
 
 Do NOT begin execution until files 1-3 have been read.
 
@@ -16,25 +16,31 @@ Do NOT begin execution until files 1-3 have been read.
 
 ### Pre-Launch Checklist
 1. CLAUDE.md and GEMINI.md MUST be saved to disk in the launch directory BEFORE starting.
-2. /quit every session and start fresh between iterations. Token context degrades over long sessions.
+2. /quit every session and start fresh between iterations.
 3. `set -gx IAO_ITERATION v9.XX` BEFORE launching.
 4. Verify Ollama: `ollama list` shows 4 models.
-5. Restart Telegram bot: `sudo systemctl restart kjtcom-telegram-bot`
+5. Restart bot: `sudo systemctl restart kjtcom-telegram-bot`
 6. Verify Firebase SA: `test -f ~/.config/gcloud/kjtcom-sa.json`.
+7. Verify archive integrity: `ls docs/archive/ | wc -l` (must be >= prior iteration count).
 
 ### Session Discipline
 - ONE iteration per session. Never chain.
-- If session crashes, /quit and relaunch. Do not recover mid-session.
+- If session crashes, /quit and relaunch.
 - Every session ends with: artifact production -> post-flight verification -> promotion.
-- Drafts cross-checked and promoted before session ends. NEVER leave unpromoted drafts.
+- Drafts cross-checked and promoted. NEVER leave unpromoted drafts.
 - Harness files GROW. Never abbreviate.
-- Previous iteration docs go to docs/archive/. NEVER delete them.
+
+### CRITICAL: Document Archival
+- **NEVER run rm or git rm on ANY docs/kjtcom-*.md file.**
+- Use `mv docs/kjtcom-*-v{X}.md docs/archive/` instead.
+- If you find yourself about to delete a doc file, STOP. Archive it.
+- This rule has been violated in v9.42 and v9.43. It must not happen again.
 
 ### Environment Architecture
 - GCP SA keys: ~/.config/gcloud/{project}-sa.json (NEVER in repo)
 - API keys: fish shell config, per-project prefixed (KJTCOM_*)
 - Agent launches: `claude --dangerously-skip-permissions` / `gemini --yolo`
-- Bot: systemd service (kjtcom-telegram-bot.service), not tmux
+- Bot: systemd (kjtcom-telegram-bot.service)
 - Sleep mask: `systemctl mask suspend` on dev machines
 
 ---
@@ -43,31 +49,24 @@ Do NOT begin execution until files 1-3 have been read.
 
 After every iteration, BEFORE the session ends:
 
-1. `curl -s -o /dev/null -w "%{http_code}" https://kylejeromethompson.com` -> expect 200
-2. Verify bot: send /status to @kjtcom_iao_bot, verify response
-3. Verify query: send `/ask how many entities are in the database`, verify count >= 6,181
-4. Run: `python3 scripts/post_flight.py`
-5. Log results in build log under POST-FLIGHT VERIFICATION section
-6. If ANY check fails: log as gotcha, do NOT mark iteration complete
+1. `python3 scripts/post_flight.py` - all checks must pass
+2. Verify site: HTTP 200 from kylejeromethompson.com
+3. Verify bot: /status responds via Telegram
+4. Verify query: /ask returns correct entity count (>= 6,181)
+5. Verify architecture.html loads
+6. Log results in build log POST-FLIGHT VERIFICATION section
+7. If ANY check fails: fix, re-deploy, re-verify. Do NOT end session with failures.
 
 ---
 
 ## Qwen Claim Audit - MANDATORY (v9.43+)
 
-Every workstream Qwen marks "complete" MUST have linked evidence:
-- File exists (ls -la)
-- Command output captured
-- Test passed (flutter test)
-- Bot responded (Telegram API)
-- Site loaded (curl HTTP 200)
-
-"Complete" without evidence = "unverified."
-
-Workstream Scorecard MUST include Evidence column.
-
-Qwen MCP whitelist (only valid values): Firebase, Context7, Firecrawl, Playwright, Dart. Anything else is hallucinated. If no MCP used, column is "-".
-
-No "TBD" in Trident evaluation. No corporate fluff. Specific numbers required.
+- Every "complete" workstream needs linked evidence in the scorecard
+- Scorecard includes Evidence column
+- Valid MCPs ONLY: Firebase, Context7, Firecrawl, Playwright, Dart
+- No "TBD" anywhere in report or changelog
+- Workstream names must EXACTLY match design doc W# labels (v9.44+ fix)
+- Specific numbers required (entity counts, chunk counts, test results)
 
 ---
 
@@ -81,45 +80,49 @@ No "TBD" in Trident evaluation. No corporate fluff. Specific numbers required.
 - No em-dashes. " - " for dashes. "->" for arrows.
 - "pipelines" and "log types," never "tables" or "datasets."
 - Build on existing code. Read files before overwriting.
-- Previous iteration docs archived to docs/archive/, NEVER deleted.
+- **NEVER delete docs. ALWAYS archive to docs/archive/.**
 
 ---
 
 ## Token Efficiency Mandate (v9.40+)
 
-- Target: <50K Claude Code tokens per infrastructure iteration
-- ALL Ollama calls use scripts/utils/ollama_config.py (think:false mandatory, G51)
-- num_predict: 512 default, 2048 for evaluations, 2048 with 45-min timeout for batch ops
-- Prefer local LLM for simple tasks. Log all usage via iao_logger.py.
+- Target: <50K Claude Code tokens per iteration
+- ALL Ollama calls use ollama_config.py (think:false, G51)
+- num_predict: 512 default, 2048 evaluations, 2048 batch (45-min timeout)
+- Gemini Flash model: use GEMINI_MODEL from ollama_config.py (v9.44+)
+- Log all usage via iao_logger.py
+
+---
+
+## Gemini Flash Model String (v9.44+)
+
+The Gemini Flash model string is centralized in scripts/utils/ollama_config.py as GEMINI_MODEL. ALL litellm calls for Gemini must use this constant. History of model string issues:
+- v9.41: gemini/gemini-2.0-flash deprecated (404)
+- v9.43: litellm.AuthenticationError 400
+- v9.44: diagnosed and fixed, centralized as GEMINI_MODEL
+
+Never hardcode the model string in individual scripts.
 
 ---
 
 ## Multi-Agent Orchestration (v9.35+)
 
-Minimum 2 LLMs per iteration. Document per workstream.
+Minimum 2 LLMs. Document per workstream.
 
 | Agent | Engine | Use For |
 |-------|--------|---------|
-| Claude Code | Claude API | Primary executor, Flutter, architecture |
+| Claude Code | Claude API | Primary executor |
 | Qwen3.5-9B | Ollama local | Evaluation, code review |
 | Nemotron Mini 4B | Ollama local | Fast triage |
-| GLM-4.6V-Flash | Ollama local | Vision, screenshots |
+| GLM-4.6V-Flash | Ollama local | Vision |
 | nomic-embed-text | Ollama local | Embeddings only |
 | Gemini Flash | Gemini API (litellm) | Intent routing, synthesis |
 
 ---
 
-## MCP Servers (5 total)
+## MCP Servers (5 total - ONLY these names are valid)
 
-| Server | Use For |
-|--------|---------|
-| Firebase MCP | Firestore queries |
-| Context7 MCP | API documentation |
-| Firecrawl MCP | Web scraping |
-| Playwright MCP | Browser automation (G47: CanvasKit blocks DOM) |
-| Dart MCP | Code analysis |
-
-These are the ONLY valid MCP server names. No others exist.
+Firebase, Context7, Firecrawl, Playwright, Dart. No others exist.
 
 ---
 
@@ -127,33 +130,29 @@ These are the ONLY valid MCP server names. No others exist.
 
 Middleware is the product. kjtcom is the lab. Every iteration adds to middleware.
 
-Components: harnesses (CLAUDE.md/GEMINI.md - grow, never shrink), harness registry (middleware_registry.json), evaluator (run_evaluator.py + workstream scoring + claim audit), RAG (embed_archive.py + query_rag.py), intent router (3 routes: firestore/chromadb/web), Firestore query module, county enrichment, event logging, artifact generator (--promote/--validate-only), gotcha archive, bot (systemd managed, session memory v9.43+, rating-aware v9.43+), config (ollama_config.py with batch defaults), post-flight verification (v9.43+), architecture HTML renderer (v9.43+).
-
----
-
-## Artifact Discipline (v9.42+)
-
-Every iteration produces:
-- kjtcom-design-v{X}.md (pre-staged)
-- kjtcom-plan-v{X}.md (pre-staged)
-- kjtcom-build-v{X}.md (generated, cross-checked, promoted; includes POST-FLIGHT VERIFICATION section)
-- kjtcom-report-v{X}.md (Workstream Scorecard with Evidence column, promoted)
-- CLAUDE.md + GEMINI.md (updated)
-- Changelog entry (specific numbers, not TBD)
-
-Workflow: generate -> evaluate -> validate -> promote. Drafts never sit unpromoted.
+Components: harnesses (grow, never shrink), harness registry, evaluator (workstream scoring + claim audit), RAG, intent router (3 routes: firestore/chromadb/web), Firestore query (G34 workaround, Python-side sort v9.44+), county enrichment, event logging, artifact generator (--promote/--validate-only), gotcha archive, bot (systemd, session memory v9.43+, rating-aware v9.44+), config (ollama_config.py: defaults + batch + GEMINI_MODEL), post-flight verification, architecture HTML renderer.
 
 ---
 
 ## Bot Session Memory (v9.43+)
 
-Telegram bot stores last query context per user_id (in-memory dict, 10-min TTL). References like "those 26" or "out of them" resolve to previous result set. Context passed to Gemini Flash for follow-up analysis.
+In-memory dict keyed by user_id. 10-min TTL. "those 26" or "out of them" resolves to previous result set. Context passed to Gemini Flash for follow-up.
 
 ---
 
-## Rating-Aware Queries (v9.43+)
+## Rating-Aware Queries (v9.43+, fixed v9.44)
 
-schema_reference.json includes sortable_fields: t_enrichment.google_places.rating and user_ratings_total. Intent router recognizes "highest rated", "best", "top N", "most reviewed" and generates sort/limit parameters.
+schema_reference.json includes sortable_fields: t_enrichment.google_places.rating and user_ratings_total. Sort in Python (v9.44) to avoid composite index dependency. Intent router recognizes "highest rated", "best", "top N".
+
+---
+
+## Artifact Discipline (v9.42+)
+
+Every iteration produces: design, plan, build (with POST-FLIGHT section), report (with Evidence column), CLAUDE.md, GEMINI.md, changelog entry (not a stub).
+
+Workflow: generate -> evaluate -> validate -> promote. Never leave unpromoted drafts.
+
+Changelog must use NEW/UPDATED/FIXED prefixes with specific numbers. "TBD" is banned.
 
 ---
 
@@ -161,12 +160,12 @@ schema_reference.json includes sortable_fields: t_enrichment.google_places.ratin
 
 | Fact | Value |
 |------|-------|
-| Machine | NZXTcos: i9-13900K, 64GB RAM, RTX 2080 SUPER, CachyOS, fish |
+| Machine | NZXTcos: i9-13900K, 64GB, RTX 2080 SUPER, CachyOS, fish |
 | Path | ~/dev/projects/kjtcom |
 | Firebase | kjtcom-c78cd |
 | SA | ~/.config/gcloud/kjtcom-sa.json |
 | Flutter | 3.41.6, Dart 3.11.4 |
-| Iteration | set -gx IAO_ITERATION v9.43 |
+| Iteration | set -gx IAO_ITERATION v9.44 |
 | Bot | systemd: kjtcom-telegram-bot.service |
 | Bot Env | /home/kyle/.config/kjtcom/bot.env |
 
@@ -181,8 +180,9 @@ schema_reference.json includes sortable_fields: t_enrichment.google_places.ratin
 | G43 | Map tile CORS | ACTIVE |
 | G47 | CanvasKit blocks Playwright DOM | Open |
 | G53 | Firebase MCP reauth per session | Recurring |
+| G57 | Gemini Flash model string instability | RESOLVED (v9.44) - centralized in GEMINI_MODEL |
 
-See data/gotcha_archive.json for resolved gotchas.
+See data/gotcha_archive.json for all resolved gotchas.
 
 ---
 
@@ -190,20 +190,16 @@ See data/gotcha_archive.json for resolved gotchas.
 
 | File | Purpose |
 |------|---------|
-| scripts/telegram_bot.py | Bot (3-route, session memory, rating-aware, systemd) |
-| scripts/intent_router.py | Gemini Flash (3 routes, sort/limit) |
-| scripts/firestore_query.py | Firestore query (G34 workaround, orderBy) |
-| scripts/post_flight.py | Post-flight verification (NEW v9.43) |
-| scripts/build_architecture_html.py | MMD -> HTML renderer (NEW v9.43) |
+| scripts/telegram_bot.py | Bot (3-route, session memory, rating sort, systemd) |
+| scripts/intent_router.py | Gemini Flash intent (3 routes, sort/limit, uses GEMINI_MODEL) |
+| scripts/firestore_query.py | Firestore query (G34, Python-side sort v9.44+) |
+| scripts/post_flight.py | Post-flight verification |
+| scripts/build_architecture_html.py | MMD -> HTML renderer |
 | scripts/enrich_counties.py | County enrichment |
-| scripts/generate_artifacts.py | Artifacts (--promote, --validate-only, Evidence column) |
-| scripts/run_evaluator.py | Qwen eval (workstreams, claim audit, MCP whitelist) |
-| scripts/query_rag.py | ChromaDB search |
-| scripts/embed_archive.py | Archive -> ChromaDB |
-| scripts/brave_search.py | Brave Search API |
-| scripts/utils/iao_logger.py | Event logger |
-| scripts/utils/ollama_config.py | Ollama defaults (batch: 45-min timeout) |
-| data/schema_reference.json | Schema ref (sortable_fields v9.43+) |
+| scripts/generate_artifacts.py | Artifacts (--promote, --validate-only, Evidence) |
+| scripts/run_evaluator.py | Qwen eval (claim audit, exact W# names) |
+| scripts/utils/ollama_config.py | Ollama defaults + batch + GEMINI_MODEL |
+| data/schema_reference.json | Schema ref (sortable_fields) |
 | data/gotcha_archive.json | Resolved gotchas |
 | data/middleware_registry.json | Middleware catalog |
-| app/web/architecture.html | Interactive architecture diagram (NEW v9.43) |
+| app/web/architecture.html | Interactive architecture diagram |

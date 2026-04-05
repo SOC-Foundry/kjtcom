@@ -222,13 +222,51 @@ def generate_changelog_entry(iteration):
     lines = diff_stat.strip().split('\n')
     files_count = len([l for l in lines if l.strip() and '|' in l])
 
+    # Build changelog entries from event log (v9.44 - no TBD)
+    event_summary = get_event_log_summary(iteration)
+    scores_entry = get_agent_scores(iteration)
+
+    changelog_lines = []
+    if scores_entry and 'workstreams' in scores_entry:
+        for ws in scores_entry['workstreams']:
+            outcome = ws.get('outcome', 'unknown')
+            name = ws.get('name', 'Unknown')
+            evidence = ws.get('evidence', '')
+            if outcome == 'complete':
+                prefix = "FIXED" if "fix" in name.lower() or "recover" in name.lower() else "UPDATED"
+                if any(kw in name.lower() for kw in ['new', 'create', 'add']):
+                    prefix = "NEW"
+                changelog_lines.append(f"{prefix}: {name} - {evidence or 'verified'}")
+            elif outcome == 'partial':
+                changelog_lines.append(f"UPDATED: {name} (partial) - {evidence or 'in progress'}")
+
+    if not changelog_lines:
+        changelog_lines = [f"UPDATED: Iteration {iteration} - see build log for details"]
+
+    changelog_entry = "\n".join(f"- {line}" for line in changelog_lines)
+
+    # Count interventions from event log
+    intervention_count = 0
+    try:
+        with open(EVENT_LOG) as f:
+            for line in f:
+                line = line.strip()
+                if not line:
+                    continue
+                ev = json.loads(line)
+                if ev.get('iteration') == iteration and ev.get('event_type') == 'intervention':
+                    intervention_count += 1
+    except FileNotFoundError:
+        pass
+
     filled = template.format(
         iteration=iteration,
         date=date,
-        changelog_entry="Bot session memory, rating-aware queries, post-flight verification, architecture HTML, Qwen evaluator overhaul",
+        changelog_entry=changelog_entry,
         files_changed_count=files_count,
         agents_used="Claude Code, Qwen3.5-9B, Gemini Flash",
-        llms_used="gemini-2.5-flash, qwen3.5:9b, nomic-embed-text"
+        llms_used="gemini-2.5-flash, qwen3.5:9b, nomic-embed-text",
+        intervention_count=intervention_count
     )
 
     out_path = os.path.join(DRAFTS_DIR, f'changelog-{iteration}.md')
