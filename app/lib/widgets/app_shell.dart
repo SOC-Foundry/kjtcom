@@ -189,7 +189,7 @@ class _ResultsArea extends ConsumerWidget {
           Positioned.fill(
             child: GestureDetector(
               onTap: () =>
-                  ref.read(selectedEntityProvider.notifier).state = null,
+                  ref.read(selectedEntityProvider.notifier).select(null),
               child: const ColoredBox(color: Color(0x80000000)),
             ),
           ),
@@ -233,7 +233,7 @@ class _TabWithDetailPanel extends ConsumerWidget {
           Positioned.fill(
             child: GestureDetector(
               onTap: () =>
-                  ref.read(selectedEntityProvider.notifier).state = null,
+                  ref.read(selectedEntityProvider.notifier).select(null),
               child: const ColoredBox(color: Color(0x80000000)),
             ),
           ),

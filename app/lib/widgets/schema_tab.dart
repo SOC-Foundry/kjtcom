@@ -278,7 +278,7 @@ class _FieldCard extends ConsumerWidget {
                     final current = controller.text.trimRight();
                     final newText = current.isEmpty ? clause : '$current\n$clause';
                     // Set flag BEFORE any changes to prevent ref.listen override
-                    ref.read(programmaticUpdateProvider.notifier).state = true;
+                    ref.read(programmaticUpdateProvider.notifier).set(true);
                     controller.text = newText;
                     
                     // Cursor between the quotes (one char before end of clause)
@@ -292,11 +292,11 @@ class _FieldCard extends ConsumerWidget {
                     });
                     
                     ref.read(queryProvider.notifier).setText(newText);
-                    ref.read(activeTabProvider.notifier).state = 0;
+                    ref.read(activeTabProvider.notifier).setTab(0);
                     
                     // Clear flag after microtask (next event loop tick)
                     Future.microtask(() {
-                      ref.read(programmaticUpdateProvider.notifier).state = false;
+                      ref.read(programmaticUpdateProvider.notifier).set(false);
                     });
                   },
                   child: Container(

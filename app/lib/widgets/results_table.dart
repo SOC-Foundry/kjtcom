@@ -148,7 +148,7 @@ class ResultsTable extends ConsumerWidget {
             label: '\u2039 Previous',
             enabled: page > 0,
             onTap: () =>
-                ref.read(currentPageProvider.notifier).state = page - 1,
+                ref.read(currentPageProvider.notifier).setPage(page - 1),
           ),
           const SizedBox(width: Tokens.space4),
           Text(
@@ -164,7 +164,7 @@ class ResultsTable extends ConsumerWidget {
             label: 'Next \u203A',
             enabled: page < totalPages - 1,
             onTap: () =>
-                ref.read(currentPageProvider.notifier).state = page + 1,
+                ref.read(currentPageProvider.notifier).setPage(page + 1),
           ),
         ],
       ),
@@ -226,8 +226,8 @@ class ResultsTable extends ConsumerWidget {
       cursor: SystemMouseCursors.click,
       child: GestureDetector(
         onTap: () {
-          ref.read(selectedEntityProvider.notifier).state =
-              isSelected ? null : entity;
+          ref.read(selectedEntityProvider.notifier).select(
+              isSelected ? null : entity);
         },
         child: AnimatedContainer(
           duration: Tokens.rowHighlight,
@@ -345,7 +345,7 @@ class _PageSizeDropdown extends StatelessWidget {
           ],
           onChanged: (value) {
             if (value != null) {
-              ref.read(pageSizeProvider.notifier).state = value;
+              ref.read(pageSizeProvider.notifier).setSize(value);
             }
           },
         ),

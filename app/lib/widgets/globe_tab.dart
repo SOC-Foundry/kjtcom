@@ -273,7 +273,7 @@ class _ContinentCardState extends State<_ContinentCard> {
             controller.text = newText;
             controller.selection = TextSelection.collapsed(offset: newText.length);
             widget.ref.read(queryProvider.notifier).setText(newText);
-            widget.ref.read(activeTabProvider.notifier).state = 0;
+            widget.ref.read(activeTabProvider.notifier).setTab(0);
           },
           child: AnimatedContainer(
             duration: Tokens.rowHighlight,
@@ -363,7 +363,7 @@ class _CountryChipState extends State<_CountryChip> {
           controller.text = newText;
           controller.selection = TextSelection.collapsed(offset: newText.length);
           widget.ref.read(queryProvider.notifier).setText(newText);
-          widget.ref.read(activeTabProvider.notifier).state = 0;
+          widget.ref.read(activeTabProvider.notifier).setTab(0);
         },
         child: AnimatedContainer(
           duration: Tokens.rowHighlight,

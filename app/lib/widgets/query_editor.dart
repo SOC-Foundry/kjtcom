@@ -50,7 +50,7 @@ class _QueryEditorState extends ConsumerState<QueryEditor> {
           ..sort();
         if (suggestions.length > 5) suggestions = suggestions.take(5).toList();
       } else if (ctx.mode == AutocompleteMode.value && ctx.fieldName != null) {
-        final valueIndex = ref.read(valueIndexProvider).valueOrNull ?? {};
+        final valueIndex = ref.read(valueIndexProvider).value ?? {};
         final values = valueIndex[ctx.fieldName] ?? [];
         suggestions = values
             .where((v) =>
@@ -158,7 +158,7 @@ class _QueryEditorState extends ConsumerState<QueryEditor> {
   Widget build(BuildContext context) {
     // Re-trigger suggestions when value index finishes loading (W3 fix)
     ref.listen(valueIndexProvider, (prev, next) {
-      if (prev?.valueOrNull == null && next.valueOrNull != null) {
+      if (prev?.value == null && next.value != null) {
         _onTextChanged();
       }
     });
@@ -424,7 +424,7 @@ class _QueryEditorState extends ConsumerState<QueryEditor> {
   void _onClear() {
     _controller.clear();
     ref.read(queryProvider.notifier).setText('');
-    ref.read(selectedEntityProvider.notifier).state = null;
+    ref.read(selectedEntityProvider.notifier).select(null);
     setState(() {});
   }
 

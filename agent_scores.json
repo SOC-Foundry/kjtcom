@@ -1,0 +1,121 @@
+[
+  {
+    "iteration": "v9.35",
+    "date": "2026-04-04",
+    "evaluator": "qwen3.5:9b",
+    "scores": [
+      {
+        "agent": "Claude Code (Opus 4.6)",
+        "role": "Primary executor",
+        "problem_analysis": 7,
+        "code_correctness": 7,
+        "efficiency": 7,
+        "gotcha_avoidance": 7,
+        "novel_contribution": 4,
+        "total": 32,
+        "notes": "Primary executor with multiple infrastructure changes including .mcp.json config and install scripts. Some API key interventions indicate minor friction."
+      },
+      {
+        "agent": "Qwen3.5-9B",
+        "role": "Code reviewer",
+        "problem_analysis": 6,
+        "code_correctness": 6,
+        "efficiency": 6,
+        "gotcha_avoidance": 6,
+        "novel_contribution": 4,
+        "total": 28,
+        "notes": "Caught firebase version concern, 1 incorrect suggestion (package name)."
+      },
+      {
+        "agent": "Nemotron Mini 4B",
+        "role": "Verification",
+        "problem_analysis": 3,
+        "code_correctness": 3,
+        "efficiency": 3,
+        "gotcha_avoidance": 3,
+        "novel_contribution": 2,
+        "total": 14,
+        "notes": "Minimal verification role - responded to test prompts only."
+      },
+      {
+        "agent": "GLM-4.6V-Flash-9B",
+        "role": "Verification",
+        "problem_analysis": 3,
+        "code_correctness": 3,
+        "efficiency": 3,
+        "gotcha_avoidance": 3,
+        "novel_contribution": 2,
+        "total": 14,
+        "notes": "Minimal verification role - responded to test prompts only."
+      }
+    ],
+    "gotcha_events": []
+  },
+  {
+    "iteration": "v9.36",
+    "date": "2026-04-04",
+    "evaluator": "qwen3.5:9b",
+    "scores": [
+      {
+        "agent": "Claude Code (Opus 4.6)",
+        "role": "Primary executor",
+        "problem_analysis": 9,
+        "code_correctness": 7,
+        "efficiency": 8,
+        "gotcha_avoidance": 8,
+        "novel_contribution": 9,
+        "total": 41,
+        "notes": "Installed Playwright, tested 4 MCP servers, created evaluator middleware, wrote CDP scrape script, produced all artifacts, discovered 3 new gotchas. Panther scrape blocked on Chrome port intervention."
+      },
+      {
+        "agent": "Qwen3.5-9B",
+        "role": "DOM advisor + evaluator",
+        "problem_analysis": 7,
+        "code_correctness": 7,
+        "efficiency": 6,
+        "gotcha_avoidance": 7,
+        "novel_contribution": 6,
+        "total": 33,
+        "notes": "Provided 8 DOM selector recommendations for Panther React app. Scored v9.35 agents. Required /no_think workaround for JSON output (G51)."
+      }
+    ],
+    "gotcha_events": [
+      {"id": "G51", "description": "Qwen thinking mode produces empty responses without /no_think"},
+      {"id": "G52", "description": "Firecrawl MCP not loading despite .mcp.json config"},
+      {"id": "G53", "description": "Firebase MCP needs fresh login each session"}
+    ]
+  },
+  {
+    "iteration": "v9.37",
+    "date": "2026-04-04",
+    "evaluator": "qwen3.5:9b",
+    "scores": [
+      {
+        "agent": "Claude Code (Opus 4.6)",
+        "role": "Primary executor",
+        "problem_analysis": 9,
+        "code_correctness": 9,
+        "efficiency": 9,
+        "gotcha_avoidance": 9,
+        "novel_contribution": 8,
+        "total": 44,
+        "notes": "Upgraded 5 major deps with Riverpod 3.x migration (8 errors, 38 warnings, all fixed). 15/15 tests, 0 analyze issues. All 4 MCP servers verified operational. Panther scrape executed with security-compliant data handling. 0 interventions."
+      },
+      {
+        "agent": "Qwen3.5-9B",
+        "role": "Upgrade risk advisor + evaluator",
+        "problem_analysis": 7,
+        "code_correctness": 7,
+        "efficiency": 6,
+        "gotcha_avoidance": 7,
+        "novel_contribution": 6,
+        "total": 33,
+        "notes": "Identified 3 upgrade risks (Firestore API, Riverpod lifecycle, web compat). Processing middleware registry. Scored v9.37 agents."
+      }
+    ],
+    "gotcha_events": [
+      {"id": "G52", "description": "Firecrawl MCP RESOLVED - transient loading issue cleared"},
+      {"id": "G53", "description": "Firebase MCP RESOLVED for session - reauth completed by Kyle"}
+    ]
+  }
+]

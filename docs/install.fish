@@ -161,6 +161,42 @@ echo "  Installing pinned tools..."
 sudo npm install -g firebase-tools@15.10.0 2>&1 | tee -a $LOG_FILE
 
 # ---------------------------------------------------------------------------
+# Step 5b/10: Ollama + local LLMs (v9.35+)
+# ---------------------------------------------------------------------------
+echo ""
+echo "[5b/10] Installing Ollama and local LLMs..."
+
+if not command -q ollama
+    echo "  Ollama not found. Install from https://ollama.com/download"
+    echo "  On Arch: yay -S ollama-cuda (NVIDIA) or yay -S ollama (CPU/AMD)"
+    set FAIL (math $FAIL + 1)
+else
+    echo "  Ollama: "(ollama --version)
+    sudo systemctl enable ollama 2>/dev/null; or true
+    sudo systemctl start ollama 2>/dev/null; or true
+
+    echo "  Pulling local LLMs (sequential, ~15 GB total)..."
+    ollama pull qwen3.5:9b 2>&1 | tee -a $LOG_FILE
+    ollama pull nemotron-mini:4b 2>&1 | tee -a $LOG_FILE
+    ollama pull haervwe/GLM-4.6V-Flash-9B 2>&1 | tee -a $LOG_FILE
+
+    echo "  Installed models:"
+    ollama list 2>&1 | tee -a $LOG_FILE
+end
+
+# ---------------------------------------------------------------------------
+# Step 5c/10: Dart MCP server verification (v9.37+)
+# ---------------------------------------------------------------------------
+echo ""
+echo "[5c/10] Verifying Dart MCP server..."
+
+if dart mcp-server --help >/dev/null 2>&1
+    echo "  PASS: dart mcp-server available (requires Dart 3.9+)"
+else
+    echo "  WARN: dart mcp-server not available - ensure Dart SDK >= 3.9"
+end
+
+# ---------------------------------------------------------------------------
 # Step 6/10: pip packages
 # ---------------------------------------------------------------------------
 echo ""
@@ -273,7 +309,8 @@ set -l CHECKS \
     "claude --version|claude-code" \
     "gemini --version|gemini-cli" \
     "npx playwright --version|playwright" \
-    "npx puppeteer --version|puppeteer"
+    "npx puppeteer --version|puppeteer" \
+    "ollama --version|ollama"
 
 for check in $CHECKS
     set -l cmd (echo $check | cut -d'|' -f1)

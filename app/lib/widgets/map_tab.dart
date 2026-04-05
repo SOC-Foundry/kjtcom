@@ -41,7 +41,7 @@ class MapTab extends ConsumerWidget {
             height: 18,
             child: GestureDetector(
               onTap: () {
-                ref.read(selectedEntityProvider.notifier).state = entity;
+                ref.read(selectedEntityProvider.notifier).select(entity);
               },
               child: Container(
                 decoration: BoxDecoration(

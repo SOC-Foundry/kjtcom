@@ -78,7 +78,7 @@ class DetailPanel extends ConsumerWidget {
                           child: GestureDetector(
                             onTap: () => ref
                                 .read(selectedEntityProvider.notifier)
-                                .state = null,
+                                .select(null),
                             child: const Text(
                               '\u00D7',
                               style: TextStyle(
@@ -260,7 +260,7 @@ class _FieldCard extends StatelessWidget {
             final current = controller.text.trimRight();
             final newText = current.isEmpty ? clause : '$current\n$clause';
             
-            ref.read(programmaticUpdateProvider.notifier).state = true;
+            ref.read(programmaticUpdateProvider.notifier).set(true);
             controller.text = newText;
             
             final cursorPos = newText.length;
@@ -271,7 +271,7 @@ class _FieldCard extends StatelessWidget {
 
             ref.read(queryProvider.notifier).setText(newText);
             Future.microtask(() {
-              ref.read(programmaticUpdateProvider.notifier).state = false;
+              ref.read(programmaticUpdateProvider.notifier).set(false);
             });
           },
         ),
@@ -288,7 +288,7 @@ class _FieldCard extends StatelessWidget {
             final current = controller.text.trimRight();
             final newText = current.isEmpty ? clause : '$current\n$clause';
             
-            ref.read(programmaticUpdateProvider.notifier).state = true;
+            ref.read(programmaticUpdateProvider.notifier).set(true);
             controller.text = newText;
             
             final cursorPos = newText.length;
@@ -299,7 +299,7 @@ class _FieldCard extends StatelessWidget {
 
             ref.read(queryProvider.notifier).setText(newText);
             Future.microtask(() {
-              ref.read(programmaticUpdateProvider.notifier).state = false;
+              ref.read(programmaticUpdateProvider.notifier).set(false);
             });
           },
         ),

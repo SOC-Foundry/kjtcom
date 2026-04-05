@@ -1,5 +1,53 @@
 # kjtcom - Unified Changelog
 
+**v9.37 (Phase 9 - Dart 3.9 Upgrade + Dart MCP + Middleware Registry + Panther Scrape + MCP Fixes)**
+- Biggest dep upgrade since Phase 6: 5 major version bumps (firebase_core 3->4, cloud_firestore 5->6, flutter_riverpod 2->3, google_fonts 6->8, flutter_map 7->8)
+- Riverpod 3.x migration: replaced 5 StateProviders with NotifierProvider+Notifier pattern, renamed valueOrNull->value, updated 18 call sites across 8 widget files
+- flutter analyze: 0 issues. flutter test: 15/15 pass. flutter build web: success (42.1s)
+- MCP servers: ALL 4 operational (was 2/4 in v9.36). G52 (Firecrawl) RESOLVED. G53 (Firebase) RESOLVED.
+- Dart MCP server added to .mcp.json and .gemini/settings.json (5 MCP servers total)
+- Panther SIEM scrape executed via CDP: captured query editor DOM, 1,274 CSS tokens, DOM structure tree
+- SECURITY: Deleted screenshots containing customer detection data per policy. DOM/CSS captures retained.
+- Created docs/panther-reference/panther-scrape-notes.md mapping Panther UI elements to kjtcom equivalents
+- Created scripts/build_registry.py for Qwen middleware iteration registry builder
+- Created iteration_registry.json with historical data from 33 iterations (v0.5-v9.36)
+- Qwen3.5-9B consulted on upgrade risks and scored v9.37 agents (Claude Code 44/50, Qwen 33/50)
+- Context7 MCP used for Riverpod 3.x migration documentation
+- Updated docs/install.fish with Dart MCP verification step (5c/10)
+- Updated GEMINI.md read order to v9.37
+- Kyle interventions: 0 (Firebase reauth and Chrome debug port pre-staged)
+
+**v9.36 (Phase 9 - Panther SIEM Scrape + Agent Evaluator Middleware)**
+- Infrastructure + reference capture iteration. Zero Flutter app changes. Zero regressions.
+- Installed Playwright chromium browsers (Chrome for Testing 147.0.7727.15)
+- MCP Validation: Context7 PASS, Playwright PASS, Firebase FAIL (needs reauth), Firecrawl NOT LOADED
+- Created Agent Evaluator Middleware: docs/evaluator-prompt.md, agent_scores.json, scripts/run_evaluator.py
+- Qwen3.5-9B retroactively scored v9.35 agents (Claude Code 32/50, Qwen 28/50, Nemotron 14/50, GLM 14/50)
+- Discovered Qwen /no_think requirement for JSON output (G51)
+- Consulted Qwen3.5-9B on Panther DOM selector strategy - adopted data-testid/aria-label approach
+- Context7 MCP confirmed Playwright connect_over_cdp API for CDP attachment
+- Playwright MCP captured kjtcom.com live site screenshot (6,181 entities verified)
+- Panther CDP scrape script prepared (scripts/panther_scrape.py) - blocked on Chrome debug port
+- Created docs/panther-reference/ directory with kjtcom Playwright test screenshot
+- 3 new gotchas: G51 (Qwen /no_think), G52 (Firecrawl not loading), G53 (Firebase reauth)
+- Kyle interventions: 1 pending (Chrome debug port restart)
+
+**v9.35 (Phase 9 - Multi-Agent Orchestration Restoration)**
+- Infrastructure-only iteration. Zero Flutter app changes. Zero regressions.
+- Deployed 3 local LLMs via Ollama: Qwen3.5-9B (primary), Nemotron Mini 4B (fast), GLM-4.6V-Flash-9B (vision)
+- Fixed Nemotron pull: `nemotron3-nano:4b` tag does not exist -> `nemotron-mini:4b` is the correct tag
+- GLM-4V not available locally -> used community upload `haervwe/GLM-4.6V-Flash-9B`
+- Removed unusable `nemotron:latest` (42 GB) from Ollama
+- Created .mcp.json with 4 MCP servers: Firebase, Context7, Firecrawl, Playwright
+- Created .gemini/settings.json with 2 MCP servers: Firebase, Context7
+- Dart/Flutter MCP deferred to v9.36 (package @anthropic/mcp-dart does not exist on npm)
+- Updated CLAUDE.md with correct model names (nemotron-mini:4b, haervwe/GLM-4.6V-Flash-9B)
+- Rewrote GEMINI.md with v9.35+ orchestration mandate
+- Updated docs/install.fish with Ollama model pulls (Step 5b/10)
+- Qwen3.5-9B consulted for .mcp.json code review - 1 valid concern (firebase version, verified OK), 1 incorrect suggestion (package name), 1 style note
+- flutter analyze: 0 issues. flutter test: 15/15 pass
+- Kyle interventions: 1 (Firecrawl API key addition)
+
 **v9.34 (Phase 9 - Gemini: Quote Cursor + Inline Autocomplete)**
 - W1: Fix quote cursor in query editor (G45 resolved). Used `WidgetsBinding.instance.addPostFrameCallback` to ensure selection survives the build cycle in `schema_tab.dart`, `query_editor.dart`, and `detail_panel.dart`.
 - W2: Replaced overlay-based autocomplete with inline Panther-style suggestions. Suggestions appear in a compact Column below query text with keyboard navigation (Tab/Enter/Arrows/Escape).

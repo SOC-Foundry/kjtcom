@@ -14,7 +14,7 @@ kjtcom extracts entities from YouTube playlists - landmarks, trails, restaurants
 
 The same normalization patterns power production SIEM migrations at [TachTech Engineering](https://tachtech.net). Built entirely by LLM agents using IAO (Iterative Agentic Orchestration) - a methodology distilled from 48+ production iterations on [TripleDB](https://github.com/TachTech-Engineering/tripledb).
 
-**[kylejeromethompson.com](https://kylejeromethompson.com)** | **Phase 9 v9.34** | **Status: Phase 9 App Optimization IN PROGRESS**
+**[kylejeromethompson.com](https://kylejeromethompson.com)** | **Phase 9 v9.37** | **Status: Phase 9 App Optimization IN PROGRESS**
 
 ---
 
@@ -306,7 +306,7 @@ graph BT
 | 6 | Flutter App | DONE | v6.15-v6.20 |
 | 7 | Firestore Load | DONE | v7.21 |
 | 8 | Enrichment Hardening | DONE | v8.22-v8.26 |
-| 9 | App Optimization | IN PROGRESS | v9.27-v9.33 |
+| 9 | App Optimization | IN PROGRESS | v9.27-v9.37 |
 | 10 | Retrospective + Template | Pending | - |
 
 ---
@@ -373,6 +373,38 @@ OS:   CachyOS (Arch-based) / fish shell
 ---
 
 ## Changelog
+
+**v9.37 (Phase 9 - Dart 3.9 Upgrade + Dart MCP + Middleware Registry + Panther Scrape + MCP Fixes)**
+- Biggest dep upgrade since Phase 6: firebase_core 3->4, cloud_firestore 5->6, flutter_riverpod 2->3, google_fonts 6->8, flutter_map 7->8
+- Riverpod 3.x migration: StateProvider -> Notifier, valueOrNull -> value, 18 call sites updated
+- All 4 MCP servers operational (G52 + G53 resolved). Dart MCP added (5 total).
+- Panther SIEM scrape: DOM structure, 1,274 CSS tokens, query editor captured
+- iteration_registry.json created with 33 historical iterations + 13 gotchas
+- 15/15 tests pass, 0 analyzer issues, 0 interventions
+
+**v9.36 (Phase 9 - Panther SIEM Scrape + Agent Evaluator Middleware)**
+- Infrastructure + reference capture iteration. First session with MCP servers loaded.
+- MCP Validation: Context7 PASS, Playwright PASS, Firebase FAIL (reauth needed), Firecrawl NOT LOADED
+- Agent Evaluator Middleware deployed: Qwen3.5-9B as permanent evaluator, agent_scores.json created
+- Panther CDP scrape script prepared (blocked on Chrome debug port)
+- 3 new gotchas: G51 (Qwen /no_think), G52 (Firecrawl loading), G53 (Firebase reauth)
+- 15/15 tests pass, 0 analyzer issues, 0 production deploys
+- Kyle interventions: 1 pending (Chrome debug port)
+
+**v9.35 (Phase 9 - Multi-Agent Orchestration Restoration)**
+- Infrastructure-only iteration. Restored IAO Pillar 2 (Agentic Orchestration).
+- Deployed 3 local LLMs via Ollama: Qwen3.5-9B, Nemotron Mini 4B, GLM-4.6V-Flash-9B
+- Configured 4 MCP servers: Firebase, Context7, Firecrawl, Playwright
+- Updated CLAUDE.md and GEMINI.md with mandatory orchestration mandate
+- 15/15 tests pass, 0 analyzer issues, 0 production deploys
+- Kyle interventions: 1 (Firecrawl API key)
+
+**v9.34 (Phase 9 - Gemini: Quote Cursor + Inline Autocomplete)**
+- Quote cursor fix (G45 resolved) via addPostFrameCallback
+- Inline Panther-style autocomplete (replaced overlay approach)
+- +filter/-exclude operators fixed per field type
+- 15/15 tests pass, 0 analyzer issues, 1 production deploy
+- Gemini CLI interventions: 0
 
 **v9.33 (Phase 9 - Parser Regression + Quotes + Operators)**
 - Parser regression fix: quoted values parse correctly again, 3 new regression tests (15 total)

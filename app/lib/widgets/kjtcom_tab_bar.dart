@@ -25,7 +25,7 @@ class KjtcomTabBar extends ConsumerWidget {
             _Tab(
               label: _labels[i],
               active: i == activeIndex,
-              onTap: () => ref.read(activeTabProvider.notifier).state = i,
+              onTap: () => ref.read(activeTabProvider.notifier).setTab(i),
             ),
         ],
       ),

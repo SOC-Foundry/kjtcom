@@ -1,0 +1,319 @@
+{
+  "tag": "BODY",
+  "class": "enable-motion underline-links",
+  "children": [
+    {
+      "tag": "NOSCRIPT"
+    },
+    {
+      "tag": "DIV",
+      "id": "root",
+      "children": [
+        {
+          "tag": "DIV",
+          "class": "MuiStack-root css-1gk93yr",
+          "children": [
+            {
+              "tag": "HEADER",
+              "class": "MuiStack-root css-1922gnk",
+              "children": [
+                {
+                  "tag": "DIV",
+                  "class": "MuiStack-root css-dpifrf",
+                  "children": [
+                    {
+                      "tag": "A",
+                      "class": "MuiBox-root css-1xgmucz",
+                      "children": [
+                        {
+                          "tag": "svg",
+                          "class": {},
+                          "role": "img",
+                          "ariaLabel": "Panther home",
+                          "children": []
+                        }
+                      ]
+                    },
+                    {
+                      "tag": "DIV",
+                      "class": "MuiBox-root css-0",
+                      "children": [
+                        {
+                          "tag": "NAV",
+                          "class": "MuiTypography-root MuiTypography-body1 MuiBreadcrumbs-root css-1sftxnk",
+                          "ariaLabel": "Breadcrumbs",
+                          "children": []
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "tag": "NAV",
+                  "class": "MuiStack-root css-1ux9u92",
+                  "ariaLabel": "Top Navigation Menu",
+                  "children": [
+                    {
+                      "tag": "DIV",
+                      "class": "MuiBox-root css-0",
+                      "children": [
+                        {
+                          "tag": "BUTTON",
+                          "id": "settings-menu",
+                          "class": "MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeLarge css-1xv0nxy",
+                          "ariaLabel": "Toggle Settings Menu",
+                          "children": []
+                        }
+                      ]
+                    },
+                    {
+                      "tag": "DIV",
+                      "class": "MuiBox-root css-0",
+                      "children": [
+                        {
+                          "tag": "BUTTON",
+                          "id": "help-menu",
+                          "class": "MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeLarge css-1xv0nxy",
+                          "ariaLabel": "Toggle Help Menu",
+                          "children": []
+                        }
+                      ]
+                    },
+                    {
+                      "tag": "DIV",
+                      "class": "MuiBox-root css-k008qs",
+                      "children": [
+                        {
+                          "tag": "BUTTON",
+                          "id": "notification-menu",
+                          "class": "MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeLarge css-1xv0nxy",
+                          "ariaLabel": "Toggle Notifications Center",
+                          "children": []
+                        }
+                      ]
+                    },
+                    {
+                      "tag": "BUTTON",
+                      "class": "MuiButtonBase-root css-1yn2qr8",
+                      "ariaLabel": "Toggle User Menu",
+                      "children": [
+                        {
+                          "tag": "DIV",
+                          "class": "MuiStack-root css-1bwwj5i",
+                          "children": []
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "tag": "DIV",
+              "class": "MuiStack-root css-1xc2l73",
+              "children": [
+                {
+                  "tag": "ASIDE",
+                  "class": "MuiStack-root css-1muk9mg",
+                  "children": [
+                    {
+                      "tag": "NAV",
+                      "class": "MuiBox-root css-toc92f",
+                      "ariaLabel": "Main",
+                      "children": [
+                        {
+                          "tag": "UL",
+                          "class": "MuiStack-root css-7sx3t2",
+                          "children": []
+                        }
+                      ]
+                    },
+                    {
+                      "tag": "DIV",
+                      "class": "MuiBox-root css-1c40z4q",
+                      "children": [
+                        {
+                          "tag": "BUTTON",
+                          "class": "MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeLarge css-1fybwt0",
+                          "ariaLabel": "Toggle navigation menu",
+                          "children": []
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "tag": "MAIN",
+                  "class": "MuiBox-root css-7aa8xc",
+                  "children": [
+                    {
+                      "tag": "DIV",
+                      "id": "layout-scroll-container",
+                      "class": "MuiStack-root css-120rpdz",
+                      "children": [
+                        {
+                          "tag": "DIV",
+                          "class": "MuiBox-root css-11qjisw",
+                          "children": []
+                        },
+                        {
+                          "tag": "FOOTER",
+                          "id": "footer",
+                          "class": "MuiBox-root css-8atqhb"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "tag": "SCRIPT",
+      "id": "__PANTHER_CONFIG__"
+    },
+    {
+      "tag": "SCRIPT"
+    },
+    {
+      "tag": "DIV",
+      "class": "css-11f3s8j",
+      "testid": "top-left-snackbar-wrapper"
+    },
+    {
+      "tag": "DIV",
+      "class": "css-1t8po4x",
+      "testid": "top-middle-snackbar-wrapper"
+    },
+    {
+      "tag": "DIV",
+      "class": "css-c3gnfa",
+      "testid": "top-right-snackbar-wrapper"
+    },
+    {
+      "tag": "DIV",
+      "class": "css-1caif5n",
+      "testid": "bottom-left-snackbar-wrapper"
+    },
+    {
+      "tag": "DIV",
+      "class": "css-7csugn",
+      "testid": "bottom-middle-snackbar-wrapper"
+    },
+    {
+      "tag": "DIV",
+      "class": "css-1o2zo0q",
+      "testid": "bottom-right-snackbar-wrapper"
+    },
+    {
+      "tag": "DIV",
+      "id": "tooltip-container"
+    },
+    {
+      "tag": "IFRAME",
+      "id": "pylon-frame"
+    },
+    {
+      "tag": "DIV",
+      "id": "pylon-chat",
+      "class": "PylonChat",
+      "children": [
+        {
+          "tag": "DIV",
+          "id": "pylon-chat-app",
+          "class": "PylonChat-app",
+          "children": [
+            {
+              "tag": "STYLE"
+            },
+            {
+              "tag": "STYLE"
+            },
+            {
+              "tag": "DIV",
+              "class": "PylonChat-container",
+              "children": [
+                {
+                  "tag": "STYLE"
+                },
+                {
+                  "tag": "DIV",
+                  "class": "PylonChat-chatWidgetContainer",
+                  "children": [
+                    {
+                      "tag": "DIV",
+                      "class": "PylonChat-chatWindowFrameContainer PylonChat-chatWindowFrameContainer--closed",
+                      "children": [
+                        {
+                          "tag": "DIV"
+                        },
+                        {
+                          "tag": "STYLE"
+                        },
+                        {
+                          "tag": "IFRAME",
+                          "id": "pylon-chat-window",
+                          "class": "PylonChat-chatWindow"
+                        }
+                      ]
+                    },
+                    {
+                      "tag": "DIV",
+                      "class": "PylonChat-bubbleFrameContainer PylonChat-bubbleFrameContainer--visible",
+                      "children": [
+                        {
+                          "tag": "STYLE"
+                        },
+                        {
+                          "tag": "IFRAME",
+                          "id": "pylon-chat-bubble",
+                          "class": "PylonChat-bubble"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "tag": "DIV",
+      "id": "a11y-status-message",
+      "role": "status"
+    },
+    {
+      "tag": "DIV",
+      "class": "context-view"
+    },
+    {
+      "tag": "DIV",
+      "class": "monaco-aria-container",
+      "children": [
+        {
+          "tag": "DIV",
+          "class": "monaco-alert",
+          "role": "alert"
+        },
+        {
+          "tag": "DIV",
+          "class": "monaco-alert",
+          "role": "alert"
+        },
+        {
+          "tag": "DIV",
+          "class": "monaco-status"
+        },
+        {
+          "tag": "DIV",
+          "class": "monaco-status"
+        }
+      ]
+    }
+  ]
+}

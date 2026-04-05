@@ -22,4 +22,11 @@ final queryProvider = NotifierProvider<QueryNotifier, String>(QueryNotifier.new)
 /// Flag to suppress ref.listen cursor override during programmatic updates (G45).
 /// Set true before schema builder / +filter / -exclude sets controller.text,
 /// cleared via Future.microtask after the update completes.
-final programmaticUpdateProvider = StateProvider<bool>((ref) => false);
+class ProgrammaticUpdateNotifier extends Notifier<bool> {
+  @override
+  bool build() => false;
+
+  void set(bool value) => state = value;
+}
+
+final programmaticUpdateProvider = NotifierProvider<ProgrammaticUpdateNotifier, bool>(ProgrammaticUpdateNotifier.new);
