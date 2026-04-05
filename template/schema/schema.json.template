@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "pipeline_id": "{PIPELINE_ID}",
+  "display_name": "{PIPELINE_DISPLAY_NAME}",
+  "entity_type": "{ENTITY_TYPE}",
+  "field_mappings": {
+    "t_any_names": ["name", "title"],
+    "t_any_cities": ["city"],
+    "t_any_states": ["state"],
+    "t_any_countries": ["country"],
+    "t_any_keywords": ["keywords", "tags"],
+    "t_any_categories": ["category", "type"]
+  },
+  "notes": "Map source fields to Thompson Indicator Fields. All values are lowercased during normalization."
+}

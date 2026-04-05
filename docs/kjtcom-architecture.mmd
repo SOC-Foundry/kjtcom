@@ -1,0 +1,144 @@
+%% kjtcom Architecture - Living Document
+%% Updated: v9.38 - Middleware Development
+%% Maintainer: Update every iteration that changes architecture
+
+graph TB
+    subgraph USER["User Layer"]
+        WEB["kylejeromethompson.com<br/>Flutter Web"]
+        TELEGRAM["Telegram Bot<br/>@kjtcom_iao_bot"]
+        CLAW3D["Claw3D Viewer<br/>Three.js Prototype"]
+    end
+
+    subgraph FRONTEND["Flutter Web App (6 tabs)"]
+        RESULTS["Results Tab"]
+        MAP["Map Tab<br/>OpenStreetMap"]
+        GLOBE["Globe Tab<br/>Stats Dashboard"]
+        IAO_TAB["IAO Tab<br/>Methodology"]
+        GOTCHA_TAB["Gotcha Tab<br/>G1-G53"]
+        SCHEMA_TAB["Schema Tab<br/>22 t_any_* Fields"]
+    end
+
+    subgraph QUERY["Query Engine"]
+        EDITOR["NoSQL Query Editor<br/>Syntax Highlighting"]
+        PARSER["QueryClause Parser<br/>Tokenizer + Validation"]
+        AUTOCOMPLETE["Inline Autocomplete<br/>21 fields, 6878 values"]
+    end
+
+    subgraph FIREBASE["Firebase (kjtcom-c78cd)"]
+        FIRESTORE["Cloud Firestore<br/>6,181 entities"]
+        FUNCTIONS["Cloud Functions<br/>Search API"]
+        HOSTING["Firebase Hosting<br/>CDN + SSL"]
+        STAGING["Staging DB"]
+        PRODUCTION["Production DB (default)"]
+    end
+
+    subgraph PIPELINES["3 Live Pipelines"]
+        CALGOLD["CalGold<br/>899 entities"]
+        RICKSTEVES["RickSteves<br/>4,182 entities"]
+        TRIPLEDB["TripleDB<br/>1,100 entities"]
+    end
+
+    subgraph PIPELINE_STAGES["Pipeline Processing"]
+        P1["Phase 1: Acquire<br/>yt-dlp"]
+        P2["Phase 2: Transcribe<br/>faster-whisper CUDA"]
+        P3["Phase 3: Extract<br/>Gemini 2.5 Flash API"]
+        P4["Phase 4: Normalize<br/>Thompson Schema"]
+        P5["Phase 5: Geocode<br/>Nominatim"]
+        P6["Phase 6: Enrich<br/>Google Places API"]
+        P7["Phase 7: Load<br/>Firebase Admin SDK"]
+        P1 --> P2 --> P3 --> P4 --> P5 --> P6 --> P7
+    end
+
+    subgraph AGENTS["Agent Orchestration (IAO)"]
+        CLAUDE["Claude Code<br/>Opus 4.6<br/>Primary Executor"]
+        GEMINI_CLI["Gemini CLI<br/>Pipeline Phases 1-5"]
+        TMUX["tmux Runner<br/>Unattended Pipelines"]
+    end
+
+    subgraph LOCAL_LLMS["Local LLMs (Ollama)"]
+        QWEN["Qwen3.5-9B<br/>Permanent Evaluator<br/>~5.1 GB VRAM"]
+        NEMOTRON["Nemotron Mini 4B<br/>Fast Triage<br/>~2.7 GB VRAM"]
+        GLM["GLM-4.6V-Flash-9B<br/>Vision<br/>~4.8 GB VRAM"]
+        NOMIC["nomic-embed-text<br/>Embedding Only<br/>~270 MB VRAM"]
+    end
+
+    subgraph MCP["MCP Servers (5)"]
+        MCP_FIREBASE["Firebase MCP<br/>Firestore Queries"]
+        MCP_CONTEXT7["Context7 MCP<br/>API Docs"]
+        MCP_FIRECRAWL["Firecrawl MCP<br/>Web Scraping"]
+        MCP_PLAYWRIGHT["Playwright MCP<br/>Browser Automation"]
+        MCP_DART["Dart MCP<br/>Code Analysis"]
+    end
+
+    subgraph MIDDLEWARE["Middleware (v9.38+)"]
+        RAG["RAG Pipeline<br/>ChromaDB + nomic-embed"]
+        CHROMADB["ChromaDB<br/>data/chromadb/<br/>145 archive docs"]
+        EVALUATOR["Agent Evaluator<br/>Qwen3.5-9B Scorer"]
+        REGISTRY["iteration_registry.json<br/>37 iterations"]
+        SCORES["agent_scores.json<br/>Token Tracking"]
+        LEADERBOARD["Leaderboard Generator"]
+        BRAVE["Brave Search API<br/>Web Research"]
+        OPENCLAW["OpenClaw<br/>Sandbox Agent"]
+    end
+
+    subgraph ARTIFACTS["Artifact Loop (per iteration)"]
+        DESIGN["Design Doc"]
+        PLAN["Plan Doc"]
+        BUILD["Build Log"]
+        REPORT["Report + Scorecard"]
+        CHANGELOG["Changelog"]
+        ARCH_MMD["architecture.mmd<br/>(this file)"]
+    end
+
+    %% User layer connections
+    WEB --> FRONTEND
+    TELEGRAM --> OPENCLAW
+    TELEGRAM --> RAG
+    TELEGRAM --> BRAVE
+
+    %% Frontend connections
+    FRONTEND --> QUERY
+    QUERY --> FIREBASE
+    FIRESTORE --> FUNCTIONS
+    HOSTING --> WEB
+
+    %% Pipeline connections
+    PIPELINES --> PIPELINE_STAGES
+    P7 --> FIRESTORE
+
+    %% Agent connections
+    CLAUDE --> MCP
+    CLAUDE --> LOCAL_LLMS
+    CLAUDE --> MIDDLEWARE
+    GEMINI_CLI --> PIPELINE_STAGES
+    TMUX --> PIPELINE_STAGES
+
+    %% Middleware connections
+    RAG --> CHROMADB
+    RAG --> NOMIC
+    EVALUATOR --> QWEN
+    EVALUATOR --> SCORES
+    LEADERBOARD --> SCORES
+    REGISTRY --> RAG
+    OPENCLAW --> LOCAL_LLMS
+
+    %% MCP connections
+    MCP_FIREBASE --> FIRESTORE
+    MCP_DART --> FRONTEND
+
+    %% Artifact connections
+    EVALUATOR --> REPORT
+    DESIGN --> PLAN --> BUILD --> REPORT
+
+    %% Styles
+    style USER fill:#1a1a2e,stroke:#4ADE80,color:#fff
+    style FRONTEND fill:#161B22,stroke:#4ADE80,color:#4ADE80
+    style QUERY fill:#161B22,stroke:#0EA5E9,color:#0EA5E9
+    style FIREBASE fill:#161B22,stroke:#FFCA28,color:#FFCA28
+    style PIPELINES fill:#161B22,stroke:#F97316,color:#F97316
+    style PIPELINE_STAGES fill:#161B22,stroke:#F97316,color:#F97316
+    style AGENTS fill:#0D9488,stroke:#4ADE80,color:#fff
+    style LOCAL_LLMS fill:#161B22,stroke:#A78BFA,color:#A78BFA
+    style MCP fill:#161B22,stroke:#EC4899,color:#EC4899
+    style MIDDLEWARE fill:#161B22,stroke:#22D3EE,color:#22D3EE
+    style ARTIFACTS fill:#161B22,stroke:#6B7280,color:#6B7280

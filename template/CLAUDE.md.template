@@ -1,0 +1,70 @@
+# {PROJECT_NAME} - Agent Instructions (Claude Code)
+
+## Read Order
+
+1. docs/{PROJECT_NAME}-design-{CURRENT_VERSION}.md
+2. docs/{PROJECT_NAME}-plan-{CURRENT_VERSION}.md
+
+## Shell - MANDATORY
+
+* Run: claude config set preferredShell fish (before first launch)
+* All commands execute in fish shell
+* NEVER use bash syntax (no ${VAR}, no heredocs, no source ~/.bashrc)
+
+## Security - ABSOLUTE RULES
+
+* NEVER write API keys, tokens, or credentials into ANY file in the repo
+* NEVER include API keys in build logs, reports, or changelog artifacts
+* Read keys from environment variables ONLY
+* Violation = BLOCKING failure - stop and alert the project owner
+
+## Permissions
+
+* CAN: build, deploy, pip install, npm install
+* CAN: ollama run/pull/list/create, curl localhost:11434/*
+* CANNOT: git add / commit / push
+* CANNOT: sudo (ask project owner)
+
+## Multi-Agent Orchestration - MANDATORY
+
+* Every iteration MUST consult at least 2 LLMs
+* You (Claude Code) count as LLM #1
+* LLM #2 via Ollama at localhost:11434:
+  - qwen3.5:9b - PERMANENT EVALUATOR. Use /no_think for JSON.
+* Consult via API:
+  ```fish
+  curl -s http://localhost:11434/api/chat -d '{
+    "model": "qwen3.5:9b",
+    "messages": [{"role": "user", "content": "/no_think Your prompt"}],
+    "stream": false
+  }' | python3 -c "import sys,json; print(json.load(sys.stdin)['message']['content'])"
+  ```
+
+## Agent Evaluator Middleware
+
+* Qwen3.5-9B is PERMANENT EVALUATOR
+* Run: python3 scripts/run_evaluator.py at end of every iteration
+* Scores append to agent_scores.json with token tracking
+
+## RAG Middleware
+
+* ChromaDB vector store at data/chromadb/
+* nomic-embed-text for embeddings via Ollama
+* scripts/embed_archive.py - ingest docs/archive/ into ChromaDB
+* scripts/query_rag.py - semantic search over archive
+
+## Living Documents
+
+* docs/install.fish - update when ANY package installed
+* docs/{PROJECT_NAME}-architecture.mmd - update when architecture changes
+* agent_scores.json - appended by evaluator each iteration
+
+## Artifact Rules - MANDATORY
+
+* Every iteration produces: design, plan, build, report
+* Report MUST include Agent Scorecard with token tracking
+* Update: changelog, README, agent_scores.json, install.fish as needed
+
+## Formatting
+
+* No em-dashes. Use " - " instead. Use "->" for arrows.

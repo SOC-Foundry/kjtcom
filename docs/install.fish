@@ -179,10 +179,20 @@ else
     ollama pull qwen3.5:9b 2>&1 | tee -a $LOG_FILE
     ollama pull nemotron-mini:4b 2>&1 | tee -a $LOG_FILE
     ollama pull haervwe/GLM-4.6V-Flash-9B 2>&1 | tee -a $LOG_FILE
+    ollama pull nomic-embed-text 2>&1 | tee -a $LOG_FILE
 
     echo "  Installed models:"
     ollama list 2>&1 | tee -a $LOG_FILE
 end
+
+# ---------------------------------------------------------------------------
+# Step 5d/10: RAG + Middleware pip packages (v9.38+)
+# ---------------------------------------------------------------------------
+echo ""
+echo "[5d/10] Installing RAG and middleware packages..."
+
+pip install chromadb --break-system-packages 2>&1 | tee -a $LOG_FILE
+pip install python-telegram-bot --break-system-packages 2>&1 | tee -a $LOG_FILE
 
 # ---------------------------------------------------------------------------
 # Step 5c/10: Dart MCP server verification (v9.37+)
@@ -379,7 +389,7 @@ echo ""
 echo "1. Copy fish config and add your API keys:"
 echo "     cp $SCRIPT_DIR/fish-config-sanitized.fish ~/.config/fish/config.fish"
 echo "     nano ~/.config/fish/config.fish"
-echo "   Required keys: GEMINI_API_KEY, GOOGLE_PLACES_API_KEY"
+echo "   Required keys: GEMINI_API_KEY, GOOGLE_PLACES_API_KEY, KJTCOM_BRAVE_SEARCH_API_KEY, KJTCOM_TELEGRAM_BOT_TOKEN"
 echo "   Replace REDACTED values with your actual keys."
 echo ""
 echo "2. Copy MCP configs (add your own API keys to these too):"

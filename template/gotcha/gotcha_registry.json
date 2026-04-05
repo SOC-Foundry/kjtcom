@@ -1,0 +1,7 @@
+{
+  "metadata": {
+    "description": "Gotcha registry - documented failure patterns and their resolutions",
+    "schema_version": 1
+  },
+  "gotchas": []
+}

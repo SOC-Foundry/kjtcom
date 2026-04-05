@@ -14,7 +14,7 @@ kjtcom extracts entities from YouTube playlists - landmarks, trails, restaurants
 
 The same normalization patterns power production SIEM migrations at [TachTech Engineering](https://tachtech.net). Built entirely by LLM agents using IAO (Iterative Agentic Orchestration) - a methodology distilled from 48+ production iterations on [TripleDB](https://github.com/TachTech-Engineering/tripledb).
 
-**[kylejeromethompson.com](https://kylejeromethompson.com)** | **Phase 9 v9.37** | **Status: Phase 9 App Optimization IN PROGRESS**
+**[kylejeromethompson.com](https://kylejeromethompson.com)** | **Phase 9 v9.38** | **Status: Phase 9 App Optimization IN PROGRESS**
 
 ---
 
@@ -39,6 +39,12 @@ The same normalization patterns power production SIEM migrations at [TachTech En
 ---
 
 ## Architecture
+
+See the [living architecture chart](docs/kjtcom-architecture.mmd) for the full system diagram (Mermaid - renders natively on GitHub).
+
+Current state: v9.38 - 3 pipelines, 5 MCP servers, 3 local LLMs, RAG middleware, OpenClaw + Telegram, Claw3D prototype.
+
+### Pipeline Flow
 
 ```
 YouTube Playlist (per pipeline)
@@ -373,6 +379,16 @@ OS:   CachyOS (Arch-based) / fish shell
 ---
 
 ## Changelog
+
+**v9.38 (Phase 9 - Middleware Development: RAG + Telegram + Claw3D + Template)**
+- RAG pipeline: nomic-embed-text + ChromaDB, 130 archive files -> 1,307 chunks, semantic search operational
+- Telegram bot with 7 commands (/status /query /evaluate /gotcha /scores /ask /search)
+- Claw3D Three.js prototype: 15 IAO nodes with animated data flow
+- Agent evaluator enhanced with token tracking (prompt_tokens, eval_tokens)
+- Portable template (template/) packaged for stamping onto new projects
+- Architecture chart: docs/kjtcom-architecture.mmd (living document, renders on GitHub)
+- Brave Search + Telegram bot verified (KJTCOM_ prefixed env vars)
+- 15/15 tests pass, 0 analyzer issues, 0 production deploys
 
 **v9.37 (Phase 9 - Dart 3.9 Upgrade + Dart MCP + Middleware Registry + Panther Scrape + MCP Fixes)**
 - Biggest dep upgrade since Phase 6: firebase_core 3->4, cloud_firestore 5->6, flutter_riverpod 2->3, google_fonts 6->8, flutter_map 7->8

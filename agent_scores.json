@@ -80,9 +80,18 @@
       }
     ],
     "gotcha_events": [
-      {"id": "G51", "description": "Qwen thinking mode produces empty responses without /no_think"},
-      {"id": "G52", "description": "Firecrawl MCP not loading despite .mcp.json config"},
-      {"id": "G53", "description": "Firebase MCP needs fresh login each session"}
+      {
+        "id": "G51",
+        "description": "Qwen thinking mode produces empty responses without /no_think"
+      },
+      {
+        "id": "G52",
+        "description": "Firecrawl MCP not loading despite .mcp.json config"
+      },
+      {
+        "id": "G53",
+        "description": "Firebase MCP needs fresh login each session"
+      }
     ]
   },
   {
@@ -114,8 +123,78 @@
       }
     ],
     "gotcha_events": [
-      {"id": "G52", "description": "Firecrawl MCP RESOLVED - transient loading issue cleared"},
-      {"id": "G53", "description": "Firebase MCP RESOLVED for session - reauth completed by Kyle"}
+      {
+        "id": "G52",
+        "description": "Firecrawl MCP RESOLVED - transient loading issue cleared"
+      },
+      {
+        "id": "G53",
+        "description": "Firebase MCP RESOLVED for session - reauth completed by Kyle"
+      }
     ]
+  },
+  {
+    "iteration": "v9.38",
+    "date": "2026-04-05",
+    "evaluator": "nemotron-mini:4b (fallback - Qwen G51 regression)",
+    "scores": [
+      {
+        "agent": "Claude Code (Opus 4.6)",
+        "role": "Primary executor",
+        "problem_analysis": 9,
+        "code_correctness": 8,
+        "efficiency": 9,
+        "gotcha_avoidance": 8,
+        "novel_contribution": 9,
+        "total": 43,
+        "prompt_tokens": 150000,
+        "eval_tokens": 0,
+        "total_tokens": 150000,
+        "notes": "6/7 workstreams delivered. 6 new scripts, Claw3D prototype, portable template. RAG pipeline operational (1307 chunks). OpenClaw deferred per P7. 0 analyze issues, 15/15 tests."
+      },
+      {
+        "agent": "Qwen3.5-9B",
+        "role": "Security advisor + evaluator (G51 regression)",
+        "problem_analysis": 5,
+        "code_correctness": 4,
+        "efficiency": 3,
+        "gotcha_avoidance": 4,
+        "novel_contribution": 5,
+        "total": 21,
+        "prompt_tokens": 3000,
+        "eval_tokens": 5000,
+        "total_tokens": 8000,
+        "notes": "G51 regression: returning empty content despite consuming tokens. /no_think not suppressing thinking. Security consultation attempted but no output. Registry scoring produced token usage but no parseable JSON."
+      },
+      {
+        "agent": "nomic-embed-text",
+        "role": "Embedding model",
+        "problem_analysis": 8,
+        "code_correctness": 9,
+        "efficiency": 9,
+        "gotcha_avoidance": 9,
+        "novel_contribution": 7,
+        "total": 42,
+        "prompt_tokens": 0,
+        "eval_tokens": 0,
+        "total_tokens": 0,
+        "notes": "1307 chunks embedded from 130 archive files. No VRAM conflicts. Batched 20 at a time. RAG queries return 0.727-0.730 relevance scores."
+      }
+    ],
+    "gotcha_events": [
+      {
+        "id": "G51",
+        "description": "Qwen3.5-9B /no_think REGRESSION - returns empty content despite consuming tokens. All eval tokens used for internal thinking, nothing in output."
+      },
+      {
+        "id": "G54",
+        "description": "open-interpreter (OpenClaw) cannot build tiktoken wheel for Python 3.14 (CP314). DEFERRED to v9.39."
+      }
+    ],
+    "evaluator_tokens": {
+      "prompt_tokens": 401,
+      "eval_tokens": 167,
+      "total_tokens": 568
+    }
   }
 ]

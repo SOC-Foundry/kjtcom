@@ -1,0 +1,42 @@
+# {PROJECT_NAME} - Agent Instructions (Gemini CLI)
+
+## Read Order
+
+1. docs/{PROJECT_NAME}-design-{CURRENT_VERSION}.md
+2. docs/{PROJECT_NAME}-plan-{CURRENT_VERSION}.md
+
+## Context
+
+{PROJECT_DESCRIPTION}
+
+## Shell
+
+- Fish shell throughout
+- All shell commands MUST be wrapped in `fish -c "..."`
+- NEVER cat config files containing API keys
+- Use `python3 -u` for unbuffered stdout
+
+## Security - ABSOLUTE RULES
+
+* NEVER write API keys, tokens, or credentials into ANY file in the repo
+* NEVER include API keys in build logs, reports, or changelog artifacts
+* NEVER echo or print API key values in commands that get logged
+* Read keys from environment variables ONLY
+* Violation = BLOCKING failure - stop and alert project owner
+
+## Permissions
+
+* CAN: build, deploy, pip install, npm install
+* CAN: ollama run/pull/list/create
+* CANNOT: git add / commit / push
+* CANNOT: sudo
+
+## Multi-Agent Orchestration - MANDATORY
+
+* Every iteration MUST consult at least 2 LLMs
+* Qwen3.5-9B via Ollama is permanent evaluator
+* agent_scores.json tracks all scores with token usage
+
+## Formatting
+
+* No em-dashes. Use " - " instead. Use "->" for arrows.

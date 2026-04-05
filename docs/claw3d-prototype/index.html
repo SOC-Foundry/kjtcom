@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Claw3D - IAO Workspace Visualization</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: #0D1117; overflow: hidden; font-family: 'Segoe UI', sans-serif; }
+        #info {
+            position: absolute; top: 16px; left: 16px; z-index: 10;
+            color: #4ADE80; font-size: 14px;
+        }
+        #info h1 { font-size: 20px; margin-bottom: 4px; }
+        #info p { color: #8B949E; font-size: 12px; }
+        #legend {
+            position: absolute; bottom: 16px; left: 16px; z-index: 10;
+            color: #C9D1D9; font-size: 11px; line-height: 1.8;
+        }
+        .legend-item { display: flex; align-items: center; gap: 8px; }
+        .legend-dot {
+            width: 10px; height: 10px; border-radius: 50%; display: inline-block;
+        }
+        #tooltip {
+            position: absolute; display: none; z-index: 20;
+            background: rgba(22, 27, 34, 0.95); border: 1px solid #4ADE80;
+            color: #C9D1D9; padding: 8px 12px; border-radius: 6px;
+            font-size: 12px; pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+    <div id="info">
+        <h1>Claw3D - IAO Workspace</h1>
+        <p>kjtcom v9.38 | Drag to orbit, scroll to zoom</p>
+    </div>
+    <div id="legend">
+        <div class="legend-item"><span class="legend-dot" style="background:#0D9488"></span> Claude Code (Opus 4.6)</div>
+        <div class="legend-item"><span class="legend-dot" style="background:#A78BFA"></span> Qwen3.5-9B</div>
+        <div class="legend-item"><span class="legend-dot" style="background:#4285F4"></span> Gemini CLI</div>
+        <div class="legend-item"><span class="legend-dot" style="background:#F59E0B"></span> Nemotron Mini 4B</div>
+        <div class="legend-item"><span class="legend-dot" style="background:#F87171"></span> GLM-4.6V-Flash-9B</div>
+        <div class="legend-item"><span class="legend-dot" style="background:#EC4899"></span> MCP Servers</div>
+        <div class="legend-item"><span class="legend-dot" style="background:#22D3EE"></span> Middleware</div>
+    </div>
+    <div id="tooltip"></div>
+
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://cdn.jsdelivr.net/npm/three@0.171.0/build/three.module.js",
+            "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.171.0/examples/jsm/"
+        }
+    }
+    </script>
+    <script type="module">
+        import * as THREE from 'three';
+        import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+        import { FontLoader } from 'three/addons/loaders/FontLoader.js';
+        import { TextGeometry } from 'three/addons/geometries/TextGeometry.js';
+
+        // Scene setup
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x0D1117);
+        scene.fog = new THREE.FogExp2(0x0D1117, 0.015);
+
+        const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 200);
+        camera.position.set(0, 12, 25);
+
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(window.devicePixelRatio);
+        document.body.appendChild(renderer.domElement);
+
+        const controls = new OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.05;
+        controls.autoRotate = true;
+        controls.autoRotateSpeed = 0.5;
+
+        // Lighting
+        const ambient = new THREE.AmbientLight(0x404040, 0.6);
+        scene.add(ambient);
+        const point1 = new THREE.PointLight(0x4ADE80, 1, 60);
+        point1.position.set(10, 15, 10);
+        scene.add(point1);
+        const point2 = new THREE.PointLight(0xA78BFA, 0.5, 60);
+        point2.position.set(-10, 10, -10);
+        scene.add(point2);
+
+        // Grid
+        const grid = new THREE.GridHelper(40, 40, 0x1a2332, 0x111820);
+        scene.add(grid);
+
+        // Node definitions
+        const agents = [
+            { name: 'Claude Code\n(Opus 4.6)', color: 0x0D9488, pos: [0, 5, 0], size: 1.8, type: 'agent', status: 'active' },
+            { name: 'Qwen3.5-9B\nEvaluator', color: 0xA78BFA, pos: [-6, 3, 4], size: 1.4, type: 'agent', status: 'active' },
+            { name: 'Gemini CLI', color: 0x4285F4, pos: [6, 3, 4], size: 1.2, type: 'agent', status: 'idle' },
+            { name: 'Nemotron\nMini 4B', color: 0xF59E0B, pos: [-8, 2, -3], size: 1.0, type: 'agent', status: 'active' },
+            { name: 'GLM-4.6V\nFlash-9B', color: 0xF87171, pos: [8, 2, -3], size: 1.0, type: 'agent', status: 'idle' },
+        ];
+
+        const mcpServers = [
+            { name: 'Firebase MCP', color: 0xEC4899, pos: [-4, 0.8, -6], size: 0.6, type: 'mcp' },
+            { name: 'Context7 MCP', color: 0xEC4899, pos: [-1, 0.8, -7], size: 0.6, type: 'mcp' },
+            { name: 'Firecrawl MCP', color: 0xEC4899, pos: [2, 0.8, -6], size: 0.6, type: 'mcp' },
+            { name: 'Playwright MCP', color: 0xEC4899, pos: [5, 0.8, -7], size: 0.6, type: 'mcp' },
+            { name: 'Dart MCP', color: 0xEC4899, pos: [8, 0.8, -6], size: 0.6, type: 'mcp' },
+        ];
+
+        const middleware = [
+            { name: 'ChromaDB\nRAG', color: 0x22D3EE, pos: [-10, 1.5, 0], size: 0.8, type: 'middleware' },
+            { name: 'nomic-embed', color: 0x22D3EE, pos: [-12, 1.5, 2], size: 0.6, type: 'middleware' },
+            { name: 'Brave Search', color: 0x22D3EE, pos: [10, 1.5, 0], size: 0.8, type: 'middleware' },
+            { name: 'Telegram Bot', color: 0x22D3EE, pos: [12, 1.5, 2], size: 0.8, type: 'middleware' },
+            { name: 'OpenClaw', color: 0x22D3EE, pos: [11, 1.5, -2], size: 0.8, type: 'middleware' },
+        ];
+
+        const allNodes = [...agents, ...mcpServers, ...middleware];
+        const meshes = [];
+
+        // Create nodes
+        allNodes.forEach(node => {
+            let geometry;
+            if (node.type === 'mcp') {
+                geometry = new THREE.BoxGeometry(node.size, node.size, node.size);
+            } else if (node.type === 'middleware') {
+                geometry = new THREE.OctahedronGeometry(node.size, 0);
+            } else {
+                geometry = new THREE.SphereGeometry(node.size, 32, 32);
+            }
+
+            const material = new THREE.MeshPhongMaterial({
+                color: node.color,
+                emissive: node.color,
+                emissiveIntensity: node.status === 'active' ? 0.3 : 0.1,
+                transparent: true,
+                opacity: node.status === 'idle' ? 0.5 : 0.9,
+            });
+
+            const mesh = new THREE.Mesh(geometry, material);
+            mesh.position.set(...node.pos);
+            mesh.userData = node;
+            scene.add(mesh);
+            meshes.push(mesh);
+
+            // Glow ring for active agents
+            if (node.type === 'agent' && node.status === 'active') {
+                const ringGeo = new THREE.RingGeometry(node.size + 0.3, node.size + 0.5, 32);
+                const ringMat = new THREE.MeshBasicMaterial({
+                    color: node.color, transparent: true, opacity: 0.3, side: THREE.DoubleSide
+                });
+                const ring = new THREE.Mesh(ringGeo, ringMat);
+                ring.position.set(...node.pos);
+                ring.rotation.x = Math.PI / 2;
+                scene.add(ring);
+            }
+        });
+
+        // Connections (edges)
+        const connections = [
+            // Claude connects to all MCPs
+            [0, 5], [0, 6], [0, 7], [0, 8], [0, 9],
+            // Claude connects to local LLMs
+            [0, 1], [0, 3], [0, 4],
+            // Claude connects to middleware
+            [0, 10], [0, 12], [0, 13],
+            // Qwen connects to evaluator role
+            [1, 10],
+            // Middleware internal
+            [10, 11], // ChromaDB <-> nomic
+            [13, 14], // Telegram <-> OpenClaw
+            [13, 12], // Telegram <-> Brave
+        ];
+
+        const lineMaterial = new THREE.LineBasicMaterial({
+            color: 0x2D3748, transparent: true, opacity: 0.4
+        });
+
+        connections.forEach(([from, to]) => {
+            const points = [
+                new THREE.Vector3(...allNodes[from].pos),
+                new THREE.Vector3(...allNodes[to].pos)
+            ];
+            const lineGeo = new THREE.BufferGeometry().setFromPoints(points);
+            const line = new THREE.Line(lineGeo, lineMaterial);
+            scene.add(line);
+        });
+
+        // Animated particles along connections
+        const particles = [];
+        const particleGeo = new THREE.SphereGeometry(0.08, 8, 8);
+
+        connections.forEach(([from, to]) => {
+            const particleMat = new THREE.MeshBasicMaterial({
+                color: allNodes[from].color, transparent: true, opacity: 0.8
+            });
+            const particle = new THREE.Mesh(particleGeo, particleMat);
+            particle.userData = {
+                from: new THREE.Vector3(...allNodes[from].pos),
+                to: new THREE.Vector3(...allNodes[to].pos),
+                t: Math.random(),
+                speed: 0.003 + Math.random() * 0.005
+            };
+            scene.add(particle);
+            particles.push(particle);
+        });
+
+        // Tooltip/hover
+        const raycaster = new THREE.Raycaster();
+        const mouse = new THREE.Vector2();
+        const tooltip = document.getElementById('tooltip');
+
+        renderer.domElement.addEventListener('mousemove', (e) => {
+            mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
+            mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
+
+            raycaster.setFromCamera(mouse, camera);
+            const intersects = raycaster.intersectObjects(meshes);
+
+            if (intersects.length > 0) {
+                const node = intersects[0].object.userData;
+                tooltip.style.display = 'block';
+                tooltip.style.left = e.clientX + 12 + 'px';
+                tooltip.style.top = e.clientY + 12 + 'px';
+                tooltip.innerHTML = `<b>${node.name.replace('\n', ' ')}</b><br>` +
+                    `Type: ${node.type}<br>Status: ${node.status || 'active'}`;
+            } else {
+                tooltip.style.display = 'none';
+            }
+        });
+
+        // Animation loop
+        function animate() {
+            requestAnimationFrame(animate);
+
+            // Animate particles
+            particles.forEach(p => {
+                p.userData.t += p.userData.speed;
+                if (p.userData.t > 1) p.userData.t = 0;
+                p.position.lerpVectors(p.userData.from, p.userData.to, p.userData.t);
+            });
+
+            // Pulse active agent nodes
+            const time = Date.now() * 0.001;
+            meshes.forEach((m, i) => {
+                if (m.userData.type === 'agent' && m.userData.status === 'active') {
+                    m.material.emissiveIntensity = 0.2 + Math.sin(time * 2 + i) * 0.15;
+                }
+                // Gentle bob
+                if (m.userData.type === 'agent') {
+                    m.position.y = m.userData.pos[1] + Math.sin(time + i * 0.5) * 0.2;
+                }
+            });
+
+            controls.update();
+            renderer.render(scene, camera);
+        }
+
+        animate();
+
+        // Resize handler
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+    </script>
+</body>
+</html>

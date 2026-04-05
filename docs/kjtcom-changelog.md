@@ -1,5 +1,20 @@
 # kjtcom - Unified Changelog
 
+**v9.38 (Phase 9 - Middleware Development: RAG + Telegram + Claw3D + Evaluator + Template)**
+- RAG pipeline operational: nomic-embed-text + ChromaDB, 130 archive files embedded as 1,307 chunks
+- scripts/embed_archive.py, query_rag.py, build_registry_v2.py created
+- Telegram bot (scripts/telegram_bot.py) with 7 commands: /status /query /evaluate /gotcha /scores /ask /search
+- Brave Search API wrapper (scripts/brave_search.py) created
+- Claw3D Three.js prototype (docs/claw3d-prototype/index.html) - 15 nodes, animated data flow
+- Agent evaluator enhanced: token tracking (prompt_tokens, eval_tokens) in agent_scores.json
+- Leaderboard generator (scripts/generate_leaderboard.py) created
+- docs/kjtcom-architecture.mmd living chart created with full system diagram
+- Portable template (template/) with CLAUDE.md, GEMINI.md, .mcp.json, evaluator, RAG, schema, gotcha
+- OpenClaw DEFERRED: tiktoken build failure on Python 3.14
+- Updated: CLAUDE.md, GEMINI.md (read order), install.fish (nomic-embed, chromadb, telegram-bot, API keys)
+- flutter analyze: 0 issues. flutter test: 15/15 pass. 0 production deploys.
+- Kyle interventions: 2 resolved (KJTCOM_TELEGRAM_BOT_TOKEN, KJTCOM_BRAVE_SEARCH_API_KEY set + verified)
+
 **v9.37 (Phase 9 - Dart 3.9 Upgrade + Dart MCP + Middleware Registry + Panther Scrape + MCP Fixes)**
 - Biggest dep upgrade since Phase 6: 5 major version bumps (firebase_core 3->4, cloud_firestore 5->6, flutter_riverpod 2->3, google_fonts 6->8, flutter_map 7->8)
 - Riverpod 3.x migration: replaced 5 StateProviders with NotifierProvider+Notifier pattern, renamed valueOrNull->value, updated 18 call sites across 8 widget files
