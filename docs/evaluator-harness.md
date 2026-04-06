@@ -723,5 +723,39 @@ For evaluator fix workstreams, evidence must include:
 - `grep -c "^| W" docs/kjtcom-report-<version>.md` >= 1.
 
 ---
-*Evaluator Harness v10.58 - April 6, 2026. ADR-011 (Thompson Schema v4 Intranet Extensions), updated evidence standards, evaluator schema evidence.*
-*(Line count verification: 670 at v10.57, expanded with ADR-011 and v10.58 evidence standards.)*
+
+## 13. ADR-012: Artifact Immutability During Execution (v10.60)
+
+### ADR-012: Artifact Immutability During Execution
+- **Context:** In v10.59, generate_artifacts.py overwrote the design and plan docs
+  authored during the planning session. The design doc lost its Mermaid trident,
+  detailed specs, and post-mortem. The plan doc lost the 10 pillars, execution
+  steps, and pre-flight checklist.
+- **Decision:** Design and plan docs are INPUT artifacts. They are immutable once
+  the iteration begins. The executing agent produces only the build log and report.
+  generate_artifacts.py must check for existing design/plan files and skip them.
+- **Rationale:** The planning session (Claude chat + human review) produces the spec.
+  The execution session (Claude Code or Gemini CLI) implements it. Mixing authorship
+  destroys the separation of concerns and the audit trail. The design doc is the
+  "what was planned" record. The build log is the "what actually happened" record.
+  Overwriting the plan with a summary of what happened collapses these into one.
+- **Consequences:** generate_artifacts.py gains an immutability check. CLAUDE.md and
+  GEMINI.md must state this rule explicitly. The evaluator checks for artifact
+  integrity as part of post-flight.
+
+---
+
+## 14. Failure Pattern Catalog - Pattern 17 (v10.60)
+
+### Pattern 17: Agent Overwrites Input Artifacts (G58)
+
+- **Failure:** generate_artifacts.py regenerates all 4 artifacts unconditionally
+- **Impact:** Design and plan docs lose planning-session content (trident, pillars, specs)
+- **Root cause:** No distinction between input artifacts (design, plan) and output artifacts (build, report) in the generation pipeline
+- **Detection:** Post-flight should verify design/plan docs haven't been modified since iteration start (compare git hash or file mtime)
+- **Prevention:** Immutability check in generate_artifacts.py. IMMUTABLE_ARTIFACTS list skips design/plan if they already exist. Post-flight verifies design/plan docs haven't been modified since iteration start.
+- **Resolution:** v10.60 W1 added the immutability guard. v10.60 W3 restored the original v10.59 docs from GEMINI.md reconstruction.
+
+---
+*Evaluator Harness v10.60 - April 6, 2026. ADR-012 (Artifact Immutability), Pattern 17 (G58), updated from v10.58.*
+*(Line count verification: 727 at v10.58, expanded with ADR-012 and Pattern 17.)*

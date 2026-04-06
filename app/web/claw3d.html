@@ -45,9 +45,12 @@
             position: absolute; color: #8B949E; font: 10px 'Courier New', monospace;
             pointer-events: none; white-space: nowrap;
             text-shadow: 0 0 4px rgba(0,0,0,0.9);
+            overflow: hidden; text-overflow: ellipsis;
+            max-width: 70px; text-align: center;
         }
         .label-overlay.board-label {
             font-size: 14px; font-weight: bold;
+            max-width: none; overflow: visible;
         }
     </style>
 </head>
@@ -57,7 +60,7 @@
         <button id="backBtn" onclick="zoomOut()">All boards</button>
         <select id="iterSelect" onchange="selectIteration(this.value)"></select>
     </div>
-    <div id="title">kjtcom PCB Architecture v10.59</div>
+    <div id="title">kjtcom PCB Architecture v10.60</div>
     <div id="legend">
         <div class="legend-row"><span class="legend-dot" style="background:#4ADE80"></span> Active</div>
         <div class="legend-row"><span class="legend-dot" style="background:#EF9F27"></span> Degraded</div>
@@ -77,7 +80,7 @@
         var BOARDS = [
             {
                 id: "frontend", label: "Frontend", color: 0x0D9488,
-                pos: [-3, 5.5, 0], size: [5, 3],
+                pos: [-3.8, 5.5, 0], size: [5, 3],
                 chips: [
                     {id:"query_ed", status:"active", detail:"NoSQL parser (query_editor)"},
                     {id:"results", status:"active", detail:"Paginated grid (results_table)"},
@@ -93,7 +96,7 @@
             },
             {
                 id: "pipeline", label: "Pipeline", color: 0xDA7E12,
-                pos: [3, 5.5, 0], size: [5, 3],
+                pos: [3.8, 5.5, 0], size: [5, 3],
                 chips: [
                     {id:"yt_dlp", status:"active", detail:"YouTube audio download"},
                     {id:"whisper", status:"active", detail:"CUDA transcription (faster_whisper)"},
@@ -114,7 +117,7 @@
                     {id:"harness", status:"active", detail:"727-line operating manual"},
                     {id:"ADR", status:"active", detail:"11 architecture decisions"},
                     {id:"artifact", status:"active", detail:"4-doc loop (artifact_gen)"},
-                    {id:"gotchas", status:"active", detail:"G1-G57, 20+ resolved (gotcha_archive)"},
+                    {id:"gotchas", status:"active", detail:"G1-G58, 20+ resolved (gotcha_archive)"},
                     {id:"scores", status:"active", detail:"5-dim scoring, append-only (agent_scores)"},
                     {id:"pre_flight", status:"active", detail:"Environment validation"},
                     {id:"post_flight", status:"active", detail:"14+ checks"},
@@ -156,6 +159,7 @@
         ];
 
         var ITERATIONS = {
+            "v10.60": ["ALL"],
             "v10.59": ["ALL"],
             "v10.58": ["ALL"],
             "v10.57": [
@@ -220,8 +224,8 @@
         // Camera positions
         var OVERVIEW = { pos: new THREE.Vector3(0, 0, 22), lookAt: new THREE.Vector3(0, 0, 0) };
         var ZOOM_TARGETS = {
-            frontend:  { pos: new THREE.Vector3(-3, 5.5, 8),  lookAt: new THREE.Vector3(-3, 5.5, 0) },
-            pipeline:  { pos: new THREE.Vector3(3, 5.5, 8),   lookAt: new THREE.Vector3(3, 5.5, 0) },
+            frontend:  { pos: new THREE.Vector3(-3.8, 5.5, 8),  lookAt: new THREE.Vector3(-3.8, 5.5, 0) },
+            pipeline:  { pos: new THREE.Vector3(3.8, 5.5, 8),   lookAt: new THREE.Vector3(3.8, 5.5, 0) },
             middleware: { pos: new THREE.Vector3(0, 0, 10), lookAt: new THREE.Vector3(0, 0, 0) },
             backend:   { pos: new THREE.Vector3(0, -6, 8),  lookAt: new THREE.Vector3(0, -6, 0) }
         };
@@ -269,8 +273,12 @@
             return div;
         }
 
-        function chipDisplayName(id) {
-            return id.replace(/_/g, ' ').replace(/\b\w/g, function(c) { return c.toUpperCase(); });
+        function chipDisplayName(id, maxLen) {
+            var name = id.replace(/_/g, ' ').replace(/\b\w/g, function(c) { return c.toUpperCase(); });
+            if (maxLen && name.length > maxLen) {
+                name = name.substring(0, maxLen);
+            }
+            return name;
         }
 
         // ================================================================
@@ -322,6 +330,9 @@
                 });
 
                 // Chips
+                // Max label chars: 8 for small boards (FE/PL), 10 for large (MW/BE)
+                var maxLabelLen = (board.id === 'middleware' || board.id === 'backend') ? 10 : 8;
+
                 chipRows.forEach(function(layout) {
                     var chip = layout.chip;
                     var cx = layout.cx, cy = layout.cy;
@@ -367,8 +378,8 @@
                         scene.add(new THREE.Line(rpGeo, pinMat));
                     }
 
-                    // Chip label
-                    var chipLabel = createLabel(chipDisplayName(chip.id), false);
+                    // Chip label (truncated to fit inside chip box)
+                    var chipLabel = createLabel(chipDisplayName(chip.id, maxLabelLen), false);
                     chipLabel._worldPos = new THREE.Vector3(cx, cy, 0.15);
                     chipLabel._chipId = chip.id;
                     labelElements.push(chipLabel);
@@ -435,21 +446,21 @@
             var chips = board.chips;
             var count = chips.length;
 
-            // Determine grid: cols based on board width, rows to fit all chips
-            var cols, chipW, chipH, padX, padY;
-            if (board.id === "middleware") {
-                cols = 7;
-                chipW = 1.5; chipH = 0.6;
-                padX = 0.2; padY = 0.5;
-            } else if (board.id === "backend") {
-                cols = 7;
-                chipW = 1.5; chipH = 0.6;
-                padX = 0.2; padY = 0.5;
+            // Determine chip size and compute cols to fit inside board
+            var chipW, chipH, padX, padY;
+            if (board.id === "middleware" || board.id === "backend") {
+                chipW = 1.4; chipH = 0.55;
+                padX = 0.2; padY = 0.4;
             } else {
-                cols = 5;
-                chipW = 1.2; chipH = 0.45;
-                padX = 0.15; padY = 0.35;
+                chipW = 0.85; chipH = 0.4;
+                padX = 0.15; padY = 0.3;
             }
+
+            // Compute max cols that fit inside board width (with 0.3 margin each side)
+            var usableW = bw - 0.6;
+            var cols = Math.floor((usableW + padX) / (chipW + padX));
+            if (cols < 1) cols = 1;
+            if (cols > count) cols = count;
 
             var rows = Math.ceil(count / cols);
             var totalW = cols * chipW + (cols - 1) * padX;
@@ -457,14 +468,38 @@
             var startX = bx - totalW / 2 + chipW / 2;
             var startY = by + totalH / 2 - chipH / 2;
 
+            // Verify grid fits inside board boundaries
+            var boardLeft = bx - bw/2;
+            var boardRight = bx + bw/2;
+            var boardTop = by + bh/2;
+            var boardBottom = by - bh/2;
+
+            // If grid exceeds board height, shrink chipH
+            var neededH = rows * chipH + (rows - 1) * padY;
+            var usableH = bh - 0.8; // 0.4 padding top (for title) + 0.4 bottom
+            if (neededH > usableH) {
+                chipH = (usableH - (rows - 1) * padY) / rows;
+                totalH = rows * chipH + (rows - 1) * padY;
+                startY = by + totalH / 2 - chipH / 2 - 0.2; // offset for title
+            } else {
+                startY = by + totalH / 2 - chipH / 2 - 0.2;
+            }
+
             var result = [];
             chips.forEach(function(chip, idx) {
                 var col = idx % cols;
                 var row = Math.floor(idx / cols);
+                var cx = startX + col * (chipW + padX);
+                var cy = startY - row * (chipH + padY);
+                // Bounds check
+                if (cx - chipW/2 < boardLeft + 0.1) cx = boardLeft + 0.1 + chipW/2;
+                if (cx + chipW/2 > boardRight - 0.1) cx = boardRight - 0.1 - chipW/2;
+                if (cy - chipH/2 < boardBottom + 0.1) cy = boardBottom + 0.1 + chipH/2;
+                if (cy + chipH/2 > boardTop - 0.1) cy = boardTop - 0.1 - chipH/2;
                 result.push({
                     chip: chip,
-                    cx: startX + col * (chipW + padX),
-                    cy: startY - row * (chipH + padY),
+                    cx: cx,
+                    cy: cy,
                     chipW: chipW,
                     chipH: chipH
                 });
@@ -638,7 +673,7 @@
 
         buildScene();
         populateIterations();
-        selectIteration('v10.58');
+        selectIteration('v10.60');
         animate();
 
     })();

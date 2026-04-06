@@ -459,8 +459,13 @@ def generate_self_eval(build_log, design_doc, version, expected_names):
         # Check build log for evidence of this workstream
         w_tag = f"W{i+1}"
         evidence_lines = []
+        # Match W-tags, workstream names, and section headings (### W1: or ## W1:)
+        name_words = [w.lower() for w in name.split() if len(w) > 3]
         for line in build_log.split('\n'):
-            if w_tag in line or name.lower() in line.lower():
+            line_lower = line.lower()
+            if w_tag in line or name.lower() in line_lower:
+                evidence_lines.append(line.strip())
+            elif any(word in line_lower for word in name_words):
                 evidence_lines.append(line.strip())
 
         has_evidence = len(evidence_lines) > 0
@@ -709,11 +714,19 @@ def evaluate_with_retry(version, design_doc_path, max_retries=3, verbose=False, 
 
     # Tier 3: Self-eval (always succeeds)
     print("[EVAL] Generating self-eval (Qwen + Gemini fallback).")
-    build_log_path = os.path.join(PROJECT_DIR, 'docs', f'kjtcom-build-{version}.md')
     build_log = ""
-    if os.path.exists(build_log_path):
-        with open(build_log_path) as f:
-            build_log = f.read()
+    # Check promoted docs first, then drafts fallback
+    for build_log_candidate in [
+        os.path.join(PROJECT_DIR, 'docs', f'kjtcom-build-{version}.md'),
+        os.path.join(PROJECT_DIR, 'docs', 'drafts', f'kjtcom-build-{version}.md'),
+    ]:
+        if os.path.exists(build_log_candidate):
+            with open(build_log_candidate) as f:
+                build_log = f.read()
+            print(f"[EVAL] Build log found: {build_log_candidate} ({len(build_log)} chars)")
+            break
+    if not build_log:
+        print(f"[EVAL] WARNING: No build log found for {version} in docs/ or docs/drafts/")
 
     result = generate_self_eval(build_log, design_content, version, expected_names)
     result['evaluator'] = 'self-eval (fallback)'

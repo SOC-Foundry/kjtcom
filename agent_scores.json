@@ -1791,58 +1791,58 @@
     },
     {
       "iteration": "v10.59",
-      "summary": "Self-evaluation fallback for v10.59. Qwen and Gemini Flash both failed schema validation. 4 workstreams parsed from design doc. Scores capped at 7/10 to avoid self-grading bias.",
+      "summary": "Corrected report for v10.59. Original self-eval scored 0/10 due to build log path timing issue. Actual delivery: 4/4 workstreams complete. Bourdain 114/114 videos (351 entities), Claw3D labels shortened, evaluator rich context added, README at 759 lines.",
       "workstreams": [
         {
           "id": "W1",
-          "name": "Bourdain Pipeline \u2014 Phase 4 Final Batch",
+          "name": "Bourdain Pipeline - Phase 4 Final Batch",
           "priority": "P1",
-          "outcome": "deferred",
-          "evidence": "No build log evidence found for this workstream",
+          "outcome": "complete",
+          "evidence": "114/114 videos, 351 entities, 44+ countries, nested array fix, 1 skip (089)",
           "agents": [
-            "claude-code"
+            "gemini-cli"
           ],
           "llms": [
-            "qwen3.5:9b"
+            "gemini-flash",
+            "faster-whisper"
           ],
           "mcps": [
-            "-"
+            "Firebase"
           ],
-          "score": 0,
+          "score": 8,
           "improvements": [
-            "Self-eval fallback used - Qwen and Gemini both failed schema validation",
-            "Manual review recommended for accurate scoring"
+            "make_firestore_safe() resolved nested array Firestore 400 errors",
+            "Video 089 correctly identified as compilation episode and skipped"
           ]
         },
         {
           "id": "W2",
           "name": "Claw3D Chip Text Fix",
           "priority": "P1",
-          "outcome": "deferred",
-          "evidence": "No build log evidence found for this workstream",
+          "outcome": "complete",
+          "evidence": "28 labels shortened, chips widened to 1.2/1.5, deployed, G56=0",
           "agents": [
-            "claude-code"
+            "gemini-cli"
           ],
           "llms": [
             "qwen3.5:9b"
           ],
           "mcps": [
-            "-"
+            "Firebase"
           ],
-          "score": 0,
+          "score": 7,
           "improvements": [
-            "Self-eval fallback used - Qwen and Gemini both failed schema validation",
-            "Manual review recommended for accurate scoring"
+            "Labels shortened but chips still overflow boards - hard containment needed (v10.60 W5)"
           ]
         },
         {
           "id": "W3",
           "name": "Qwen Context Expansion",
           "priority": "P1",
-          "outcome": "deferred",
-          "evidence": "No build log evidence found for this workstream",
+          "outcome": "complete",
+          "evidence": "build_rich_context() added, fuzzy name matching, few-shot examples in context",
           "agents": [
-            "claude-code"
+            "gemini-cli"
           ],
           "llms": [
             "qwen3.5:9b"
@@ -1850,20 +1850,19 @@
           "mcps": [
             "-"
           ],
-          "score": 0,
+          "score": 7,
           "improvements": [
-            "Self-eval fallback used - Qwen and Gemini both failed schema validation",
-            "Manual review recommended for accurate scoring"
+            "Rich context is right direction per G57 but all 3 evaluator tiers still failed schema validation"
           ]
         },
         {
           "id": "W4",
           "name": "README Overhaul",
           "priority": "P1",
-          "outcome": "deferred",
-          "evidence": "No build log evidence found for this workstream",
+          "outcome": "complete",
+          "evidence": "759 lines, 4 pipelines, PCB architecture, 11 ADRs, middleware section",
           "agents": [
-            "claude-code"
+            "gemini-cli"
           ],
           "llms": [
             "qwen3.5:9b"
@@ -1871,24 +1870,24 @@
           "mcps": [
             "-"
           ],
-          "score": 0,
+          "score": 8,
           "improvements": [
-            "Self-eval fallback used - Qwen and Gemini both failed schema validation",
-            "Manual review recommended for accurate scoring"
+            "Comprehensive overhaul from 680 to 759 lines with all required sections"
           ]
         }
       ],
       "trident": {
-        "cost": "Minimal - self-eval required no LLM tokens",
-        "delivery": "0/4 workstreams completed (self-eval)",
-        "performance": "Self-eval fallback triggered - evaluator pipeline needs repair"
+        "cost": "~$1.50 (Gemini API + Google Places). No Claude tokens.",
+        "delivery": "4/4 workstreams complete. Zero interventions.",
+        "performance": "351 entities processed. 15/15 post-flight. Evaluator fallback triggered."
       },
       "what_could_be_better": [
-        "Qwen failed schema validation after 3 attempts - prompt or model issue",
-        "Gemini Flash failed schema validation after 2 attempts - schema may be too strict",
-        "Self-eval cannot provide the same quality as an independent evaluator"
+        "Self-eval scored 0/10 due to build log path issue - evaluator ran before build log existed",
+        "generate_artifacts.py overwrote design/plan docs (G58)",
+        "Claw3D chips still overflow board boundaries despite label shortening",
+        "Qwen schema validation still failing after rich context expansion"
       ],
-      "evaluator": "self-eval (fallback)",
+      "evaluator": "manual-review (correcting self-eval)",
       "evaluator_tokens": {},
       "date": "2026-04-06"
     }

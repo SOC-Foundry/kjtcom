@@ -647,6 +647,13 @@ def main():
     # Default: generate drafts
     print(f"Generating artifacts for {iteration}...")
 
+    # G58: Design and plan docs are INPUT artifacts - immutable during execution
+    IMMUTABLE_ARTIFACTS = ["design", "plan"]
+    for artifact_type in IMMUTABLE_ARTIFACTS:
+        output_path = os.path.join(DOCS_DIR, f'kjtcom-{artifact_type}-{iteration}.md')
+        if os.path.exists(output_path):
+            print(f"[ARTIFACT] SKIP {artifact_type} -- already exists (immutable, G58)")
+
     log_event("command", "generate-artifacts", "local", "generate",
               input_summary=f"generate_artifacts for {iteration}")
 

@@ -1,6 +1,6 @@
 # CLAUDE.md — kjtcom Agent Harness (Claude Code)
 
-**Launch:** `read claude and execute 10.58`
+**Launch:** `read claude and execute 10.60`
 **Repo:** SOC-Foundry/kjtcom
 **Site:** kylejeromethompson.com
 **Firebase:** kjtcom-c78cd (Blaze)
@@ -10,15 +10,22 @@
 
 ## RULES
 
-1. **NEVER** `git commit`, `git push`, or any git write. All git = Kyle only.
+1. **NEVER** `git commit`, `git push`. All git = Kyle only.
 2. **NEVER** heredocs. `printf` only (G1). `command ls` (G22). `fish -c` wrappers (G19).
-3. **NEVER** simultaneous GPU. Graduated tmux batches, unload Ollama first (G18).
+3. **NEVER** simultaneous GPU. Graduated tmux, unload Ollama first (G18).
 4. Read ENTIRE files before editing. `grep` all related patterns across `app/`.
-5. 4 artifacts per iteration: design, plan, build, report. No exceptions.
-6. Post-flight MANDATORY. `10/10` prohibited. Harness never shrinks. Scores append-only.
-7. Changelog: `NEW:` / `UPDATED:` / `FIXED:` prefixes. No fluff.
-8. **REPORTS MANDATORY.** Fallback: Qwen → Gemini → self-eval. Empty scorecards = failure.
-9. **G56: ALL Claw3D data INLINE as JS objects. NEVER fetch() external JSON.**
+5. 4 artifacts per iteration. Post-flight MANDATORY. `10/10` prohibited. Harness never shrinks.
+6. **REPORTS MANDATORY.** Fallback: Qwen → Gemini → self-eval. No empty scorecards.
+7. **G56: ALL Claw3D data INLINE. NEVER fetch() external JSON.**
+8. **G57: Qwen needs more context, not tighter rules.**
+9. **G58: DESIGN AND PLAN DOCS ARE IMMUTABLE DURING EXECUTION.**
+   - Design doc and plan doc are INPUT artifacts written by the planning session (Claude chat)
+   - The executing agent (Claude Code or Gemini CLI) reads them — NEVER rewrites them
+   - The executing agent produces ONLY the build log and report
+   - `generate_artifacts.py` must SKIP design and plan docs if they already exist
+   - If the agent overwrites design/plan docs, the iteration is compromised
+   - Build log = agent's record of what happened. Report = evaluator's assessment.
+   - Design doc = what was planned. Plan doc = how to execute. These are READ-ONLY.
 
 ---
 
@@ -29,187 +36,251 @@
 | California's Gold | calgold | #DA7E12 | 899 | Production |
 | Rick Steves' Europe | ricksteves | #3B82F6 | 4,182 | Production |
 | Diners Drive-Ins and Dives | tripledb | #DD3333 | 1,100 | Production |
-| Anthony Bourdain | bourdain | #8B5CF6 | 188 | **Staging (Phase 2)** |
+| Anthony Bourdain | bourdain | #8B5CF6 | 351 | **Staging (Phase 4 complete, 114/114 videos)** |
 
-**Total:** 6,181 production + 188 staging. Bourdain Phase 3 not yet executed.
+**Total:** 6,181 production + 351 staging. Bourdain playlist COMPLETE.
 
 ---
 
-## AGENTS & EVALUATOR
+## AGENTS
 
 | Agent | Role |
 |-------|------|
-| Claude Code | Executor (Phases 6-7, app, docs) |
-| Gemini CLI | Executor (Phases 1-5) |
+| Claude Code | Executor: app, middleware, docs (Phases 6-7) |
+| Gemini CLI | Executor: pipeline (Phases 1-5) |
 | Qwen3.5-9B | Evaluator (local Ollama) |
 | Gemini Flash | Intent routing, extraction, evaluator fallback |
 
-**Evaluator fallback:** Qwen (3) → Gemini (2) → self-eval (always succeeds, cap 7/10)
-
-**v10.57 evaluator issue:** All 3 tiers failed schema validation. Root cause: `eval_schema.json` constraints are too tight for the actual LLM output format. The schema needs to be relaxed OR the prompt needs a concrete JSON example that matches the schema exactly. Fix in W3.
+**Evaluator fallback:** Qwen (3) → Gemini (2) → self-eval (cap 7/10)
 
 ---
 
 ## GOTCHAS
 
-| ID | Title | Workaround |
-|----|-------|------------|
-| G1 | Heredocs | printf only |
-| G18 | CUDA OOM | Graduated tmux, unload Ollama |
-| G34 | Firestore array-contains | Post-filter |
-| G45 | Query editor cursor | flutter_code_editor pending |
-| G53 | Firebase MCP reauth | Retry wrapper |
-| G55 | Qwen empty reports | Fallback chain (resolved v10.56) |
-| G56 | Claw3D fetch() 404 | Inline all data (resolved v10.57) |
+| ID | Title | Status |
+|----|-------|--------|
+| G1 | Heredocs | Active |
+| G18 | CUDA OOM | Active |
+| G53 | Firebase MCP reauth | Recurring |
+| G56 | Claw3D fetch() 404 | Resolved v10.57 |
+| G57 | Qwen needs context not rules | Active — rich context added v10.59 |
+| **G58** | **Agent overwrites design/plan docs** | **NEW — generate_artifacts.py must skip existing design/plan** |
 
 ---
 
-## v10.58 WORKSTREAMS
+## v10.60 WORKSTREAMS
 
-### W1: Claw3D Visual Polish — Gaps + Connectors + Logger (P1)
+### W1: Fix generate_artifacts.py — G58 Artifact Immutability (P0)
 
-**v10.57 delivered the layout but boards are directly touching middleware.** Fix:
+**Problem:** In v10.59, Gemini CLI's `generate_artifacts.py` overwrote the design and plan docs that were carefully authored in the planning session. The design doc lost its Mermaid trident, detailed workstream specs, and v10.58 post-mortem. The plan doc lost the 10 IAO pillars, detailed execution steps, and pre-flight checklist. This destroys the audit trail.
 
-**Gap + connector requirement:** All 4 boards must have visible gaps between them with animated dashed trace connectors crossing the gaps — exactly like the Backend→Middleware connector already works. Specifically:
-- Frontend board (top-left) has a gap below it, with animated traces going down to Middleware
-- Pipeline board (top-right) has a gap below it, with animated traces going down to Middleware
-- Middleware board (center) has a gap below it, with animated traces going down to Backend
-- The gap should be ~1.5 Three.js units (enough to see the animated dashes and read the connector label)
+**Root cause:** `generate_artifacts.py` generates ALL 4 artifacts (design, plan, build, report) unconditionally. It should only generate build and report. Design and plan are INPUT artifacts.
 
-**Board positions (adjusted for gaps):**
-```
-Frontend:   [-3, 5, 0]   size [5, 3]
-Pipeline:   [3, 5, 0]    size [5, 3]
-  ↕ gap ~1.5 units with animated connectors
-Middleware: [0, 0, 0]    size [12, 6]   ← LARGE, centered
-  ↕ gap ~1.5 units with animated connectors
-Backend:    [0, -5.5, 0] size [12, 3]
+**Fix `scripts/generate_artifacts.py`:**
+```python
+# At the top of the generation loop, add:
+IMMUTABLE_ARTIFACTS = ["design", "plan"]
+for artifact_type in ["design", "plan", "build", "report"]:
+    output_path = f"docs/kjtcom-{artifact_type}-{iteration}.md"
+    if artifact_type in IMMUTABLE_ARTIFACTS and os.path.exists(output_path):
+        print(f"[ARTIFACT] SKIP {artifact_type} — already exists (immutable, G58)")
+        continue
+    # ... generate only build and report
 ```
 
-**Connector labels in gaps:**
-- FE→MW gap: "Riverpod / Firestore stream"
-- PL→MW gap: "Pipeline scripts / checkpoint"
-- MW→BE gap: "Admin SDK / Ollama / ChromaDB"
+**Also fix `run_evaluator.py` self-eval build log path:**
+The v10.59 self-eval scored 0/10 on all workstreams with "No build log evidence found." The build log exists at `docs/kjtcom-build-v10.59.md` but the self-eval function looked in the wrong place or ran before the build log was written.
 
-**Logger chip:** Add a `logger` chip to the Middleware board. All event logging (`data/iao_event_log.jsonl`) is managed by middleware. The logger chip should show:
-- id: "iao_logger"
-- status: "active"
-- detail: "JSONL event log, P3 diligence"
+Diagnose:
+```bash
+grep -n "build.*log\|build.*path\|kjtcom-build" scripts/run_evaluator.py
+grep -n "build.*log\|build.*path\|kjtcom-build" scripts/generate_artifacts.py
+```
 
-Claw3D itself does not log — it reads component data that's been logged by middleware. The logger chip on the middleware board represents this.
+The self-eval function must:
+1. Read the build log from `docs/kjtcom-build-{iteration}.md`
+2. Parse workstream sections (look for `## W1:`, `## W2:`, etc. OR `### W1:` headings)
+3. If build log doesn't exist yet, check `docs/drafts/` as fallback
+4. If neither exists, note "build log not yet written" but still score based on filesystem evidence (check if files changed, entity counts, etc.)
+
+**Restore v10.59 original design and plan docs:**
+The original docs are the ones uploaded to this conversation. Copy them back:
+```bash
+# The originals from the planning session need to be restored
+# Kyle will provide them or they can be reconstructed from GEMINI.md
+```
 
 **Evidence:**
-- Visible gaps between all board pairs
-- Animated traces crossing each gap
-- Connector labels readable
-- Logger chip present on middleware board
-- 0 console errors, hover/zoom still work
+- `generate_artifacts.py` has the immutability check
+- Running `generate_artifacts.py` with existing design/plan docs prints "SKIP"
+- Self-eval finds build log evidence and scores > 0
 
 ---
 
-### W2: Bourdain Pipeline — Phase 3 (P1)
+### W2: Produce Accurate v10.59 Report (P1)
 
-**This did not execute in v10.57.** Videos 61-90.
+**The v10.59 report is wrong.** It scored 0/10 on all 4 workstreams despite the build log showing:
+- W1: 351 Bourdain entities (114 videos, Phase 4 complete, nested array fix)
+- W2: Claw3D chips widened, labels shortened, deployed
+- W3: `build_rich_context()` added, fuzzy name matching improved
+- W4: README at 759 lines, 4 pipelines, PCB architecture, 11 ADRs
 
-**Machine:** NZXTcos (GPU required)
-**Playlist:** `https://www.youtube.com/playlist?list=PLEVfhwFNb44fPn5N3OXk-aEHFvLOPzXKo`
+**Produce a corrected report** based on the actual build log evidence. Score honestly:
+- W1: 8/10 — all 114 videos processed, 351 entities, nested array fix was a real contribution, 1 video skip (089 compilation)
+- W2: 7/10 — labels shortened, chips widened, but need to verify readability at live URL
+- W3: 7/10 — rich context implemented, fuzzy matching added, but Qwen/Gemini still failed schema validation (self-eval triggered)
+- W4: 8/10 — 759 lines, comprehensive, all required sections present
 
-```
-yt-dlp --playlist-items 61-90 -x --audio-format mp3
-# Unload Ollama: curl -s http://localhost:11434/api/generate -d '{"model":"qwen3.5:9b","keep_alive":0}'
-# Graduated tmux: 3 batches of 10, sequential, timeout 600s
-faster-whisper (CUDA)
-Gemini Flash extraction (pipeline/config/bourdain/extraction_prompt.md)
-phase4_normalize.py --pipeline bourdain
-phase5_geocode.py --pipeline bourdain
-phase6_enrich.py --pipeline bourdain
-phase7_load.py --pipeline bourdain --database staging
-```
-
-**DO NOT load to production. Staging only.**
-**Dedup against 188 existing entities.**
-**Update `data/bourdain/checkpoint.json`.**
+**Save as `docs/kjtcom-report-v10.59-corrected.md` and also update `agent_scores.json`** with the corrected scores.
 
 ---
 
-### W3: Fix Evaluator Schema Validation (P1)
+### W3: Restore Original v10.59 Design + Plan Docs (P1)
 
-**Problem:** In v10.57, all 3 evaluator tiers failed schema validation. The `eval_schema.json` constraints don't match what the LLMs actually produce. Self-eval saved scores to `agent_scores.json` but didn't generate the report markdown file.
+**The originals were uploaded to this chat session.** They are the authoritative versions.
 
-**Diagnosis:**
-1. `cat data/eval_schema.json` — what constraints exist?
-2. Run evaluator with `--verbose` and capture the raw LLM output
-3. Compare raw output structure to schema requirements
-4. Identify mismatches (field names? types? enum values? string length limits?)
+The original design doc (from our planning session) contained:
+- v10.58 post-mortem with specific metrics
+- Detailed workstream specs referencing GEMINI.md
+- Trident targets with specific metrics
+- 4-board PCB context
 
-**Fix options (try in order):**
-1. **Relax the schema** — if constraints are unnecessarily tight (e.g. summary max 500 chars, priority enum missing values), loosen them to match realistic LLM output
-2. **Add a concrete JSON example to the prompt** — show Qwen/Gemini exactly what the output should look like, field by field, so there's no ambiguity
-3. **Add a JSON repair step** — after getting LLM output, attempt to fix common issues (strip markdown fences, fix trailing commas, coerce types) before validation
-4. **Ensure self-eval writes both `agent_scores.json` AND the report markdown** — the self-eval tier must produce `docs/kjtcom-report-v{version}.md` not just the JSON scores
+The original plan doc contained:
+- Mermaid trident chart (graph BT with shaft/prong classDefs)
+- All 10 IAO pillars (verbatim)
+- Pre-flight checklist
+- Detailed 5-step execution sequence with timing estimates
+- Post-flight + report verification steps
+- Full completion checklist
+
+Restore these from the uploaded files (they're in `kjtcom-design-v10.59.md` and `kjtcom-plan-v10.59.md` as uploaded to this session, which are the originals from our planning session — NOT the overwritten versions from Gemini).
+
+**If the originals can't be recovered from git:** Reconstruct from the GEMINI.md content which was not overwritten (GEMINI.md is the launch artifact and was read-only during execution).
+
+---
+
+### W4: Evaluator Harness — G58 ADR + Pattern (P2)
+
+**Append to `docs/evaluator-harness.md`:**
+
+1. **ADR-012: Artifact Immutability**
+```
+### ADR-012: Artifact Immutability During Execution
+- **Context:** In v10.59, generate_artifacts.py overwrote the design and plan docs
+  authored during the planning session. The design doc lost its Mermaid trident,
+  detailed specs, and post-mortem. The plan doc lost the 10 pillars, execution
+  steps, and pre-flight checklist.
+- **Decision:** Design and plan docs are INPUT artifacts. They are immutable once
+  the iteration begins. The executing agent produces only the build log and report.
+  generate_artifacts.py must check for existing design/plan files and skip them.
+- **Rationale:** The planning session (Claude chat + human review) produces the spec.
+  The execution session (Claude Code or Gemini CLI) implements it. Mixing authorship
+  destroys the separation of concerns and the audit trail. The design doc is the
+  "what was planned" record. The build log is the "what actually happened" record.
+  Overwriting the plan with a summary of what happened collapses these into one.
+- **Consequences:** generate_artifacts.py gains an immutability check. CLAUDE.md and
+  GEMINI.md must state this rule explicitly. The evaluator checks for artifact
+  integrity as part of post-flight.
+```
+
+2. **Pattern 17: Agent overwrites input artifacts (G58)**
+```
+- **Failure:** generate_artifacts.py regenerates all 4 artifacts unconditionally
+- **Impact:** Design and plan docs lose planning-session content (trident, pillars, specs)
+- **Prevention:** Immutability check in generate_artifacts.py. Post-flight verifies
+  design/plan docs haven't been modified since iteration start.
+```
+
+**Evidence:** ADR-012 present, Pattern 17 present, `wc -l` shows growth (currently 727).
+
+---
+
+### W5: Claw3D — Horizontal Gap Between FE and PL Boards (P1)
+
+### W5: Claw3D — All Components Must Fit Inside Their Board (P1)
+
+**Problem:** Chip labels and chips still overflow their parent board boundaries. Every chip label must fit inside its chip box, and every chip must fit inside its board border. Nothing should spill outside its containing rectangle.
+
+**Requirements:**
+1. **Chip labels inside chip boxes.** If a label is too wide, truncate further. Full name lives in hover tooltip — the on-board label just needs to be identifiable. Max 8 chars on small boards (FE/PL), max 10 on large boards (MW/BE).
+2. **All chips inside their board.** The chip grid must fit entirely within the board border. If too many chips, enlarge the board OR shrink chips.
+3. **Board titles inside boards.** "Frontend", "Pipeline", "Middleware", "Backend" must sit inside the top edge, not floating above.
+4. **FE and PL horizontal gap.** Push FE left (x=-3.8) and PL right (x=3.8) so they're visually distinct. They both connect down to MW — no direct FE↔PL connection.
+
+**HTML overlay text clamping:**
+```css
+.chip-label {
+    font: 10px monospace;
+    color: #C9D1D9;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 70px;
+    text-align: center;
+    pointer-events: none;
+}
+```
+
+**Chip grid layout — compute before placing:**
+```javascript
+function layoutChips(board) {
+    const chipW = 1.2, chipH = 0.6;
+    const gapX = 0.3, gapZ = 0.4;
+    const padX = 0.5, padZ = 0.8;
+    const usableW = board.size[0] - 2 * padX;
+    const cols = Math.floor((usableW + gapX) / (chipW + gapX));
+    const rows = Math.ceil(board.chips.length / cols);
+    // Verify rows * (chipH + gapZ) <= board.size[1] - 2*padZ
+}
+```
+
+**Bounds check after placement:**
+```javascript
+board.chips.forEach(chip => {
+    const cx = chip.mesh.position.x, cz = chip.mesh.position.z;
+    console.assert(
+        cx - 0.6 >= boardLeft && cx + 0.6 <= boardRight &&
+        cz - 0.3 >= boardTop && cz + 0.3 <= boardBottom,
+        `Chip ${chip.id} overflows board ${board.id}`
+    );
+});
+```
 
 **Evidence:**
-- Run evaluator against v10.57 build log: `python3 -u scripts/run_evaluator.py --iteration v10.57 --verbose`
-- At least one tier produces valid output (Qwen preferred)
-- Report markdown file is generated (not just agent_scores.json)
-- `grep -c "^| W" docs/kjtcom-report-v10.58.md` >= 1
-
----
-
-### W4: Thompson Schema — Intranet Field Identification (P2)
-
-**Context:** The intranet deployment will process different log sources than kjtcom. Each new source type may require new Thompson Indicator Fields. Identify these now so the schema can grow intentionally.
-
-**Current schema v3 fields (kjtcom — YouTube content):**
-`t_any_names`, `t_any_people`, `t_any_cities`, `t_any_states`, `t_any_counties`, `t_any_countries`, `t_any_country_codes`, `t_any_regions`, `t_any_coordinates`, `t_any_geohashes`, `t_any_keywords`, `t_any_categories`, `t_any_actors`, `t_any_roles`, `t_any_shows`, `t_any_cuisines`, `t_any_dishes`, `t_any_eras`, `t_any_continents`
-
-**New intranet log sources and candidate fields:**
-
-| Log Source | New t_any_* Fields | Rationale |
-|-----------|-------------------|-----------|
-| Documents (docx, pdf) | `t_any_authors`, `t_any_titles`, `t_any_dates`, `t_any_orgs`, `t_any_topics` | Author attribution, document metadata, organizational tagging |
-| Spreadsheets (xlsx, csv) | `t_any_columns`, `t_any_metrics`, `t_any_units` | Column headers as searchable fields, numeric context |
-| Meeting transcripts (mp3) | `t_any_speakers`, `t_any_action_items`, `t_any_decisions` | Who said what, what was decided, what needs follow-up |
-| Gmail / Calendar | `t_any_senders`, `t_any_recipients`, `t_any_subjects`, `t_any_attachments` | Email graph, calendar event metadata |
-| Slack channels | `t_any_channels`, `t_any_threads`, `t_any_reactions` | Channel-level context, thread grouping |
-| CRM API pulls | `t_any_accounts`, `t_any_contacts`, `t_any_deals`, `t_any_stages`, `t_any_values` | Sales pipeline, account hierarchy |
-| Contractor portal | `t_any_certifications`, `t_any_skills`, `t_any_projects`, `t_any_contractors` | Contractor qualification data |
-
-**Universal fields (apply to ALL intranet sources):**
-- `t_any_tags` — user-applied tags (manual taxonomy)
-- `t_any_record_ids` — external system IDs for cross-referencing (Salesforce IDs, Jira ticket numbers, etc.)
-- `t_any_sources` — which system the entity originated from (gmail, slack, crm, etc.)
-- `t_any_sensitivity` — classification level (public, internal, confidential)
-
-**Output:** Append to `docs/evaluator-harness.md` as ADR-011 (Thompson Schema v4 — Intranet Extensions). This is a design decision, not implementation — the fields don't get created until intranet pipelines are built.
-
-**Also note in ADR-011:** When pipeline consumes a new log source, the extraction prompt for that source defines which `t_any_*` fields it populates. Fields not relevant to a source are left empty (not omitted). The schema grows monotonically — fields are never removed, only added. This mirrors how SIEM platforms (Panther `p_any_*`, ECS) evolve their schemas.
+- Screenshot: all labels inside chips, all chips inside boards, board titles inside borders
+- Visible horizontal gap between FE and PL
+- Hover tooltips still show full names
+- 0 console errors
 
 ---
 
 ## EXECUTION ORDER
 
-1. **W2: Bourdain Phase 3** (P1, NZXTcos) — longest, start first
-2. **W1: Claw3D gaps + connectors** (P1, tsP3-cos) — parallel with W2
-3. **W3: Fix evaluator schema** (P1, after W1/W2) — needs working evaluator for report
-4. **W4: Schema field identification** (P2) — ADR-011 append to harness
-5. Post-flight + living docs + report
+1. **W1: Fix generate_artifacts.py** (P0) — prevents future overwrites
+2. **W3: Restore original v10.59 docs** (P1) — fix the damage
+3. **W5: Claw3D chip containment** (P1) — all components inside boards
+4. **W2: Produce corrected v10.59 report** (P1) — accurate scoring
+5. **W4: Harness update** (P2) — ADR-012 + Pattern 17
+6. Post-flight + living docs + report for v10.60
 
 ---
 
 ## COMPLETION CHECKLIST
 
 ```
-[ ] W1: Visible gaps between all board pairs with animated connectors
-[ ] W1: Connector labels readable in gaps
-[ ] W1: Logger chip on middleware board
-[ ] W1: 0 console errors, hover/zoom work
-[ ] W2: Bourdain Phase 3 entities in staging (videos 61-90)
-[ ] W2: checkpoint.json updated
-[ ] W3: Evaluator produces valid report markdown
-[ ] W3: grep -c "^| W" docs/kjtcom-report-v10.58.md >= 1
-[ ] W4: ADR-011 in evaluator-harness.md
-[ ] Post-flight passes (including G56 check)
-[ ] Changelog updated
-[ ] 4 artifacts: design, plan, build, report
+[ ] W1: generate_artifacts.py has immutability check for design/plan
+[ ] W1: Self-eval finds build log evidence (path fix)
+[ ] W2: kjtcom-report-v10.59-corrected.md has scored workstreams
+[ ] W2: agent_scores.json v10.59 entry updated with real scores
+[ ] W3: Original v10.59 design doc restored (has Mermaid trident)
+[ ] W3: Original v10.59 plan doc restored (has 10 pillars, execution steps)
+[ ] W4: ADR-012 in evaluator-harness.md
+[ ] W4: Pattern 17 (G58) in failure catalog
+[ ] W5: All chip labels fit inside chip boxes (screenshot)
+[ ] W5: All chips fit inside parent board boundaries
+[ ] W5: Board titles inside board borders
+[ ] W5: FE/PL horizontal gap visible
+[ ] W5: Hover tooltips show full component names
+[ ] Report for v10.60 has scored workstreams
+[ ] Post-flight passes, changelog updated, 4 artifacts
 ```
