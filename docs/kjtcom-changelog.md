@@ -1,4 +1,36 @@
 # kjtcom - Unified Changelog
+## v10.54 - 2026-04-06 
+
+- NEW: docs/phase9-retrospective.md - Comprehensive analysis of 27 iterations (v9.27-v9.53), 144 workstreams, ~74% zero-intervention rate. 
+- REBUILT: app/web/claw3d.html - Complete static rebuild with Three.js. 46 nodes, elliptical disc layout, sun-facing moon clusters, animated active connectors, hover tooltips, and iteration history toggle. 
+- FIXED: docs/evaluator-harness.md - Restored to v9.52 state (528 lines) after a regression to 405 lines. 
+- UPDATED: README.md - Phase 10 kickoff, updated status and current state. 
+- UPDATED: app/web/architecture.html - Rebuilt via build_architecture_html.py. 
+- Multi-agent: Gemini CLI (primary) + Claude Code (sub-agent for retrospective) + Qwen3.5-9B (evaluator reference). 
+- Kyle interventions: 0 
+
+
+## v9.53 - 2026-04-05
+
+- FIXED: Claw3D orbital mechanics fix - app/web/claw3d.html updated with orbitSpeed *= 0.25, radius reduction, LineBasicMaterial for connectors, and rotation logic removed.
+- UPDATED: Final Qwen harness tuning - scripts/run_evaluator.py updated to include specific field-path error specificity (v9.53), reducing fallback usage to ~10%.
+- UPDATED: Post-flight + Phase 9 close-out - MCP checks passed with zero errors/timeouts; scripts/run_evaluator.py (505 lines) and generate_artifacts.py (668 lines) ready for v9.53 deployment.
+
+**Files changed:** 18
+**Agents:** Claude Code, Qwen3.5-9B, Gemini Flash
+**LLMs:** gemini-2.5-flash, qwen3.5:9b, nomic-embed-text
+**Interventions:** 0
+
+<!-- TEMPLATE RULES (v9.44+):
+- Each line MUST start with NEW:, UPDATED:, or FIXED: prefix
+- Include specific numbers (entity counts, chunk counts, test results)
+- "TBD" is BANNED. If data is missing, use "MISSING: [what data]"
+- List all agents and LLMs used
+- Include intervention count (target: 0)
+-->
+
+
+---
 
 ## v9.39 - 2026-04-05
 

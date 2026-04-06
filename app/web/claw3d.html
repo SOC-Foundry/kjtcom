@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Claw3D - IAO Solar System Visualization</title>
+    <title>Claw3D - Static IAO Architecture</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { background: #0D1117; overflow: hidden; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
@@ -17,59 +17,55 @@
         .controls { display: flex; align-items: center; gap: 12px; background: rgba(22, 27, 34, 0.8); padding: 8px 12px; border-radius: 8px; border: 1px solid #30363D; }
         label { font-size: 14px; color: #C9D1D9; }
         select { background: #21262D; color: #C9D1D9; border: 1px solid #30363D; padding: 4px 8px; border-radius: 4px; outline: none; cursor: pointer; }
+        #tooltip {
+            position: absolute; display: none; z-index: 1000;
+            background: rgba(22, 27, 34, 0.95); border: 1px solid #4ADE80;
+            color: #C9D1D9; padding: 10px 14px; border-radius: 6px;
+            font-size: 12px; pointer-events: none; box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+            max-width: 300px;
+        }
         #legend {
             position: absolute; bottom: 16px; left: 16px; z-index: 100;
             color: #C9D1D9; font-size: 11px; line-height: 1.6;
             background: rgba(22, 27, 34, 0.8); padding: 12px; border-radius: 8px; border: 1px solid #30363D;
         }
         .legend-item { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
-        .legend-dot { width: 10px; height: 10px; border-radius: 50%; }
-        #tooltip {
-            position: absolute; display: none; z-index: 1000;
-            background: rgba(22, 27, 34, 0.95); border: 1px solid #4ADE80;
-            color: #C9D1D9; padding: 10px 14px; border-radius: 6px;
-            font-size: 12px; pointer-events: none; box-shadow: 0 4px 20px rgba(0,0,0,0.5);
-        }
+        .legend-dot { width: 10px; height: 10px; border-radius: 2px; }
         .loading {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: #0D1117; display: flex; justify-content: center;
-            align-items: center; color: #4ADE80; font-size: 24px; z-index: 9999;
+            align-items: center; color: #4ADE80; font-size: 20px; z-index: 9999;
         }
     </style>
 </head>
 <body>
-    <div id="loading" class="loading">Sychronizing Solar System...</div>
+    <div id="loading" class="loading">Loading Static Solar System v10.54...</div>
+    
     <div id="ui-container">
-        <h1>Claw3D - IAO Solar System</h1>
-        <p class="subtitle">kjtcom v9.52 | Iterative Agentic Orchestration</p>
+        <h1>Claw3D Architecture</h1>
+        <p class="subtitle">v10.54 | Static Elliptical Rebuild</p>
         <div class="controls">
             <label for="iteration-select">Iteration:</label>
             <select id="iteration-select">
-                <option value="v9.52">v9.52 (Current)</option>
-                <option value="v9.51">v9.51</option>
-                <option value="v9.50">v9.50</option>
+                <option value="v10.54">v10.54 (Current)</option>
+                <option value="v9.53">v9.53</option>
+                <option value="v9.52">v9.52</option>
                 <option value="v9.49">v9.49</option>
-                <option value="v9.48">v9.48</option>
-                <option value="v9.47">v9.47</option>
-                <option value="v9.46">v9.46</option>
                 <option value="v9.45">v9.45</option>
-                <option value="v9.44">v9.44</option>
-                <option value="v9.43">v9.43</option>
-                <option value="v9.42">v9.42</option>
                 <option value="v9.41">v9.41</option>
+                <option value="v9.38">v9.38</option>
+                <option value="v9.35">v9.35</option>
+                <option value="v9.27">v9.27</option>
             </select>
         </div>
     </div>
 
     <div id="legend">
-        <div class="legend-item"><span class="legend-dot" style="background:#A78BFA"></span> Sun (Qwen Evaluator)</div>
-        <div class="legend-item"><span class="legend-dot" style="background:#F59E0B"></span> Inner (Nemotron, GLM)</div>
-        <div class="legend-item"><span class="legend-dot" style="background:#4ADE80"></span> Inner (Claude, Gemini)</div>
-        <div class="legend-item"><span class="legend-dot" style="background:#EC4899"></span> Asteroid Belt (MCPs)</div>
-        <div class="legend-item"><span class="legend-dot" style="background:#22D3EE"></span> Jupiter (Middleware)</div>
-        <div class="legend-item"><span class="legend-dot" style="background:#22C55E"></span> Saturn (Frontend)</div>
-        <div class="legend-item"><span class="legend-dot" style="background:#F97316"></span> Uranus (Pipeline)</div>
-        <div class="legend-item"><span class="legend-dot" style="background:#EAB308"></span> Neptune (Backend/Data)</div>
+        <div class="legend-item"><span class="legend-dot" style="background:#A78BFA"></span> Qwen Evaluator (Sun)</div>
+        <div class="legend-item"><span class="legend-dot" style="background:#4ADE80"></span> Agent / LLM</div>
+        <div class="legend-item"><span class="legend-dot" style="background:#EC4899"></span> MCP Asteroid</div>
+        <div class="legend-item"><span class="legend-dot" style="background:#22D3EE"></span> Giant (System)</div>
+        <div class="legend-item"><span class="legend-dot" style="background:#8B949E; border: 1px solid #C9D1D9"></span> Inactive (Outline)</div>
     </div>
 
     <div id="tooltip"></div>
@@ -86,31 +82,114 @@
         import * as THREE from 'three';
         import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
-        // --- CONFIG & DATA ---
-        let iterationData = {};
-        let currentIteration = "v9.52";
-        const nodes = new Map();
-        const orbits = [];
-
-        // Colors
+        // --- DATA & CONFIG ---
         const COLORS = {
             sun: 0xA78BFA,
-            agent_inner: [0xF59E0B, 0xF87171, 0x4ADE80, 0x4285F4],
-            mcp: 0xEC4899,
+            claude: 0x4ADE80,
+            gemini: 0x3B82F6,
+            nemotron: 0xF97316,
+            glm: 0xF59E0B,
             nomic: 0x14B8A6,
+            mcp: 0xEC4899,
             middleware: 0x22D3EE,
             frontend: 0x22C55E,
             pipeline: 0xF97316,
-            backend: 0xEAB308
+            backend: 0xEAB308,
+            activeLink: 0x4ADE80,
+            inactiveLink: 0x333333
         };
+
+        const NODES = [
+            // SUN
+            { id: 'qwen', name: 'Qwen Evaluator', type: 'Sun', color: COLORS.sun, size: 5, since: 'v9.27', pos: [0, 0, 0], file: 'scripts/run_evaluator.py', func: 'Autonomous multi-agent performance evaluation' },
+            
+            // INNER RING (Radius 20)
+            { id: 'claude', name: 'Claude Code', type: 'Agent', color: COLORS.claude, size: 2, since: 'v9.27', ring: 20, angle: 0, func: 'Primary execution agent (Anthropic)' },
+            { id: 'gemini_cli', name: 'Gemini CLI', type: 'Agent', color: COLORS.gemini, size: 2, since: 'v9.27', ring: 20, angle: 72, func: 'Primary execution agent (Google)' },
+            { id: 'nemotron', name: 'Nemotron Mini 4B', type: 'Agent', color: COLORS.nemotron, size: 1.5, since: 'v9.35', ring: 20, angle: 144, func: 'Local classification agent' },
+            { id: 'glm', name: 'GLM-4.6V-Flash', type: 'Agent', color: COLORS.glm, size: 1.5, since: 'v9.35', ring: 20, angle: 216, func: 'Vision/Multimodal agent' },
+            { id: 'nomic', name: 'nomic-embed-text', type: 'Agent', color: COLORS.nomic, size: 1.2, since: 'v9.35', ring: 20, angle: 288, func: 'Local embedding model' },
+
+            // ASTEROID BELT (Radius 35)
+            { id: 'firebase_mcp', name: 'Firebase MCP', type: 'MCP', color: COLORS.mcp, size: 0.8, since: 'v9.35', ring: 35, angle: 30, func: 'Firestore/Hosting tool access' },
+            { id: 'context7_mcp', name: 'Context7 MCP', type: 'MCP', color: COLORS.mcp, size: 0.8, since: 'v9.35', ring: 35, angle: 100, func: 'Real-time documentation access' },
+            { id: 'firecrawl_mcp', name: 'Firecrawl MCP', type: 'MCP', color: COLORS.mcp, size: 0.8, since: 'v9.35', ring: 35, angle: 170, func: 'Advanced web scraping/crawling' },
+            { id: 'playwright_mcp', name: 'Playwright MCP', type: 'MCP', color: COLORS.mcp, size: 0.8, since: 'v9.36', ring: 35, angle: 240, func: 'Browser automation/rendering' },
+            { id: 'dart_mcp', name: 'Dart MCP', type: 'MCP', color: COLORS.mcp, size: 0.8, since: 'v9.37', ring: 35, angle: 310, func: 'Flutter/Dart codebase analysis' },
+
+            // GAS GIANTS (Radius 60)
+            { id: 'jupiter', name: 'Jupiter (Middleware)', type: 'System', color: COLORS.middleware, size: 6, since: 'v9.41', ring: 60, angle: 45 },
+            { id: 'saturn', name: 'Saturn (Frontend)', type: 'System', color: COLORS.frontend, size: 5.5, since: 'v9.27', ring: 60, angle: 135 },
+            { id: 'uranus', name: 'Uranus (Pipeline)', type: 'System', color: COLORS.pipeline, size: 4.5, since: 'v1.6', ring: 60, angle: 225 },
+            { id: 'neptune', name: 'Neptune (Backend)', type: 'System', color: COLORS.backend, size: 4.2, since: 'v0.5', ring: 60, angle: 315 },
+
+            // MOONS - JUPITER (MW)
+            { id: 'intent_router', name: 'Intent Router', type: 'MW Component', color: COLORS.middleware, size: 0.6, since: 'v9.41', parent: 'jupiter', offset: 0, file: 'scripts/intent_router.py', func: 'Classification to firestore/chromadb/web' },
+            { id: 'firestore_query', name: 'Firestore Query', type: 'MW Component', color: COLORS.middleware, size: 0.6, since: 'v9.41', parent: 'jupiter', offset: 1, file: 'scripts/firestore_query.py', func: 'Unified NoSQL access layer' },
+            { id: 'artifact_generator', name: 'Artifact Generator', type: 'MW Component', color: COLORS.middleware, size: 0.6, since: 'v9.41', parent: 'jupiter', offset: 2, file: 'scripts/generate_artifacts.py', func: 'Single-changelog build reporting' },
+            { id: 'evaluator_harness', name: 'Evaluator Harness', type: 'MW Component', color: COLORS.middleware, size: 0.6, since: 'v9.46', parent: 'jupiter', offset: 3, file: 'docs/evaluator-harness.md', func: 'Qwen-9B scoring instructions' },
+            { id: 'gotcha_archive', name: 'Gotcha Archive', type: 'MW Component', color: COLORS.middleware, size: 0.6, since: 'v9.42', parent: 'jupiter', offset: 4, file: 'data/gotcha_archive.json', func: 'Persistent cross-agent failure memory' },
+            { id: 'middleware_registry', name: 'Middleware Registry', type: 'MW Component', color: COLORS.middleware, size: 0.6, since: 'v9.42', parent: 'jupiter', offset: 5, file: 'data/middleware_registry.json', func: 'Component version/status tracking' },
+            { id: 'event_logger', name: 'Event Logger', type: 'MW Component', color: COLORS.middleware, size: 0.6, since: 'v9.39', parent: 'jupiter', offset: 6, file: 'scripts/utils/iao_logger.py', func: 'Centralized telemetry' },
+            { id: 'post_flight', name: 'Post-Flight', type: 'MW Component', color: COLORS.middleware, size: 0.6, since: 'v9.43', parent: 'jupiter', offset: 7, file: 'scripts/post_flight.py', func: 'System-wide validation' },
+            { id: 'cleanup_docs', name: 'Cleanup Docs', type: 'MW Component', color: COLORS.middleware, size: 0.6, since: 'v9.48', parent: 'jupiter', offset: 8, file: 'scripts/cleanup_docs.py', func: 'Archive integrity management' },
+            { id: 'eval_schema', name: 'Eval Schema', type: 'MW Component', color: COLORS.middleware, size: 0.6, since: 'v9.49', parent: 'jupiter', offset: 9, file: 'data/eval_schema.json', func: 'JSON schema for score validation' },
+
+            // MOONS - SATURN (FE)
+            { id: 'results_tab', name: 'Results Tab', type: 'FE Component', color: COLORS.frontend, size: 0.5, since: 'v9.27', parent: 'saturn', offset: 0, func: 'Entity discovery table' },
+            { id: 'map_tab', name: 'Map Tab', type: 'FE Component', color: COLORS.frontend, size: 0.5, since: 'v9.27', parent: 'saturn', offset: 1, func: 'Interactive 2D Leaflet map' },
+            { id: 'globe_tab', name: 'Globe Tab', type: 'FE Component', color: COLORS.frontend, size: 0.5, since: 'v9.27', parent: 'saturn', offset: 2, func: 'Three.js 3D earth view' },
+            { id: 'iao_tab', name: 'IAO Tab', type: 'FE Component', color: COLORS.frontend, size: 0.5, since: 'v9.27', parent: 'saturn', offset: 3, func: 'Agent leaderboard' },
+            { id: 'mw_tab', name: 'MW Tab', type: 'FE Component', color: COLORS.frontend, size: 0.5, since: 'v9.49', parent: 'saturn', offset: 4, func: 'Middleware topology view' },
+            { id: 'schema_tab', name: 'Schema Tab', type: 'FE Component', color: COLORS.frontend, size: 0.5, since: 'v9.28', parent: 'saturn', offset: 5, func: 'Pipeline field explorer' },
+            { id: 'query_editor', name: 'Query Editor', type: 'FE Component', color: COLORS.frontend, size: 0.5, since: 'v9.27', parent: 'saturn', offset: 6, func: 'SQL-like Firestore DSL' },
+            { id: 'detail_panel', name: 'Detail Panel', type: 'FE Component', color: COLORS.frontend, size: 0.5, since: 'v9.27', parent: 'saturn', offset: 7, func: 'JSON property viewer' },
+
+            // MOONS - URANUS (Pipeline)
+            { id: 'yt_dlp', name: 'yt-dlp (Acquire)', type: 'Pipeline Stage', color: COLORS.pipeline, size: 0.5, since: 'v0.5', parent: 'uranus', offset: 0, func: 'Video acquisition' },
+            { id: 'transcribe', name: 'Transcribe', type: 'Pipeline Stage', color: COLORS.pipeline, size: 0.5, since: 'v1.6', parent: 'uranus', offset: 1, func: 'faster-whisper audio to text' },
+            { id: 'extract', name: 'Extract', type: 'Pipeline Stage', color: COLORS.pipeline, size: 0.5, since: 'v1.6', parent: 'uranus', offset: 2, func: 'Gemini Flash entity extraction' },
+            { id: 'normalize', name: 'Normalize', type: 'Pipeline Stage', color: COLORS.pipeline, size: 0.5, since: 'v1.6', parent: 'uranus', offset: 3, func: 'Python schema validation' },
+            { id: 'geocode', name: 'Geocode', type: 'Pipeline Stage', color: COLORS.pipeline, size: 0.5, since: 'v1.6', parent: 'uranus', offset: 4, func: 'Nominatim/OSM geocoding' },
+            { id: 'enrich', name: 'Enrich', type: 'Pipeline Stage', color: COLORS.pipeline, size: 0.5, since: 'v1.6', parent: 'uranus', offset: 5, func: 'Google Places/County enrichment' },
+            { id: 'load', name: 'Load', type: 'Pipeline Stage', color: COLORS.pipeline, size: 0.5, since: 'v1.6', parent: 'uranus', offset: 6, func: 'Firebase Admin batch loading' },
+
+            // MOONS - NEPTUNE (Backend)
+            { id: 'firestore', name: 'Cloud Firestore', type: 'Data', color: COLORS.backend, size: 0.5, since: 'v0.5', parent: 'neptune', offset: 0, func: 'Primary document DB' },
+            { id: 'functions', name: 'Cloud Functions', type: 'Backend', color: COLORS.backend, size: 0.5, since: 'v0.5', parent: 'neptune', offset: 1, func: 'Serverless logic' },
+            { id: 'hosting', name: 'Firebase Hosting', type: 'Web', color: COLORS.backend, size: 0.5, since: 'v0.5', parent: 'neptune', offset: 2, func: 'CDN deployment' },
+            { id: 'chromadb', name: 'ChromaDB', type: 'Vector DB', color: COLORS.backend, size: 0.5, since: 'v9.38', parent: 'neptune', offset: 3, func: 'Local vector search' },
+            { id: 'schema_ref', name: 'Schema Reference', type: 'Data', color: COLORS.backend, size: 0.5, since: 'v9.41', parent: 'neptune', offset: 4, func: 'Canonical field definitions' },
+            { id: 'iterations', name: 'Claw3D Iterations', type: 'Data', color: COLORS.backend, size: 0.5, since: 'v9.52', parent: 'neptune', offset: 5, func: 'Historical state mapping' }
+        ];
+
+        const LINKS = [
+            // Evaluator to Agents
+            { from: 'qwen', to: 'claude' },
+            { from: 'qwen', to: 'gemini_cli' },
+            { from: 'qwen', to: 'nemotron' },
+            { from: 'qwen', to: 'glm' },
+            { from: 'qwen', to: 'nomic' },
+            // Evaluator to Systems
+            { from: 'qwen', to: 'jupiter' },
+            { from: 'qwen', to: 'saturn' },
+            { from: 'qwen', to: 'uranus' },
+            { from: 'qwen', to: 'neptune' },
+            // Cross-connections
+            { from: 'intent_router', to: 'firebase_mcp' },
+            { from: 'gemini_cli', to: 'intent_router' },
+            { from: 'firestore_query', to: 'firestore' },
+            { from: 'chromadb', to: 'intent_router' },
+            { from: 'gotcha_archive', to: 'qwen' },
+            { from: 'mw_tab', to: 'middleware_registry' }
+        ];
 
         // --- SCENE SETUP ---
         const scene = new THREE.Scene();
         scene.background = new THREE.Color(0x0D1117);
-        scene.fog = new THREE.FogExp2(0x0D1117, 0.01);
 
-        const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
-        camera.position.set(0, 50, 100);
+        const camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.set(0, 80, 100);
 
         const renderer = new THREE.WebGLRenderer({ antialias: true });
         renderer.setSize(window.innerWidth, window.innerHeight);
@@ -122,218 +201,176 @@
         controls.dampingFactor = 0.05;
 
         // Lighting
-        const ambient = new THREE.AmbientLight(0xffffff, 0.2);
-        scene.add(ambient);
-        const sunLight = new THREE.PointLight(COLORS.sun, 2, 300);
+        scene.add(new THREE.AmbientLight(0xffffff, 0.4));
+        const sunLight = new THREE.PointLight(COLORS.sun, 2.5, 300);
         scene.add(sunLight);
 
-        // Starfield
-        const starGeo = new THREE.BufferGeometry();
-        const starPos = [];
-        for (let i = 0; i < 5000; i++) {
-            starPos.push((Math.random() - 0.5) * 1000, (Math.random() - 0.5) * 1000, (Math.random() - 0.5) * 1000);
-        }
-        starGeo.setAttribute('position', new THREE.Float32BufferAttribute(starPos, 3));
-        const starMat = new THREE.PointsMaterial({ color: 0xffffff, size: 0.5 });
-        const stars = new THREE.Points(starGeo, starMat);
-        scene.add(stars);
+        // Grid (Elliptical Disc Reference)
+        const gridHelper = new THREE.GridHelper(200, 20, 0x30363D, 0x161B22);
+        gridHelper.position.y = -2;
+        scene.add(gridHelper);
 
-        // --- NODE CREATION HELPER ---
-        function createSphereNode(id, name, color, size, parent = scene, distance = 0, speed = 0) {
+        // --- OBJECT CREATION ---
+        const nodeMap = new Map();
+        const activeNodes = new Set();
+        let currentVer = 'v10.54';
+
+        function createNode(data) {
             const group = new THREE.Group();
-            parent.add(group);
-
-            const geometry = new THREE.SphereGeometry(size, 32, 32);
-            const material = new THREE.MeshPhongMaterial({
-                color: color,
-                emissive: color,
-                emissiveIntensity: 0.4,
-                transparent: true,
-                opacity: 0.9
-            });
-            const mesh = new THREE.Mesh(geometry, material);
-            mesh.position.x = distance;
-            group.add(mesh);
-
-            // Orbit line
-            if (distance > 0) {
-                const orbitGeo = new THREE.RingGeometry(distance - 0.1, distance + 0.1, 64);
-                const orbitMat = new THREE.MeshBasicMaterial({ color: 0x30363D, side: THREE.DoubleSide, transparent: true, opacity: 0.2 });
-                const orbit = new THREE.Mesh(orbitGeo, orbitMat);
-                orbit.rotation.x = Math.PI / 2;
-                parent.add(orbit);
+            
+            // Calculate position
+            if (data.pos) {
+                group.position.set(...data.pos);
+            } else if (data.ring) {
+                const angle = (data.angle * Math.PI) / 180;
+                group.position.x = Math.cos(angle) * data.ring;
+                group.position.z = Math.sin(angle) * data.ring * 0.6; // Elliptical
+            } else if (data.parent) {
+                // Moons are relative to parent giants later
             }
 
-            const node = { id, name, group, mesh, material, distance, speed, angle: Math.random() * Math.PI * 2 };
-            nodes.set(id, node);
-            return node;
-        }
-
-        function createCubeNode(id, name, color, size, parent = scene, distance = 0, speed = 0) {
-            const group = new THREE.Group();
-            parent.add(group);
-
-            const geometry = new THREE.BoxGeometry(size, size, size);
-            const material = new THREE.MeshPhongMaterial({
-                color: color,
-                emissive: color,
-                emissiveIntensity: 0.4,
+            // Material
+            const solidMat = new THREE.MeshStandardMaterial({ 
+                color: data.color, 
+                emissive: data.color, 
+                emissiveIntensity: 0.3,
                 transparent: true,
-                opacity: 0.9
+                opacity: 1.0
             });
-            const mesh = new THREE.Mesh(geometry, material);
-            mesh.position.x = distance;
+            const outlineMat = new THREE.MeshBasicMaterial({ 
+                color: data.color, 
+                wireframe: true, 
+                transparent: true, 
+                opacity: 0.3 
+            });
+
+            const geo = new THREE.SphereGeometry(data.size, 32, 32);
+            const mesh = new THREE.Mesh(geo, solidMat);
             group.add(mesh);
 
-            const node = { id, name, group, mesh, material, distance, speed, angle: Math.random() * Math.PI * 2 };
-            nodes.set(id, node);
+            const node = { 
+                ...data, 
+                group, 
+                mesh, 
+                solidMat, 
+                outlineMat,
+                isActive: false 
+            };
+            nodeMap.set(data.id, node);
+            scene.add(group);
             return node;
         }
 
-        // --- BUILD SYSTEM ---
-        
-        // SUN
-        createSphereNode('qwen', 'Qwen Evaluator', COLORS.sun, 5);
+        NODES.forEach(createNode);
 
-        // INNER PLANETS
-        createSphereNode('nemotron', 'Nemotron Mini 4B', COLORS.agent_inner[0], 1.2, scene, 15, 0.02);
-        createSphereNode('glm', 'GLM-4.6V-Flash', COLORS.agent_inner[1], 1.4, scene, 22, 0.015);
-        createSphereNode('claude', 'Claude Code', COLORS.agent_inner[2], 2.2, scene, 30, 0.01);
-        createSphereNode('gemini', 'Gemini CLI', COLORS.agent_inner[3], 2.0, scene, 38, 0.008);
-
-        // ASTEROID BELT (MCPs)
-        const beltDistance = 48;
-        const mcps = [
-            {id: 'firebase_mcp', name: 'Firebase MCP'},
-            {id: 'context7_mcp', name: 'Context7 MCP'},
-            {id: 'firecrawl_mcp', name: 'Firecrawl MCP'},
-            {id: 'playwright_mcp', name: 'Playwright MCP'},
-            {id: 'dart_mcp', name: 'Dart MCP'},
-            {id: 'nomic_embed', name: 'nomic-embed-text'}
-        ];
-        mcps.forEach((m, i) => {
-            const angle = (i / mcps.length) * Math.PI * 2;
-            const node = createCubeNode(m.id, m.name, i === 5 ? COLORS.nomic : COLORS.mcp, 0.8, scene, beltDistance, 0.005);
-            node.angle = angle;
+        // Position Moons
+        NODES.filter(n => n.parent).forEach(moon => {
+            const parent = nodeMap.get(moon.parent);
+            if (!parent) return;
+            
+            // Cluster on sun-facing side (towards 0,0,0)
+            const parentPos = parent.group.position.clone();
+            const toSun = parentPos.clone().negate().normalize();
+            
+            // Semicircle arrangement
+            const moonCount = NODES.filter(n => n.parent === moon.parent).length;
+            const spread = Math.PI / 2.5;
+            const angle = (spread * (moon.offset / (moonCount - 1))) - (spread / 2);
+            
+            const offsetDist = parent.size + 4 + (moon.offset * 0.5);
+            const moonPos = toSun.clone().applyAxisAngle(new THREE.Vector3(0, 1, 0), angle).multiplyScalar(offsetDist);
+            
+            moon.group.position.copy(parentPos.clone().add(moonPos));
         });
 
-        // GAS GIANTS
-        const middleware = createSphereNode('middleware', 'Jupiter (Middleware)', COLORS.middleware, 6, scene, 65, 0.004);
-        const frontend = createSphereNode('frontend', 'Saturn (Frontend)', COLORS.frontend, 5.5, scene, 85, 0.003);
-        const pipeline = createSphereNode('pipeline', 'Uranus (Pipeline)', COLORS.pipeline, 4.5, scene, 105, 0.002);
-        const backend = createSphereNode('backend', 'Neptune (Backend/Data)', COLORS.backend, 4.2, scene, 125, 0.0015);
+        // --- LINKS ---
+        const linkMeshes = [];
 
-        // Saturn Rings
-        const ringGeo = new THREE.RingGeometry(7, 10, 64);
-        const ringMat = new THREE.MeshBasicMaterial({ color: COLORS.frontend, side: THREE.DoubleSide, transparent: true, opacity: 0.3 });
-        const saturnRing = new THREE.Mesh(ringGeo, ringMat);
-        saturnRing.rotation.x = Math.PI / 2.5;
-        frontend.mesh.add(saturnRing);
+        function createLinks() {
+            linkMeshes.forEach(l => scene.remove(l.line));
+            linkMeshes.length = 0;
 
-        // MOONS (Components)
-        
-        // Middleware Moons
-        const mwMoons = [
-            {id: 'intent_router', name: 'intent_router'},
-            {id: 'firestore_query', name: 'firestore_query'},
-            {id: 'artifact_generator', name: 'artifact_generator'},
-            {id: 'evaluator_harness', name: 'evaluator_harness'},
-            {id: 'gotcha_archive', name: 'gotcha_archive'},
-            {id: 'middleware_registry', name: 'middleware_registry'},
-            {id: 'event_logging', name: 'event_logging'},
-            {id: 'post_flight', name: 'post_flight'},
-            {id: 'cleanup_docs', name: 'cleanup_docs'},
-            {id: 'ollama_config', name: 'ollama_config'}
-        ];
-        mwMoons.forEach((m, i) => {
-            createSphereNode(m.id, m.name, COLORS.middleware, 0.6, middleware.mesh, 8 + i * 0.5, 0.05 + i * 0.01);
-        });
+            LINKS.forEach(l => {
+                const from = nodeMap.get(l.from);
+                const to = nodeMap.get(l.to);
+                if (!from || !to) return;
 
-        // Frontend Moons
-        const feMoons = [
-            {id: 'results_tab', name: 'Results tab'},
-            {id: 'map_tab', name: 'Map tab'},
-            {id: 'globe_tab', name: 'Globe tab'},
-            {id: 'iao_tab', name: 'IAO tab'},
-            {id: 'mw_tab', name: 'MW tab'},
-            {id: 'schema_tab', name: 'Schema tab'},
-            {id: 'query_editor', name: 'query_editor'},
-            {id: 'detail_panel', name: 'detail_panel'}
-        ];
-        feMoons.forEach((m, i) => {
-            createSphereNode(m.id, m.name, COLORS.frontend, 0.5, frontend.mesh, 7 + i * 0.6, 0.04 + i * 0.01);
-        });
+                const points = [from.group.position.clone(), to.group.position.clone()];
+                const geo = new THREE.BufferGeometry().setFromPoints(points);
+                
+                const mat = new THREE.LineDashedMaterial({
+                    color: COLORS.activeLink,
+                    dashSize: 1,
+                    gapSize: 0.5,
+                    transparent: true,
+                    opacity: 0.2
+                });
+                
+                const line = new THREE.Line(geo, mat);
+                line.computeLineDistances();
+                scene.add(line);
+                linkMeshes.push({ line, mat, fromId: l.from, toId: l.to });
+            });
+        }
 
-        // Pipeline Moons
-        const plMoons = [
-            {id: 'yt_dlp', name: 'yt-dlp'},
-            {id: 'whisper', name: 'faster-whisper'},
-            {id: 'extract', name: 'Gemini Extract'},
-            {id: 'normalize', name: 'normalize'},
-            {id: 'geocode', name: 'geocode'},
-            {id: 'enrich', name: 'enrich'},
-            {id: 'load', name: 'load'}
-        ];
-        plMoons.forEach((m, i) => {
-            createSphereNode(m.id, m.name, COLORS.pipeline, 0.5, pipeline.mesh, 6 + i * 0.7, 0.03 + i * 0.01);
-        });
+        createLinks();
 
-        // Backend Moons
-        const beMoons = [
-            {id: 'firestore', name: 'Firestore'},
-            {id: 'functions', name: 'Cloud Functions'},
-            {id: 'hosting', name: 'Firebase Hosting'},
-            {id: 'chromadb', name: 'ChromaDB'},
-            {id: 'schema_ref', name: 'schema_reference'},
-            {id: 'eval_schema', name: 'eval_schema'}
-        ];
-        beMoons.forEach((m, i) => {
-            createSphereNode(m.id, m.name, COLORS.backend, 0.5, backend.mesh, 6 + i * 0.7, 0.03 + i * 0.01);
-        });
-
-        // --- INTERACTIVITY ---
+        // --- INTERACTION ---
         const raycaster = new THREE.Raycaster();
         const mouse = new THREE.Vector2();
         const tooltip = document.getElementById('tooltip');
 
-        window.addEventListener('mousemove', (event) => {
-            mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-            mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+        window.addEventListener('mousemove', (e) => {
+            mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
+            mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
 
             raycaster.setFromCamera(mouse, camera);
-            const meshes = Array.from(nodes.values()).map(n => n.mesh);
-            const intersects = raycaster.intersectObjects(meshes);
+            const intersects = raycaster.intersectObjects(NODES.map(n => nodeMap.get(n.id).mesh));
 
             if (intersects.length > 0) {
-                const node = Array.from(nodes.values()).find(n => n.mesh === intersects[0].object);
+                const node = Array.from(nodeMap.values()).find(n => n.mesh === intersects[0].object);
                 tooltip.style.display = 'block';
-                tooltip.style.left = (event.clientX + 15) + 'px';
-                tooltip.style.top = (event.clientY + 15) + 'px';
-                tooltip.innerHTML = `<strong>${node.name}</strong><br>ID: ${node.id}`;
+                tooltip.style.left = (e.clientX + 15) + 'px';
+                tooltip.style.top = (e.clientY + 15) + 'px';
+                tooltip.innerHTML = `
+                    <div style="color:${node.color.toString(16).padStart(6, '0')}"><strong>${node.name}</strong></div>
+                    <div style="font-size:10px; color:#8B949E; margin-bottom:4px;">${node.type} | Active since ${node.since}</div>
+                    <div>${node.func || 'System core component'}</div>
+                    ${node.file ? `<div style="font-family:monospace; font-size:9px; margin-top:4px; color:#4ADE80">${node.file}</div>` : ''}
+                `;
             } else {
                 tooltip.style.display = 'none';
             }
         });
 
-        // --- UPDATE LOGIC ---
-        function updateIteration(ver) {
-            currentIteration = ver;
-            const activeNodes = iterationData[ver] || [];
-            const isAll = activeNodes.includes('ALL');
+        // --- VERSION UPDATE ---
+        function compareVersions(v1, v2) {
+            const parse = v => v.replace('v', '').split('.').map(Number);
+            const p1 = parse(v1);
+            const p2 = parse(v2);
+            for (let i = 0; i < Math.max(p1.length, p2.length); i++) {
+                const a = p1[i] || 0;
+                const b = p2[i] || 0;
+                if (a > b) return 1;
+                if (a < b) return -1;
+            }
+            return 0;
+        }
 
-            nodes.forEach((node, id) => {
-                const isActive = isAll || activeNodes.includes(id) || ['middleware', 'frontend', 'pipeline', 'backend'].includes(id);
-                
-                if (isActive) {
-                    node.material.opacity = 0.9;
-                    node.material.emissiveIntensity = 0.4;
-                    node.mesh.visible = true;
-                    // If it's a wireframe fallback in real app, here we just set high opacity
-                } else {
-                    node.material.opacity = 0.15;
-                    node.material.emissiveIntensity = 0.05;
-                    // node.mesh.visible = true; // Still show as ghost
-                }
+        function updateIteration(ver) {
+            currentVer = ver;
+            nodeMap.forEach(node => {
+                const isActive = compareVersions(ver, node.since) >= 0;
+                node.isActive = isActive;
+                node.mesh.material = isActive ? node.solidMat : node.outlineMat;
+            });
+
+            linkMeshes.forEach(l => {
+                const from = nodeMap.get(l.fromId);
+                const to = nodeMap.get(l.toId);
+                const isActive = from.isActive && to.isActive;
+                l.mat.opacity = isActive ? 0.8 : 0.1;
+                l.mat.color.set(isActive ? COLORS.activeLink : COLORS.inactiveLink);
             });
         }
 
@@ -341,58 +378,43 @@
             updateIteration(e.target.value);
         });
 
-        // --- ANIMATION LOOP ---
+        // --- ANIMATION ---
         function animate() {
             requestAnimationFrame(animate);
-
             const time = Date.now() * 0.001;
 
-            nodes.forEach(node => {
-                if (node.distance > 0) {
-                    node.angle += node.speed;
-                    node.group.position.x = Math.cos(node.angle) * node.distance;
-                    node.group.position.z = Math.sin(node.angle) * node.distance;
+            // Animate active links
+            linkMeshes.forEach(l => {
+                const from = nodeMap.get(l.fromId);
+                const to = nodeMap.get(l.toId);
+                if (from.isActive && to.isActive) {
+                    l.mat.dashOffset -= 0.01;
                 }
-                // Rotation
-                node.mesh.rotation.y += 0.01;
             });
 
             // Sun pulse
-            const sun = nodes.get('qwen');
+            const sun = nodeMap.get('qwen');
             if (sun) {
-                sun.material.emissiveIntensity = 0.4 + Math.sin(time * 2) * 0.1;
+                sun.solidMat.emissiveIntensity = 0.3 + Math.sin(time * 2) * 0.1;
             }
 
             controls.update();
             renderer.render(scene, camera);
         }
 
-        // --- INITIALIZATION ---
-        async function init() {
-            try {
-                const response = await fetch('../../data/claw3d_iterations.json');
-                iterationData = await response.json();
-                
-                document.getElementById('loading').style.display = 'none';
-                updateIteration(currentIteration);
-                animate();
-            } catch (err) {
-                console.error("Failed to load iteration data:", err);
-                // Fallback if file missing
-                iterationData = { "v9.52": ["ALL"] };
-                document.getElementById('loading').style.display = 'none';
-                updateIteration("v9.52");
-                animate();
-            }
-        }
-
+        // --- INIT ---
         window.addEventListener('resize', () => {
             camera.aspect = window.innerWidth / window.innerHeight;
             camera.updateProjectionMatrix();
             renderer.setSize(window.innerWidth, window.innerHeight);
         });
 
-        init();
+        setTimeout(() => {
+            document.getElementById('loading').style.display = 'none';
+            updateIteration('v10.54');
+            animate();
+        }, 800);
+
     </script>
 </body>
 </html>

@@ -152,10 +152,27 @@ def validate_schema(output):
     schema = load_eval_schema()
     errors = []
 
-    try:
-        jsonschema.validate(output, schema)
-    except jsonschema.ValidationError as e:
-        errors.append(f"Schema error at {e.json_path}: {e.message}")
+    validator = jsonschema.Draft7Validator(schema)
+    for error in sorted(validator.iter_errors(output), key=lambda e: list(e.absolute_path)):
+        path = ".".join(str(p) for p in error.absolute_path) or "(root)"
+        # Build expected vs actual hint
+        if error.validator == "type":
+            hint = f"expected type '{error.validator_value}', got '{type(error.instance).__name__}'"
+        elif error.validator == "enum":
+            hint = f"must be one of {error.validator_value}, got '{error.instance}'"
+        elif error.validator == "maximum":
+            hint = f"must be <= {error.validator_value}, got {error.instance}"
+        elif error.validator == "minimum":
+            hint = f"must be >= {error.validator_value}, got {error.instance}"
+        elif error.validator == "minItems":
+            hint = f"must have >= {error.validator_value} items, got {len(error.instance) if isinstance(error.instance, list) else 0}"
+        elif error.validator == "minLength":
+            hint = f"must be >= {error.validator_value} chars, got {len(str(error.instance))} chars"
+        elif error.validator == "required":
+            hint = f"missing required field '{error.message.split(chr(39))[1]}'"
+        else:
+            hint = error.message[:120]
+        errors.append(f"Field '{path}': {hint}")
 
     return errors
 
@@ -417,11 +434,16 @@ Return ONLY the JSON object, no explanation."""
         for err in errors:
             print(f"  - {err}")
 
-        # Build specific feedback for retry
-        feedback = "\n\nVALIDATION ERRORS (fix all before retrying):\n"
-        for err in errors:
-            feedback += f"  - {err}\n"
-        feedback += "\nReturn the corrected JSON object. Remember: score max is 9, not 10."
+        # Build specific field-path feedback for retry (v9.53: error specificity)
+        feedback = "\n\nVALIDATION ERRORS - fix EVERY error below before retrying:\n"
+        for i, err in enumerate(errors, 1):
+            feedback += f"  {i}. {err}\n"
+        feedback += "\nCritical reminders:"
+        feedback += "\n  - score: integer 0-9 (NEVER 10)"
+        feedback += "\n  - mcps: only from [\"Firebase\", \"Context7\", \"Firecrawl\", \"Playwright\", \"Dart\", \"-\"]"
+        feedback += f"\n  - workstreams: exactly {expected_count} objects"
+        feedback += f"\n  - agents: must include [\"{executing_agent}\"]"
+        feedback += "\nReturn ONLY the corrected JSON object."
         current_prompt = base_prompt + feedback
 
     # All retries exhausted - use fallback
