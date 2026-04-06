@@ -32,16 +32,16 @@
 <body>
     <div id="info">
         <h1>Claw3D - IAO Workspace</h1>
-        <p>kjtcom v9.38 | Drag to orbit, scroll to zoom</p>
+        <p>kjtcom v9.50 | Drag to orbit, scroll to zoom</p>
     </div>
     <div id="legend">
         <div class="legend-item"><span class="legend-dot" style="background:#0D9488"></span> Claude Code (Opus 4.6)</div>
         <div class="legend-item"><span class="legend-dot" style="background:#A78BFA"></span> Qwen3.5-9B</div>
         <div class="legend-item"><span class="legend-dot" style="background:#4285F4"></span> Gemini CLI</div>
-        <div class="legend-item"><span class="legend-dot" style="background:#F59E0B"></span> Nemotron Mini 4B</div>
-        <div class="legend-item"><span class="legend-dot" style="background:#F87171"></span> GLM-4.6V-Flash-9B</div>
-        <div class="legend-item"><span class="legend-dot" style="background:#EC4899"></span> MCP Servers</div>
         <div class="legend-item"><span class="legend-dot" style="background:#22D3EE"></span> Middleware</div>
+        <div class="legend-item"><span class="legend-dot" style="background:#14B8A6"></span> Data Stores</div>
+        <div class="legend-item"><span class="legend-dot" style="background:#3B82F6"></span> Infrastructure</div>
+        <div class="legend-item"><span class="legend-dot" style="background:#22C55E"></span> Frontend</div>
     </div>
     <div id="tooltip"></div>
 
@@ -94,39 +94,64 @@
 
         // Node definitions
         const agents = [
-            { name: 'Claude Code\n(Opus 4.6)', color: 0x0D9488, pos: [0, 5, 0], size: 1.8, type: 'agent', status: 'active' },
-            { name: 'Qwen3.5-9B\nEvaluator', color: 0xA78BFA, pos: [-6, 3, 4], size: 1.4, type: 'agent', status: 'active' },
-            { name: 'Gemini CLI', color: 0x4285F4, pos: [6, 3, 4], size: 1.2, type: 'agent', status: 'idle' },
-            { name: 'Nemotron\nMini 4B', color: 0xF59E0B, pos: [-8, 2, -3], size: 1.0, type: 'agent', status: 'active' },
-            { name: 'GLM-4.6V\nFlash-9B', color: 0xF87171, pos: [8, 2, -3], size: 1.0, type: 'agent', status: 'idle' },
+            { name: 'Claude Code\n(Opus 4.6)', color: 0x0D9488, pos: [0, 6, 0], size: 1.8, type: 'agent', status: 'active' }, // 0
+            { name: 'Qwen3.5-9B\nEvaluator', color: 0xA78BFA, pos: [-6, 4, 4], size: 1.4, type: 'agent', status: 'active' }, // 1
+            { name: 'Gemini CLI', color: 0x4285F4, pos: [6, 4, 4], size: 1.2, type: 'agent', status: 'active' }, // 2
+            { name: 'Nemotron\nMini 4B', color: 0xF59E0B, pos: [-8, 3, -3], size: 1.0, type: 'agent', status: 'active' }, // 3
+            { name: 'GLM-4.6V\nFlash-9B', color: 0xF87171, pos: [8, 3, -3], size: 1.0, type: 'agent', status: 'idle' }, // 4
         ];
 
         const mcpServers = [
-            { name: 'Firebase MCP', color: 0xEC4899, pos: [-4, 0.8, -6], size: 0.6, type: 'mcp' },
-            { name: 'Context7 MCP', color: 0xEC4899, pos: [-1, 0.8, -7], size: 0.6, type: 'mcp' },
-            { name: 'Firecrawl MCP', color: 0xEC4899, pos: [2, 0.8, -6], size: 0.6, type: 'mcp' },
-            { name: 'Playwright MCP', color: 0xEC4899, pos: [5, 0.8, -7], size: 0.6, type: 'mcp' },
-            { name: 'Dart MCP', color: 0xEC4899, pos: [8, 0.8, -6], size: 0.6, type: 'mcp' },
+            { name: 'Firebase MCP', color: 0xEC4899, pos: [-4, 1.2, -6], size: 0.6, type: 'mcp' }, // 5
+            { name: 'Context7 MCP', color: 0xEC4899, pos: [-1, 1.2, -7], size: 0.6, type: 'mcp' }, // 6
+            { name: 'Firecrawl MCP', color: 0xEC4899, pos: [2, 1.2, -6], size: 0.6, type: 'mcp' }, // 7
+            { name: 'Playwright MCP', color: 0xEC4899, pos: [5, 1.2, -7], size: 0.6, type: 'mcp' }, // 8
+            { name: 'Dart MCP', color: 0xEC4899, pos: [8, 1.2, -6], size: 0.6, type: 'mcp' }, // 9
         ];
 
         const middleware = [
-            { name: 'ChromaDB\nRAG', color: 0x22D3EE, pos: [-10, 1.5, 0], size: 0.8, type: 'middleware' },
-            { name: 'nomic-embed', color: 0x22D3EE, pos: [-12, 1.5, 2], size: 0.6, type: 'middleware' },
-            { name: 'Brave Search', color: 0x22D3EE, pos: [10, 1.5, 0], size: 0.8, type: 'middleware' },
-            { name: 'Telegram Bot', color: 0x22D3EE, pos: [12, 1.5, 2], size: 0.8, type: 'middleware' },
-            { name: 'OpenClaw', color: 0x22D3EE, pos: [11, 1.5, -2], size: 0.8, type: 'middleware' },
+            { name: 'Intent Router', color: 0x22D3EE, pos: [11, 2, 0], size: 0.9, type: 'middleware' }, // 10
+            { name: 'Firestore Query', color: 0x22D3EE, pos: [13, 2, -2], size: 0.7, type: 'middleware' }, // 11
+            { name: 'Brave Search', color: 0x22D3EE, pos: [13, 2, 2], size: 0.7, type: 'middleware' }, // 12
+            { name: 'ChromaDB RAG', color: 0x22D3EE, pos: [-11, 2, 0], size: 0.8, type: 'middleware' }, // 13
+            { name: 'nomic-embed', color: 0x22D3EE, pos: [-13, 2, 2], size: 0.6, type: 'middleware' }, // 14
+            { name: 'Artifact Gen', color: 0x22D3EE, pos: [0, 2, 8], size: 0.7, type: 'middleware' }, // 15
+            { name: 'Post-Flight', color: 0x22D3EE, pos: [-2, 2, 8], size: 0.7, type: 'middleware' }, // 16
+            { name: 'Eval Harness', color: 0x22D3EE, pos: [-4, 2, 8], size: 0.7, type: 'middleware' }, // 17
+            { name: 'County Enrich', color: 0x22D3EE, pos: [2, 2, 8], size: 0.7, type: 'middleware' }, // 18
         ];
 
-        const allNodes = [...agents, ...mcpServers, ...middleware];
+        const dataStores = [
+            { name: 'Cloud Firestore', color: 0x14B8A6, pos: [15, 0.5, -4], size: 1.2, type: 'data' }, // 19
+            { name: 'ChromaDB Local', color: 0x14B8A6, pos: [-15, 0.5, -2], size: 1.0, type: 'data' }, // 20
+            { name: 'Gotcha Archive', color: 0x14B8A6, pos: [-15, 0.5, 4], size: 0.6, type: 'data' }, // 21
+            { name: 'MW Registry', color: 0x14B8A6, pos: [-13, 0.5, 6], size: 0.6, type: 'data' }, // 22
+            { name: 'Eval Schema', color: 0x14B8A6, pos: [-8, 0.5, 8], size: 0.6, type: 'data' }, // 23
+            { name: 'Schema Ref', color: 0x14B8A6, pos: [15, 0.5, 2], size: 0.6, type: 'data' }, // 24
+        ];
+
+        const infrastructure = [
+            { name: 'Telegram Bot', color: 0x3B82F6, pos: [10, 4, 8], size: 0.8, type: 'infrastructure' }, // 25
+            { name: 'systemd Bot', color: 0x3B82F6, pos: [12, 4, 10], size: 0.6, type: 'infrastructure' }, // 26
+        ];
+
+        const frontend = [
+            { name: 'Flutter Web App', color: 0x22C55E, pos: [0, 0, 12], size: 1.5, type: 'frontend' }, // 27
+            { name: 'MW Tab', color: 0x22C55E, pos: [2, 0, 14], size: 0.8, type: 'frontend' }, // 28
+        ];
+
+        const allNodes = [...agents, ...mcpServers, ...middleware, ...dataStores, ...infrastructure, ...frontend];
         const meshes = [];
 
         // Create nodes
         allNodes.forEach(node => {
             let geometry;
-            if (node.type === 'mcp') {
+            if (node.type === 'mcp' || node.type === 'data') {
                 geometry = new THREE.BoxGeometry(node.size, node.size, node.size);
-            } else if (node.type === 'middleware') {
+            } else if (node.type === 'middleware' || node.type === 'infrastructure') {
                 geometry = new THREE.OctahedronGeometry(node.size, 0);
+            } else if (node.type === 'frontend') {
+                geometry = new THREE.TorusGeometry(node.size * 0.6, node.size * 0.2, 16, 100);
             } else {
                 geometry = new THREE.SphereGeometry(node.size, 32, 32);
             }
@@ -162,16 +187,20 @@
         const connections = [
             // Claude connects to all MCPs
             [0, 5], [0, 6], [0, 7], [0, 8], [0, 9],
-            // Claude connects to local LLMs
-            [0, 1], [0, 3], [0, 4],
-            // Claude connects to middleware
-            [0, 10], [0, 12], [0, 13],
-            // Qwen connects to evaluator role
-            [1, 10],
-            // Middleware internal
-            [10, 11], // ChromaDB <-> nomic
-            [13, 14], // Telegram <-> OpenClaw
-            [13, 12], // Telegram <-> Brave
+            // Agents to each other
+            [0, 1], [0, 2], [1, 2],
+            // Evaluator cycle
+            [1, 17], [17, 23], [15, 1],
+            // Bot flow
+            [25, 10], [10, 11], [10, 12], [10, 13],
+            [11, 19], [13, 20], [14, 13],
+            [26, 25],
+            // Frontend
+            [27, 28], [27, 19], [28, 22], [28, 21],
+            // Post-flight connections
+            [16, 27], [16, 25], [16, 15],
+            // Enrichment
+            [18, 19], [18, 24]
         ];
 
         const lineMaterial = new THREE.LineBasicMaterial({

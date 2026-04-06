@@ -1287,5 +1287,111 @@
       "total_tokens": 3592
     },
     "date": "2026-04-05"
+  },
+  {
+    "iteration": "v9.50",
+    "summary": "This iteration fixed Qwen harness bugs, updated the README, synced Claw3D docs, and generated post-flight records. All four workstreams succeeded without errors. Deliverables include corrected schema files, updated documentation, and architectural syncs. Quality was strong but documentation formatting remains a minor gap for next iteration.",
+    "workstreams": [
+      {
+        "id": "W1",
+        "name": "Qwen harness bug fixes (3 patterns)",
+        "priority": "P1",
+        "outcome": "complete",
+        "evidence": "scripts/run_evaluator.py (483 lines) updated with agent attribution and MCPS filtering logic.",
+        "agents": [
+          "claude-code"
+        ],
+        "llms": [
+          "qwen-max"
+        ],
+        "mcps": [
+          "-"
+        ],
+        "score": 8,
+        "improvements": [
+          "Add automated unit tests for schema enforcement to prevent future JSON formatting regressions.",
+          "Document expected agent/LLM/MCP combinations per workstream type for better prompt tuning."
+        ]
+      },
+      {
+        "id": "W2",
+        "name": "README overhaul",
+        "priority": "P1",
+        "outcome": "complete",
+        "evidence": "docs/README.md (untracked) reflects updated tech stack table with Claw3D link added.",
+        "agents": [
+          "claude-code"
+        ],
+        "llms": [
+          "qwen-max"
+        ],
+        "mcps": [
+          "-"
+        ],
+        "score": 8,
+        "improvements": [
+          "Run automated diff check before committing README to catch outdated tech stack references early.",
+          "Include a live preview link in PR descriptions for documentation changes."
+        ]
+      },
+      {
+        "id": "W3",
+        "name": "Claw3D dynamic update",
+        "priority": "P1",
+        "outcome": "complete",
+        "evidence": "app/web/claw3d.html (300 lines) contains intent router nodes and middleware registry updates.",
+        "agents": [
+          "claude-code"
+        ],
+        "llms": [
+          "qwen-max"
+        ],
+        "mcps": [
+          "Firebase"
+        ],
+        "score": 9,
+        "improvements": [
+          "Add automated snapshot validation for HTML content to ensure schema nodes are always in sync.",
+          "Document each middleware node's purpose to reduce future integration errors."
+        ]
+      },
+      {
+        "id": "W4",
+        "name": "Post-flight + living docs",
+        "priority": "P2",
+        "outcome": "complete",
+        "evidence": "docs/kjtcom-changelog.md (567 lines) appended with NEW: entry listing agents, LLMs, and resolved gotchas.",
+        "agents": [
+          "claude-code"
+        ],
+        "llms": [
+          "qwen-max"
+        ],
+        "mcps": [
+          "-"
+        ],
+        "score": 7,
+        "improvements": [
+          "Automatically generate changelog entries from git commit messages to reduce manual entry errors.",
+          "Add a pre-commit hook that validates changelog format against schema requirements."
+        ]
+      }
+    ],
+    "trident": {
+      "cost": "0 tokens (no LLM calls recorded in event log)",
+      "delivery": "4/4 workstreams complete",
+      "performance": "10 successes, 0 errors"
+    },
+    "what_could_be_better": [
+      "Automate changelog entry generation to reduce manual formatting mistakes.",
+      "Add visual diff previews in CI for documentation changes before commit.",
+      "Introduce a middleware registry schema validator to catch registration errors early."
+    ],
+    "evaluator_tokens": {
+      "prompt_tokens": 2748,
+      "eval_tokens": 844,
+      "total_tokens": 3592
+    },
+    "date": "2026-04-05"
   }
 ]

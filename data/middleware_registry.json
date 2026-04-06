@@ -1,13 +1,13 @@
 {
   "metadata": {
-    "version": "v9.49",
+    "version": "v9.50",
     "updated": "2026-04-05",
     "description": "Middleware component catalog - the IP that stamps onto new projects"
   },
   "harnesses": [
-    {"name": "CLAUDE.md", "version": "v9.49", "type": "agent_instructions", "target": "claude-code"},
-    {"name": "GEMINI.md", "version": "v9.49", "type": "agent_instructions", "target": "gemini-cli"},
-    {"name": "docs/evaluator-harness.md", "version": "v9.49", "type": "evaluator_personality", "target": "qwen3.5-9b", "description": "Schema-validated assessment: eval_schema.json, retry-with-feedback loop, max 9/10, banned phrases, improvement mandate"}
+    {"name": "CLAUDE.md", "version": "v9.50", "type": "agent_instructions", "target": "claude-code"},
+    {"name": "GEMINI.md", "version": "v9.50", "type": "agent_instructions", "target": "gemini-cli"},
+    {"name": "docs/evaluator-harness.md", "version": "v9.50", "type": "evaluator_personality", "target": "qwen3.5-9b", "description": "Schema-validated assessment (v9.50): MCP constraints, agent attribution, plain-text summary mandate"}
   ],
   "scripts": [
     {
@@ -33,16 +33,16 @@
     },
     {
       "name": "scripts/generate_artifacts.py",
-      "version": "v9.49",
+      "version": "v9.50",
       "type": "automation",
-      "description": "Draft artifact generator consuming schema-validated JSON, --promote, --validate-only, computed Trident",
+      "description": "Artifact generator (v9.50) with render_report_markdown() and schema-validated summary prioritization",
       "dependencies": ["scripts/utils/ollama_config.py", "scripts/utils/iao_logger.py", "scripts/utils/ollama_logged.py"]
     },
     {
       "name": "scripts/run_evaluator.py",
-      "version": "v9.49",
+      "version": "v9.50",
       "type": "evaluation",
-      "description": "Schema-validated Qwen evaluator with retry-with-feedback loop, execution context, no build log dependency",
+      "description": "Schema-validated Qwen evaluator (v9.50) with agent attribution parsing and MCP selection validation",
       "dependencies": ["scripts/utils/ollama_config.py", "scripts/utils/iao_logger.py"]
     },
     {
@@ -164,7 +164,7 @@
   ],
   "data_stores": [
     {"name": "data/chromadb/", "type": "vector_store", "records": 1524, "description": "RAG archive embeddings"},
-    {"name": "data/eval_schema.json", "type": "schema", "version": "v9.49", "description": "Strict JSON schema for Qwen evaluation output - score max 9, MCP enum, outcome enum, improvements minItems 2"},
+    {"name": "data/eval_schema.json", "type": "schema", "version": "v9.50", "description": "Strict JSON schema (v9.50) - score max 9, constrained MCPs, root-level summary field"},
     {"name": "data/gotcha_archive.json", "type": "knowledge_base", "version": "v9.44", "description": "17 resolved gotchas with resolution patterns"},
     {"name": "data/schema_reference.json", "type": "schema", "version": "v9.42", "description": "Thompson Schema field reference for intent routing"},
     {"name": "data/iao_event_log.jsonl", "type": "event_log", "description": "P3 diligence event stream"},

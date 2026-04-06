@@ -1,5 +1,28 @@
 # kjtcom - Unified Changelog
 
+## v9.50 - 2026-04-05
+
+- FIXED: Qwen harness bug fixes (3 patterns) - scripts/run_evaluator.py (483 lines) updated with agent attribution and MCPS filtering logic.
+- UPDATED: README overhaul - docs/README.md (untracked) reflects updated tech stack table with Claw3D link added.
+- UPDATED: Claw3D dynamic update - app/web/claw3d.html (300 lines) contains intent router nodes and middleware registry updates.
+- UPDATED: Post-flight + living docs - docs/kjtcom-changelog.md (567 lines) appended with NEW: entry listing agents, LLMs, and resolved gotchas.
+
+**Files changed:** 11
+**Agents:** Claude Code, Qwen3.5-9B, Gemini Flash
+**LLMs:** gemini-2.5-flash, qwen3.5:9b, nomic-embed-text
+**Interventions:** 0
+
+<!-- TEMPLATE RULES (v9.44+):
+- Each line MUST start with NEW:, UPDATED:, or FIXED: prefix
+- Include specific numbers (entity counts, chunk counts, test results)
+- "TBD" is BANNED. If data is missing, use "MISSING: [what data]"
+- List all agents and LLMs used
+- Include intervention count (target: 0)
+-->
+
+
+---
+
 ## v9.49 - 2026-04-05
 
 - UPDATED: Qwen schema-validated harness - scripts/data/eval_schema.json exists (48 lines); event log shows 5 successes with 0 errors.

@@ -160,8 +160,25 @@ def validate_schema(output):
     return errors
 
 
+def parse_executing_agent(design_doc_path):
+    """Parse design doc header for the recommended/executing agent."""
+    if not os.path.exists(design_doc_path):
+        return "claude-code"
+
+    with open(design_doc_path) as f:
+        for _ in range(20):
+            line = f.readline()
+            if not line: break
+            if "**Recommended Agent:**" in line or "**Executing Agent:**" in line:
+                agent = line.split(":")[-1].strip().lower()
+                if "claude" in agent: return "claude-code"
+                if "gemini" in agent: return "gemini-cli"
+                return agent.replace(" ", "-")
+    return "claude-code"
+
+
 def validate_qwen_output(output, expected_count, expected_names):
-    """Full validation: schema + workstream count + names + banned phrases.
+    """Full validation: schema + workstream count + names + banned phrases + mcps logic.
 
     Returns list of error strings. Empty list means valid.
     """
@@ -178,6 +195,7 @@ def validate_qwen_output(output, expected_count, expected_names):
         )
 
     # 3. Workstream name matching
+    full_enum = ["Firebase", "Context7", "Firecrawl", "Playwright", "Dart", "-"]
     for i, ws in enumerate(ws_list):
         if i < len(expected_names):
             expected = expected_names[i]
@@ -186,6 +204,11 @@ def validate_qwen_output(output, expected_count, expected_names):
                 errors.append(
                     f"W{i+1} name mismatch: got '{actual}', expected '{expected}'"
                 )
+        
+        # Check for full MCP enum dump
+        mcps = ws.get("mcps", [])
+        if len(mcps) >= 5 and all(m in mcps for m in ["Firebase", "Firecrawl", "Dart"]):
+             errors.append(f"W{i+1}: Do NOT dump all MCPs. List ONLY the {len(mcps)} used.")
 
     # 4. Banned phrase check
     text = json.dumps(output)
@@ -267,6 +290,7 @@ def build_fallback(version, expected_names):
     total = len(expected_names)
     return {
         "iteration": version,
+        "summary": "Evaluation generated via fallback due to schema validation failure after 3 attempts.",
         "workstreams": workstreams,
         "trident": {
             "cost": "Within target - local Ollama inference",
@@ -287,7 +311,9 @@ def evaluate_with_retry(version, design_doc_path, max_retries=3):
     This is the core v9.49 schema-validated evaluation loop.
     """
     expected_count, expected_names = parse_workstream_count(design_doc_path)
+    executing_agent = parse_executing_agent(design_doc_path)
     print(f"Expecting {expected_count} workstreams: {', '.join(expected_names)}")
+    print(f"Executing agent parsed as: {executing_agent}")
 
     with open(design_doc_path) as f:
         design_content = f.read()
@@ -316,6 +342,7 @@ IMPORTANT: Return a single JSON OBJECT (not array) conforming to the eval_schema
 
 The JSON object MUST have these top-level keys:
 - "iteration": "{version}"
+- "summary": "Plain text summary. 2-4 sentences describing what was built and what failed. NO JSON."
 - "workstreams": array of exactly {expected_count} objects
 - "trident": object with "cost", "delivery", "performance"
 - "what_could_be_better": array of 3+ strings
@@ -323,6 +350,7 @@ The JSON object MUST have these top-level keys:
 Each workstream object MUST have: id, name, priority, outcome, evidence, agents, llms, mcps, score, improvements
 
 CONSTRAINTS:
+- agents: MUST include ["{executing_agent}"]. You are NOT the agent.
 - score: integer 0-9 (NEVER 10)
 - outcome: one of "complete", "partial", "failed", "deferred"
 - mcps: array of strings from ONLY: "Firebase", "Context7", "Firecrawl", "Playwright", "Dart", "-"

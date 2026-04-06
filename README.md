@@ -14,7 +14,7 @@ kjtcom extracts entities from YouTube playlists - landmarks, trails, restaurants
 
 The same normalization patterns power production SIEM migrations at [TachTech Engineering](https://tachtech.net). Built entirely by LLM agents using IAO (Iterative Agentic Orchestration) - a methodology distilled from 46+ iterations across 10 phases on [TripleDB](https://github.com/TachTech-Engineering/tripledb).
 
-**[kylejeromethompson.com](https://kylejeromethompson.com)** | **Phase 9 v9.49** | **Status: Phase 9 App Optimization - Final Iterations**
+**[kylejeromethompson.com](https://kylejeromethompson.com)** | **Phase 9 v9.50** | **Status: Phase 9 App Optimization - Final Iterations**
 
 ---
 
@@ -40,9 +40,9 @@ The same normalization patterns power production SIEM migrations at [TachTech En
 
 ## Architecture
 
-**[Interactive Architecture Diagram](https://kylejeromethompson.com/architecture.html)** | **[3D IAO Visualization](https://kylejeromethompson.com/claw3d.html)** | [Mermaid Source](docs/kjtcom-architecture.mmd)
+**[Interactive Architecture Diagram](https://kylejeromethompson.com/architecture.html)** | **[3D IAO Visualization](https://kylejeromethompson.com/claw3d.html)** | **[Telegram Bot](https://t.me/kjtcom_iao_bot)** | [Mermaid Source](docs/kjtcom-architecture.mmd)
 
-Current state: v9.49 - 3 pipelines, 5 MCP servers, 4 local LLMs, RAG middleware, dual retrieval (Firestore + ChromaDB) via Gemini Flash 3-route intent router, Telegram bot (@kjtcom_iao_bot) with session memory and rating-aware queries, systemd service management, P3 event logging, post-flight verification, artifact automation with computed Trident values, schema-validated Qwen evaluator harness (eval_schema.json + retry-with-feedback loop, v9.49).
+Current state: v9.50 - 3 pipelines, 5 MCP servers, 4 local LLMs, RAG middleware, dual retrieval (Firestore + ChromaDB) via Gemini Flash 3-route intent router, Telegram bot (@kjtcom_iao_bot) with session memory and rating-aware queries, systemd service management, P3 event logging, post-flight verification, artifact automation with computed Trident values, schema-validated Qwen evaluator harness (eval_schema.json + retry-with-feedback loop, v9.49).
 
 ### Pipeline Flow
 
@@ -324,14 +324,24 @@ graph BT
 | Audio Download | yt-dlp | YouTube -> mp3 |
 | Transcription | faster-whisper (CUDA) | mp3 -> timestamped JSON |
 | Extraction | Gemini 2.5 Flash API | Transcript -> structured entity JSON |
-| Normalization | Python + schema.json | Raw JSON -> Thompson Indicator Fields (t_any_*) |
+| Normalization | Python + schema.json | Raw JSON -> Thompson Indicator Fields |
 | Geocoding | Nominatim (OSM) | Address/name -> lat/lon |
-| Enrichment | Google Places API (New) | Rating, open/closed, website, phone |
+| Enrichment | Google Places API (New) | Rating, reviews, website, phone |
+| County Enrichment | Nominatim reverse geocode | Coordinates -> county (v9.42) |
 | Database | Cloud Firestore (Blaze) | Denormalized documents, multi-database |
 | Search API | Firebase Cloud Functions | Complex cross-dataset queries |
-| Frontend | Flutter Web | Unified search, map, list views |
+| Frontend | Flutter Web (6 tabs + MW) | Unified search, map, middleware dashboard |
 | Hosting | Firebase Hosting | CDN, preview channels, SSL |
-| Orchestration | Claude Code (Opus) / Gemini CLI | IAO agent execution |
+| Orchestration | Claude Code / Gemini CLI | IAO agent execution |
+| Intent Router | Gemini 2.5 Flash (litellm) | 3-route query classification |
+| RAG | ChromaDB + nomic-embed-text | Semantic search over project archive |
+| Telegram Bot | python-telegram-bot (systemd) | @kjtcom_iao_bot, 3-route retrieval |
+| Web Search | Brave Search API | External query routing |
+| Local LLMs | Ollama (4 models) | Evaluation, triage, vision, embeddings |
+| Evaluation | Qwen3.5-9B (schema-validated) | Workstream scoring, artifact drafting |
+| Event Logging | iao_logger.py | P3 Diligence event stream |
+| Artifact Automation | generate_artifacts.py | Post-iteration doc generation |
+| 3D Visualization | Three.js (Claw3D) | IAO workspace visualization |
 
 ---
 
@@ -406,6 +416,16 @@ Phase 10 brings the Bourdain pipeline (114 videos from Parts Unknown), IaC packa
 ---
 
 ## Changelog
+
+**v9.50 (Phase 9 - Qwen Harness Bug Fixes + README Overhaul + Claw3D Dynamic Update)**
+- UPDATED: data/eval_schema.json - constrained MCPs enum selection, added top-level summary field
+- UPDATED: docs/evaluator-harness.md - added MCP selection, agent attribution, and plain-text summary rules
+- UPDATED: scripts/run_evaluator.py - parses executing agent from design doc, injects into prompt context, validates MCP selection logic
+- UPDATED: scripts/generate_artifacts.py - render_report_markdown() converts validated JSON to markdown, prioritizes schema-validated summary
+- UPDATED: app/web/claw3d.html - dynamic update to v9.50 state with 13 new nodes (Intent Router, Bot, RAG, etc.) and connections
+- UPDATED: README.md - full overhaul: 21-row tech stack table, Claw3D/Bot links, v9.50 roadmap
+- Multi-agent: Gemini CLI (primary executor) + Qwen3.5-9B (evaluator) + Gemini Flash (routing)
+- Kyle interventions: 0
 
 **v9.49 (Phase 9 - Schema-Validated Qwen Harness + MW Tab + Execution Order Fix)**
 - NEW: data/eval_schema.json - strict JSON schema for Qwen evaluation output (score max 9, MCP enum, outcome enum, improvements minItems 2)

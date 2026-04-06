@@ -155,7 +155,7 @@ def format_workstream_rows(scores_entry):
         rows.append(
             f"| {ws['id']} | {ws['name']} | {ws.get('priority', '-')} | "
             f"{ws.get('outcome', '-')} | {evidence} | {agents} | {llms} | {mcps} | "
-            f"{ws.get('score', '-')}/10 |"
+            f"{ws.get('score', '-')}/9 |"
         )
     return "\n".join(rows)
 
@@ -274,41 +274,51 @@ def compute_trident_values(iteration, scores_entry):
     }
 
 
-def generate_report(iteration):
-    """Generate report draft."""
+def render_report_markdown(iteration, scores_entry, event_summary):
+    """Render the full report markdown using template and evaluation data."""
     template = load_template('report-template.md')
     date = datetime.now().strftime('%B %d, %Y')
     iter_num = get_iteration_number(iteration)
 
-    scores_entry = get_agent_scores(iteration)
     workstream_rows = format_workstream_rows(scores_entry)
-    event_summary = get_event_log_summary(iteration)
-
-    # Compute actual Trident values from event log and workstream data
     trident = compute_trident_values(iteration, scores_entry)
 
-    # Generate summary narrative
-    context = f"Iteration: {iteration}\nWorkstreams: {json.dumps(scores_entry.get('workstreams', []) if scores_entry else [], indent=2)[:2000]}\n\nEvents:\n{event_summary}"
-    summary = generate_narrative(iteration, context)
+    # Use schema-validated summary if available (v9.50)
+    summary = scores_entry.get('summary') if scores_entry else None
+    if not summary:
+        context = f"Iteration: {iteration}\nWorkstreams: {json.dumps(scores_entry.get('workstreams', []) if scores_entry else [], indent=2)[:2000]}\n\nEvents:\n{event_summary}"
+        summary = generate_narrative(iteration, context)
 
-    agent_utilization = "Gemini CLI (primary executor), Qwen3.5-9B (evaluator), Gemini Flash (intent routing, synthesis)" if iteration == "v9.47" else "Claude Code (primary executor), Qwen3.5-9B (evaluator), Gemini Flash (intent routing, synthesis)"
+    # Agent utilization logic
+    exec_agent = "Claude Code"
+    if iteration == "v9.47": exec_agent = "Gemini CLI"
+    
+    # Try to find executor in event log if not hardcoded
+    try:
+        with open(EVENT_LOG) as f:
+            for line in f:
+                if 'gemini-cli' in line: 
+                    exec_agent = "Gemini CLI"
+                    break
+    except: pass
 
-    # v9.49+: use schema-validated what_could_be_better if available
+    agent_utilization = f"{exec_agent} (primary executor), Qwen3.5-9B (evaluator), Gemini Flash (intent routing, synthesis)"
+
+    # Schema-validated fields (v9.49+)
     wcbb = ""
     if scores_entry and 'what_could_be_better' in scores_entry:
         wcbb_items = scores_entry['what_could_be_better']
         wcbb = "\n".join(f"{i+1}. {item}" for i, item in enumerate(wcbb_items))
     else:
-        wcbb = "1. Persistent session storage (Redis/Firestore) for bot context\n2. Composite Firestore index for rating sort + filter\n3. Bourdain pipeline onboarding"
+        wcbb = "1. Persistent session storage\n2. Firestore indexing\n3. Pipeline onboarding"
 
-    # v9.49+: use schema-validated trident if available
     if scores_entry and 'trident' in scores_entry:
         t = scores_entry['trident']
         trident['cost_result'] = t.get('cost', trident['cost_result'])
         trident['delivery_result'] = t.get('delivery', trident['delivery_result'])
         trident['performance_result'] = t.get('performance', trident['performance_result'])
 
-    filled = template.format(
+    return template.format(
         iteration=iteration,
         iteration_number=iter_num,
         date=date,
@@ -322,9 +332,17 @@ def generate_report(iteration):
         performance_result=trident['performance_result'],
         agent_utilization=agent_utilization,
         event_log_summary=event_summary,
-        gotcha_summary="G34: Active - post-filter workaround\nG47: Open\nG53: Recurring\nG54: Transitive deps",
+        gotcha_summary="G34: Active\nG47: Open\nG53: Recurring\nG54: Transitive deps",
         next_candidates=wcbb
     )
+
+
+def generate_report(iteration):
+    """Generate report draft."""
+    scores_entry = get_agent_scores(iteration)
+    event_summary = get_event_log_summary(iteration)
+    
+    filled = render_report_markdown(iteration, scores_entry, event_summary)
 
     out_path = os.path.join(DRAFTS_DIR, f'kjtcom-report-{iteration}.md')
     os.makedirs(DRAFTS_DIR, exist_ok=True)
