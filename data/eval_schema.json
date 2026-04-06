@@ -7,7 +7,7 @@
     "summary": {
       "type": "string",
       "minLength": 50,
-      "maxLength": 500,
+      "maxLength": 2000,
       "description": "Plain text summary. NO JSON, NO markdown headers, NO code blocks. 2-4 sentences describing what was built, what worked, and what failed."
     },
     "workstreams": {
@@ -20,14 +20,14 @@
           "name": {"type": "string", "minLength": 5},
           "priority": {"type": "string", "enum": ["P0", "P1", "P2", "P3"]},
           "outcome": {"type": "string", "enum": ["complete", "partial", "failed", "deferred"]},
-          "evidence": {"type": "string", "minLength": 10},
+          "evidence": {"type": "string", "minLength": 10, "maxLength": 1000},
           "agents": {"type": "array", "items": {"type": "string"}},
           "llms": {"type": "array", "items": {"type": "string"}},
           "mcps": {
             "type": "array",
-            "items": {"type": "string", "enum": ["Firebase", "Context7", "Firecrawl", "Playwright", "Dart", "-"]},
-            "maxItems": 3,
-            "description": "List ONLY the MCP servers actually invoked during this workstream. Use '-' ONLY if no MCPs were used. Most workstreams use 0-1 MCPs."
+            "items": {"type": "string"},
+            "maxItems": 5,
+            "description": "List ONLY the MCP servers actually invoked during this workstream. Use '-' ONLY if no MCPs were used. Valid: Firebase, Context7, Firecrawl, Playwright, Dart, -"
           },
           "score": {"type": "integer", "minimum": 0, "maximum": 9, "description": "Score on a 10-point scale (0-10) where 10 is prohibited. Maximum allowed is 9. Report as X/10, not X/9. Example: 8/10, not 8/9."},
           "improvements": {
@@ -50,7 +50,7 @@
     "what_could_be_better": {
       "type": "array",
       "items": {"type": "string"},
-      "minItems": 3
+      "minItems": 2
     }
   }
 }

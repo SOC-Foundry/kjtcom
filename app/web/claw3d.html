@@ -57,7 +57,7 @@
         <button id="backBtn" onclick="zoomOut()">All boards</button>
         <select id="iterSelect" onchange="selectIteration(this.value)"></select>
     </div>
-    <div id="title">kjtcom PCB Architecture v10.57</div>
+    <div id="title">kjtcom PCB Architecture v10.58</div>
     <div id="legend">
         <div class="legend-row"><span class="legend-dot" style="background:#4ADE80"></span> Active</div>
         <div class="legend-row"><span class="legend-dot" style="background:#EF9F27"></span> Degraded</div>
@@ -77,7 +77,7 @@
         var BOARDS = [
             {
                 id: "frontend", label: "Frontend", color: 0x0D9488,
-                pos: [-3.5, 3, 0], size: [5, 3],
+                pos: [-3, 5.5, 0], size: [5, 3],
                 chips: [
                     {id:"query_editor", status:"active", detail:"NoSQL parser"},
                     {id:"results_table", status:"active", detail:"Paginated grid"},
@@ -93,7 +93,7 @@
             },
             {
                 id: "pipeline", label: "Pipeline", color: 0xDA7E12,
-                pos: [3.5, 3, 0], size: [5, 3],
+                pos: [3, 5.5, 0], size: [5, 3],
                 chips: [
                     {id:"yt_dlp", status:"active", detail:"YouTube audio download"},
                     {id:"faster_whisper", status:"active", detail:"CUDA transcription"},
@@ -108,7 +108,7 @@
             },
             {
                 id: "middleware", label: "Middleware", color: 0x8B5CF6,
-                pos: [0, -1.5, 0], size: [12, 6],
+                pos: [0, 0, 0], size: [12, 6],
                 chips: [
                     {id:"evaluator", status:"active", detail:"Qwen fallback chain, G55 resolved"},
                     {id:"harness", status:"active", detail:"601-line operating manual"},
@@ -130,12 +130,13 @@
                     {id:"firecrawl_mcp", status:"active", detail:"Web scraping"},
                     {id:"dart_mcp", status:"active", detail:"Flutter/Dart analysis"},
                     {id:"claude_code", status:"active", detail:"Primary executor, Phases 6-7"},
-                    {id:"gemini_cli", status:"active", detail:"Primary executor, Phases 1-5"}
+                    {id:"gemini_cli", status:"active", detail:"Primary executor, Phases 1-5"},
+                    {id:"iao_logger", status:"active", detail:"JSONL event log, P3 diligence"}
                 ]
             },
             {
                 id: "backend", label: "Backend", color: 0x3B82F6,
-                pos: [0, -6.5, 0], size: [12, 3],
+                pos: [0, -6, 0], size: [12, 3],
                 chips: [
                     {id:"firestore", status:"active", detail:"Single locations collection"},
                     {id:"production_db", status:"active", detail:"6,181 entities"},
@@ -143,7 +144,7 @@
                     {id:"calgold", status:"active", detail:"899 entities", color:0xDA7E12},
                     {id:"ricksteves", status:"active", detail:"4,182 entities", color:0x3B82F6},
                     {id:"tripledb", status:"active", detail:"1,100 entities", color:0xDD3333},
-                    {id:"bourdain", status:"degraded", detail:"188 staging, Phase 2", color:0x8B5CF6}
+                    {id:"bourdain", status:"degraded", detail:"275 staging, Phase 3", color:0x8B5CF6}
                 ]
             }
         ];
@@ -155,7 +156,20 @@
         ];
 
         var ITERATIONS = {
-            "v10.57": ["ALL"],
+            "v10.58": ["ALL"],
+            "v10.57": [
+                "query_editor","results_table","detail_panel","map_tab","globe_tab",
+                "iao_tab","mw_tab","schema_tab","claw3d","firebase_hosting",
+                "yt_dlp","faster_whisper","gemini_extract","normalize","geocode","enrich","load",
+                "tmux_runner","checkpoint",
+                "evaluator","harness","ADR","artifact_gen","gotcha_archive","agent_scores",
+                "pre_flight","post_flight","intent_router","telegram_bot","rag_pipeline",
+                "qwen_9b","nemotron_4b","gemini_flash",
+                "firebase_mcp","context7_mcp","playwright_mcp","firecrawl_mcp","dart_mcp",
+                "claude_code","gemini_cli",
+                "firestore","production_db","staging_db",
+                "calgold","ricksteves","tripledb","bourdain"
+            ],
             "v10.56": [
                 "query_editor","results_table","detail_panel","map_tab","globe_tab",
                 "iao_tab","mw_tab","schema_tab","claw3d","firebase_hosting",
@@ -203,12 +217,12 @@
         var BOARD_COLORS_HEX = { frontend: '#0D9488', pipeline: '#DA7E12', middleware: '#8B5CF6', backend: '#3B82F6' };
 
         // Camera positions
-        var OVERVIEW = { pos: new THREE.Vector3(0, -1, 18), lookAt: new THREE.Vector3(0, -1.5, 0) };
+        var OVERVIEW = { pos: new THREE.Vector3(0, 0, 22), lookAt: new THREE.Vector3(0, 0, 0) };
         var ZOOM_TARGETS = {
-            frontend:  { pos: new THREE.Vector3(-3.5, 3, 8),  lookAt: new THREE.Vector3(-3.5, 3, 0) },
-            pipeline:  { pos: new THREE.Vector3(3.5, 3, 8),   lookAt: new THREE.Vector3(3.5, 3, 0) },
-            middleware: { pos: new THREE.Vector3(0, -1.5, 10), lookAt: new THREE.Vector3(0, -1.5, 0) },
-            backend:   { pos: new THREE.Vector3(0, -6.5, 8),  lookAt: new THREE.Vector3(0, -6.5, 0) }
+            frontend:  { pos: new THREE.Vector3(-3, 5.5, 8),  lookAt: new THREE.Vector3(-3, 5.5, 0) },
+            pipeline:  { pos: new THREE.Vector3(3, 5.5, 8),   lookAt: new THREE.Vector3(3, 5.5, 0) },
+            middleware: { pos: new THREE.Vector3(0, 0, 10), lookAt: new THREE.Vector3(0, 0, 0) },
+            backend:   { pos: new THREE.Vector3(0, -6, 8),  lookAt: new THREE.Vector3(0, -6, 0) }
         };
 
         // State
@@ -623,7 +637,7 @@
 
         buildScene();
         populateIterations();
-        selectIteration('v10.57');
+        selectIteration('v10.58');
         animate();
 
     })();

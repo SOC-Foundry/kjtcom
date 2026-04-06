@@ -1685,6 +1685,109 @@
       "evaluator": "self-eval (fallback)",
       "evaluator_tokens": {},
       "date": "2026-04-06"
+    },
+    {
+      "iteration": "v10.58",
+      "summary": "Self-evaluation fallback for v10.58. Qwen and Gemini Flash both failed schema validation. 4 workstreams parsed from design doc. Scores capped at 7/10 to avoid self-grading bias.",
+      "workstreams": [
+        {
+          "id": "W1",
+          "name": "Claw3D Visual Polish \u2014 Gaps + Connectors + Logger",
+          "priority": "P1",
+          "outcome": "partial",
+          "evidence": "## W1: Claw3D Visual Polish - Gaps + Connectors + Logger; [x] W1: Board positions adjusted with visible gaps; [x] W1: Animated connectors with labels in each gap",
+          "agents": [
+            "claude-code"
+          ],
+          "llms": [
+            "qwen3.5:9b"
+          ],
+          "mcps": [
+            "-"
+          ],
+          "score": 5,
+          "improvements": [
+            "Self-eval fallback used - Qwen and Gemini both failed schema validation",
+            "Manual review recommended for accurate scoring"
+          ]
+        },
+        {
+          "id": "W2",
+          "name": "Bourdain Pipeline \u2014 Phase 3",
+          "priority": "P1",
+          "outcome": "partial",
+          "evidence": "## W2: Bourdain Pipeline - Phase 3 (Videos 61-90); [ ] W2: Bourdain Phase 3 entities in staging; [ ] W2: checkpoint.json updated",
+          "agents": [
+            "claude-code"
+          ],
+          "llms": [
+            "qwen3.5:9b"
+          ],
+          "mcps": [
+            "-"
+          ],
+          "score": 3,
+          "improvements": [
+            "Self-eval fallback used - Qwen and Gemini both failed schema validation",
+            "Manual review recommended for accurate scoring"
+          ]
+        },
+        {
+          "id": "W3",
+          "name": "Fix Evaluator Schema Validation",
+          "priority": "P1",
+          "outcome": "partial",
+          "evidence": "## W3: Fix Evaluator Schema Validation; [x] W3: eval_schema.json relaxed; [x] W3: JSON repair added to run_evaluator.py",
+          "agents": [
+            "claude-code"
+          ],
+          "llms": [
+            "qwen3.5:9b"
+          ],
+          "mcps": [
+            "-"
+          ],
+          "score": 4,
+          "improvements": [
+            "Self-eval fallback used - Qwen and Gemini both failed schema validation",
+            "Manual review recommended for accurate scoring"
+          ]
+        },
+        {
+          "id": "W4",
+          "name": "Thompson Schema v4 \u2014 Intranet Field Identification",
+          "priority": "P2",
+          "outcome": "partial",
+          "evidence": "## W4: ADR-011 Thompson Schema v4 - Intranet Extensions; [x] W4: ADR-011 in evaluator-harness.md (727 lines)",
+          "agents": [
+            "claude-code"
+          ],
+          "llms": [
+            "qwen3.5:9b"
+          ],
+          "mcps": [
+            "-"
+          ],
+          "score": 2,
+          "improvements": [
+            "Self-eval fallback used - Qwen and Gemini both failed schema validation",
+            "Manual review recommended for accurate scoring"
+          ]
+        }
+      ],
+      "trident": {
+        "cost": "Minimal - self-eval required no LLM tokens",
+        "delivery": "0/4 workstreams completed (self-eval)",
+        "performance": "Self-eval fallback triggered - evaluator pipeline needs repair"
+      },
+      "what_could_be_better": [
+        "Qwen failed schema validation after 3 attempts - prompt or model issue",
+        "Gemini Flash failed schema validation after 2 attempts - schema may be too strict",
+        "Self-eval cannot provide the same quality as an independent evaluator"
+      ],
+      "evaluator": "self-eval (fallback)",
+      "evaluator_tokens": {},
+      "date": "2026-04-06"
     }
   ]
 }

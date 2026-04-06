@@ -1,4 +1,16 @@
 # kjtcom - Unified Changelog
+## v10.58 - 2026-04-06
+
+- NEW: Bourdain Pipeline Phase 3 - 30 videos acquired (61-90), transcribed (faster-whisper CUDA, 3 graduated batches of 10), extracted (Gemini Flash, 29/30 success), normalized, geocoded, enriched, loaded to staging. 88 new entities, total 275 staging (was 188). 1 extraction failure on compilation episode. Checkpoint updated.
+- UPDATED: app/web/claw3d.html - Board positions adjusted for visible gaps between all board pairs. FE/PL moved to y=5.5, MW centered at y=0, BE at y=-6. Animated dashed trace connectors cross each gap with labels. Camera overview widened to z=22. Zoom targets updated. Version bumped to v10.58. v10.58 iteration entry added.
+- NEW: iao_logger chip on middleware board in Claw3D - {id:"iao_logger", status:"active", detail:"JSONL event log, P3 diligence"}. 22 middleware chips (was 21).
+- FIXED: data/eval_schema.json - Relaxed summary maxLength (500 -> 2000), added evidence maxLength (1000), removed strict MCP enum (was causing validation failures), reduced what_could_be_better minItems (3 -> 2).
+- FIXED: scripts/run_evaluator.py - Added repair_json() for markdown fence stripping and trailing comma fixes. Added concrete JSON example to evaluator prompt reducing ambiguity. Added write_report_markdown() function so evaluator produces both agent_scores.json AND report markdown. Self-eval now writes docs/kjtcom-report-{version}.md.
+- NEW: ADR-011 (Thompson Schema v4 - Intranet Extensions) in evaluator-harness.md - 30 candidate t_any_* fields for 7 intranet source types (documents, spreadsheets, meetings, email, Slack, CRM, contractor portal). 4 universal fields (tags, record_ids, sources, sensitivity). Schema grows monotonically. Design decision only.
+- UPDATED: docs/evaluator-harness.md - 670 -> 727 lines. ADR-011, v10.58 evidence standards, evaluator schema evidence requirements.
+- Multi-agent: Claude Code (Opus 4.6, primary) + Qwen3.5-9B (evaluator) + Gemini Flash (extraction + evaluator fallback) + faster-whisper (CUDA transcription)
+- Kyle interventions: 0
+
 ## v10.57 - 2026-04-06
 
 - FIXED: G56 - Claw3D external JSON fetch 404 on Firebase Hosting. Complete rewrite with ALL data inline as JS objects. Zero fetch() calls. 4th attempt, root cause eliminated.

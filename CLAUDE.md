@@ -1,6 +1,6 @@
 # CLAUDE.md — kjtcom Agent Harness (Claude Code)
 
-**Launch:** `read claude and execute 10.57`
+**Launch:** `read claude and execute 10.58`
 **Repo:** SOC-Foundry/kjtcom
 **Site:** kylejeromethompson.com
 **Firebase:** kjtcom-c78cd (Blaze)
@@ -10,24 +10,19 @@
 
 ## RULES
 
-1. **NEVER** run `git commit`, `git push`, or any git write operation. All git operations are manual (Kyle only).
-2. **NEVER** use heredocs. Use `printf` blocks only (G1).
-3. **NEVER** run simultaneous GPU processes. Graduated tmux batches only (G18).
-4. Use `command ls` to avoid color codes (G22). Use `fish -c "..."` wrappers (G19).
-5. Use `-u` flag on all Python scripts for unbuffered stdout.
-6. Read the ENTIRE relevant file before editing. `grep` for ALL related patterns across `app/`.
-7. Every iteration produces 4 artifacts: design, plan, build, report. No exceptions.
-8. Post-flight (`python3 scripts/post_flight.py`) is MANDATORY before marking any iteration complete.
-9. `10/10` scores prohibited. `agent_scores.json` is append-only. Evaluator harness never shrinks.
-10. Changelog prefixes: `NEW:`, `UPDATED:`, `FIXED:`. No fluff words.
-11. **REPORTS ARE MANDATORY.** Fallback chain: Qwen → Gemini Flash → self-eval. Empty scorecards are never acceptable.
-12. **Claw3D JSON must be INLINE in the HTML file.** Do NOT use fetch() for any JSON data. Firebase Hosting does not serve `data/` directory files. This has broken Claw3D in v10.54, v10.55, and v10.56 (G56). Embed all component and iteration data as JS objects directly in the script block.
+1. **NEVER** `git commit`, `git push`, or any git write. All git = Kyle only.
+2. **NEVER** heredocs. `printf` only (G1). `command ls` (G22). `fish -c` wrappers (G19).
+3. **NEVER** simultaneous GPU. Graduated tmux batches, unload Ollama first (G18).
+4. Read ENTIRE files before editing. `grep` all related patterns across `app/`.
+5. 4 artifacts per iteration: design, plan, build, report. No exceptions.
+6. Post-flight MANDATORY. `10/10` prohibited. Harness never shrinks. Scores append-only.
+7. Changelog: `NEW:` / `UPDATED:` / `FIXED:` prefixes. No fluff.
+8. **REPORTS MANDATORY.** Fallback: Qwen → Gemini → self-eval. Empty scorecards = failure.
+9. **G56: ALL Claw3D data INLINE as JS objects. NEVER fetch() external JSON.**
 
 ---
 
-## PROJECT CONTEXT
-
-Cross-pipeline location intelligence platform. YouTube playlists → Thompson Indicator Fields (`t_any_*`) → Firestore → Flutter Web.
+## PROJECT STATE
 
 | Pipeline | t_log_type | Color | Entities | Status |
 |----------|-----------|-------|----------|--------|
@@ -36,258 +31,168 @@ Cross-pipeline location intelligence platform. YouTube playlists → Thompson In
 | Diners Drive-Ins and Dives | tripledb | #DD3333 | 1,100 | Production |
 | Anthony Bourdain | bourdain | #8B5CF6 | 188 | **Staging (Phase 2)** |
 
-**Total:** 6,181 production + 188 staging.
+**Total:** 6,181 production + 188 staging. Bourdain Phase 3 not yet executed.
 
 ---
 
-## AGENT MODEL
+## AGENTS & EVALUATOR
 
-| Agent | Role | When |
-|-------|------|------|
-| Claude Code | Primary executor (Phases 6-7, app, docs) | This file |
-| Gemini CLI | Primary executor (Phases 1-5) | GEMINI.md |
-| Qwen3.5-9B | Evaluator (local Ollama) | docs/evaluator-harness.md |
-| Gemini Flash | Intent routing, extraction, **evaluator fallback** | API |
+| Agent | Role |
+|-------|------|
+| Claude Code | Executor (Phases 6-7, app, docs) |
+| Gemini CLI | Executor (Phases 1-5) |
+| Qwen3.5-9B | Evaluator (local Ollama) |
+| Gemini Flash | Intent routing, extraction, evaluator fallback |
 
-**Evaluator fallback:** Qwen (3 attempts) → Gemini Flash (2 attempts) → self-eval (always succeeds, cap 7/10)
+**Evaluator fallback:** Qwen (3) → Gemini (2) → self-eval (always succeeds, cap 7/10)
 
-**MCP Servers:** Firebase, Context7, Playwright, Firecrawl, Dart/Flutter
-
----
-
-## ACTIVE GOTCHAS
-
-| ID | Title | Status | Workaround |
-|----|-------|--------|------------|
-| G1 | Heredocs break agents | Active | printf only |
-| G18 | CUDA OOM RTX 2080 SUPER | Active | Graduated tmux, unload Ollama first |
-| G19 | Gemini CLI runs bash | Active | fish -c wrappers |
-| G34 | Firestore array-contains | Active | Client-side post-filter |
-| G45 | Query editor cursor | Active | flutter_code_editor pending |
-| G47 | CanvasKit DOM | Open | Playwright screenshots only |
-| G53 | Firebase MCP reauth | Recurring | Script wrapper with retry |
-| G55 | Qwen empty reports | Resolved v10.56 | Fallback chain |
-| **G56** | **Claw3D fetch() 404 on Firebase Hosting** | **NEW** | **Inline all data as JS objects. NEVER fetch .json** |
+**v10.57 evaluator issue:** All 3 tiers failed schema validation. Root cause: `eval_schema.json` constraints are too tight for the actual LLM output format. The schema needs to be relaxed OR the prompt needs a concrete JSON example that matches the schema exactly. Fix in W3.
 
 ---
 
-## ARTIFACT CONVENTIONS
+## GOTCHAS
 
-**Naming:** `kjtcom-{type}-v{X.XX}.md` (design/plan/build/report)
-**Archive:** Previous artifacts → `docs/archive/`
-**Changelog:** `docs/kjtcom-changelog.md` — `NEW:` / `UPDATED:` / `FIXED:` prefixes
-**Evaluator harness:** `docs/evaluator-harness.md` — living document, 601+ lines, contains ADRs
-**agent_scores.json:** Canonical `{"iterations": [...]}` schema, 5 scoring dimensions (0-10, max 50)
+| ID | Title | Workaround |
+|----|-------|------------|
+| G1 | Heredocs | printf only |
+| G18 | CUDA OOM | Graduated tmux, unload Ollama |
+| G34 | Firestore array-contains | Post-filter |
+| G45 | Query editor cursor | flutter_code_editor pending |
+| G53 | Firebase MCP reauth | Retry wrapper |
+| G55 | Qwen empty reports | Fallback chain (resolved v10.56) |
+| G56 | Claw3D fetch() 404 | Inline all data (resolved v10.57) |
 
 ---
 
-## v10.57 WORKSTREAMS
+## v10.58 WORKSTREAMS
 
-### W1: Claw3D 4-Board PCB — Fix G56 + New Layout (P0)
+### W1: Claw3D Visual Polish — Gaps + Connectors + Logger (P1)
 
-**G56 root cause:** `claw3d.html` fetches external JSON files (`claw3d_components.json`, `claw3d_iterations.json`). These files live in `data/` in the repo. Firebase Hosting only serves `app/web/` build output. The fetch 404s. This has broken Claw3D in v10.54, v10.55, and v10.56.
+**v10.57 delivered the layout but boards are directly touching middleware.** Fix:
 
-**Fix:** ALL data must be inline JavaScript objects inside `claw3d.html`. No `fetch()`. No external JSON. The file must be 100% self-contained.
+**Gap + connector requirement:** All 4 boards must have visible gaps between them with animated dashed trace connectors crossing the gaps — exactly like the Backend→Middleware connector already works. Specifically:
+- Frontend board (top-left) has a gap below it, with animated traces going down to Middleware
+- Pipeline board (top-right) has a gap below it, with animated traces going down to Middleware
+- Middleware board (center) has a gap below it, with animated traces going down to Backend
+- The gap should be ~1.5 Three.js units (enough to see the animated dashes and read the connector label)
 
-**New 4-board layout (per Kyle's sketch):**
+**Board positions (adjusted for gaps):**
 ```
-┌──────────┐  ┌──────────┐
-│ Frontend │  │ Pipeline │     ← small boards, side by side, top row
-└────┬─────┘  └────┬─────┘
-     │              │
-     ▼              ▼
-┌─────────────────────────────┐
-│                             │
-│        Middleware            │  ← LARGE board, full width, significantly bigger
-│                             │
-└──────────────┬──────────────┘
-               │
-               ▼
-┌─────────────────────────────┐
-│          Backend            │  ← full width, bottom
-└─────────────────────────────┘
+Frontend:   [-3, 5, 0]   size [5, 3]
+Pipeline:   [3, 5, 0]    size [5, 3]
+  ↕ gap ~1.5 units with animated connectors
+Middleware: [0, 0, 0]    size [12, 6]   ← LARGE, centered
+  ↕ gap ~1.5 units with animated connectors
+Backend:    [0, -5.5, 0] size [12, 3]
 ```
 
-**Board assignments (what lives where):**
+**Connector labels in gaps:**
+- FE→MW gap: "Riverpod / Firestore stream"
+- PL→MW gap: "Pipeline scripts / checkpoint"
+- MW→BE gap: "Admin SDK / Ollama / ChromaDB"
 
-**Frontend** (#0D9488 teal, top-left, small) — what's deployed in Firebase:
-- query_editor, results_table, detail_panel
-- map_tab, globe_tab, iao_tab, mw_tab, schema_tab
-- claw3d, firebase_hosting
+**Logger chip:** Add a `logger` chip to the Middleware board. All event logging (`data/iao_event_log.jsonl`) is managed by middleware. The logger chip should show:
+- id: "iao_logger"
+- status: "active"
+- detail: "JSONL event log, P3 diligence"
 
-**Pipeline** (#DA7E12 amber, top-right, small) — local GPU extraction scripts:
-- yt_dlp, faster_whisper, gemini_extract
-- normalize, geocode, enrich, load
-- tmux_runner, checkpoint
-
-**Middleware** (#8B5CF6 purple, center, LARGE) — the hub. Everything routes through here:
-- Harness & evaluation: evaluator, harness, ADR, artifact_gen, gotcha_archive, agent_scores
-- Operations: pre_flight, post_flight, intent_router, telegram_bot, rag_pipeline
-- LLMs: qwen_9b, nemotron_4b, gemini_flash
-- MCPs: firebase_mcp, context7_mcp, playwright_mcp, firecrawl_mcp, dart_mcp
-- Agents: claude_code, gemini_cli
-
-**Backend** (#3B82F6 blue, bottom, full width) — Firestore + log sources:
-- firestore (locations collection)
-- production_db, staging_db
-- Log sources: calgold (#DA7E12, 899), ricksteves (#3B82F6, 4,182), tripledb (#DD3333, 1,100), bourdain (#8B5CF6, 188)
-
-**Component placement rule:** If a component is used in multiple boards (e.g. Gemini Flash is both pipeline extraction AND middleware intent routing), defer to Middleware unless it is a primary component of that board (Flutter → Frontend, Firestore → Backend, faster-whisper → Pipeline).
-
-**Connectors (animated dashed traces):**
-- Frontend → Middleware (down-left): Riverpod state, Firestore stream
-- Pipeline → Middleware (down-right): pipeline scripts, checkpoint JSON
-- Middleware → Backend (down): Firebase Admin SDK, Ollama API, ChromaDB
-
-**Interaction:**
-- Hover chip → dark tooltip (green border, monospace: name + status LED + detail text)
-- Click board → camera lerps to close-up (~1s)
-- Escape / "All boards" button → camera lerps to overview
-- Iteration dropdown → chip states toggle per iteration history
-
-**Three.js r128 constraints:** Same as v10.56. NO OrbitControls, NO CapsuleGeometry, NO TextGeometry. Chips = BoxGeometry, boards = PlaneGeometry + EdgesGeometry. Text = HTML overlay via Vector3.project(). Background 0x0D1117.
-
-**CRITICAL: Inline data example:**
-```javascript
-const BOARDS = [
-  {
-    id: "frontend", label: "Frontend", color: 0x0D9488,
-    pos: [-3, 3, 0], size: [5, 3],
-    chips: [
-      {id:"query_editor", status:"active", detail:"NoSQL parser"},
-      {id:"results_table", status:"active", detail:"Paginated grid"},
-      {id:"detail_panel", status:"active", detail:"Entity inspector"},
-      {id:"map_tab", status:"active", detail:"OpenStreetMap markers"},
-      {id:"globe_tab", status:"active", detail:"Continent cards"},
-      {id:"iao_tab", status:"active", detail:"Trident + 10 pillars"},
-      {id:"mw_tab", status:"active", detail:"33 components"},
-      {id:"schema_tab", status:"active", detail:"22 t_any_* fields"},
-      {id:"claw3d", status:"active", detail:"PCB architecture viz"},
-      {id:"firebase_hosting", status:"active", detail:"CDN + SSL"}
-    ]
-  },
-  {
-    id: "pipeline", label: "Pipeline", color: 0xDA7E12,
-    pos: [3, 3, 0], size: [5, 3],
-    chips: [
-      {id:"yt_dlp", status:"active", detail:"YouTube audio download"},
-      {id:"faster_whisper", status:"active", detail:"CUDA transcription"},
-      {id:"gemini_extract", status:"active", detail:"Entity extraction API"},
-      {id:"normalize", status:"active", detail:"Schema v3 t_any_*"},
-      {id:"geocode", status:"active", detail:"Nominatim 1 req/sec"},
-      {id:"enrich", status:"active", detail:"Google Places API"},
-      {id:"load", status:"active", detail:"Firebase Admin SDK"},
-      {id:"tmux_runner", status:"active", detail:"Graduated GPU batches"},
-      {id:"checkpoint", status:"active", detail:"JSON state persistence"}
-    ]
-  },
-  {
-    id: "middleware", label: "Middleware", color: 0x8B5CF6,
-    pos: [0, -1.5, 0], size: [12, 6],
-    chips: [
-      {id:"evaluator", status:"active", detail:"Qwen fallback chain, G55 resolved"},
-      {id:"harness", status:"active", detail:"601-line operating manual"},
-      {id:"ADR", status:"active", detail:"10 architecture decisions"},
-      {id:"artifact_gen", status:"active", detail:"4-doc loop"},
-      {id:"gotcha_archive", status:"active", detail:"G1-G56, 18+ resolved"},
-      {id:"agent_scores", status:"active", detail:"5-dim scoring, append-only"},
-      {id:"pre_flight", status:"active", detail:"Environment validation"},
-      {id:"post_flight", status:"active", detail:"14+ checks"},
-      {id:"intent_router", status:"active", detail:"3-route Gemini Flash"},
-      {id:"telegram_bot", status:"active", detail:"systemd, session memory"},
-      {id:"rag_pipeline", status:"active", detail:"1,819 ChromaDB chunks"},
-      {id:"qwen_9b", status:"active", detail:"Evaluator LLM, 256K ctx"},
-      {id:"nemotron_4b", status:"active", detail:"Code review, 4K ctx"},
-      {id:"gemini_flash", status:"active", detail:"Intent routing + extraction"},
-      {id:"firebase_mcp", status:"active", detail:"G53 recurring reauth"},
-      {id:"context7_mcp", status:"active", detail:"API docs lookup"},
-      {id:"playwright_mcp", status:"active", detail:"Browser automation"},
-      {id:"firecrawl_mcp", status:"active", detail:"Web scraping"},
-      {id:"dart_mcp", status:"active", detail:"Flutter/Dart analysis"},
-      {id:"claude_code", status:"active", detail:"Primary executor, Phases 6-7"},
-      {id:"gemini_cli", status:"active", detail:"Primary executor, Phases 1-5"}
-    ]
-  },
-  {
-    id: "backend", label: "Backend", color: 0x3B82F6,
-    pos: [0, -6.5, 0], size: [12, 3],
-    chips: [
-      {id:"firestore", status:"active", detail:"Single locations collection"},
-      {id:"production_db", status:"active", detail:"6,181 entities"},
-      {id:"staging_db", status:"active", detail:"188 Bourdain entities"},
-      {id:"calgold", status:"active", detail:"899 entities", color:0xDA7E12},
-      {id:"ricksteves", status:"active", detail:"4,182 entities", color:0x3B82F6},
-      {id:"tripledb", status:"active", detail:"1,100 entities", color:0xDD3333},
-      {id:"bourdain", status:"degraded", detail:"188 staging, Phase 2", color:0x8B5CF6}
-    ]
-  }
-];
-```
-
-**Post-flight G56 check:**
-```python
-# In post_flight.py:
-import re
-content = open("app/web/claw3d.html").read()
-fetches = re.findall(r'fetch\s*\([^)]*\.json', content)
-assert len(fetches) == 0, f"FAIL: G56 - {len(fetches)} external JSON fetches found. Must be 0."
-```
+Claw3D itself does not log — it reads component data that's been logged by middleware. The logger chip on the middleware board represents this.
 
 **Evidence:**
-- Page loads at kylejeromethompson.com/claw3d.html (screenshot)
-- `grep -c "fetch.*\.json" app/web/claw3d.html` returns 0
-- 4 boards visible, MW visibly larger
-- Hover + click-to-zoom functional
-- Browser console: 0 errors
+- Visible gaps between all board pairs
+- Animated traces crossing each gap
+- Connector labels readable
+- Logger chip present on middleware board
+- 0 console errors, hover/zoom still work
 
 ---
 
 ### W2: Bourdain Pipeline — Phase 3 (P1)
 
-**Videos 61-90.** Machine: NZXTcos. **Staging only.**
+**This did not execute in v10.57.** Videos 61-90.
+
+**Machine:** NZXTcos (GPU required)
+**Playlist:** `https://www.youtube.com/playlist?list=PLEVfhwFNb44fPn5N3OXk-aEHFvLOPzXKo`
 
 ```
 yt-dlp --playlist-items 61-90 -x --audio-format mp3
-faster-whisper (graduated tmux: 3 batches of 10, unload Ollama first)
-Gemini Flash extraction
+# Unload Ollama: curl -s http://localhost:11434/api/generate -d '{"model":"qwen3.5:9b","keep_alive":0}'
+# Graduated tmux: 3 batches of 10, sequential, timeout 600s
+faster-whisper (CUDA)
+Gemini Flash extraction (pipeline/config/bourdain/extraction_prompt.md)
 phase4_normalize.py --pipeline bourdain
 phase5_geocode.py --pipeline bourdain
 phase6_enrich.py --pipeline bourdain
 phase7_load.py --pipeline bourdain --database staging
 ```
 
-**Dedup against existing 188 entities.** Update `data/bourdain/checkpoint.json`.
+**DO NOT load to production. Staging only.**
+**Dedup against 188 existing entities.**
+**Update `data/bourdain/checkpoint.json`.**
 
 ---
 
-### W3: ADR-010 (GCP Portability) + Harness Update (P1)
+### W3: Fix Evaluator Schema Validation (P1)
 
-**Append to `docs/evaluator-harness.md`:**
+**Problem:** In v10.57, all 3 evaluator tiers failed schema validation. The `eval_schema.json` constraints don't match what the LLMs actually produce. Self-eval saved scores to `agent_scores.json` but didn't generate the report markdown file.
 
-1. **ADR-010: GCP Portability Design** — Pipeline and middleware are designed portable from local to GCP (tachnet-intranet). Two pipeline configs tracked: v1 (CalGold/RickSteves/TripleDB, established) and v2 (Bourdain, current). Focus on RickSteves as reference pipeline. Intranet will have different log sources (docs, spreadsheets, PDFs, meeting transcripts, Gmail, Slack, CRM) but same Thompson Indicator Fields normalization. Pub/sub topic router in intranet middleware enables Firestore to push to downstream consumers (tachtrack.com portals). Middleware scripts must not hardcode local paths.
+**Diagnosis:**
+1. `cat data/eval_schema.json` — what constraints exist?
+2. Run evaluator with `--verbose` and capture the raw LLM output
+3. Compare raw output structure to schema requirements
+4. Identify mismatches (field names? types? enum values? string length limits?)
 
-2. **Pattern 16: External JSON fetch on Firebase Hosting (G56)** — Failure: `fetch('file.json')` returns 404 because Firebase Hosting only serves the build output directory. Prevention: all data must be inline JS objects. File existence checks in post-flight are insufficient.
+**Fix options (try in order):**
+1. **Relax the schema** — if constraints are unnecessarily tight (e.g. summary max 500 chars, priority enum missing values), loosen them to match realistic LLM output
+2. **Add a concrete JSON example to the prompt** — show Qwen/Gemini exactly what the output should look like, field by field, so there's no ambiguity
+3. **Add a JSON repair step** — after getting LLM output, attempt to fix common issues (strip markdown fences, fix trailing commas, coerce types) before validation
+4. **Ensure self-eval writes both `agent_scores.json` AND the report markdown** — the self-eval tier must produce `docs/kjtcom-report-v{version}.md` not just the JSON scores
 
-3. **Evidence standards for Claw3D** — Must include `grep` for fetch+json (must be 0), screenshot of loaded page, browser console error count.
-
-**Evidence:** `wc -l docs/evaluator-harness.md` > 601. ADR-010 present. G56 pattern present.
+**Evidence:**
+- Run evaluator against v10.57 build log: `python3 -u scripts/run_evaluator.py --iteration v10.57 --verbose`
+- At least one tier produces valid output (Qwen preferred)
+- Report markdown file is generated (not just agent_scores.json)
+- `grep -c "^| W" docs/kjtcom-report-v10.58.md` >= 1
 
 ---
 
-### W4: Post-Flight Hardening (P2)
+### W4: Thompson Schema — Intranet Field Identification (P2)
 
-Add G56 prevention check to `scripts/post_flight.py`:
-- `grep` for `fetch` + `.json` in claw3d.html → must be 0
-- If Playwright available: local serve + screenshot smoke test
+**Context:** The intranet deployment will process different log sources than kjtcom. Each new source type may require new Thompson Indicator Fields. Identify these now so the schema can grow intentionally.
+
+**Current schema v3 fields (kjtcom — YouTube content):**
+`t_any_names`, `t_any_people`, `t_any_cities`, `t_any_states`, `t_any_counties`, `t_any_countries`, `t_any_country_codes`, `t_any_regions`, `t_any_coordinates`, `t_any_geohashes`, `t_any_keywords`, `t_any_categories`, `t_any_actors`, `t_any_roles`, `t_any_shows`, `t_any_cuisines`, `t_any_dishes`, `t_any_eras`, `t_any_continents`
+
+**New intranet log sources and candidate fields:**
+
+| Log Source | New t_any_* Fields | Rationale |
+|-----------|-------------------|-----------|
+| Documents (docx, pdf) | `t_any_authors`, `t_any_titles`, `t_any_dates`, `t_any_orgs`, `t_any_topics` | Author attribution, document metadata, organizational tagging |
+| Spreadsheets (xlsx, csv) | `t_any_columns`, `t_any_metrics`, `t_any_units` | Column headers as searchable fields, numeric context |
+| Meeting transcripts (mp3) | `t_any_speakers`, `t_any_action_items`, `t_any_decisions` | Who said what, what was decided, what needs follow-up |
+| Gmail / Calendar | `t_any_senders`, `t_any_recipients`, `t_any_subjects`, `t_any_attachments` | Email graph, calendar event metadata |
+| Slack channels | `t_any_channels`, `t_any_threads`, `t_any_reactions` | Channel-level context, thread grouping |
+| CRM API pulls | `t_any_accounts`, `t_any_contacts`, `t_any_deals`, `t_any_stages`, `t_any_values` | Sales pipeline, account hierarchy |
+| Contractor portal | `t_any_certifications`, `t_any_skills`, `t_any_projects`, `t_any_contractors` | Contractor qualification data |
+
+**Universal fields (apply to ALL intranet sources):**
+- `t_any_tags` — user-applied tags (manual taxonomy)
+- `t_any_record_ids` — external system IDs for cross-referencing (Salesforce IDs, Jira ticket numbers, etc.)
+- `t_any_sources` — which system the entity originated from (gmail, slack, crm, etc.)
+- `t_any_sensitivity` — classification level (public, internal, confidential)
+
+**Output:** Append to `docs/evaluator-harness.md` as ADR-011 (Thompson Schema v4 — Intranet Extensions). This is a design decision, not implementation — the fields don't get created until intranet pipelines are built.
+
+**Also note in ADR-011:** When pipeline consumes a new log source, the extraction prompt for that source defines which `t_any_*` fields it populates. Fields not relevant to a source are left empty (not omitted). The schema grows monotonically — fields are never removed, only added. This mirrors how SIEM platforms (Panther `p_any_*`, ECS) evolve their schemas.
 
 ---
 
 ## EXECUTION ORDER
 
-1. **W1: Claw3D 4-Board** (P0, tsP3-cos) — 3 consecutive failures, fix G56 root cause
-2. **W2: Bourdain Phase 3** (P1, NZXTcos) — parallel with W1
-3. **W3: ADR-010 + Harness** (P1) — after W1/W2
-4. **W4: Post-Flight** (P2) — after W3
+1. **W2: Bourdain Phase 3** (P1, NZXTcos) — longest, start first
+2. **W1: Claw3D gaps + connectors** (P1, tsP3-cos) — parallel with W2
+3. **W3: Fix evaluator schema** (P1, after W1/W2) — needs working evaluator for report
+4. **W4: Schema field identification** (P2) — ADR-011 append to harness
 5. Post-flight + living docs + report
 
 ---
@@ -295,18 +200,16 @@ Add G56 prevention check to `scripts/post_flight.py`:
 ## COMPLETION CHECKLIST
 
 ```
-[ ] W1: claw3d.html loads at live URL — 4 boards visible, MW is largest
-[ ] W1: grep -c "fetch.*\.json" app/web/claw3d.html returns 0
-[ ] W1: Hover tooltips + click-to-zoom work
-[ ] W1: 0 browser console errors
-[ ] W2: Bourdain Phase 3 entities in staging
+[ ] W1: Visible gaps between all board pairs with animated connectors
+[ ] W1: Connector labels readable in gaps
+[ ] W1: Logger chip on middleware board
+[ ] W1: 0 console errors, hover/zoom work
+[ ] W2: Bourdain Phase 3 entities in staging (videos 61-90)
 [ ] W2: checkpoint.json updated
-[ ] W3: ADR-010 in evaluator-harness.md
-[ ] W3: G56 pattern in failure catalog
-[ ] W3: harness > 601 lines
-[ ] W4: post_flight.py has G56 check
-[ ] Report has non-empty scorecard
-[ ] post_flight.py passes all checks
-[ ] changelog updated
+[ ] W3: Evaluator produces valid report markdown
+[ ] W3: grep -c "^| W" docs/kjtcom-report-v10.58.md >= 1
+[ ] W4: ADR-011 in evaluator-harness.md
+[ ] Post-flight passes (including G56 check)
+[ ] Changelog updated
 [ ] 4 artifacts: design, plan, build, report
 ```

@@ -666,5 +666,62 @@ For W4 (Post-Flight Hardening), evidence must include:
 - Post-flight passes all checks.
 
 ---
-*Evaluator Harness v10.57 - April 6, 2026. ADR-010 (GCP Portability), G56 failure pattern, updated evidence standards.*
-*(Line count verification: 601 at v10.56, expanded with ADR-010, Pattern 16, and v10.57 evidence standards.)*
+
+### ADR-011: Thompson Schema v4 - Intranet Extensions
+- **Context:** kjtcom schema v3 was designed for YouTube content (locations, food, travel). The intranet deployment will process documents, spreadsheets, meeting transcripts, email, Slack, CRM data, and contractor records. Each source type requires fields the current schema does not have.
+- **Decision:** Define candidate t_any_* fields per source type. Fields are added to the schema when the first pipeline consuming that source type goes live. The schema grows monotonically - fields are never removed, only added. Fields not relevant to a source are left as empty arrays (not omitted). This mirrors how SIEM platforms (Panther p_any_*, ECS) evolve their schemas.
+- **Current schema v3 fields (kjtcom - YouTube content):**
+  - t_any_names, t_any_people, t_any_cities, t_any_states, t_any_counties, t_any_countries, t_any_country_codes, t_any_regions, t_any_coordinates, t_any_geohashes, t_any_keywords, t_any_categories, t_any_actors, t_any_roles, t_any_shows, t_any_cuisines, t_any_dishes, t_any_eras, t_any_continents
+- **New fields by source type:**
+  - Documents (docx, pdf): t_any_authors, t_any_titles, t_any_dates, t_any_orgs, t_any_topics
+  - Spreadsheets (xlsx, csv): t_any_columns, t_any_metrics, t_any_units
+  - Meeting transcripts (mp3): t_any_speakers, t_any_action_items, t_any_decisions
+  - Email (Gmail): t_any_senders, t_any_recipients, t_any_subjects, t_any_attachments
+  - Slack channels: t_any_channels, t_any_threads, t_any_reactions
+  - CRM API pulls: t_any_accounts, t_any_contacts, t_any_deals, t_any_stages, t_any_values
+  - Contractor portal: t_any_certifications, t_any_skills, t_any_projects, t_any_contractors
+- **Universal fields (all intranet sources):**
+  - t_any_tags - user-applied taxonomy tags
+  - t_any_record_ids - external system IDs for cross-referencing (Salesforce IDs, Jira ticket numbers, etc.)
+  - t_any_sources - originating system (gmail, slack, crm, etc.)
+  - t_any_sensitivity - classification level (public, internal, confidential)
+- **Extraction prompt contract:** When a pipeline consumes a new log source, the extraction prompt for that source defines which t_any_* fields it populates. Fields not relevant to a source are left empty (not omitted).
+- **Rationale:** Defining fields ahead of implementation ensures the extraction prompt for each source type has a clear target schema. The pipeline team (or agent) can reference this ADR when writing new extraction prompts.
+- **Consequences:**
+  - schema.json must be versioned (v3 = kjtcom YouTube, v4 = intranet baseline).
+  - Each new source type's extraction prompt documents which t_any_* fields it populates.
+  - The pub/sub topic router (ADR-010) will key on t_any_sources for downstream routing to tachtrack.com portals.
+  - Total field count grows from 19 (v3) to 49 (v4 candidate set). Not all will activate simultaneously.
+
+---
+
+## 12. Evidence Standards (v10.58)
+
+### Claw3D Evidence Requirements (updated)
+
+For any workstream involving Claw3D, evidence must include ALL of the following:
+
+1. **G56 grep check:** `grep -c "fetch.*\.json" app/web/claw3d.html` returns 0.
+2. **Board gaps:** Visible gaps between all board pairs (FE-MW, PL-MW, MW-BE).
+3. **Animated connectors:** Dashed trace connectors crossing each gap with labels.
+4. **Logger chip:** iao_logger chip present on middleware board.
+5. **Console errors:** Browser console shows 0 errors on page load.
+6. **Functional checks:**
+   - All 4 boards visible with MW visibly larger.
+   - Hover tooltips display chip name, status LED, and detail text.
+   - Click-to-zoom on any board works.
+   - Escape or "All boards" button returns to overview.
+   - Iteration dropdown toggles chip visibility.
+7. **Post-flight pass:** `python3 scripts/post_flight.py` passes `claw3d_no_external_json` check.
+
+### Evaluator Schema Evidence (v10.58)
+
+For evaluator fix workstreams, evidence must include:
+- `python3 scripts/run_evaluator.py --iteration <version> --verbose` completes.
+- At least one tier produces valid output (Qwen preferred).
+- `docs/kjtcom-report-<version>.md` exists with scored workstreams.
+- `grep -c "^| W" docs/kjtcom-report-<version>.md` >= 1.
+
+---
+*Evaluator Harness v10.58 - April 6, 2026. ADR-011 (Thompson Schema v4 Intranet Extensions), updated evidence standards, evaluator schema evidence.*
+*(Line count verification: 670 at v10.57, expanded with ADR-011 and v10.58 evidence standards.)*

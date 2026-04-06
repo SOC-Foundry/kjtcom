@@ -261,7 +261,6 @@ def validate_qwen_output(output, expected_count, expected_names):
         )
 
     # 3. Workstream name matching
-    full_enum = ["Firebase", "Context7", "Firecrawl", "Playwright", "Dart", "-"]
     for i, ws in enumerate(ws_list):
         if i < len(expected_names):
             expected = expected_names[i]
@@ -316,10 +315,24 @@ def call_qwen(messages):
     return content, tokens, latency
 
 
+def repair_json(raw):
+    """Repair common LLM JSON issues before parsing."""
+    import re
+    # Strip markdown fences
+    raw = re.sub(r'^```json\s*', '', raw, flags=re.MULTILINE)
+    raw = re.sub(r'^```\s*$', '', raw, flags=re.MULTILINE)
+    # Fix trailing commas before } or ]
+    raw = re.sub(r',\s*([}\]])', r'\1', raw)
+    # Strip leading/trailing whitespace
+    return raw.strip()
+
+
 def parse_json_from_response(content):
     """Extract JSON object from Qwen response text."""
     if not content:
         return None
+
+    content = repair_json(content)
 
     # Try object first (new schema format)
     json_start = content.find('{')
@@ -436,35 +449,39 @@ def build_evaluator_prompt(version, design_content, exec_context, expected_count
     """Build the shared evaluator prompt used by all tiers."""
     ws_list_str = "\n".join(f"  W{i+1}: {name}" for i, name in enumerate(expected_names))
 
+    example_ws = ', '.join(
+        '{{"id":"W{0}","name":"{1}","priority":"P1","outcome":"partial","evidence":"app/web/claw3d.html updated, 633 lines","agents":["{2}"],"llms":["qwen3.5:9b"],"mcps":["-"],"score":6,"improvements":["Add integration tests","Improve error handling"]}}'.format(
+            i+1, name[:30], executing_agent
+        ) for i, name in enumerate(expected_names[:2])
+    )
+
     return f"""/no_think
 You are evaluating workstreams for kjtcom iteration {version}.
 
-IMPORTANT: Return a single JSON OBJECT (not array) conforming to the eval_schema.json schema.
+IMPORTANT: Return ONLY a JSON object. No markdown fences. No explanation. No preamble.
 
-The JSON object MUST have these top-level keys:
-- "iteration": "{version}"
-- "summary": "Plain text summary. 2-4 sentences describing what was built and what failed. NO JSON."
-- "workstreams": array of exactly {expected_count} objects
-- "trident": object with "cost", "delivery", "performance"
-- "what_could_be_better": array of 3+ strings
+EXACT OUTPUT FORMAT (follow this structure precisely):
+{{"iteration":"{version}","summary":"Plain text 2-4 sentences about what was built and what failed.","workstreams":[{example_ws}],"trident":{{"cost":"<100K Claude tokens","delivery":"2/{expected_count} workstreams completed","performance":"Specific metric here"}},"what_could_be_better":["Item 1","Item 2","Item 3"]}}
 
-Each workstream object MUST have: id, name, priority, outcome, evidence, agents, llms, mcps, score, improvements
-
-CONSTRAINTS:
-- agents: MUST include ["{executing_agent}"]. You are NOT the agent.
+RULES:
+- iteration: exactly "{version}"
+- summary: plain text, 50-2000 chars, no JSON/markdown
+- workstreams: exactly {expected_count} objects
+- Each workstream MUST have: id, name, priority, outcome, evidence, agents, llms, mcps, score, improvements
 - score: integer 0-9 (NEVER 10)
-- outcome: one of "complete", "partial", "failed", "deferred"
-- priority: one of "P0", "P1", "P2", "P3"
-- mcps: array of strings from ONLY: "Firebase", "Context7", "Firecrawl", "Playwright", "Dart", "-"
-- improvements: array of 2+ strings per workstream
-- evidence: string of 10+ characters with file path, command output, or test result
-- delivery in trident: must match pattern "X/Y workstreams..."
-- what_could_be_better: 3+ concrete suggestions
+- outcome: "complete", "partial", "failed", or "deferred"
+- priority: "P0", "P1", "P2", or "P3"
+- agents: must include ["{executing_agent}"]
+- mcps: use "-" if none, otherwise "Firebase", "Context7", "Firecrawl", "Playwright", or "Dart"
+- improvements: 2+ strings per workstream
+- evidence: 10+ chars, cite file paths or command outputs
+- delivery: must match "X/Y workstreams ..."
+- what_could_be_better: 2+ concrete suggestions
 
 WORKSTREAMS TO EVALUATE (exactly {expected_count}):
 {ws_list_str}
 
-Use the EXECUTION CONTEXT as ground truth. If errors/timeouts exist for a workstream, do NOT mark "complete".
+Use EXECUTION CONTEXT as ground truth. Errors/timeouts = NOT "complete".
 
 Design document (first 3000 chars):
 {design_content[:3000]}
@@ -473,7 +490,7 @@ EXECUTION CONTEXT (ground truth):
 {exec_context}
 {gotcha_summary}
 
-Return ONLY the JSON object, no explanation."""
+Return ONLY the JSON object."""
 
 
 def try_qwen_tier(base_prompt, harness, expected_count, expected_names, executing_agent, version, verbose=False):
@@ -670,6 +687,59 @@ def evaluate_with_retry(version, design_doc_path, max_retries=3, verbose=False, 
     return result
 
 
+def write_report_markdown(version, evaluation):
+    """Write the evaluation report as a markdown file."""
+    report_path = os.path.join(PROJECT_DIR, 'docs', f'kjtcom-report-{version}.md')
+    evaluator = evaluation.get('evaluator', 'unknown')
+    lines = []
+    lines.append(f"# kjtcom - Report v{version.replace('v','')}")
+    lines.append(f"")
+    lines.append(f"**Evaluator:** {evaluator}")
+    lines.append(f"**Date:** {time.strftime('%B %d, %Y')}")
+    lines.append(f"")
+    lines.append(f"## Summary")
+    lines.append(f"")
+    lines.append(evaluation.get('summary', 'No summary available.'))
+    lines.append(f"")
+    lines.append(f"## Workstream Scores")
+    lines.append(f"")
+    lines.append(f"| # | Workstream | Priority | Outcome | Score | Evidence |")
+    lines.append(f"|---|-----------|----------|---------|-------|----------|")
+    for ws in evaluation.get('workstreams', []):
+        lines.append(f"| {ws.get('id','?')} | {ws.get('name','?')} | {ws.get('priority','?')} | {ws.get('outcome','?')} | {ws.get('score',0)}/10 | {ws.get('evidence','')[:80]} |")
+    lines.append(f"")
+    lines.append(f"## Trident")
+    lines.append(f"")
+    trident = evaluation.get('trident', {})
+    lines.append(f"- **Cost:** {trident.get('cost', 'N/A')}")
+    lines.append(f"- **Delivery:** {trident.get('delivery', 'N/A')}")
+    lines.append(f"- **Performance:** {trident.get('performance', 'N/A')}")
+    lines.append(f"")
+    lines.append(f"## What Could Be Better")
+    lines.append(f"")
+    for item in evaluation.get('what_could_be_better', []):
+        lines.append(f"- {item}")
+    lines.append(f"")
+    lines.append(f"## Workstream Details")
+    lines.append(f"")
+    for ws in evaluation.get('workstreams', []):
+        lines.append(f"### {ws.get('id','?')}: {ws.get('name','?')}")
+        lines.append(f"- **Agents:** {', '.join(ws.get('agents', []))}")
+        lines.append(f"- **LLMs:** {', '.join(ws.get('llms', []))}")
+        lines.append(f"- **MCPs:** {', '.join(ws.get('mcps', []))}")
+        lines.append(f"- **Improvements:**")
+        for imp in ws.get('improvements', []):
+            lines.append(f"  - {imp}")
+        lines.append(f"")
+    lines.append(f"---")
+    lines.append(f"*Report {version}, {time.strftime('%B %d, %Y')}. Evaluator: {evaluator}.*")
+
+    with open(report_path, 'w') as f:
+        f.write('\n'.join(lines) + '\n')
+    print(f"[EVAL] Report written to {report_path}")
+    return report_path
+
+
 def save_scores(version, evaluation):
     """Save evaluation result to agent_scores.json (canonical iterations wrapper)."""
     try:
@@ -735,6 +805,7 @@ if __name__ == '__main__':
     # Qwen (3 attempts) -> Gemini Flash (2 attempts) -> self-eval (always succeeds)
     evaluation = evaluate_with_retry(version, design_path, verbose=verbose, test_fallback=test_fallback)
     save_scores(version, evaluation)
+    write_report_markdown(version, evaluation)
 
     evaluator = evaluation.get('evaluator', 'unknown')
     print(f"\n[EVAL] Evaluator: {evaluator}")
