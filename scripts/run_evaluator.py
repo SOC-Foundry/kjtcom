@@ -187,6 +187,8 @@ def build_execution_context(version):
         'scripts/build_architecture_html.py',
         'app/web/architecture.html',
         'data/schema_reference.json',
+        'docs/pipeline-review-v9.47.md',
+        'app/web/claw3d.html',
     ]
     lines.append("Key file existence:")
     for kf in key_files:
@@ -242,7 +244,7 @@ MANDATORY RULES:
 6. Use the EXACT workstream names from the design doc W# labels. Do not rename, reorder, or combine workstreams.
 7. TRIDENT VALUES: Cost must state actual token count or "within target"/"exceeded target". Delivery must state "X/Y workstreams complete". Performance must state the specific metric result. "Review..." is equivalent to "TBD" and is BANNED.
 
-Based on the design document and execution context, score each workstream (W1-W6).
+Based on the design document and execution context, score ONLY the workstreams listed in the design document.
 Return ONLY a JSON array of objects with these fields:
 - id: "W1", "W2", etc.
 - name: workstream name

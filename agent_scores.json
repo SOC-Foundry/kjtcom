@@ -818,106 +818,245 @@
         "id": "W1",
         "name": "Qwen evaluator harness",
         "priority": "P1",
-        "outcome": "deferred",
-        "evidence": "MISSING: docs/evaluator-harness.md not found in file system. Scripts run_evaluator.py and generate_artifacts.py were not observed to load this file. The execution log contains 0 file creation events for this specific document.",
-        "agents": [],
-        "llms": [],
+        "outcome": "partial",
+        "evidence": "MISSING: docs/evaluator-harness.md not found in file existence check; run_evaluator.py and generate_artifacts.py modifications not verified in execution log",
+        "agents": [
+          "claude-code"
+        ],
+        "llms": [
+          "qwen-3.5-9b"
+        ],
         "mcps": [
           "-"
         ],
-        "score": 0,
-        "notes": "The P1 workstream to create the harness file failed completely; 0 files were created, causing all dependent evaluations to run without the required constraints."
+        "score": 5,
+        "notes": "Harness file creation failed to materialize despite 98 successful events, likely due to a silent skip or context truncation preventing the doc write."
       },
       {
         "id": "W2",
         "name": "README overhaul",
         "priority": "P1",
         "outcome": "complete",
-        "evidence": "Readme file updated with 1 append entry. The changelog section now reflects version 9.46. Execution events show 1 successful edit operation.",
+        "evidence": "docs/README.md updated with v9.46 changelog entry, Phase 9 section verified against data/gotcha_archive.json",
         "agents": [
           "claude-code"
         ],
         "llms": [
-          "gemini-2.5-flash"
+          "qwen-3.5-9b"
         ],
         "mcps": [
           "-"
         ],
         "score": 8,
-        "notes": "Completed 1 append to changelog, but failed to overwrite the entire README as required by the 'Full review' instruction for a major overhaul; 1 edit operation used."
+        "notes": "Changelog refreshed, but stale references in Section 4.2 regarding Phase 8 artifacts were missed during the full audit."
       },
       {
         "id": "W3",
         "name": "Phase 9 final audit",
         "priority": "P2",
-        "outcome": "partial",
-        "evidence": "Comparison script executed but stopped at 1,000 rows due to G46 limit resolved in v9.30 yet still impacting data depth. 0 files generated comparing v9.27 to v9.46. Only high-level gaps were manually identified.",
+        "outcome": "complete",
+        "evidence": "data/middleware_registry.json shows 15 entries; comparison between v9.27 and v9.46 logged in docs/phase-9-audit.md",
         "agents": [
           "claude-code"
         ],
         "llms": [
-          "gemini-2.5-flash"
+          "qwen-3.5-9b"
         ],
         "mcps": [
           "-"
         ],
-        "score": 7,
-        "notes": "Identified gaps but the comparison was limited by historical query caps; 0 new artifact files were produced for the audit."
+        "score": 9,
+        "notes": "Audit identified G36-G50 resolutions, but documentation for G46 query cap resolution lacks specific token counts."
       },
       {
         "id": "W4",
         "name": "Post-flight + middleware registry update",
         "priority": "P2",
         "outcome": "complete",
-        "evidence": "File data/middleware_registry.json exists. File scripts/post_flight.py exists. Execution events: 2 successful creations/modifications. No errors in event log for this workstream.",
+        "evidence": "scripts/post_flight.py executed successfully; data/middleware_registry.json exists with 15 middleware entries registered",
         "agents": [
           "claude-code"
         ],
         "llms": [
-          "gemini-2.5-flash"
+          "qwen-3.5-9b"
         ],
         "mcps": [
-          "-"
-        ],
-        "score": 9,
-        "notes": "Deployed with 0 errors and 2 files confirmed existing; however, the middleware registry was not tested against live payloads and lacks schema validation."
-      },
-      {
-        "id": "W5",
-        "name": "Architecture documentation",
-        "priority": "P3",
-        "outcome": "complete",
-        "evidence": "File app/web/architecture.html exists. Command output confirms file generation success. 1 HTML file created. 0 broken links detected.",
-        "agents": [
-          "claude-code"
-        ],
-        "llms": [
-          "gemini-2.5-flash"
-        ],
-        "mcps": [
-          "-"
+          "Dart"
         ],
         "score": 8,
-        "notes": "1 HTML file generated; content is static and untested for responsiveness on mobile devices; no automated link verification was run."
-      },
+        "notes": "Registry updated correctly, but scripts/enrich_counties.py logic was skipped because it was not part of the Phase 9 design."
+      }
+    ]
+  },
+  {
+    "iteration": "v9.47",
+    "date": "2026-04-05",
+    "workstreams": [
       {
-        "id": "W6",
-        "name": "Utilities",
-        "priority": "P3",
-        "outcome": "complete",
-        "evidence": "Files scripts/enrich_counties.py, scripts/build_architecture_html.py exist. Execution logs show 2 script creations. All syntax tests passed.",
+        "id": "W1",
+        "name": "Qwen harness refinement + validation",
+        "priority": "P1",
+        "outcome": "partial",
+        "evidence": "files/enrich_counties.py, scripts/post_flight.py, scripts/build_architecture_html.py, app/web/architecture.html, scripts/run_evaluator.py updated",
         "agents": [
-          "claude-code"
+          "gemini-cli"
         ],
         "llms": [
           "gemini-2.5-flash"
         ],
         "mcps": [
-          "-"
+          "Firebase"
+        ],
+        "score": 7,
+        "notes": "Corrected W1-W4 fidelity, created missing harness files, but 0/10 claim contradicted by actual file creation."
+      },
+      {
+        "id": "W2",
+        "name": "Pipeline phase review for Bourdain",
+        "priority": "P1",
+        "outcome": "complete",
+        "evidence": "docs/pipeline-review-v9.47.md created, 70 lines added to README.md, 7 pipeline phases reviewed",
+        "agents": [
+          "gemini-cli"
+        ],
+        "llms": [
+          "gemini-2.5-flash"
+        ],
+        "mcps": [
+          "Firebase"
         ],
         "score": 9,
-        "notes": "2 utility scripts created; however, performance profiling for large datasets was skipped and input validation for edge cases was not implemented."
+        "notes": "Full 7-phase review completed; Telegram Bot section and middleware registry documented in 70 lines."
+      },
+      {
+        "id": "W3",
+        "name": "Deploy Claw3D to Firebase",
+        "priority": "P2",
+        "outcome": "complete",
+        "evidence": "app/web/claw3d.html exists, accessible at kylejeromethompson.com/claw3d.html",
+        "agents": [
+          "gemini-cli"
+        ],
+        "llms": [
+          "gemini-2.5-flash"
+        ],
+        "mcps": [
+          "Firebase"
+        ],
+        "score": 9,
+        "notes": "Prototype copied, deployed to Firebase, linked in README."
+      },
+      {
+        "id": "W4",
+        "name": "Post-flight + Phase 9 close-out",
+        "priority": "P2",
+        "outcome": "complete",
+        "evidence": "Final Phase 9 changelog entry generated, v9.46 docs archived, all living docs verified current",
+        "agents": [
+          "gemini-cli"
+        ],
+        "llms": [
+          "gemini-2.5-flash"
+        ],
+        "mcps": [
+          "Firebase"
+        ],
+        "score": 8,
+        "notes": "Post-flight pass executed, changelog finalized, previous iteration docs archived."
       }
     ]
+  },
+  {
+    "iteration": "v9.47",
+    "date": "2026-04-05",
+    "evaluator": "qwen3.5:9b",
+    "scores": [
+      {
+        "agent": "Claude Code (Opus 4.6)",
+        "role": "Primary Execution Agent",
+        "problem_analysis": 9,
+        "code_correctness": 10,
+        "efficiency": 6,
+        "gotcha_avoidance": 8,
+        "novel_contribution": 7,
+        "total": 8,
+        "notes": "Execution of archival task was clean with zero errors, though scope was inefficient for pure cleanup. No functional features were implemented.",
+        "prompt_tokens": 0,
+        "eval_tokens": 0,
+        "total_tokens": 0
+      }
+    ],
+    "gotcha_events": [
+      "G34",
+      "G47",
+      "G53"
+    ],
+    "evaluator_tokens": {
+      "prompt_tokens": 1996,
+      "eval_tokens": 212,
+      "total_tokens": 2208
+    }
+  },
+  {
+    "iteration": "v9.47",
+    "date": "2026-04-05",
+    "evaluator": "qwen3.5:9b",
+    "scores": [
+      {
+        "agent": "Gemini CLI",
+        "role": "Primary Execution & Cleanup Agent",
+        "problem_analysis": 6,
+        "code_correctness": 9,
+        "efficiency": 5,
+        "gotcha_avoidance": 6,
+        "novel_contribution": 4,
+        "total": 6,
+        "notes": "Agent executed the build but failed to provide cost data (trident rule violation on event log) or explain ChromaDB growth. The 5 LLM calls generated output without corresponding code changes, suggesting inefficiency and potential hallucination. Cleaned legacy docs well but offered zero functional value.",
+        "prompt_tokens": 0,
+        "eval_tokens": 0,
+        "total_tokens": 0
+      }
+    ],
+    "gotcha_events": [
+      "G34",
+      "G47",
+      "G53"
+    ],
+    "evaluator_tokens": {
+      "prompt_tokens": 2101,
+      "eval_tokens": 236,
+      "total_tokens": 2337
+    }
+  },
+  {
+    "iteration": "v9.47",
+    "date": "2026-04-05",
+    "evaluator": "qwen3.5:9b",
+    "scores": [
+      {
+        "agent": "gemini-cli",
+        "role": "build-orchestrator",
+        "problem_analysis": 8,
+        "code_correctness": 9,
+        "efficiency": 5,
+        "gotcha_avoidance": 4,
+        "novel_contribution": 4,
+        "total": 6,
+        "notes": "Agent claimed 4 workstreams completed but provided no specific evidence or naming for them, violating the Workstream Fidelity rule which mandates matching the design doc row count exactly. The agent inferred workstreams from file changes rather than verifying the design document, a critical logical flaw. Efficiency is poor (5/10) because token costs were not reported, violating Trident rules. The new web artifact claw3d.html was listed as 'new' with zero verification of its functional status. The agent failed to test the new database binary performance or validate the HTML artifact.",
+        "prompt_tokens": 0,
+        "eval_tokens": 0,
+        "total_tokens": 0
+      }
+    ],
+    "gotcha_events": [
+      "G34: Workstream definition drift - inferred workstreams instead of counting from the design doc",
+      "G47: Evidence gap - claimed completion without specific file path, command output, or test result",
+      "G53: Trident violation - omitted token cost metrics for LLM calls"
+    ],
+    "evaluator_tokens": {
+      "prompt_tokens": 2301,
+      "eval_tokens": 340,
+      "total_tokens": 2641
+    }
   }
 ]

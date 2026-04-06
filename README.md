@@ -40,9 +40,9 @@ The same normalization patterns power production SIEM migrations at [TachTech En
 
 ## Architecture
 
-**[Interactive Architecture Diagram](https://kylejeromethompson.com/architecture.html)** | [Mermaid Source](docs/kjtcom-architecture.mmd)
+**[Interactive Architecture Diagram](https://kylejeromethompson.com/architecture.html)** | **[3D IAO Visualization](https://kylejeromethompson.com/claw3d.html)** | [Mermaid Source](docs/kjtcom-architecture.mmd)
 
-Current state: v9.46 - 3 pipelines, 5 MCP servers, 4 local LLMs, RAG middleware, dual retrieval (Firestore + ChromaDB) via Gemini Flash 3-route intent router, Telegram bot (@kjtcom_iao_bot) with session memory and rating-aware queries, systemd service management, P3 event logging, post-flight verification, artifact automation with computed Trident values, Qwen evaluator harness for skeptical assessment.
+Current state: v9.47 - 3 pipelines, 5 MCP servers, 4 local LLMs, RAG middleware, dual retrieval (Firestore + ChromaDB) via Gemini Flash 3-route intent router, Telegram bot (@kjtcom_iao_bot) with session memory and rating-aware queries, systemd service management, P3 event logging, post-flight verification, artifact automation with computed Trident values, Qwen evaluator harness for skeptical assessment.
 
 ### Pipeline Flow
 

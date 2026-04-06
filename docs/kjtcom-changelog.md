@@ -1,5 +1,18 @@
 # kjtcom - Unified Changelog
 
+**v9.47 (Phase 9 - Qwen Harness Refinement + Claw3D Deploy + Pipeline Review)**
+- UPDATED: Qwen harness refinement + validation - Added Workstream Fidelity and Evidence Cross-Check rules; fixed hardcoded W1-W6 in prompt
+- NEW: docs/pipeline-review-v9.47.md - 7-phase pipeline review for Bourdain prep; identified 12 middleware enhancements
+- NEW: app/web/claw3d.html - Three.js IAO visualization prototype deployed to web root
+- UPDATED: README.md - Added 3D IAO Visualization link; updated version to v9.47
+- UPDATED: data/middleware_registry.json - Added 7 pipeline scripts to middleware catalog; updated metadata to v9.47
+- UPDATED: scripts/run_evaluator.py - Added v9.47 specific files to key file checklist; removed hardcoded W1-W6
+- UPDATED: scripts/generate_artifacts.py - Added untracked file support for git diff; added dynamic executing_agent variable
+- UPDATED: ChromaDB re-embedded - 1,687 chunks (up from 1,590)
+- Post-flight: 3/3 passed (site 200, bot alive, 6,181 entities)
+- Multi-agent: Gemini CLI (Primary) + Qwen3.5-9B (evaluator) + Gemini Flash (routing)
+- Kyle interventions: 0
+
 **v9.46 (Phase 9 - Qwen Evaluator Harness + README Overhaul + Phase 9 Audit)**
 - NEW: docs/evaluator-harness.md - Qwen personality file enforcing skeptical scoring (max 9/10, banned phrases, evidence required, "What Could Be Better" mandatory)
 - UPDATED: scripts/run_evaluator.py - loads evaluator harness as system prompt for all Qwen evaluations

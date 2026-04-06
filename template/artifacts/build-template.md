@@ -3,7 +3,7 @@
 **Phase:** 9 - App Optimization
 **Iteration:** {iteration_number}
 **Date:** {date}
-**Executing Agent:** Claude Code (Opus 4.6)
+**Executing Agent:** {executing_agent}
 
 ---
 

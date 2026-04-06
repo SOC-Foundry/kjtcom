@@ -1,13 +1,13 @@
 {
   "metadata": {
-    "version": "v9.46",
+    "version": "v9.47",
     "updated": "2026-04-05",
     "description": "Middleware component catalog - the IP that stamps onto new projects"
   },
   "harnesses": [
     {"name": "CLAUDE.md", "version": "v9.46", "type": "agent_instructions", "target": "claude-code"},
     {"name": "GEMINI.md", "version": "v9.46", "type": "agent_instructions", "target": "gemini-cli"},
-    {"name": "docs/evaluator-harness.md", "version": "v9.46", "type": "evaluator_personality", "target": "qwen3.5-9b", "description": "Skeptical assessment rules: max 9/10, evidence required, banned phrases, improvement mandate"}
+    {"name": "docs/evaluator-harness.md", "version": "v9.47", "type": "evaluator_personality", "target": "qwen3.5-9b", "description": "Skeptical assessment rules: max 9/10, evidence required, banned phrases, improvement mandate, workstream fidelity, evidence cross-check"}
   ],
   "scripts": [
     {
@@ -86,6 +86,55 @@
       "type": "analytics",
       "description": "Event log analyzer for P3 diligence reporting",
       "dependencies": []
+    },
+    {
+      "name": "pipeline/scripts/phase1_acquire.py",
+      "version": "v0.5",
+      "type": "pipeline",
+      "description": "Phase 1: Acquire audio from YouTube playlist via yt-dlp",
+      "dependencies": ["yt-dlp"]
+    },
+    {
+      "name": "pipeline/scripts/phase2_transcribe.py",
+      "version": "v0.5",
+      "type": "pipeline",
+      "description": "Phase 2: Transcribe audio to timestamped JSON via faster-whisper (CUDA)",
+      "dependencies": ["faster-whisper"]
+    },
+    {
+      "name": "pipeline/scripts/phase3_extract.py",
+      "version": "v0.5",
+      "type": "pipeline",
+      "description": "Phase 3: Extract structured entities via Gemini Flash API",
+      "dependencies": ["google-genai"]
+    },
+    {
+      "name": "pipeline/scripts/phase4_normalize.py",
+      "version": "v0.5",
+      "type": "pipeline",
+      "description": "Phase 4: Normalize extracted entities with Thompson Schema",
+      "dependencies": []
+    },
+    {
+      "name": "pipeline/scripts/phase5_geocode.py",
+      "version": "v0.5",
+      "type": "pipeline",
+      "description": "Phase 5: Geocode entities via Nominatim (OSM)",
+      "dependencies": ["urllib"]
+    },
+    {
+      "name": "pipeline/scripts/phase6_enrich.py",
+      "version": "v0.5",
+      "type": "pipeline",
+      "description": "Phase 6: Enrich entities via Google Places API (New)",
+      "dependencies": ["urllib"]
+    },
+    {
+      "name": "pipeline/scripts/phase7_load.py",
+      "version": "v0.5",
+      "type": "pipeline",
+      "description": "Phase 7: Load enriched JSONL into Cloud Firestore",
+      "dependencies": ["firebase-admin"]
     }
   ],
   "utils": [

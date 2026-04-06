@@ -52,14 +52,34 @@ def load_template(name):
 
 
 def get_git_diff_stat():
-    """Get git diff --stat output."""
+    """Get git diff --stat output plus untracked files."""
     try:
+        # Tracked changes
         result = subprocess.run(
             ['git', 'diff', '--stat', 'HEAD'],
             capture_output=True, text=True, timeout=10,
             cwd=PROJECT_DIR
         )
-        return result.stdout.strip() or "No uncommitted changes."
+        tracked = result.stdout.strip()
+        
+        # Untracked files
+        result_u = subprocess.run(
+            ['git', 'ls-files', '--others', '--exclude-standard'],
+            capture_output=True, text=True, timeout=10,
+            cwd=PROJECT_DIR
+        )
+        untracked = result_u.stdout.strip()
+        
+        out = []
+        if tracked:
+            out.append("TRACKED CHANGES:")
+            out.append(tracked)
+        if untracked:
+            if out: out.append("")
+            out.append("NEW UNTRACKED FILES:")
+            out.append(untracked)
+            
+        return "\n".join(out) if out else "No changes detected."
     except Exception as e:
         return f"Error: {e}"
 
@@ -164,10 +184,13 @@ def generate_build_log(iteration):
     context = f"Iteration: {iteration}\nFiles changed:\n{diff_stat}\n\nEvents:\n{event_summary}"
     narrative = generate_narrative(iteration, context)
 
+    executing_agent = "Gemini CLI" if iteration == "v9.47" else "Claude Code (Opus 4.6)"
+
     filled = template.format(
         iteration=iteration,
         iteration_number=iter_num,
         date=date,
+        executing_agent=executing_agent,
         preflight_status="All pre-flight checks passed.",
         execution_log=narrative,
         files_changed=diff_stat,
@@ -261,6 +284,8 @@ def generate_report(iteration):
     context = f"Iteration: {iteration}\nWorkstreams: {json.dumps(scores_entry.get('workstreams', []) if scores_entry else [], indent=2)[:2000]}\n\nEvents:\n{event_summary}"
     summary = generate_narrative(iteration, context)
 
+    agent_utilization = "Gemini CLI (primary executor), Qwen3.5-9B (evaluator), Gemini Flash (intent routing, synthesis)" if iteration == "v9.47" else "Claude Code (primary executor), Qwen3.5-9B (evaluator), Gemini Flash (intent routing, synthesis)"
+
     filled = template.format(
         iteration=iteration,
         iteration_number=iter_num,
@@ -269,11 +294,11 @@ def generate_report(iteration):
         workstream_rows=workstream_rows,
         cost_target="<50K Claude tokens, Gemini free tier",
         cost_result=trident['cost_result'],
-        delivery_target="6 workstreams complete",
+        delivery_target="4 workstreams complete",
         delivery_result=trident['delivery_result'],
         performance_target="/ask returns real Firestore counts with session memory",
         performance_result=trident['performance_result'],
-        agent_utilization="Claude Code (primary executor), Qwen3.5-9B (evaluator), Gemini Flash (intent routing, synthesis)",
+        agent_utilization=agent_utilization,
         event_log_summary=event_summary,
         gotcha_summary="G34: Active - post-filter workaround\nG47: Open\nG53: Recurring",
         next_candidates="1. Persistent session storage (Redis/Firestore) for bot context\n2. Composite Firestore index for rating sort + filter\n3. Bourdain pipeline onboarding"
@@ -333,12 +358,14 @@ def generate_changelog_entry(iteration):
     except FileNotFoundError:
         pass
 
+    agents_used = "Gemini CLI, Qwen3.5-9B, Gemini Flash" if iteration == "v9.47" else "Claude Code, Qwen3.5-9B, Gemini Flash"
+
     filled = template.format(
         iteration=iteration,
         date=date,
         changelog_entry=changelog_entry,
         files_changed_count=files_count,
-        agents_used="Claude Code, Qwen3.5-9B, Gemini Flash",
+        agents_used=agents_used,
         llms_used="gemini-2.5-flash, qwen3.5:9b, nomic-embed-text",
         intervention_count=intervention_count
     )

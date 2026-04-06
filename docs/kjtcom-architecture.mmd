@@ -1,5 +1,5 @@
 %% kjtcom Architecture - Living Document
-%% Updated: v9.43 - Session Memory + Rating Queries + Post-Flight + Architecture HTML
+%% Updated: v9.47 - Qwen Harness Refinement + Claw3D Deploy + Pipeline Review
 %% Maintainer: Update every iteration that changes architecture
 
 graph TB
@@ -15,7 +15,7 @@ graph TB
         MAP["Map Tab<br/>OpenStreetMap"]
         GLOBE["Globe Tab<br/>Stats Dashboard"]
         IAO_TAB["IAO Tab<br/>Methodology"]
-        GOTCHA_TAB["Gotcha Tab<br/>G1-G53"]
+        GOTCHA_TAB["Gotcha Tab<br/>G1-G54"]
         SCHEMA_TAB["Schema Tab<br/>22 t_any_* Fields"]
     end
 
@@ -51,8 +51,8 @@ graph TB
     end
 
     subgraph AGENTS["Agent Orchestration (IAO)"]
-        CLAUDE["Claude Code<br/>Opus 4.6<br/>Primary Executor"]
-        GEMINI_CLI["Gemini CLI<br/>Pipeline Phases 1-5"]
+        CLAUDE["Claude Code<br/>Opus 4.6"]
+        GEMINI_CLI["Gemini CLI<br/>Primary Executor (v9.47)"]
         TMUX["tmux Runner<br/>Unattended Pipelines"]
     end
 
@@ -71,11 +71,11 @@ graph TB
         MCP_DART["Dart MCP<br/>Code Analysis"]
     end
 
-    subgraph MIDDLEWARE["Middleware (v9.39+)"]
+    subgraph MIDDLEWARE["Middleware (v9.47+)"]
         RAG["RAG Pipeline<br/>ChromaDB + nomic-embed"]
-        CHROMADB["ChromaDB<br/>data/chromadb/<br/>1,419 chunks"]
+        CHROMADB["ChromaDB<br/>data/chromadb/<br/>1,590 chunks"]
         EVALUATOR["Agent Evaluator<br/>Qwen3.5-9B Scorer"]
-        REGISTRY["iteration_registry.json<br/>39 iterations"]
+        REGISTRY["iteration_registry.json<br/>47 iterations"]
         SCORES["agent_scores.json<br/>Token Tracking"]
         LEADERBOARD["Leaderboard Generator"]
         BRAVE["Brave Search API<br/>Web Research"]
@@ -85,7 +85,7 @@ graph TB
         SCHEMA_REF["Schema Reference<br/>data/schema_reference.json<br/>22 Fields + 3 Pipelines"]
         INTENT_ROUTER["Intent Router<br/>Gemini Flash<br/>3 Routes: Firestore/ChromaDB/Web"]
         ARTIFACT_GEN["Artifact Generator<br/>generate_artifacts.py<br/>--promote --validate-only"]
-        GOTCHA_ARCHIVE["Gotcha Archive<br/>data/gotcha_archive.json<br/>15 Resolved Patterns"]
+        GOTCHA_ARCHIVE["Gotcha Archive<br/>data/gotcha_archive.json<br/>18 Resolved Patterns"]
         HARNESS_REGISTRY["Middleware Registry<br/>data/middleware_registry.json<br/>Component Catalog"]
         COUNTY_ENRICHMENT["County Enrichment<br/>enrich_counties.py<br/>Nominatim Reverse Geocode"]
         POST_FLIGHT["Post-Flight Verification<br/>post_flight.py<br/>Site + Bot + Query Checks"]
