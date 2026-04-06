@@ -3,10 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Claw3D - Static IAO Architecture</title>
+    <title>Claw3D - PCB Architecture</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { background: #0D1117; overflow: hidden; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+
         #ui-container {
             position: absolute; top: 16px; left: 16px; z-index: 100;
             color: #4ADE80; pointer-events: none;
@@ -14,421 +15,472 @@
         #ui-container * { pointer-events: auto; }
         h1 { font-size: 22px; margin-bottom: 4px; text-shadow: 0 0 10px rgba(74, 222, 128, 0.5); }
         .subtitle { color: #8B949E; font-size: 13px; margin-bottom: 16px; }
-        .controls { display: flex; align-items: center; gap: 12px; background: rgba(22, 27, 34, 0.8); padding: 8px 12px; border-radius: 8px; border: 1px solid #30363D; }
+        .controls {
+            display: flex; align-items: center; gap: 12px;
+            background: rgba(22, 27, 34, 0.8); padding: 8px 12px;
+            border-radius: 8px; border: 1px solid #30363D;
+        }
         label { font-size: 14px; color: #C9D1D9; }
-        select { background: #21262D; color: #C9D1D9; border: 1px solid #30363D; padding: 4px 8px; border-radius: 4px; outline: none; cursor: pointer; }
-        button { background: #21262D; color: #C9D1D9; border: 1px solid #30363D; padding: 4px 10px; border-radius: 4px; cursor: pointer; font-size: 13px; }
+        select {
+            background: #21262D; color: #C9D1D9; border: 1px solid #30363D;
+            padding: 4px 8px; border-radius: 4px; outline: none; cursor: pointer;
+        }
+        button {
+            background: #21262D; color: #C9D1D9; border: 1px solid #30363D;
+            padding: 4px 10px; border-radius: 4px; cursor: pointer; font-size: 13px;
+        }
         button:hover { border-color: #4ADE80; }
+        #btn-all-boards { display: none; }
+
         #tooltip {
             position: absolute; display: none; z-index: 1000;
             background: rgba(22, 27, 34, 0.95); border: 1px solid #4ADE80;
             color: #C9D1D9; padding: 10px 14px; border-radius: 6px;
-            font-size: 12px; pointer-events: none; box-shadow: 0 4px 20px rgba(0,0,0,0.5);
-            max-width: 300px;
+            font-family: 'Courier New', monospace; font-size: 12px;
+            pointer-events: none; box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+            max-width: 300px; line-height: 1.5;
         }
+
         #legend {
             position: absolute; bottom: 16px; left: 16px; z-index: 100;
             color: #C9D1D9; font-size: 11px; line-height: 1.6;
-            background: rgba(22, 27, 34, 0.8); padding: 12px; border-radius: 8px; border: 1px solid #30363D;
+            background: rgba(22, 27, 34, 0.8); padding: 12px;
+            border-radius: 8px; border: 1px solid #30363D;
         }
         .legend-item { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
-        .legend-dot { width: 10px; height: 10px; border-radius: 2px; }
+        .legend-dot { width: 10px; height: 10px; border-radius: 50%; }
+
         .loading {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: #0D1117; display: flex; justify-content: center;
             align-items: center; color: #4ADE80; font-size: 20px; z-index: 9999;
         }
+
+        .label-overlay {
+            position: absolute; color: #8B949E; font-family: 'Courier New', monospace;
+            font-size: 10px; pointer-events: none; white-space: nowrap;
+            text-shadow: 0 0 4px rgba(0,0,0,0.8);
+        }
+        .label-overlay.board-label {
+            font-size: 13px; color: #C9D1D9; font-weight: bold;
+        }
     </style>
 </head>
 <body>
-    <div id="loading" class="loading">Loading Static Solar System v10.55...</div>
-    
+    <div id="loading" class="loading">Loading PCB Architecture...</div>
+
     <div id="ui-container">
         <h1>Claw3D Architecture</h1>
-        <p class="subtitle">v10.55 | Static Elliptical Rebuild</p>
+        <p class="subtitle">v10.56 | PCB Architecture</p>
         <div class="controls">
             <label for="iteration-select">Iteration:</label>
-            <select id="iteration-select">
-                <option value="v10.55">v10.55 (Current)</option>
-                <option value="v10.54">v10.54</option>
-                <option value="v9.53">v9.53</option>
-                <option value="v9.52">v9.52</option>
-                <option value="v9.49">v9.49</option>
-                <option value="v9.45">v9.45</option>
-                <option value="v9.41">v9.41</option>
-                <option value="v9.38">v9.38</option>
-                <option value="v9.35">v9.35</option>
-                <option value="v9.27">v9.27</option>
-            </select>
-            <button id="anim-toggle">Animate</button>
+            <select id="iteration-select"></select>
+            <button id="btn-all-boards">All boards</button>
         </div>
     </div>
 
     <div id="legend">
-        <div class="legend-item"><span class="legend-dot" style="background:#A78BFA"></span> Qwen Evaluator (Sun)</div>
-        <div class="legend-item"><span class="legend-dot" style="background:#4ADE80"></span> Agent / LLM</div>
-        <div class="legend-item"><span class="legend-dot" style="background:#EC4899"></span> MCP Asteroid</div>
-        <div class="legend-item"><span class="legend-dot" style="background:#22D3EE"></span> Giant (System)</div>
-        <div class="legend-item"><span class="legend-dot" style="background:#8B949E; border: 1px solid #C9D1D9"></span> Inactive (Outline)</div>
+        <div class="legend-item"><span class="legend-dot" style="background:#4ADE80"></span> Active</div>
+        <div class="legend-item"><span class="legend-dot" style="background:#EF9F27"></span> Degraded</div>
+        <div class="legend-item"><span class="legend-dot" style="background:#666666"></span> Inactive</div>
     </div>
 
     <div id="tooltip"></div>
+    <div id="label-container"></div>
 
-    <script type="importmap">
-    {
-        "imports": {
-            "three": "https://cdn.jsdelivr.net/npm/three@0.171.0/build/three.module.js",
-            "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.171.0/examples/jsm/"
-        }
-    }
-    </script>
-    <script type="module">
-        import * as THREE from 'three';
-        import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script>
+    (function() {
+        'use strict';
 
-        // --- DATA & CONFIG ---
-        const COLORS = {
-            sun: 0xA78BFA,
-            claude: 0x4ADE80,
-            gemini: 0x3B82F6,
-            nemotron: 0xF97316,
-            glm: 0xF59E0B,
-            nomic: 0x14B8A6,
-            mcp: 0xEC4899,
-            middleware: 0x22D3EE,
-            frontend: 0x22C55E,
-            pipeline: 0xF97316,
-            backend: 0xEAB308,
-            activeLink: 0x4ADE80,
-            inactiveLink: 0x333333
+        // --- Constants ---
+        var STATUS_COLORS = { active: 0x4ADE80, degraded: 0xEF9F27, inactive: 0x666666 };
+        var STATUS_HEX = { active: '#4ADE80', degraded: '#EF9F27', inactive: '#666666' };
+        var BG_COLOR = 0x0D1117;
+        var CHIP_COLOR = 0x1F2937;
+        var BOARD_Y = { frontend: 3, middleware: 0, backend: -3 };
+        var CHIP_X = [-4.5, -1.5, 1.5, 4.5];
+        var CHIP_Z = [-0.8, 0.8];
+
+        // Camera targets
+        var OVERVIEW = { pos: new THREE.Vector3(0, 5, 14), lookAt: new THREE.Vector3(0, 0, 0) };
+        var ZOOM_TARGETS = {
+            frontend:   { pos: new THREE.Vector3(0, 6, 6),  lookAt: new THREE.Vector3(0, 3, 0) },
+            middleware:  { pos: new THREE.Vector3(0, 3, 6),  lookAt: new THREE.Vector3(0, 0, 0) },
+            backend:    { pos: new THREE.Vector3(0, 0, 6),  lookAt: new THREE.Vector3(0, -3, 0) }
         };
 
-        const NODES = [
-            // SUN
-            { id: 'qwen', name: 'Qwen Evaluator', type: 'Sun', color: COLORS.sun, size: 5, since: 'v9.27', pos: [0, 0, 0], file: 'scripts/run_evaluator.py', func: 'Autonomous multi-agent performance evaluation' },
-            
-            // INNER RING (Radius 20)
-            { id: 'claude', name: 'Claude Code', type: 'Agent', color: COLORS.claude, size: 2, since: 'v9.27', ring: 20, angle: 0, func: 'Primary execution agent (Anthropic)' },
-            { id: 'gemini_cli', name: 'Gemini CLI', type: 'Agent', color: COLORS.gemini, size: 2, since: 'v9.27', ring: 20, angle: 72, func: 'Primary execution agent (Google)' },
-            { id: 'nemotron', name: 'Nemotron Mini 4B', type: 'Agent', color: COLORS.nemotron, size: 1.5, since: 'v9.35', ring: 20, angle: 144, func: 'Local classification agent' },
-            { id: 'glm', name: 'GLM-4.6V-Flash', type: 'Agent', color: COLORS.glm, size: 1.5, since: 'v9.35', ring: 20, angle: 216, func: 'Vision/Multimodal agent' },
-            { id: 'nomic', name: 'nomic-embed-text', type: 'Agent', color: COLORS.nomic, size: 1.2, since: 'v9.35', ring: 20, angle: 288, func: 'Local embedding model' },
+        // State
+        var boardData = null;
+        var iterationData = null;
+        var chipMeshes = [];
+        var boardMeshes = [];
+        var chipDataMap = new Map();
+        var boardDataMap = new Map();
+        var dashedLines = [];
+        var labelElements = [];
+        var cameraTarget = { pos: OVERVIEW.pos.clone(), lookAt: OVERVIEW.lookAt.clone() };
+        var currentLookAt = OVERVIEW.lookAt.clone();
+        var zoomedBoard = null;
 
-            // ASTEROID BELT (Radius 35)
-            { id: 'firebase_mcp', name: 'Firebase MCP', type: 'MCP', color: COLORS.mcp, size: 0.8, since: 'v9.35', ring: 35, angle: 30, func: 'Firestore/Hosting tool access' },
-            { id: 'context7_mcp', name: 'Context7 MCP', type: 'MCP', color: COLORS.mcp, size: 0.8, since: 'v9.35', ring: 35, angle: 100, func: 'Real-time documentation access' },
-            { id: 'firecrawl_mcp', name: 'Firecrawl MCP', type: 'MCP', color: COLORS.mcp, size: 0.8, since: 'v9.35', ring: 35, angle: 170, func: 'Advanced web scraping/crawling' },
-            { id: 'playwright_mcp', name: 'Playwright MCP', type: 'MCP', color: COLORS.mcp, size: 0.8, since: 'v9.36', ring: 35, angle: 240, func: 'Browser automation/rendering' },
-            { id: 'dart_mcp', name: 'Dart MCP', type: 'MCP', color: COLORS.mcp, size: 0.8, since: 'v9.37', ring: 35, angle: 310, func: 'Flutter/Dart codebase analysis' },
+        // --- Scene Setup ---
+        var scene = new THREE.Scene();
+        scene.background = new THREE.Color(BG_COLOR);
 
-            // GAS GIANTS (Radius 60)
-            { id: 'jupiter', name: 'Jupiter (Middleware)', type: 'System', color: COLORS.middleware, size: 6, since: 'v9.41', ring: 60, angle: 45 },
-            { id: 'saturn', name: 'Saturn (Frontend)', type: 'System', color: COLORS.frontend, size: 5.5, since: 'v9.27', ring: 60, angle: 135 },
-            { id: 'uranus', name: 'Uranus (Pipeline)', type: 'System', color: COLORS.pipeline, size: 4.5, since: 'v1.6', ring: 60, angle: 225 },
-            { id: 'neptune', name: 'Neptune (Backend)', type: 'System', color: COLORS.backend, size: 4.2, since: 'v0.5', ring: 60, angle: 315 },
+        var camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 500);
+        camera.position.copy(OVERVIEW.pos);
 
-            // MOONS - JUPITER (MW)
-            { id: 'intent_router', name: 'Intent Router', type: 'MW Component', color: COLORS.middleware, size: 0.6, since: 'v9.41', parent: 'jupiter', offset: 0, file: 'scripts/intent_router.py', func: 'Classification to firestore/chromadb/web' },
-            { id: 'firestore_query', name: 'Firestore Query', type: 'MW Component', color: COLORS.middleware, size: 0.6, since: 'v9.41', parent: 'jupiter', offset: 1, file: 'scripts/firestore_query.py', func: 'Unified NoSQL access layer' },
-            { id: 'artifact_generator', name: 'Artifact Generator', type: 'MW Component', color: COLORS.middleware, size: 0.6, since: 'v9.41', parent: 'jupiter', offset: 2, file: 'scripts/generate_artifacts.py', func: 'Single-changelog build reporting' },
-            { id: 'evaluator_harness', name: 'Evaluator Harness', type: 'MW Component', color: COLORS.middleware, size: 0.6, since: 'v9.46', parent: 'jupiter', offset: 3, file: 'docs/evaluator-harness.md', func: 'Qwen-9B scoring instructions' },
-            { id: 'gotcha_archive', name: 'Gotcha Archive', type: 'MW Component', color: COLORS.middleware, size: 0.6, since: 'v9.42', parent: 'jupiter', offset: 4, file: 'data/gotcha_archive.json', func: 'Persistent cross-agent failure memory' },
-            { id: 'middleware_registry', name: 'Middleware Registry', type: 'MW Component', color: COLORS.middleware, size: 0.6, since: 'v9.42', parent: 'jupiter', offset: 5, file: 'data/middleware_registry.json', func: 'Component version/status tracking' },
-            { id: 'event_logger', name: 'Event Logger', type: 'MW Component', color: COLORS.middleware, size: 0.6, since: 'v9.39', parent: 'jupiter', offset: 6, file: 'scripts/utils/iao_logger.py', func: 'Centralized telemetry' },
-            { id: 'post_flight', name: 'Post-Flight', type: 'MW Component', color: COLORS.middleware, size: 0.6, since: 'v9.43', parent: 'jupiter', offset: 7, file: 'scripts/post_flight.py', func: 'System-wide validation' },
-            { id: 'cleanup_docs', name: 'Cleanup Docs', type: 'MW Component', color: COLORS.middleware, size: 0.6, since: 'v9.48', parent: 'jupiter', offset: 8, file: 'scripts/cleanup_docs.py', func: 'Archive integrity management' },
-            { id: 'eval_schema', name: 'Eval Schema', type: 'MW Component', color: COLORS.middleware, size: 0.6, since: 'v9.49', parent: 'jupiter', offset: 9, file: 'data/eval_schema.json', func: 'JSON schema for score validation' },
-
-            // MOONS - SATURN (FE)
-            { id: 'results_tab', name: 'Results Tab', type: 'FE Component', color: COLORS.frontend, size: 0.5, since: 'v9.27', parent: 'saturn', offset: 0, func: 'Entity discovery table' },
-            { id: 'map_tab', name: 'Map Tab', type: 'FE Component', color: COLORS.frontend, size: 0.5, since: 'v9.27', parent: 'saturn', offset: 1, func: 'Interactive 2D Leaflet map' },
-            { id: 'globe_tab', name: 'Globe Tab', type: 'FE Component', color: COLORS.frontend, size: 0.5, since: 'v9.27', parent: 'saturn', offset: 2, func: 'Three.js 3D earth view' },
-            { id: 'iao_tab', name: 'IAO Tab', type: 'FE Component', color: COLORS.frontend, size: 0.5, since: 'v9.27', parent: 'saturn', offset: 3, func: 'Agent leaderboard' },
-            { id: 'mw_tab', name: 'MW Tab', type: 'FE Component', color: COLORS.frontend, size: 0.5, since: 'v9.49', parent: 'saturn', offset: 4, func: 'Middleware topology view' },
-            { id: 'schema_tab', name: 'Schema Tab', type: 'FE Component', color: COLORS.frontend, size: 0.5, since: 'v9.28', parent: 'saturn', offset: 5, func: 'Pipeline field explorer' },
-            { id: 'query_editor', name: 'Query Editor', type: 'FE Component', color: COLORS.frontend, size: 0.5, since: 'v9.27', parent: 'saturn', offset: 6, func: 'SQL-like Firestore DSL' },
-            { id: 'detail_panel', name: 'Detail Panel', type: 'FE Component', color: COLORS.frontend, size: 0.5, since: 'v9.27', parent: 'saturn', offset: 7, func: 'JSON property viewer' },
-
-            // MOONS - URANUS (Pipeline)
-            { id: 'yt_dlp', name: 'yt-dlp (Acquire)', type: 'Pipeline Stage', color: COLORS.pipeline, size: 0.5, since: 'v0.5', parent: 'uranus', offset: 0, func: 'Video acquisition' },
-            { id: 'transcribe', name: 'Transcribe', type: 'Pipeline Stage', color: COLORS.pipeline, size: 0.5, since: 'v1.6', parent: 'uranus', offset: 1, func: 'faster-whisper audio to text' },
-            { id: 'extract', name: 'Extract', type: 'Pipeline Stage', color: COLORS.pipeline, size: 0.5, since: 'v1.6', parent: 'uranus', offset: 2, func: 'Gemini Flash entity extraction' },
-            { id: 'normalize', name: 'Normalize', type: 'Pipeline Stage', color: COLORS.pipeline, size: 0.5, since: 'v1.6', parent: 'uranus', offset: 3, func: 'Python schema validation' },
-            { id: 'geocode', name: 'Geocode', type: 'Pipeline Stage', color: COLORS.pipeline, size: 0.5, since: 'v1.6', parent: 'uranus', offset: 4, func: 'Nominatim/OSM geocoding' },
-            { id: 'enrich', name: 'Enrich', type: 'Pipeline Stage', color: COLORS.pipeline, size: 0.5, since: 'v1.6', parent: 'uranus', offset: 5, func: 'Google Places/County enrichment' },
-            { id: 'load', name: 'Load', type: 'Pipeline Stage', color: COLORS.pipeline, size: 0.5, since: 'v1.6', parent: 'uranus', offset: 6, func: 'Firebase Admin batch loading' },
-
-            // MOONS - NEPTUNE (Backend)
-            { id: 'firestore', name: 'Cloud Firestore', type: 'Data', color: COLORS.backend, size: 0.5, since: 'v0.5', parent: 'neptune', offset: 0, func: 'Primary document DB' },
-            { id: 'functions', name: 'Cloud Functions', type: 'Backend', color: COLORS.backend, size: 0.5, since: 'v0.5', parent: 'neptune', offset: 1, func: 'Serverless logic' },
-            { id: 'hosting', name: 'Firebase Hosting', type: 'Web', color: COLORS.backend, size: 0.5, since: 'v0.5', parent: 'neptune', offset: 2, func: 'CDN deployment' },
-            { id: 'chromadb', name: 'ChromaDB', type: 'Vector DB', color: COLORS.backend, size: 0.5, since: 'v9.38', parent: 'neptune', offset: 3, func: 'Local vector search' },
-            { id: 'schema_ref', name: 'Schema Reference', type: 'Data', color: COLORS.backend, size: 0.5, since: 'v9.41', parent: 'neptune', offset: 4, func: 'Canonical field definitions' },
-            { id: 'iterations', name: 'Claw3D Iterations', type: 'Data', color: COLORS.backend, size: 0.5, since: 'v9.52', parent: 'neptune', offset: 5, func: 'Historical state mapping' }
-        ];
-
-        const LINKS = [
-            // Evaluator to Agents
-            { from: 'qwen', to: 'claude' },
-            { from: 'qwen', to: 'gemini_cli' },
-            { from: 'qwen', to: 'nemotron' },
-            { from: 'qwen', to: 'glm' },
-            { from: 'qwen', to: 'nomic' },
-            // Evaluator to Systems
-            { from: 'qwen', to: 'jupiter' },
-            { from: 'qwen', to: 'saturn' },
-            { from: 'qwen', to: 'uranus' },
-            { from: 'qwen', to: 'neptune' },
-            // Cross-connections
-            { from: 'intent_router', to: 'firebase_mcp' },
-            { from: 'gemini_cli', to: 'intent_router' },
-            { from: 'firestore_query', to: 'firestore' },
-            { from: 'chromadb', to: 'intent_router' },
-            { from: 'gotcha_archive', to: 'qwen' },
-            { from: 'mw_tab', to: 'middleware_registry' }
-        ];
-
-        // --- SCENE SETUP ---
-        const scene = new THREE.Scene();
-        scene.background = new THREE.Color(0x0D1117);
-
-        const camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 1000);
-        camera.position.set(0, 80, 100);
-
-        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        var renderer = new THREE.WebGLRenderer({ antialias: true });
         renderer.setSize(window.innerWidth, window.innerHeight);
-        renderer.setPixelRatio(window.devicePixelRatio);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
         document.body.appendChild(renderer.domElement);
 
-        const controls = new OrbitControls(camera, renderer.domElement);
-        controls.enableDamping = true;
-        controls.dampingFactor = 0.05;
+        var raycaster = new THREE.Raycaster();
+        var mouse = new THREE.Vector2();
+        var tooltip = document.getElementById('tooltip');
+        var labelContainer = document.getElementById('label-container');
 
-        // Lighting
-        scene.add(new THREE.AmbientLight(0xffffff, 0.4));
-        const sunLight = new THREE.PointLight(COLORS.sun, 2.5, 300);
-        scene.add(sunLight);
-
-        // Grid (Elliptical Disc Reference)
-        const gridHelper = new THREE.GridHelper(200, 20, 0x30363D, 0x161B22);
-        gridHelper.position.y = -2;
-        scene.add(gridHelper);
-
-        // --- OBJECT CREATION ---
-        const nodeMap = new Map();
-        const activeNodes = new Set();
-        let currentVer = 'v10.54';
-
-        function createNode(data) {
-            const group = new THREE.Group();
-            
-            // Calculate position
-            if (data.pos) {
-                group.position.set(...data.pos);
-            } else if (data.ring) {
-                const angle = (data.angle * Math.PI) / 180;
-                group.position.x = Math.cos(angle) * data.ring;
-                group.position.z = Math.sin(angle) * data.ring * 0.6; // Elliptical
-            } else if (data.parent) {
-                // Moons are relative to parent giants later
-            }
-
-            // Material
-            const solidMat = new THREE.MeshStandardMaterial({ 
-                color: data.color, 
-                emissive: data.color, 
-                emissiveIntensity: 0.3,
-                transparent: true,
-                opacity: 1.0
-            });
-            const outlineMat = new THREE.MeshBasicMaterial({ 
-                color: data.color, 
-                wireframe: true, 
-                transparent: true, 
-                opacity: 0.3 
-            });
-
-            const geo = new THREE.SphereGeometry(data.size, 32, 32);
-            const mesh = new THREE.Mesh(geo, solidMat);
-            group.add(mesh);
-
-            const node = { 
-                ...data, 
-                group, 
-                mesh, 
-                solidMat, 
-                outlineMat,
-                isActive: false 
-            };
-            nodeMap.set(data.id, node);
-            scene.add(group);
-            return node;
+        // --- Helpers ---
+        function hexToThreeColor(hex) {
+            return new THREE.Color(hex);
         }
 
-        NODES.forEach(createNode);
+        function createLabel(text, isBoard) {
+            var div = document.createElement('div');
+            div.className = 'label-overlay' + (isBoard ? ' board-label' : '');
+            div.textContent = text;
+            labelContainer.appendChild(div);
+            return div;
+        }
 
-        // Position Moons
-        NODES.filter(n => n.parent).forEach(moonData => {
-            const moon = nodeMap.get(moonData.id);
-            const parent = nodeMap.get(moonData.parent);
-            if (!moon || !parent) return;
+        // --- Build Scene ---
+        function buildScene() {
+            var boards = boardData.boards;
+            var connectors = boardData.connectors;
 
-            // Cluster on sun-facing side (towards 0,0,0)
-            const parentPos = parent.group.position.clone();
-            const toSun = parentPos.clone().negate().normalize();
+            boards.forEach(function(board) {
+                var yPos = BOARD_Y[board.id];
+                var boardColor = hexToThreeColor(board.color);
 
-            // Semicircle arrangement
-            const moonCount = NODES.filter(n => n.parent === moonData.parent).length;
-            const spread = Math.PI / 2.5;
-            const angle = (spread * (moonData.offset / (moonCount - 1))) - (spread / 2);
-
-            const offsetDist = parent.size + 4 + (moonData.offset * 0.5);
-            const moonPos = toSun.clone().applyAxisAngle(new THREE.Vector3(0, 1, 0), angle).multiplyScalar(offsetDist);
-
-            moon.group.position.copy(parentPos.clone().add(moonPos));
-        });
-
-        // --- LINKS ---
-        const linkMeshes = [];
-
-        function createLinks() {
-            linkMeshes.forEach(l => scene.remove(l.line));
-            linkMeshes.length = 0;
-
-            LINKS.forEach(l => {
-                const from = nodeMap.get(l.from);
-                const to = nodeMap.get(l.to);
-                if (!from || !to) return;
-
-                const points = [from.group.position.clone(), to.group.position.clone()];
-                const geo = new THREE.BufferGeometry().setFromPoints(points);
-                
-                const mat = new THREE.LineDashedMaterial({
-                    color: COLORS.activeLink,
-                    dashSize: 1,
-                    gapSize: 0.5,
-                    transparent: true,
-                    opacity: 0.2
+                // Board plane
+                var planeGeo = new THREE.PlaneGeometry(12, 4);
+                var planeMat = new THREE.MeshBasicMaterial({
+                    color: 0x0D1117, side: THREE.DoubleSide, transparent: true, opacity: 0.8
                 });
-                
-                const line = new THREE.Line(geo, mat);
+                var planeMesh = new THREE.Mesh(planeGeo, planeMat);
+                planeMesh.rotation.x = -Math.PI / 2;
+                planeMesh.position.set(0, yPos, 0);
+                scene.add(planeMesh);
+                boardMeshes.push(planeMesh);
+                boardDataMap.set(planeMesh.uuid, board.id);
+
+                // Board border
+                var edgesGeo = new THREE.EdgesGeometry(planeGeo);
+                var edgesMat = new THREE.LineBasicMaterial({ color: boardColor });
+                var edges = new THREE.LineSegments(edgesGeo, edgesMat);
+                edges.rotation.x = -Math.PI / 2;
+                edges.position.set(0, yPos + 0.01, 0);
+                scene.add(edges);
+
+                // Board label
+                var boardLabel = createLabel(board.label, true);
+                boardLabel._worldPos = new THREE.Vector3(0, yPos + 0.2, -2.3);
+                boardLabel.style.color = board.color;
+                labelElements.push(boardLabel);
+
+                // Intra-board bus traces (horizontal lines through both rows)
+                var busColor = boardColor.clone();
+                var busMat = new THREE.LineBasicMaterial({ color: busColor, transparent: true, opacity: 0.25 });
+                CHIP_Z.forEach(function(z) {
+                    var busPoints = [
+                        new THREE.Vector3(-5.5, yPos + 0.06, z),
+                        new THREE.Vector3(5.5, yPos + 0.06, z)
+                    ];
+                    var busGeo = new THREE.BufferGeometry().setFromPoints(busPoints);
+                    var busLine = new THREE.Line(busGeo, busMat);
+                    scene.add(busLine);
+                });
+
+                // Chips
+                board.components.forEach(function(comp, idx) {
+                    var col = idx % 4;
+                    var row = Math.floor(idx / 4);
+                    var cx = CHIP_X[col];
+                    var cz = CHIP_Z[row];
+                    var cy = yPos + 0.06;
+
+                    // Chip body
+                    var chipColor = comp.color ? hexToThreeColor(comp.color) : new THREE.Color(CHIP_COLOR);
+                    var chipGeo = new THREE.BoxGeometry(1.2, 0.1, 0.7);
+                    var chipMat = new THREE.MeshBasicMaterial({ color: chipColor });
+                    var chipMesh = new THREE.Mesh(chipGeo, chipMat);
+                    chipMesh.position.set(cx, cy, cz);
+                    scene.add(chipMesh);
+                    chipMeshes.push(chipMesh);
+                    chipDataMap.set(chipMesh.uuid, {
+                        id: comp.id,
+                        label: comp.label,
+                        status: comp.status,
+                        detail: comp.detail,
+                        boardId: board.id,
+                        boardColor: board.color
+                    });
+
+                    // LED indicator (top-right corner)
+                    var ledGeo = new THREE.SphereGeometry(0.05, 8, 8);
+                    var ledColor = STATUS_COLORS[comp.status] || STATUS_COLORS.inactive;
+                    var ledMat = new THREE.MeshBasicMaterial({ color: ledColor });
+                    var ledMesh = new THREE.Mesh(ledGeo, ledMat);
+                    ledMesh.position.set(cx + 0.5, cy + 0.06, cz - 0.25);
+                    scene.add(ledMesh);
+
+                    // Pin arrays (small lines extending from chip edges)
+                    var pinMat = new THREE.LineBasicMaterial({ color: 0x555555 });
+                    var pinLen = 0.15;
+                    // Left and right pins
+                    for (var p = 0; p < 4; p++) {
+                        var pz = cz - 0.25 + p * 0.15;
+                        // Left pins
+                        var lpGeo = new THREE.BufferGeometry().setFromPoints([
+                            new THREE.Vector3(cx - 0.6, cy, pz),
+                            new THREE.Vector3(cx - 0.6 - pinLen, cy, pz)
+                        ]);
+                        scene.add(new THREE.Line(lpGeo, pinMat));
+                        // Right pins
+                        var rpGeo = new THREE.BufferGeometry().setFromPoints([
+                            new THREE.Vector3(cx + 0.6, cy, pz),
+                            new THREE.Vector3(cx + 0.6 + pinLen, cy, pz)
+                        ]);
+                        scene.add(new THREE.Line(rpGeo, pinMat));
+                    }
+
+                    // Chip label
+                    var chipLabel = createLabel(comp.label, false);
+                    chipLabel._worldPos = new THREE.Vector3(cx, cy + 0.15, cz);
+                    labelElements.push(chipLabel);
+                });
+            });
+
+            // Inter-board connectors (animated dashed lines with L-bends)
+            connectors.forEach(function(conn, idx) {
+                var fromY = BOARD_Y[conn.from];
+                var toY = BOARD_Y[conn.to];
+                var connColor = hexToThreeColor(conn.color);
+
+                // Spread connectors horizontally to avoid overlap
+                var count = connectors.filter(function(c) { return c.from === conn.from && c.to === conn.to; }).length;
+                var sameGroup = connectors.filter(function(c) { return c.from === conn.from && c.to === conn.to; });
+                var groupIdx = sameGroup.indexOf(conn);
+                var spread = 2.0;
+                var xOffset = (groupIdx - (count - 1) / 2) * spread;
+
+                // L-bend routing: go down from source, then across
+                var midY = (fromY + toY) / 2;
+                var points = [
+                    new THREE.Vector3(xOffset, fromY - 0.05, 0),
+                    new THREE.Vector3(xOffset, midY, 0),
+                    new THREE.Vector3(xOffset, toY + 0.05, 0)
+                ];
+
+                var lineGeo = new THREE.BufferGeometry().setFromPoints(points);
+                var lineMat = new THREE.LineDashedMaterial({
+                    color: connColor,
+                    dashSize: 0.3,
+                    gapSize: 0.15,
+                    transparent: true,
+                    opacity: 0.6
+                });
+                var line = new THREE.Line(lineGeo, lineMat);
                 line.computeLineDistances();
                 scene.add(line);
-                linkMeshes.push({ line, mat, fromId: l.from, toId: l.to });
+                dashedLines.push(line);
+
+                // Connector label at midpoint
+                var connLabel = createLabel(conn.label, false);
+                connLabel._worldPos = new THREE.Vector3(xOffset + 0.15, midY, 0);
+                connLabel.style.color = conn.color;
+                connLabel.style.fontSize = '9px';
+                labelElements.push(connLabel);
             });
         }
 
-        createLinks();
+        // --- Iteration dropdown ---
+        function populateIterations() {
+            var select = document.getElementById('iteration-select');
+            var keys = Object.keys(iterationData).reverse();
+            keys.forEach(function(key, i) {
+                var opt = document.createElement('option');
+                opt.value = key;
+                opt.textContent = key + (i === 0 ? ' (Current)' : '');
+                select.appendChild(opt);
+            });
+            select.addEventListener('change', function() {
+                applyIteration(select.value);
+            });
+        }
 
-        // --- INTERACTION ---
-        const raycaster = new THREE.Raycaster();
-        const mouse = new THREE.Vector2();
-        const tooltip = document.getElementById('tooltip');
+        function applyIteration(ver) {
+            var val = iterationData[ver];
+            if (!val) return;
+            var showAll = (Array.isArray(val) && val[0] === 'ALL');
 
-        window.addEventListener('mousemove', (e) => {
+            chipMeshes.forEach(function(mesh) {
+                var data = chipDataMap.get(mesh.uuid);
+                if (!data) return;
+                var visible = showAll || val.indexOf(data.id) !== -1;
+                mesh.visible = visible;
+            });
+        }
+
+        // --- Tooltip ---
+        function updateTooltip(e) {
             mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
             mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
-
             raycaster.setFromCamera(mouse, camera);
-            const intersects = raycaster.intersectObjects(NODES.map(n => nodeMap.get(n.id).mesh));
 
-            if (intersects.length > 0) {
-                const node = Array.from(nodeMap.values()).find(n => n.mesh === intersects[0].object);
-                tooltip.style.display = 'block';
-                tooltip.style.left = (e.clientX + 15) + 'px';
-                tooltip.style.top = (e.clientY + 15) + 'px';
-                tooltip.innerHTML = `
-                    <div style="color:#${node.color.toString(16).padStart(6, '0')}"><strong>${node.name}</strong></div>
-                    <div style="font-size:10px; color:#8B949E; margin-bottom:4px;">${node.type} | Active since ${node.since}</div>
-                    <div>${node.func || 'System core component'}</div>
-                    ${node.file ? `<div style="font-family:monospace; font-size:9px; margin-top:4px; color:#4ADE80">${node.file}</div>` : ''}
-                `;
-            } else {
-                tooltip.style.display = 'none';
-            }
-        });
+            var intersects = raycaster.intersectObjects(chipMeshes);
+            if (intersects.length > 0 && intersects[0].object.visible) {
+                var data = chipDataMap.get(intersects[0].object.uuid);
+                if (data) {
+                    var statusDot = '<span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:' +
+                        STATUS_HEX[data.status] + ';margin-right:6px;vertical-align:middle;"></span>';
+                    tooltip.innerHTML =
+                        '<div style="color:' + data.boardColor + ';font-weight:bold;margin-bottom:4px;">' + data.label + '</div>' +
+                        '<div style="margin-bottom:4px;">' + statusDot + data.status + '</div>' +
+                        '<div style="color:#8B949E;">' + data.detail + '</div>';
+                    tooltip.style.display = 'block';
 
-        // --- VERSION UPDATE ---
-        function compareVersions(v1, v2) {
-            const parse = v => v.replace('v', '').split('.').map(Number);
-            const p1 = parse(v1);
-            const p2 = parse(v2);
-            for (let i = 0; i < Math.max(p1.length, p2.length); i++) {
-                const a = p1[i] || 0;
-                const b = p2[i] || 0;
-                if (a > b) return 1;
-                if (a < b) return -1;
-            }
-            return 0;
-        }
-
-        function updateIteration(ver) {
-            currentVer = ver;
-            nodeMap.forEach(node => {
-                const isActive = compareVersions(ver, node.since) >= 0;
-                node.isActive = isActive;
-                node.mesh.material = isActive ? node.solidMat : node.outlineMat;
-            });
-
-            linkMeshes.forEach(l => {
-                const from = nodeMap.get(l.fromId);
-                const to = nodeMap.get(l.toId);
-                const isActive = from.isActive && to.isActive;
-                l.mat.opacity = isActive ? 0.8 : 0.1;
-                l.mat.color.set(isActive ? COLORS.activeLink : COLORS.inactiveLink);
-            });
-        }
-
-        document.getElementById('iteration-select').addEventListener('change', (e) => {
-            updateIteration(e.target.value);
-        });
-
-        // --- ANIMATION ---
-        let animating = false;
-
-        function animate() {
-            requestAnimationFrame(animate);
-            const time = Date.now() * 0.001;
-
-            if (animating) {
-                // Animate active links
-                linkMeshes.forEach(l => {
-                    const from = nodeMap.get(l.fromId);
-                    const to = nodeMap.get(l.toId);
-                    if (from.isActive && to.isActive) {
-                        l.mat.dashOffset -= 0.01;
-                    }
-                });
-
-                // Sun pulse
-                const sun = nodeMap.get('qwen');
-                if (sun) {
-                    sun.solidMat.emissiveIntensity = 0.3 + Math.sin(time * 2) * 0.1;
+                    // Clamp to viewport
+                    var tx = e.clientX + 15;
+                    var ty = e.clientY + 15;
+                    var tw = tooltip.offsetWidth;
+                    var th = tooltip.offsetHeight;
+                    if (tx + tw > window.innerWidth - 10) tx = e.clientX - tw - 15;
+                    if (ty + th > window.innerHeight - 10) ty = e.clientY - th - 15;
+                    tooltip.style.left = tx + 'px';
+                    tooltip.style.top = ty + 'px';
+                    return;
                 }
             }
+            tooltip.style.display = 'none';
+        }
 
-            controls.update();
+        // --- Click-to-zoom ---
+        function handleClick(e) {
+            mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
+            mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
+            raycaster.setFromCamera(mouse, camera);
+
+            // Check chip click first (do nothing special on chip click - tooltip handles it)
+            var chipHits = raycaster.intersectObjects(chipMeshes);
+            if (chipHits.length > 0 && chipHits[0].object.visible) return;
+
+            // Check board click
+            var boardHits = raycaster.intersectObjects(boardMeshes);
+            if (boardHits.length > 0) {
+                var boardId = boardDataMap.get(boardHits[0].object.uuid);
+                if (boardId && ZOOM_TARGETS[boardId]) {
+                    zoomToBoard(boardId);
+                }
+            }
+        }
+
+        function zoomToBoard(boardId) {
+            var target = ZOOM_TARGETS[boardId];
+            cameraTarget.pos.copy(target.pos);
+            cameraTarget.lookAt.copy(target.lookAt);
+            zoomedBoard = boardId;
+            document.getElementById('btn-all-boards').style.display = 'inline-block';
+        }
+
+        function zoomToOverview() {
+            cameraTarget.pos.copy(OVERVIEW.pos);
+            cameraTarget.lookAt.copy(OVERVIEW.lookAt);
+            zoomedBoard = null;
+            document.getElementById('btn-all-boards').style.display = 'none';
+        }
+
+        // --- Labels ---
+        function updateLabels() {
+            var halfW = window.innerWidth / 2;
+            var halfH = window.innerHeight / 2;
+
+            labelElements.forEach(function(el) {
+                var pos = el._worldPos.clone();
+                pos.project(camera);
+
+                if (pos.z > 1) {
+                    el.style.display = 'none';
+                    return;
+                }
+
+                var sx = (pos.x * halfW) + halfW;
+                var sy = -(pos.y * halfH) + halfH;
+                el.style.display = 'block';
+                el.style.left = sx + 'px';
+                el.style.top = sy + 'px';
+                el.style.transform = 'translate(-50%, -50%)';
+            });
+        }
+
+        // --- Render Loop ---
+        function animate() {
+            requestAnimationFrame(animate);
+
+            // Camera lerp
+            camera.position.lerp(cameraTarget.pos, 0.05);
+            currentLookAt.lerp(cameraTarget.lookAt, 0.05);
+            camera.lookAt(currentLookAt);
+
+            // Animate dashed line offsets
+            dashedLines.forEach(function(line) {
+                line.material.dashOffset -= 0.02;
+            });
+
+            // Update HTML label positions
+            updateLabels();
+
             renderer.render(scene, camera);
         }
 
-        document.getElementById('anim-toggle').addEventListener('click', (e) => {
-            animating = !animating;
-            e.target.textContent = animating ? 'Stop' : 'Animate';
+        // --- Events ---
+        window.addEventListener('mousemove', updateTooltip);
+        window.addEventListener('click', handleClick);
+
+        document.getElementById('btn-all-boards').addEventListener('click', zoomToOverview);
+
+        window.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && zoomedBoard) {
+                zoomToOverview();
+            }
         });
 
-        // --- INIT ---
-        window.addEventListener('resize', () => {
+        window.addEventListener('resize', function() {
             camera.aspect = window.innerWidth / window.innerHeight;
             camera.updateProjectionMatrix();
             renderer.setSize(window.innerWidth, window.innerHeight);
         });
 
-        setTimeout(() => {
-            document.getElementById('loading').style.display = 'none';
-            updateIteration('v10.55');
-            animate();
-        }, 800);
+        // --- Load Data ---
+        Promise.all([
+            fetch('../../data/claw3d_components.json').then(function(r) { return r.json(); }),
+            fetch('../../data/claw3d_iterations.json').then(function(r) { return r.json(); })
+        ]).then(function(results) {
+            boardData = results[0];
+            iterationData = results[1];
 
+            buildScene();
+            populateIterations();
+            applyIteration('v10.56');
+
+            document.getElementById('loading').style.display = 'none';
+            animate();
+        }).catch(function(err) {
+            console.error('Failed to load data:', err);
+            document.getElementById('loading').textContent = 'Error loading data. Check console.';
+        });
+
+    })();
     </script>
 </body>
 </html>

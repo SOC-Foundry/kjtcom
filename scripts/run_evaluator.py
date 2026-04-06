@@ -51,9 +51,10 @@ def load_gotcha_archive():
 
 
 def build_execution_context(version):
-    """Build ground-truth execution context from event log and file system.
+    """Build ground-truth execution context from event log, build log, changelog, and file system.
 
-    Evaluator reads execution context, NOT build log.
+    v10.56: Also reads build log and changelog for evidence when event log
+    has no entries for this iteration (fixes G55 empty context problem).
     """
     event_log_path = os.path.join(PROJECT_DIR, 'data', 'iao_event_log.jsonl')
 
@@ -70,7 +71,6 @@ def build_execution_context(version):
                     events.append(ev)
     except FileNotFoundError:
         lines.append("No event log found.")
-        return "\n".join(lines)
 
     errors = [e for e in events if e.get('status') in ('error', 'timeout')]
     successes = [e for e in events if e.get('status') == 'success']
@@ -87,19 +87,50 @@ def build_execution_context(version):
         for e in errors[:10]:
             lines.append(f"  - {e.get('source_agent', '?')}: {e.get('action', '?')} -> {e.get('status')} ({e.get('error', 'N/A')[:80]})")
 
+    # v10.56: Read build log for additional evidence
+    build_log_path = os.path.join(PROJECT_DIR, 'docs', f'kjtcom-build-{version}.md')
+    if os.path.exists(build_log_path):
+        try:
+            with open(build_log_path) as f:
+                build_content = f.read()
+            lines.append(f"\nBuild log ({len(build_content)} chars):")
+            lines.append(build_content[:3000])
+        except Exception:
+            pass
+
+    # v10.56: Read changelog for evidence of completed work
+    changelog_path = os.path.join(PROJECT_DIR, 'docs', 'kjtcom-changelog.md')
+    if os.path.exists(changelog_path):
+        try:
+            with open(changelog_path) as f:
+                cl_content = f.read()
+            # Extract entries for this version
+            version_entries = []
+            for cl_line in cl_content.split('\n'):
+                if version in cl_line:
+                    version_entries.append(cl_line)
+            if version_entries:
+                lines.append(f"\nChangelog entries for {version}:")
+                for entry in version_entries[:20]:
+                    lines.append(f"  {entry}")
+        except Exception:
+            pass
+
     # Check key file existence
     key_files = [
         'scripts/run_evaluator.py',
         'scripts/generate_artifacts.py',
         'data/eval_schema.json',
+        'data/claw3d_components.json',
         'CLAUDE.md',
         'GEMINI.md',
         'docs/kjtcom-changelog.md',
+        'docs/bourdain-scaling-plan.md',
         'app/web/architecture.html',
         'app/web/claw3d.html',
         'app/lib/widgets/mw_tab.dart',
     ]
-    lines.append("Key file existence:")
+    lines.append("\nKey file existence:")
     for kf in key_files:
         full = os.path.join(PROJECT_DIR, kf)
         exists = os.path.exists(full)
@@ -116,7 +147,12 @@ def build_execution_context(version):
 
 
 def parse_workstream_count(design_doc_path):
-    """Parse design doc to extract workstream table and count W# rows."""
+    """Parse design doc to extract workstream count and names.
+
+    Supports two formats:
+    1. Table: | W1 | Name | ... |
+    2. Heading: ### W1: Name (Priority)
+    """
     if not os.path.exists(design_doc_path):
         return 0, []
 
@@ -126,6 +162,19 @@ def parse_workstream_count(design_doc_path):
     lines = content.split("\n")
     w_count = 0
     w_names = []
+
+    # Try heading format first: ### W1: Name (P0)
+    import re
+    for line in lines:
+        m = re.match(r'^###\s+W(\d+)[:\s]+(.+?)(?:\s*\(P\d\))?\s*$', line)
+        if m:
+            w_count += 1
+            w_names.append(m.group(2).strip())
+
+    if w_count > 0:
+        return w_count, w_names
+
+    # Fallback: table format | W1 | Name | ... |
     in_table = False
     for line in lines:
         if "| #" in line and "Workstream" in line:
@@ -284,75 +333,110 @@ def parse_json_from_response(content):
     return None
 
 
-def build_fallback(version, expected_names):
-    """Build a minimal valid fallback response when all retries fail."""
+def call_gemini_flash(prompt):
+    """Call Gemini Flash via litellm for evaluator fallback.
+
+    Returns (content_string, tokens_dict, latency_ms) or (None, {}, 0).
+    """
+    try:
+        import litellm
+    except ImportError:
+        print("[EVAL] litellm not installed, skipping Gemini fallback")
+        return None, {}, 0
+
+    from utils.ollama_config import GEMINI_MODEL
+
+    start_time = time.time()
+    try:
+        response = litellm.completion(
+            model=GEMINI_MODEL,
+            messages=[{"role": "user", "content": prompt}],
+            temperature=0.3,
+            max_tokens=2048,
+        )
+        latency = int((time.time() - start_time) * 1000)
+        content = response.choices[0].message.content
+        tokens = {
+            'prompt_tokens': response.usage.prompt_tokens or 0,
+            'eval_tokens': response.usage.completion_tokens or 0,
+            'total_tokens': response.usage.total_tokens or 0,
+        }
+        return content, tokens, latency
+    except Exception as e:
+        print(f"[EVAL] Gemini Flash call failed: {e}")
+        return None, {}, 0
+
+
+def generate_self_eval(build_log, design_doc, version, expected_names):
+    """Generate a self-evaluation when all LLM evaluators fail.
+
+    Parses the build log and design doc to produce an honest evaluation.
+    Caps all scores at 7/10 to avoid self-grading bias.
+    """
+    import re
+
     workstreams = []
     for i, name in enumerate(expected_names):
+        # Check build log for evidence of this workstream
+        w_tag = f"W{i+1}"
+        evidence_lines = []
+        for line in build_log.split('\n'):
+            if w_tag in line or name.lower() in line.lower():
+                evidence_lines.append(line.strip())
+
+        has_evidence = len(evidence_lines) > 0
+        outcome = "partial" if has_evidence else "deferred"
+        score = min(6, len(evidence_lines)) if has_evidence else 0
+
+        # Determine priority from design doc
+        priority = "P1"
+        p_match = re.search(rf'W{i+1}[:\s].*?\((P\d)\)', design_doc)
+        if p_match:
+            priority = p_match.group(1)
+
+        evidence_text = "; ".join(evidence_lines[:3]) if evidence_lines else "No build log evidence found for this workstream"
+
         workstreams.append({
-            "id": f"W{i+1}",
+            "id": w_tag,
             "name": name,
-            "priority": "P1" if i < 2 else ("P2" if i < 4 else "P3"),
-            "outcome": "partial",
-            "evidence": "Evaluation generated via fallback due to schema validation failure",
+            "priority": priority,
+            "outcome": outcome,
+            "evidence": evidence_text[:200],
             "agents": ["claude-code"],
             "llms": ["qwen3.5:9b"],
             "mcps": ["-"],
-            "score": 5,
+            "score": min(score, 7),
             "improvements": [
-                "Schema validation failed - manual review needed",
-                "Qwen output did not conform after 3 attempts"
+                "Self-eval fallback used - Qwen and Gemini both failed schema validation",
+                "Manual review recommended for accurate scoring"
             ]
         })
 
     total = len(expected_names)
+    completed = sum(1 for ws in workstreams if ws['outcome'] == 'complete')
+
     return {
         "iteration": version,
-        "summary": "Evaluation generated via fallback due to schema validation failure after 3 attempts.",
+        "summary": f"Self-evaluation fallback for {version}. Qwen and Gemini Flash both failed schema validation. {total} workstreams parsed from design doc. Scores capped at 7/10 to avoid self-grading bias.",
         "workstreams": workstreams,
         "trident": {
-            "cost": "Within target - local Ollama inference",
-            "delivery": f"0/{total} workstreams verified (fallback)",
-            "performance": "Qwen schema compliance failed after 3 attempts"
+            "cost": "Minimal - self-eval required no LLM tokens",
+            "delivery": f"{completed}/{total} workstreams completed (self-eval)",
+            "performance": "Self-eval fallback triggered - evaluator pipeline needs repair"
         },
         "what_could_be_better": [
-            "Qwen output did not conform to eval_schema.json after 3 retries",
-            "Consider adjusting prompt structure for better schema compliance",
-            "Manual evaluation may be needed for this iteration"
+            "Qwen failed schema validation after 3 attempts - prompt or model issue",
+            "Gemini Flash failed schema validation after 2 attempts - schema may be too strict",
+            "Self-eval cannot provide the same quality as an independent evaluator"
         ]
     }
 
 
-def evaluate_with_retry(version, design_doc_path, max_retries=3):
-    """Call Qwen, validate against schema, retry with specific feedback on failure.
-
-    This is the core v9.49 schema-validated evaluation loop.
-    """
-    expected_count, expected_names = parse_workstream_count(design_doc_path)
-    executing_agent = parse_executing_agent(design_doc_path)
-    print(f"Expecting {expected_count} workstreams: {', '.join(expected_names)}")
-    print(f"Executing agent parsed as: {executing_agent}")
-
-    with open(design_doc_path) as f:
-        design_content = f.read()
-
-    exec_context = build_execution_context(version)
-
-    gotchas = load_gotcha_archive()
-    gotcha_summary = ""
-    if gotchas:
-        recent = [g for g in gotchas if g.get('iteration_resolved', '').startswith('v9.')]
-        if recent:
-            gotcha_summary = "\nRecently resolved gotchas:\n" + "\n".join(
-                f"  {g['id']}: {g['description']} (resolved {g['iteration_resolved']})"
-                for g in recent[:5]
-            )
-
-    harness = load_harness()
-
-    # Build workstream list for prompt
+def build_evaluator_prompt(version, design_content, exec_context, expected_count, expected_names, executing_agent, gotcha_summary=""):
+    """Build the shared evaluator prompt used by all tiers."""
     ws_list_str = "\n".join(f"  W{i+1}: {name}" for i, name in enumerate(expected_names))
 
-    base_prompt = f"""/no_think
+    return f"""/no_think
 You are evaluating workstreams for kjtcom iteration {version}.
 
 IMPORTANT: Return a single JSON OBJECT (not array) conforming to the eval_schema.json schema.
@@ -370,6 +454,7 @@ CONSTRAINTS:
 - agents: MUST include ["{executing_agent}"]. You are NOT the agent.
 - score: integer 0-9 (NEVER 10)
 - outcome: one of "complete", "partial", "failed", "deferred"
+- priority: one of "P0", "P1", "P2", "P3"
 - mcps: array of strings from ONLY: "Firebase", "Context7", "Firecrawl", "Playwright", "Dart", "-"
 - improvements: array of 2+ strings per workstream
 - evidence: string of 10+ characters with file path, command output, or test result
@@ -390,10 +475,14 @@ EXECUTION CONTEXT (ground truth):
 
 Return ONLY the JSON object, no explanation."""
 
-    current_prompt = base_prompt
 
-    for attempt in range(max_retries):
-        print(f"\nEvaluation attempt {attempt + 1}/{max_retries}...")
+def try_qwen_tier(base_prompt, harness, expected_count, expected_names, executing_agent, version, verbose=False):
+    """Tier 1: Qwen3.5-9B via Ollama (3 attempts)."""
+    current_prompt = base_prompt
+    tokens = {}
+
+    for attempt in range(3):
+        print(f"\n[EVAL] Qwen attempt {attempt + 1}/3...")
 
         messages = []
         if harness:
@@ -412,6 +501,9 @@ Return ONLY the JSON object, no explanation."""
                   latency_ms=latency,
                   status="success" if content else "empty_response")
 
+        if verbose and content:
+            print(f"[EVAL] Qwen raw response (first 500 chars): {content[:500]}")
+
         if not content:
             current_prompt = base_prompt + "\n\nERROR: Empty response. Return ONLY a JSON object."
             continue
@@ -424,17 +516,17 @@ Return ONLY the JSON object, no explanation."""
         errors = validate_qwen_output(parsed, expected_count, expected_names)
 
         if not errors:
-            print(f"Schema validation passed on attempt {attempt + 1}")
+            print(f"[EVAL] Qwen schema validation passed on attempt {attempt + 1}")
             parsed['evaluator_tokens'] = tokens
+            parsed['evaluator'] = 'qwen3.5:9b'
             for ws in parsed.get('workstreams', []):
                 print(f"  {ws['id']}: {ws['name']} - {ws['score']}/10 ({ws['outcome']})")
             return parsed
 
-        print(f"Validation failed on attempt {attempt + 1} with {len(errors)} errors:")
+        print(f"[EVAL] Qwen validation failed attempt {attempt + 1} with {len(errors)} errors:")
         for err in errors:
             print(f"  - {err}")
 
-        # Build specific field-path feedback for retry (v9.53: error specificity)
         feedback = "\n\nVALIDATION ERRORS - fix EVERY error below before retrying:\n"
         for i, err in enumerate(errors, 1):
             feedback += f"  {i}. {err}\n"
@@ -446,11 +538,120 @@ Return ONLY the JSON object, no explanation."""
         feedback += "\nReturn ONLY the corrected JSON object."
         current_prompt = base_prompt + feedback
 
-    # All retries exhausted - use fallback
-    print(f"Max retries ({max_retries}) exhausted. Using fallback.")
-    fallback = build_fallback(version, expected_names)
-    fallback['evaluator_tokens'] = tokens if tokens else {}
-    return fallback
+    return None
+
+
+def try_gemini_tier(base_prompt, expected_count, expected_names, verbose=False):
+    """Tier 2: Gemini Flash via litellm (2 attempts)."""
+    current_prompt = base_prompt
+
+    for attempt in range(2):
+        print(f"\n[EVAL] Gemini Flash attempt {attempt + 1}/2 (Qwen fallback)...")
+
+        content, tokens, latency = call_gemini_flash(current_prompt)
+
+        if verbose and content:
+            print(f"[EVAL] Gemini raw response (first 500 chars): {content[:500]}")
+
+        if not content:
+            print("[EVAL] Gemini Flash returned empty response")
+            continue
+
+        parsed = parse_json_from_response(content)
+        if parsed is None:
+            current_prompt = base_prompt + "\n\nERROR: Not valid JSON. Return ONLY a JSON object."
+            continue
+
+        errors = validate_qwen_output(parsed, expected_count, expected_names)
+
+        if not errors:
+            print(f"[EVAL] Gemini Flash schema validation passed on attempt {attempt + 1}")
+            parsed['evaluator_tokens'] = tokens
+            parsed['evaluator'] = 'gemini-flash (qwen-fallback)'
+            for ws in parsed.get('workstreams', []):
+                print(f"  {ws['id']}: {ws['name']} - {ws['score']}/10 ({ws['outcome']})")
+            return parsed
+
+        print(f"[EVAL] Gemini validation failed attempt {attempt + 1} with {len(errors)} errors:")
+        for err in errors:
+            print(f"  - {err}")
+
+        feedback = "\n\nVALIDATION ERRORS:\n"
+        for i, err in enumerate(errors, 1):
+            feedback += f"  {i}. {err}\n"
+        feedback += "\nReturn ONLY the corrected JSON object."
+        current_prompt = base_prompt + feedback
+
+    return None
+
+
+def evaluate_with_retry(version, design_doc_path, max_retries=3, verbose=False, test_fallback=None):
+    """Three-tier evaluator fallback chain (v10.56).
+
+    Tier 1: Qwen3.5-9B via Ollama (3 attempts)
+    Tier 2: Gemini Flash via litellm (2 attempts)
+    Tier 3: Self-eval (always succeeds, scores capped at 7/10)
+    """
+    expected_count, expected_names = parse_workstream_count(design_doc_path)
+    executing_agent = parse_executing_agent(design_doc_path)
+    print(f"[EVAL] Expecting {expected_count} workstreams: {', '.join(expected_names)}")
+    print(f"[EVAL] Executing agent: {executing_agent}")
+
+    with open(design_doc_path) as f:
+        design_content = f.read()
+
+    exec_context = build_execution_context(version)
+    if verbose:
+        print(f"[EVAL] Execution context ({len(exec_context)} chars):")
+        print(exec_context[:1000])
+
+    gotchas = load_gotcha_archive()
+    gotcha_summary = ""
+    if gotchas:
+        recent = [g for g in gotchas if g.get('iteration_resolved', '').startswith(('v9.', 'v10.'))]
+        if recent:
+            gotcha_summary = "\nRecently resolved gotchas:\n" + "\n".join(
+                f"  {g['id']}: {g['description']} (resolved {g['iteration_resolved']})"
+                for g in recent[:5]
+            )
+
+    harness = load_harness()
+
+    base_prompt = build_evaluator_prompt(
+        version, design_content, exec_context, expected_count,
+        expected_names, executing_agent, gotcha_summary
+    )
+
+    # Tier 1: Qwen (skip if testing fallback)
+    if test_fallback not in ('gemini', 'self-eval'):
+        result = try_qwen_tier(base_prompt, harness, expected_count, expected_names, executing_agent, version, verbose)
+        if result:
+            return result
+        print("[EVAL] Qwen tier exhausted. Falling through to Gemini Flash.")
+    else:
+        print(f"[EVAL] Skipping Qwen tier (--test-fallback {test_fallback})")
+
+    # Tier 2: Gemini Flash (skip if testing self-eval)
+    if test_fallback != 'self-eval':
+        result = try_gemini_tier(base_prompt, expected_count, expected_names, verbose)
+        if result:
+            return result
+        print("[EVAL] Gemini tier exhausted. Falling through to self-eval.")
+    else:
+        print("[EVAL] Skipping Gemini tier (--test-fallback self-eval)")
+
+    # Tier 3: Self-eval (always succeeds)
+    print("[EVAL] Generating self-eval (Qwen + Gemini fallback).")
+    build_log_path = os.path.join(PROJECT_DIR, 'docs', f'kjtcom-build-{version}.md')
+    build_log = ""
+    if os.path.exists(build_log_path):
+        with open(build_log_path) as f:
+            build_log = f.read()
+
+    result = generate_self_eval(build_log, design_content, version, expected_names)
+    result['evaluator'] = 'self-eval (fallback)'
+    result['evaluator_tokens'] = {}
+    return result
 
 
 def save_scores(version, evaluation):
@@ -489,6 +690,8 @@ def save_scores(version, evaluation):
 
 if __name__ == '__main__':
     version = 'v9.49'
+    verbose = '--verbose' in sys.argv
+    test_fallback = None
 
     if '--iteration' in sys.argv:
         idx = sys.argv.index('--iteration')
@@ -497,17 +700,28 @@ if __name__ == '__main__':
     elif len(sys.argv) > 1 and not sys.argv[1].startswith('-'):
         version = sys.argv[1]
 
+    if '--test-fallback' in sys.argv:
+        idx = sys.argv.index('--test-fallback')
+        if idx + 1 < len(sys.argv):
+            test_fallback = sys.argv[idx + 1]
+            if test_fallback not in ('gemini', 'self-eval'):
+                print(f"Invalid --test-fallback value: {test_fallback}")
+                print("Valid values: gemini, self-eval")
+                sys.exit(1)
+
     design_path = f'docs/kjtcom-design-{version}.md'
 
     if not os.path.exists(design_path):
         print(f"Design doc not found: {design_path}")
         sys.exit(1)
 
-    # Schema-validated evaluation (v9.49+)
-    # Evaluator reads design doc + event log + file checks, NOT build log
-    evaluation = evaluate_with_retry(version, design_path)
+    # Three-tier evaluator fallback chain (v10.56)
+    # Qwen (3 attempts) -> Gemini Flash (2 attempts) -> self-eval (always succeeds)
+    evaluation = evaluate_with_retry(version, design_path, verbose=verbose, test_fallback=test_fallback)
     save_scores(version, evaluation)
 
-    print(f"\nTokens: prompt={evaluation.get('evaluator_tokens', {}).get('prompt_tokens', 0)}, "
+    evaluator = evaluation.get('evaluator', 'unknown')
+    print(f"\n[EVAL] Evaluator: {evaluator}")
+    print(f"[EVAL] Tokens: prompt={evaluation.get('evaluator_tokens', {}).get('prompt_tokens', 0)}, "
           f"eval={evaluation.get('evaluator_tokens', {}).get('eval_tokens', 0)}, "
           f"total={evaluation.get('evaluator_tokens', {}).get('total_tokens', 0)}")

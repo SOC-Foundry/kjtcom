@@ -1,4 +1,20 @@
 # kjtcom - Unified Changelog
+## v10.56 - 2026-04-06
+
+- FIXED: Qwen evaluator empty reports (G55) - Root causes: parse_workstream_count() only parsed table format not heading format, build_execution_context() had no v10.x event log entries, eval_schema.json priority enum missing P0. All 4 root causes fixed.
+- NEW: Three-tier evaluator fallback chain in scripts/run_evaluator.py - Qwen3.5-9B (3 attempts) -> Gemini Flash (2 attempts) -> self-eval (always succeeds, scores capped at 7/10). --verbose and --test-fallback flags added.
+- NEW: app/web/claw3d.html - Complete PCB architecture rewrite replacing solar system. Three circuit boards (Frontend/Middleware/Backend), 24 IC chip components, LED status indicators, hover tooltips, click-to-zoom, animated inter-board traces.
+- NEW: data/claw3d_components.json - 3 boards, 24 chips, 5 inter-board connectors. Valid JSON.
+- NEW: docs/bourdain-scaling-plan.md - Gemini Flash archive analysis for Bourdain Phase 2-5 execution plan. Entity yield projections, batch schedule, risk mitigations.
+- NEW: scripts/run_archive_analysis.py - Pipeline archive analysis with Qwen/Gemini fallback.
+- UPDATED: docs/evaluator-harness.md - 528 -> 601 lines. G55 ADR with root cause analysis and resolution. v10.56 evidence standards for all 4 workstreams.
+- UPDATED: data/eval_schema.json - P0 added to priority enum.
+- UPDATED: data/claw3d_iterations.json - v10.56 entry added.
+- UPDATED: README.md - Full overhaul: Bourdain pipeline listed (#8B5CF6, 96 staging entities), PCB architecture referenced, evaluator fallback chain documented, v10.56 changelog entries, Phase 10 roadmap updated.
+- UPDATED: docs/kjtcom-changelog.md - v10.56 entry.
+- Multi-agent: Claude Code (Opus 4.6, primary) + Qwen3.5-9B (evaluator) + Gemini 2.5 Flash (fallback evaluator, extraction, archive analysis)
+- Kyle interventions: 0
+
 ## v10.55 - 2026-04-06
 
 - NEW: Bourdain pipeline Phase 1 - 30 videos acquired, transcribed (faster-whisper CUDA), extracted (Gemini 2.5 Flash), normalized, geocoded, enriched. 96 unique entities across 20 countries loaded to staging Firestore. Pipeline 4 launched.

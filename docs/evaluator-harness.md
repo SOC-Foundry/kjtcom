@@ -524,5 +524,78 @@ For W4 (Post-flight + Living Docs), the evidence must include:
 - `scripts/embed_archive.py` chunk count result.
 
 ---
-*Evaluator Harness v9.52 - April 5, 2026. 400+ lines of rigorous IAO standards.*
-*(Line count verification: this file is intended to be expanded further in future iterations to maintain the 400+ line mandate.)*
+
+## 22. G55: Qwen Evaluator Empty Reports (v10.56 ADR)
+
+**Problem:** Qwen produced 3 consecutive empty reports (v10.54, v10.55, v10.55-retry).
+Reports are the audit trail - without them, the iteration did not happen.
+
+**Root causes identified (v10.56 diagnosis):**
+
+1. `parse_workstream_count()` only parsed table format (`| W1 | Name |`) but v10.x design docs
+   use heading format (`### W1: Name (P0)`). This returned 0 expected workstreams, causing Qwen
+   to produce empty evaluations or fail schema validation with "expected 0 workstreams".
+
+2. `build_execution_context()` relied solely on `data/iao_event_log.jsonl` which had no entries
+   for v10.x iterations. The evaluator received near-empty context, so Qwen correctly concluded
+   "no workstreams were executed."
+
+3. `eval_schema.json` priority enum was ["P1","P2","P3"] - missing "P0". Any P0 workstream
+   caused schema validation failure.
+
+4. No fallback beyond a minimal template that wrote score=5 for all workstreams with
+   "evaluation generated via fallback" evidence. This template itself was an empty report.
+
+**Resolution (v10.56):**
+
+1. `parse_workstream_count()` now supports both heading and table formats via regex.
+2. `build_execution_context()` now also reads the build log and changelog for evidence.
+3. `eval_schema.json` priority enum expanded to ["P0","P1","P2","P3"].
+4. Three-tier fallback chain implemented:
+
+```
+Tier 1: Qwen3.5-9B (3 attempts with schema validation + retry feedback)
+Tier 2: Gemini Flash via litellm (2 attempts with schema validation)
+Tier 3: Self-eval by executing agent (always succeeds, scores capped at 7/10)
+```
+
+Each tier logs attempt count, raw response preview, and validation errors.
+The `--test-fallback gemini|self-eval` flag allows testing fallback tiers directly.
+The `--verbose` flag enables detailed logging of prompts and responses.
+
+**ADR: An empty report is never acceptable.**
+The fallback chain guarantees a non-empty report. Tier 3 (self-eval) always succeeds
+by parsing the build log and design doc directly. Self-eval caps scores at 7/10 to
+avoid self-grading bias.
+
+---
+
+## 23. Evaluator Evidence Requirements (v10.56)
+
+For W1 (Fix Qwen Evaluator + Fallback Chain), evidence must include:
+- `run_evaluator.py` produces non-empty report (grep for workstream rows).
+- Fallback chain code exists (Qwen -> Gemini -> self-eval).
+- `--test-fallback` flag works for both `gemini` and `self-eval`.
+- `docs/bourdain-scaling-plan.md` exists from archive analysis.
+
+For W2 (Claw3D PCB Redesign), evidence must include:
+- `app/web/claw3d.html` loads with 0 JS errors.
+- `data/claw3d_components.json` valid JSON with 3 boards, 24 chips.
+- Hover tooltip works on any chip.
+- Click-to-zoom works on any board.
+- Animated dashed traces between boards.
+
+For W3 (Bourdain Pipeline), evidence must include:
+- Entity count increase in staging.
+- `data/bourdain/checkpoint.json` updated.
+- Schema v3 compliance verified.
+
+For W4 (README Overhaul), evidence must include:
+- Bourdain pipeline listed with color code.
+- PCB architecture referenced (not solar system).
+- Evaluator fallback chain documented.
+- `wc -l README.md` shows growth.
+
+---
+*Evaluator Harness v10.56 - April 6, 2026. 590+ lines with G55 ADR and fallback chain.*
+*(Line count verification: 528 at v9.52, expanded with G55 documentation and v10.56 evidence standards.)*

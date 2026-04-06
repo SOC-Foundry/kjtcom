@@ -1,0 +1,56 @@
+{
+  "boards": [
+    {
+      "id": "frontend",
+      "label": "Frontend board",
+      "color": "#0D9488",
+      "components": [
+        {"id": "query_editor", "label": "query_editor", "status": "active", "detail": "NoSQL parser, syntax highlighting"},
+        {"id": "results_table", "label": "results_table", "status": "active", "detail": "Paginated grid, 20/50/100"},
+        {"id": "detail_panel", "label": "detail_panel", "status": "active", "detail": "Entity inspector, t_any_* cards"},
+        {"id": "map_tab", "label": "map_tab", "status": "active", "detail": "OpenStreetMap, colored markers"},
+        {"id": "globe_tab", "label": "globe_tab", "status": "active", "detail": "Continent cards, country grid"},
+        {"id": "iao_tab", "label": "iao_tab", "status": "active", "detail": "Trident SVG, 10 pillars"},
+        {"id": "mw_tab", "label": "mw_tab", "status": "active", "detail": "33 middleware components"},
+        {"id": "schema_tab", "label": "schema_tab", "status": "active", "detail": "22 Thompson Indicator Fields"}
+      ]
+    },
+    {
+      "id": "middleware",
+      "label": "Middleware board",
+      "color": "#8B5CF6",
+      "components": [
+        {"id": "intent_router", "label": "intent_router", "status": "active", "detail": "3-route Gemini Flash"},
+        {"id": "rag_pipeline", "label": "rag_pipeline", "status": "active", "detail": "1,819 ChromaDB chunks"},
+        {"id": "evaluator", "label": "evaluator", "status": "degraded", "detail": "Qwen 528-line harness, G55"},
+        {"id": "telegram_bot", "label": "telegram_bot", "status": "active", "detail": "systemd, session memory"},
+        {"id": "artifact_gen", "label": "artifact_gen", "status": "active", "detail": "4-doc artifact loop"},
+        {"id": "post_flight", "label": "post_flight", "status": "active", "detail": "14 validation checks"},
+        {"id": "gotcha_archive", "label": "gotcha_archive", "status": "active", "detail": "18+ resolved, G1-G55"},
+        {"id": "agent_scores", "label": "agent_scores", "status": "degraded", "detail": "5-dim scoring, append-only"}
+      ]
+    },
+    {
+      "id": "backend",
+      "label": "Backend board",
+      "color": "#3B82F6",
+      "components": [
+        {"id": "calgold", "label": "calgold", "status": "active", "detail": "899 entities", "color": "#DA7E12"},
+        {"id": "ricksteves", "label": "ricksteves", "status": "active", "detail": "4,182 entities", "color": "#3B82F6"},
+        {"id": "tripledb", "label": "tripledb", "status": "active", "detail": "1,100 entities", "color": "#DD3333"},
+        {"id": "bourdain", "label": "bourdain", "status": "degraded", "detail": "96 staging entities", "color": "#8B5CF6"},
+        {"id": "qwen_9b", "label": "qwen_9b", "status": "degraded", "detail": "Evaluator LLM, 256K ctx"},
+        {"id": "nemotron_4b", "label": "nemotron_4b", "status": "active", "detail": "Code review, 4K ctx"},
+        {"id": "chromadb", "label": "chromadb", "status": "active", "detail": "Vector store, nomic-embed"},
+        {"id": "firebase_mcp", "label": "firebase_mcp", "status": "active", "detail": "G53 recurring reauth"}
+      ]
+    }
+  ],
+  "connectors": [
+    {"from": "frontend", "to": "middleware", "label": "Riverpod state", "color": "#0D9488"},
+    {"from": "frontend", "to": "middleware", "label": "Firestore stream", "color": "#0D9488"},
+    {"from": "middleware", "to": "backend", "label": "Ollama API", "color": "#8B5CF6"},
+    {"from": "middleware", "to": "backend", "label": "Firebase Admin SDK", "color": "#3B82F6"},
+    {"from": "middleware", "to": "backend", "label": "ChromaDB embed", "color": "#8B5CF6"}
+  ]
+}

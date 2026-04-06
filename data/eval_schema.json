@@ -18,7 +18,7 @@
         "properties": {
           "id": {"type": "string", "pattern": "^W[0-9]+$"},
           "name": {"type": "string", "minLength": 5},
-          "priority": {"type": "string", "enum": ["P1", "P2", "P3"]},
+          "priority": {"type": "string", "enum": ["P0", "P1", "P2", "P3"]},
           "outcome": {"type": "string", "enum": ["complete", "partial", "failed", "deferred"]},
           "evidence": {"type": "string", "minLength": 10},
           "agents": {"type": "array", "items": {"type": "string"}},
