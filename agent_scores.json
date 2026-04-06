@@ -1136,5 +1136,156 @@
         "notes": "Web build passed but need build time and asset size metrics from event log"
       }
     ]
+  },
+  {
+    "iteration": "v9.49",
+    "workstreams": [
+      {
+        "id": "W1",
+        "name": "Qwen schema-validated harness",
+        "priority": "P1",
+        "outcome": "complete",
+        "evidence": "scripts/data/eval_schema.json exists (48 lines); event log shows 5 successes with 0 errors.",
+        "agents": [
+          "Qwen"
+        ],
+        "llms": [
+          "Qwen"
+        ],
+        "mcps": [
+          "Firebase",
+          "Context7",
+          "Firecrawl",
+          "Playwright",
+          "Dart",
+          "-"
+        ],
+        "score": 8,
+        "improvements": [
+          "Consider pre-generating schema templates before LLM call to reduce token usage on error recovery.",
+          "Add explicit validation for array MCPS presence rather than assuming array completeness."
+        ]
+      },
+      {
+        "id": "W2",
+        "name": "Fix execution order (build log paradox)",
+        "priority": "P1",
+        "outcome": "complete",
+        "evidence": "scripts/run_evaluator.py (455 lines) exists; post-flight PASS confirms no build log dependency violation.",
+        "agents": [
+          "Qwen"
+        ],
+        "llms": [
+          "Qwen"
+        ],
+        "mcps": [
+          "Firebase",
+          "Context7",
+          "Firecrawl",
+          "Playwright",
+          "Dart",
+          "-"
+        ],
+        "score": 8,
+        "improvements": [
+          "Document execution order in README with a step-by-step flowchart to reduce onboarding friction.",
+          "Add unit tests for run_evaluator.py to assert independence from build log presence."
+        ]
+      },
+      {
+        "id": "W3",
+        "name": "Middleware tab in Flutter app",
+        "priority": "P1",
+        "outcome": "complete",
+        "evidence": "app/lib/widgets/mw_tab.dart exists (558 lines); post-flight PASS confirms widget integration.",
+        "agents": [
+          "Qwen"
+        ],
+        "llms": [
+          "Qwen"
+        ],
+        "mcps": [
+          "Firebase",
+          "Context7",
+          "Firecrawl",
+          "Playwright",
+          "Dart",
+          "-"
+        ],
+        "score": 7,
+        "improvements": [
+          "Add linting rules to mw_tab.dart to enforce consistent widget structure.",
+          "Include unit tests for middleware tab state transitions to catch UI regressions."
+        ]
+      },
+      {
+        "id": "W4",
+        "name": "README overhaul (3-iteration cadence)",
+        "priority": "P1",
+        "outcome": "deferred",
+        "evidence": "No README file found in execution context; docs/kjtcom-changelog.md references README but file not in key file existence list.",
+        "agents": [
+          "Qwen"
+        ],
+        "llms": [
+          "Qwen"
+        ],
+        "mcps": [
+          "Firebase",
+          "Context7",
+          "Firecrawl",
+          "Playwright",
+          "Dart",
+          "-"
+        ],
+        "score": 4,
+        "improvements": [
+          "Schedule README update task explicitly in next iteration to avoid missing cadence checkpoints.",
+          "Implement automated README diff check to catch stale documentation in CI pipeline."
+        ]
+      },
+      {
+        "id": "W5",
+        "name": "Post-flight + living docs",
+        "priority": "P1",
+        "outcome": "complete",
+        "evidence": "Post-flight PASS (3x); docs/kjtcom-changelog.md (544 lines) updated with NEW: resolved v9.49 events.",
+        "agents": [
+          "Qwen"
+        ],
+        "llms": [
+          "Qwen"
+        ],
+        "mcps": [
+          "Firebase",
+          "Context7",
+          "Firecrawl",
+          "Playwright",
+          "Dart",
+          "-"
+        ],
+        "score": 8,
+        "improvements": [
+          "Automate changelog generation to reduce manual entry errors.",
+          "Add cross-references between changelog entries and specific file paths to ensure traceability."
+        ]
+      }
+    ],
+    "trident": {
+      "cost": "1,200 tokens (estimated from 5 successful LLM calls)",
+      "delivery": "4/5 workstreams complete",
+      "performance": "0 errors in event log; post-flight passed all 3 verification cycles"
+    },
+    "what_could_be_better": [
+      "README file missing from execution context suggests W4 was deferred; prioritize scheduling for next iteration.",
+      "W1 harness could benefit from adding pre-call schema templates to reduce retry token overhead.",
+      "W3 middleware tab lacks unit tests; adding state transition tests would improve reliability."
+    ],
+    "evaluator_tokens": {
+      "prompt_tokens": 2399,
+      "eval_tokens": 1193,
+      "total_tokens": 3592
+    },
+    "date": "2026-04-05"
   }
 ]

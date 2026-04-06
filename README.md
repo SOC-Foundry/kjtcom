@@ -14,7 +14,7 @@ kjtcom extracts entities from YouTube playlists - landmarks, trails, restaurants
 
 The same normalization patterns power production SIEM migrations at [TachTech Engineering](https://tachtech.net). Built entirely by LLM agents using IAO (Iterative Agentic Orchestration) - a methodology distilled from 46+ iterations across 10 phases on [TripleDB](https://github.com/TachTech-Engineering/tripledb).
 
-**[kylejeromethompson.com](https://kylejeromethompson.com)** | **Phase 9 v9.46** | **Status: Phase 9 App Optimization - Final Iterations**
+**[kylejeromethompson.com](https://kylejeromethompson.com)** | **Phase 9 v9.49** | **Status: Phase 9 App Optimization - Final Iterations**
 
 ---
 
@@ -29,7 +29,7 @@ The same normalization patterns power production SIEM migrations at [TachTech En
 - **Map tab** - OpenStreetMap with pipeline-colored entity markers, click to open detail panel
 - **Globe tab** - Stats dashboard with continent cards + country grid, click to filter results
 - **IAO tab** - Methodology showcase with trident graphic and 10 pillar cards
-- **Gotcha tab** - Full gotcha registry (G1-G57) with status badges, filter toggle (All/Active/Resolved)
+- **MW tab** - Middleware showcase: component registry from middleware_registry.json, resolved gotchas from gotcha_archive.json, agent roster, 7-phase pipeline overview
 - **Schema tab** - 22 Thompson Indicator Fields with query builder - click any field to add it to the query editor
 - **Inline autocomplete** - Panther-style suggestions rendered below the query text for field names (type `t_any_`) and values (type inside quotes)
 - **Clear button** - Clear query, results, and selected entity with one click
@@ -42,7 +42,7 @@ The same normalization patterns power production SIEM migrations at [TachTech En
 
 **[Interactive Architecture Diagram](https://kylejeromethompson.com/architecture.html)** | **[3D IAO Visualization](https://kylejeromethompson.com/claw3d.html)** | [Mermaid Source](docs/kjtcom-architecture.mmd)
 
-Current state: v9.47 - 3 pipelines, 5 MCP servers, 4 local LLMs, RAG middleware, dual retrieval (Firestore + ChromaDB) via Gemini Flash 3-route intent router, Telegram bot (@kjtcom_iao_bot) with session memory and rating-aware queries, systemd service management, P3 event logging, post-flight verification, artifact automation with computed Trident values, Qwen evaluator harness for skeptical assessment.
+Current state: v9.49 - 3 pipelines, 5 MCP servers, 4 local LLMs, RAG middleware, dual retrieval (Firestore + ChromaDB) via Gemini Flash 3-route intent router, Telegram bot (@kjtcom_iao_bot) with session memory and rating-aware queries, systemd service management, P3 event logging, post-flight verification, artifact automation with computed Trident values, schema-validated Qwen evaluator harness (eval_schema.json + retry-with-feedback loop, v9.49).
 
 ### Pipeline Flow
 
@@ -312,7 +312,7 @@ graph BT
 | 6 | Flutter App | DONE | v6.15-v6.20 |
 | 7 | Firestore Load | DONE | v7.21 |
 | 8 | Enrichment Hardening | DONE | v8.22-v8.26 |
-| 9 | App Optimization | IN PROGRESS | v9.27-v9.46 |
+| 9 | App Optimization | IN PROGRESS | v9.27-v9.49 |
 | 10 | Bourdain Pipeline + IaC | Pending | - |
 
 ---
@@ -395,17 +395,43 @@ Features: session memory (10-min context window), rating-aware queries ("top 3 h
 
 The middleware layer is the portable IAO infrastructure that stamps onto new projects. See [middleware_registry.json](data/middleware_registry.json) for the full component catalog.
 
-Key components: evaluator harness (docs/evaluator-harness.md), intent router, Firestore query module, artifact generator, gotcha archive (18 resolved patterns), event logging, bot framework, RAG pipeline.
+Key components: evaluator harness (docs/evaluator-harness.md) with schema-validated output (data/eval_schema.json), intent router, Firestore query module, artifact generator, gotcha archive (18+ resolved patterns), event logging, bot framework, RAG pipeline, MW tab (app/lib/widgets/mw_tab.dart).
 
 ---
 
 ## Phase 10 Roadmap
 
-Phase 10 brings the Bourdain pipeline (114 videos from Parts Unknown), IaC packaging for GCP, and middleware stamp validation on a new project. Bourdain dry run is 2-3 iterations into Phase 10.
+Phase 10 brings the Bourdain pipeline (114 videos from Parts Unknown), IaC packaging for GCP, and middleware stamp validation on a new project. Bourdain dry run is 2-3 iterations into Phase 10. Qwen harness must be reliable (schema-validated) before Phase 10 begins. Target: ~v10.51+.
 
 ---
 
 ## Changelog
+
+**v9.49 (Phase 9 - Schema-Validated Qwen Harness + MW Tab + Execution Order Fix)**
+- NEW: data/eval_schema.json - strict JSON schema for Qwen evaluation output (score max 9, MCP enum, outcome enum, improvements minItems 2)
+- NEW: app/lib/widgets/mw_tab.dart - Middleware tab replacing Gotcha tab: component registry, resolved gotchas, agent roster, pipeline phases
+- UPDATED: scripts/run_evaluator.py - schema validation + retry-with-feedback loop (max 3 attempts), no longer reads build log for current iteration
+- UPDATED: scripts/generate_artifacts.py - consumes schema-validated JSON, uses trident + what_could_be_better from evaluation
+- UPDATED: docs/evaluator-harness.md - schema enforcement section, validation rules reference
+- UPDATED: README.md - full 3-iteration overhaul (v9.49 cadence), MW tab docs, Phase 10 timeline
+- FIXED: Build log paradox - evaluator no longer tries to read current iteration's build log (which doesn't exist yet)
+- Multi-agent: Claude Code (Opus 4.6, primary) + Qwen3.5-9B (schema-validated evaluator) + Gemini Flash (routing)
+- Kyle interventions: 0
+
+**v9.48 (Phase 9 - Workstream Validation + Structural Enforcement)**
+- UPDATED: scripts/run_evaluator.py - structural enforcement validates workstream count and names against design doc
+- UPDATED: scripts/generate_artifacts.py - computed Trident values from event log, cross-check workstream outcomes
+- UPDATED: data/middleware_registry.json - script version bumps
+- Multi-agent: Claude Code + Qwen3.5-9B + Gemini Flash
+- Kyle interventions: 0
+
+**v9.47 (Phase 9 - Gemini-Led Iteration + Pipeline Review)**
+- First Gemini CLI-led iteration: validated agent-agnostic harness design
+- NEW: docs/pipeline-review-v9.47.md - 7-phase pipeline audit with per-phase status
+- UPDATED: GEMINI.md - comprehensive harness for Gemini CLI execution
+- UPDATED: architecture.mmd + architecture.html rebuilt
+- Multi-agent: Gemini CLI (primary) + Qwen3.5-9B + Gemini Flash
+- Kyle interventions: 0
 
 **v9.46 (Phase 9 - Qwen Evaluator Harness + README Overhaul + Phase 9 Audit)**
 - NEW: docs/evaluator-harness.md - permanent Qwen personality file enforcing skeptical, evidence-based scoring (max 9/10, banned phrases, "What Could Be Better" mandatory)
@@ -556,7 +582,7 @@ Phase 10 brings the Bourdain pipeline (114 videos from Parts Unknown), IaC packa
 - Claude Code interventions: 0
 
 **v9.28 (Phase 9 - App Optimization: Gotcha Tab + Schema Builder + JSON Copy)**
-- 6 tabs: Results | Map | Globe | IAO | Gotcha | Schema
+- 6 tabs: Results | Map | Globe | IAO | Gotcha (now MW in v9.49) | Schema
 - Gotcha tab with 25 documented failure patterns, status badges, filter toggle
 - Schema tab with 22 Thompson Indicator Fields and click-to-query builder
 - Copy JSON button on entity detail panel with SnackBar confirmation

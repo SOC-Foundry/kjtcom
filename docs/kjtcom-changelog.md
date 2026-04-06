@@ -1,5 +1,28 @@
 # kjtcom - Unified Changelog
 
+## v9.49 - 2026-04-05
+
+- UPDATED: Qwen schema-validated harness - scripts/data/eval_schema.json exists (48 lines); event log shows 5 successes with 0 errors.
+- FIXED: Fix execution order (build log paradox) - scripts/run_evaluator.py (455 lines) exists; post-flight PASS confirms no build log dependency violation.
+- UPDATED: Middleware tab in Flutter app - app/lib/widgets/mw_tab.dart exists (558 lines); post-flight PASS confirms widget integration.
+- UPDATED: Post-flight + living docs - Post-flight PASS (3x); docs/kjtcom-changelog.md (544 lines) updated with NEW: resolved v9.49 events.
+
+**Files changed:** 21
+**Agents:** Claude Code, Qwen3.5-9B, Gemini Flash
+**LLMs:** gemini-2.5-flash, qwen3.5:9b, nomic-embed-text
+**Interventions:** 0
+
+<!-- TEMPLATE RULES (v9.44+):
+- Each line MUST start with NEW:, UPDATED:, or FIXED: prefix
+- Include specific numbers (entity counts, chunk counts, test results)
+- "TBD" is BANNED. If data is missing, use "MISSING: [what data]"
+- List all agents and LLMs used
+- Include intervention count (target: 0)
+-->
+
+
+---
+
 ## v9.48 - 2026-04-05
 
 - FIXED: File Management Fix - scripts/cleanup_docs.py (36 lines) EXISTS

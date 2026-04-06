@@ -119,13 +119,20 @@ def get_event_log_summary(iteration):
 
 
 def get_agent_scores(iteration):
-    """Load agent_scores.json entry for this iteration."""
+    """Load agent_scores.json entry for this iteration.
+
+    v9.49+: supports both old format (list of entries with 'workstreams' key)
+    and new schema-validated format (entry IS the evaluation object).
+    """
     try:
         with open(SCORES_PATH) as f:
             scores = json.load(f)
-        for entry in scores:
-            if entry.get('iteration') == iteration:
-                return entry
+        if isinstance(scores, list):
+            for entry in scores:
+                if entry.get('iteration') == iteration:
+                    return entry
+        elif isinstance(scores, dict) and scores.get('iteration') == iteration:
+            return scores
     except (FileNotFoundError, json.JSONDecodeError):
         pass
     return None
@@ -286,6 +293,21 @@ def generate_report(iteration):
 
     agent_utilization = "Gemini CLI (primary executor), Qwen3.5-9B (evaluator), Gemini Flash (intent routing, synthesis)" if iteration == "v9.47" else "Claude Code (primary executor), Qwen3.5-9B (evaluator), Gemini Flash (intent routing, synthesis)"
 
+    # v9.49+: use schema-validated what_could_be_better if available
+    wcbb = ""
+    if scores_entry and 'what_could_be_better' in scores_entry:
+        wcbb_items = scores_entry['what_could_be_better']
+        wcbb = "\n".join(f"{i+1}. {item}" for i, item in enumerate(wcbb_items))
+    else:
+        wcbb = "1. Persistent session storage (Redis/Firestore) for bot context\n2. Composite Firestore index for rating sort + filter\n3. Bourdain pipeline onboarding"
+
+    # v9.49+: use schema-validated trident if available
+    if scores_entry and 'trident' in scores_entry:
+        t = scores_entry['trident']
+        trident['cost_result'] = t.get('cost', trident['cost_result'])
+        trident['delivery_result'] = t.get('delivery', trident['delivery_result'])
+        trident['performance_result'] = t.get('performance', trident['performance_result'])
+
     filled = template.format(
         iteration=iteration,
         iteration_number=iter_num,
@@ -294,14 +316,14 @@ def generate_report(iteration):
         workstream_rows=workstream_rows,
         cost_target="<50K Claude tokens, Gemini free tier",
         cost_result=trident['cost_result'],
-        delivery_target="4 workstreams complete",
+        delivery_target="5 workstreams complete",
         delivery_result=trident['delivery_result'],
-        performance_target="/ask returns real Firestore counts with session memory",
+        performance_target="Schema-validated Qwen eval on first/second attempt",
         performance_result=trident['performance_result'],
         agent_utilization=agent_utilization,
         event_log_summary=event_summary,
-        gotcha_summary="G34: Active - post-filter workaround\nG47: Open\nG53: Recurring",
-        next_candidates="1. Persistent session storage (Redis/Firestore) for bot context\n2. Composite Firestore index for rating sort + filter\n3. Bourdain pipeline onboarding"
+        gotcha_summary="G34: Active - post-filter workaround\nG47: Open\nG53: Recurring\nG54: Transitive deps",
+        next_candidates=wcbb
     )
 
     out_path = os.path.join(DRAFTS_DIR, f'kjtcom-report-{iteration}.md')

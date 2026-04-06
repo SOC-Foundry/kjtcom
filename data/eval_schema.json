@@ -1,0 +1,48 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "required": ["iteration", "workstreams", "trident", "what_could_be_better"],
+  "properties": {
+    "iteration": {"type": "string", "pattern": "^v[0-9]+\\.[0-9]+$"},
+    "workstreams": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "priority", "outcome", "evidence", "agents", "llms", "mcps", "score", "improvements"],
+        "properties": {
+          "id": {"type": "string", "pattern": "^W[0-9]+$"},
+          "name": {"type": "string", "minLength": 5},
+          "priority": {"type": "string", "enum": ["P1", "P2", "P3"]},
+          "outcome": {"type": "string", "enum": ["complete", "partial", "failed", "deferred"]},
+          "evidence": {"type": "string", "minLength": 10},
+          "agents": {"type": "array", "items": {"type": "string"}},
+          "llms": {"type": "array", "items": {"type": "string"}},
+          "mcps": {
+            "type": "array",
+            "items": {"type": "string", "enum": ["Firebase", "Context7", "Firecrawl", "Playwright", "Dart", "-"]}
+          },
+          "score": {"type": "integer", "minimum": 0, "maximum": 9},
+          "improvements": {
+            "type": "array",
+            "items": {"type": "string"},
+            "minItems": 2
+          }
+        }
+      }
+    },
+    "trident": {
+      "type": "object",
+      "required": ["cost", "delivery", "performance"],
+      "properties": {
+        "cost": {"type": "string", "minLength": 5},
+        "delivery": {"type": "string", "pattern": "^[0-9]+/[0-9]+ workstreams"},
+        "performance": {"type": "string", "minLength": 10}
+      }
+    },
+    "what_could_be_better": {
+      "type": "array",
+      "items": {"type": "string"},
+      "minItems": 3
+    }
+  }
+}

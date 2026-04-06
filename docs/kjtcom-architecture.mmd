@@ -1,5 +1,5 @@
 %% kjtcom Architecture - Living Document
-%% Updated: v9.47 - Qwen Harness Refinement + Claw3D Deploy + Pipeline Review
+%% Updated: v9.49 - Schema-Validated Qwen Harness + MW Tab + Execution Order Fix
 %% Maintainer: Update every iteration that changes architecture
 
 graph TB
@@ -15,7 +15,7 @@ graph TB
         MAP["Map Tab<br/>OpenStreetMap"]
         GLOBE["Globe Tab<br/>Stats Dashboard"]
         IAO_TAB["IAO Tab<br/>Methodology"]
-        GOTCHA_TAB["Gotcha Tab<br/>G1-G54"]
+        MW_TAB["MW Tab<br/>Middleware Showcase"]
         SCHEMA_TAB["Schema Tab<br/>22 t_any_* Fields"]
     end
 
@@ -71,10 +71,11 @@ graph TB
         MCP_DART["Dart MCP<br/>Code Analysis"]
     end
 
-    subgraph MIDDLEWARE["Middleware (v9.47+)"]
+    subgraph MIDDLEWARE["Middleware (v9.49+)"]
         RAG["RAG Pipeline<br/>ChromaDB + nomic-embed"]
         CHROMADB["ChromaDB<br/>data/chromadb/<br/>1,590 chunks"]
-        EVALUATOR["Agent Evaluator<br/>Qwen3.5-9B Scorer"]
+        EVAL_SCHEMA["Eval Schema<br/>data/eval_schema.json<br/>Strict JSON Schema"]
+        EVALUATOR["Agent Evaluator<br/>Qwen3.5-9B Scorer<br/>Schema-Validated v9.49"]
         REGISTRY["iteration_registry.json<br/>47 iterations"]
         SCORES["agent_scores.json<br/>Token Tracking"]
         LEADERBOARD["Leaderboard Generator"]
@@ -133,6 +134,7 @@ graph TB
     RAG --> NOMIC
     EVALUATOR --> QWEN
     EVALUATOR --> SCORES
+    EVAL_SCHEMA --> EVALUATOR
     LEADERBOARD --> SCORES
     REGISTRY --> RAG
     OPENCLAW --> LOCAL_LLMS
