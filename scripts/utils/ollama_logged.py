@@ -14,14 +14,18 @@ OLLAMA_URL = 'http://localhost:11434'
 
 
 def chat_logged(model, prompt, source_agent="unknown", stream=False,
-                options=None, think=None, evaluation=False):
+                options=None, think=None, evaluation=False, system_prompt=None):
     """Send a chat request to Ollama and log the event.
 
     Returns dict with keys: content, prompt_eval_count, eval_count, raw_response
     """
+    messages = []
+    if system_prompt:
+        messages.append({'role': 'system', 'content': system_prompt})
+    messages.append({'role': 'user', 'content': prompt})
     payload = {
         'model': model,
-        'messages': [{'role': 'user', 'content': prompt}],
+        'messages': messages,
     }
     if stream:
         payload['stream'] = stream

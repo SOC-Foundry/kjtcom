@@ -12,6 +12,17 @@ from utils.ollama_config import merge_defaults
 
 OLLAMA_URL = 'http://localhost:11434/api/chat'
 SCORES_PATH = 'agent_scores.json'
+HARNESS_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'docs', 'evaluator-harness.md')
+
+
+def load_harness():
+    """Load evaluator harness as system prompt prefix."""
+    try:
+        with open(HARNESS_PATH) as f:
+            return f.read()
+    except FileNotFoundError:
+        print(f"WARNING: Evaluator harness not found at {HARNESS_PATH}")
+        return ""
 
 
 def run_evaluator(version, build_log_path, active_gotchas):
@@ -26,9 +37,15 @@ def run_evaluator(version, build_log_path, active_gotchas):
         .replace('{active_gotchas}', active_gotchas)
         .replace('{build_log_content}', build_log[:4000]))
 
+    harness = load_harness()
+    messages = []
+    if harness:
+        messages.append({'role': 'system', 'content': harness})
+    messages.append({'role': 'user', 'content': prompt})
+
     payload = merge_defaults({
         'model': 'qwen3.5:9b',
-        'messages': [{'role': 'user', 'content': prompt}],
+        'messages': messages,
     }, evaluation=True)
 
     start_time = time.time()
@@ -207,6 +224,8 @@ def run_workstream_evaluator(version, design_doc_path):
                 for g in recent[:5]
             )
 
+    harness = load_harness()
+
     prompt = f"""/no_think
 You are evaluating workstreams for kjtcom iteration {version}.
 
@@ -245,9 +264,14 @@ EXECUTION CONTEXT (ground truth):
 
 Return ONLY the JSON array, no explanation."""
 
+    ws_messages = []
+    if harness:
+        ws_messages.append({'role': 'system', 'content': harness})
+    ws_messages.append({'role': 'user', 'content': prompt})
+
     payload = merge_defaults({
         'model': 'qwen3.5:9b',
-        'messages': [{'role': 'user', 'content': prompt}],
+        'messages': ws_messages,
     }, evaluation=True)
 
     start_time = time.time()

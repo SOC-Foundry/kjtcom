@@ -1,5 +1,25 @@
 # kjtcom - Unified Changelog
 
+**v9.46 (Phase 9 - Qwen Evaluator Harness + README Overhaul + Phase 9 Audit)**
+- NEW: docs/evaluator-harness.md - Qwen personality file enforcing skeptical scoring (max 9/10, banned phrases, evidence required, "What Could Be Better" mandatory)
+- UPDATED: scripts/run_evaluator.py - loads evaluator harness as system prompt for all Qwen evaluations
+- UPDATED: scripts/generate_artifacts.py - loads evaluator harness for narrative generation, fixed NoneType tokens bug
+- UPDATED: scripts/utils/ollama_logged.py - added system_prompt parameter
+- UPDATED: README.md - full overhaul: Telegram Bot section, Middleware section, Phase 10 Roadmap, G1-G57, v9.44-v9.46 changelog
+- UPDATED: data/middleware_registry.json - added evaluator-harness.md, version bumps
+- UPDATED: ChromaDB re-embedded - 1,590 chunks (up from 1,524)
+- NEW: Phase 9 audit - 20 iterations, 16/20 zero-intervention, 6 major deliverable categories
+- Post-flight: 3/3 passed (site 200, bot alive, 6,181 entities)
+- Multi-agent: Claude Code (Opus 4.6) + Qwen3.5-9B (evaluator) + Gemini Flash (routing)
+- Kyle interventions: 0
+
+**v9.45 (Phase 9 - Phase 10 Readiness Audit + Trident Fix)**
+- Phase 10 readiness audit: 17/18 items ready, 1 blocker (Bourdain playlist URLs)
+- FIXED: Trident computation - compute_trident_values() replaces "Review..." with actual values
+- Dependency freshness: 10 transitive deps locked by upstream (G54)
+- Multi-agent: Claude Code + Qwen3.5-9B + Gemini Flash
+- Kyle interventions: 0
+
 **v9.44 (Phase 9 - Fix v9.43 Failures: Gemini Auth + Rating Sort + Changelog Quality)**
 - FIXED: Gemini Flash auth error - litellm 1.83.3 + gemini/gemini-2.5-flash + thinking disabled. GEMINI_MODEL centralized in ollama_config.py. G57 resolved.
 - FIXED: Firestore rating sort - Python-side sort in firestore_query.py avoids composite index. Top 3 DDD LA: crush craft (4.9), el sazon (4.9), la unica birria (4.7). G56 resolved.

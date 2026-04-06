@@ -24,6 +24,16 @@ DRAFTS_DIR = os.path.join(PROJECT_DIR, 'docs', 'drafts')
 DOCS_DIR = os.path.join(PROJECT_DIR, 'docs')
 EVENT_LOG = os.path.join(PROJECT_DIR, 'data', 'iao_event_log.jsonl')
 SCORES_PATH = os.path.join(PROJECT_DIR, 'agent_scores.json')
+HARNESS_PATH = os.path.join(PROJECT_DIR, 'docs', 'evaluator-harness.md')
+
+
+def load_harness():
+    """Load evaluator harness for skeptical artifact generation."""
+    try:
+        with open(HARNESS_PATH) as f:
+            return f.read()
+    except FileNotFoundError:
+        return ""
 
 
 def get_iteration():
@@ -125,6 +135,7 @@ def format_workstream_rows(scores_entry):
 
 def generate_narrative(iteration, context_text):
     """Use Qwen to generate narrative sections from structured context."""
+    harness = load_harness()
     prompt = (
         f"/no_think Write a concise build summary for kjtcom iteration {iteration}. "
         f"Include what was built, what worked, and any issues. "
@@ -134,7 +145,8 @@ def generate_narrative(iteration, context_text):
         model="qwen3.5:9b",
         prompt=prompt,
         source_agent="generate-artifacts",
-        evaluation=False
+        evaluation=False,
+        system_prompt=harness if harness else None
     )
     return result.get('content', 'Narrative generation failed.').strip()
 
@@ -191,7 +203,7 @@ def compute_trident_values(iteration, scores_entry):
                 ev = json.loads(line)
                 if ev.get('iteration') == iteration and ev.get('event_type') == 'llm_call':
                     llm_calls += 1
-                    tokens = ev.get('tokens', {})
+                    tokens = ev.get('tokens') or {}
                     total_tokens += tokens.get('total', 0)
     except FileNotFoundError:
         pass

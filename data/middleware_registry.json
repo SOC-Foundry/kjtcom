@@ -1,12 +1,13 @@
 {
   "metadata": {
-    "version": "v9.44",
+    "version": "v9.46",
     "updated": "2026-04-05",
     "description": "Middleware component catalog - the IP that stamps onto new projects"
   },
   "harnesses": [
-    {"name": "CLAUDE.md", "version": "v9.42", "type": "agent_instructions", "target": "claude-code"},
-    {"name": "GEMINI.md", "version": "v9.42", "type": "agent_instructions", "target": "gemini-cli"}
+    {"name": "CLAUDE.md", "version": "v9.46", "type": "agent_instructions", "target": "claude-code"},
+    {"name": "GEMINI.md", "version": "v9.46", "type": "agent_instructions", "target": "gemini-cli"},
+    {"name": "docs/evaluator-harness.md", "version": "v9.46", "type": "evaluator_personality", "target": "qwen3.5-9b", "description": "Skeptical assessment rules: max 9/10, evidence required, banned phrases, improvement mandate"}
   ],
   "scripts": [
     {
@@ -32,14 +33,14 @@
     },
     {
       "name": "scripts/generate_artifacts.py",
-      "version": "v9.44",
+      "version": "v9.46",
       "type": "automation",
       "description": "Draft artifact generator with --promote, --validate-only, cross-check, changelog quality (no TBD)",
       "dependencies": ["scripts/utils/ollama_config.py", "scripts/utils/iao_logger.py", "scripts/utils/ollama_logged.py"]
     },
     {
       "name": "scripts/run_evaluator.py",
-      "version": "v9.44",
+      "version": "v9.46",
       "type": "evaluation",
       "description": "Qwen workstream evaluator with execution context and gotcha archive query",
       "dependencies": ["scripts/utils/ollama_config.py", "scripts/utils/iao_logger.py"]

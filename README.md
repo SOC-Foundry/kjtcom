@@ -12,9 +12,9 @@
 
 kjtcom extracts entities from YouTube playlists - landmarks, trails, restaurants, destinations - and normalizes them into Thompson Indicator Fields (`t_any_*` universal indicator fields) modeled after [Panther SIEM's](https://docs.panther.com/search/panther-fields) `p_any_*` fields and [Elastic Common Schema](https://www.elastic.co/guide/en/ecs/current/index.html). Three live pipelines serve 6,181 geocoded entities through a unified Flutter Web frontend with a functional NoSQL query system, case-insensitive search, `contains` and `contains-any` operators, result counts, entity detail panel, and cross-dataset query at [kylejeromethompson.com](https://kylejeromethompson.com).
 
-The same normalization patterns power production SIEM migrations at [TachTech Engineering](https://tachtech.net). Built entirely by LLM agents using IAO (Iterative Agentic Orchestration) - a methodology distilled from 48+ production iterations on [TripleDB](https://github.com/TachTech-Engineering/tripledb).
+The same normalization patterns power production SIEM migrations at [TachTech Engineering](https://tachtech.net). Built entirely by LLM agents using IAO (Iterative Agentic Orchestration) - a methodology distilled from 46+ iterations across 10 phases on [TripleDB](https://github.com/TachTech-Engineering/tripledb).
 
-**[kylejeromethompson.com](https://kylejeromethompson.com)** | **Phase 9 v9.45** | **Status: Phase 9 App Optimization IN PROGRESS**
+**[kylejeromethompson.com](https://kylejeromethompson.com)** | **Phase 9 v9.46** | **Status: Phase 9 App Optimization - Final Iterations**
 
 ---
 
@@ -29,7 +29,7 @@ The same normalization patterns power production SIEM migrations at [TachTech En
 - **Map tab** - OpenStreetMap with pipeline-colored entity markers, click to open detail panel
 - **Globe tab** - Stats dashboard with continent cards + country grid, click to filter results
 - **IAO tab** - Methodology showcase with trident graphic and 10 pillar cards
-- **Gotcha tab** - Full gotcha registry (G1-G44) with status badges, filter toggle (All/Active/Resolved)
+- **Gotcha tab** - Full gotcha registry (G1-G57) with status badges, filter toggle (All/Active/Resolved)
 - **Schema tab** - 22 Thompson Indicator Fields with query builder - click any field to add it to the query editor
 - **Inline autocomplete** - Panther-style suggestions rendered below the query text for field names (type `t_any_`) and values (type inside quotes)
 - **Clear button** - Clear query, results, and selected entity with one click
@@ -42,7 +42,7 @@ The same normalization patterns power production SIEM migrations at [TachTech En
 
 **[Interactive Architecture Diagram](https://kylejeromethompson.com/architecture.html)** | [Mermaid Source](docs/kjtcom-architecture.mmd)
 
-Current state: v9.45 - 3 pipelines, 5 MCP servers, 4 local LLMs, RAG middleware, dual retrieval (Firestore + ChromaDB) via Gemini Flash intent router, Telegram bot with session memory and rating-aware queries, P3 event logging, post-flight verification, artifact automation with computed Trident values.
+Current state: v9.46 - 3 pipelines, 5 MCP servers, 4 local LLMs, RAG middleware, dual retrieval (Firestore + ChromaDB) via Gemini Flash 3-route intent router, Telegram bot (@kjtcom_iao_bot) with session memory and rating-aware queries, systemd service management, P3 event logging, post-flight verification, artifact automation with computed Trident values, Qwen evaluator harness for skeptical assessment.
 
 ### Pipeline Flow
 
@@ -228,7 +228,7 @@ locations
 
 ## IAO Methodology
 
-kjtcom is built using the Iterative Agentic Orchestration (IAO) methodology - a structured approach to running AI coding agents (Claude Code, Gemini CLI) against multi-phase data pipelines with zero-to-minimal human intervention. Distilled from 48+ production iterations on [TripleDB](https://github.com/TachTech-Engineering/tripledb).
+kjtcom is built using the Iterative Agentic Orchestration (IAO) methodology - a structured approach to running AI coding agents (Claude Code, Gemini CLI) against multi-phase data pipelines with zero-to-minimal human intervention. Distilled from 46+ iterations on [TripleDB](https://github.com/TachTech-Engineering/tripledb).
 
 IAO maps directly to the "harness engineering" pattern formalized by LangChain, Anthropic, and the broader agent ecosystem in 2026. The core principle: the model contains the intelligence; the harness makes it useful.
 
@@ -238,7 +238,7 @@ IAO maps directly to the "harness engineering" pattern formalized by LangChain, 
 |-----------|---------|----------------|
 | Agent Instructions | System prompt per agent | CLAUDE.md, GEMINI.md |
 | Pipeline Scripts | Tool definitions | phase1_acquire.py through phase7_load.py |
-| Gotcha Registry | Executable middleware (failure prevention) | G1-G44 documented patterns |
+| Gotcha Registry | Executable middleware (failure prevention) | G1-G57 documented patterns |
 | Checkpoint Files | State persistence across agent handoffs | .checkpoint_enrich.json, handoff JSON |
 | 4-Artifact Output | Trace analysis and improvement loop | build log, report, changelog, README |
 | Split-Agent Model | Cross-provider subagent delegation | Gemini CLI (phases 1-5) + Claude Code (phases 6-7) |
@@ -312,8 +312,8 @@ graph BT
 | 6 | Flutter App | DONE | v6.15-v6.20 |
 | 7 | Firestore Load | DONE | v7.21 |
 | 8 | Enrichment Hardening | DONE | v8.22-v8.26 |
-| 9 | App Optimization | IN PROGRESS | v9.27-v9.43 |
-| 10 | Retrospective + Template | Pending | - |
+| 9 | App Optimization | IN PROGRESS | v9.27-v9.46 |
+| 10 | Bourdain Pipeline + IaC | Pending | - |
 
 ---
 
@@ -378,7 +378,61 @@ OS:   CachyOS (Arch-based) / fish shell
 
 ---
 
+## Telegram Bot
+
+**[@kjtcom_iao_bot](https://t.me/kjtcom_iao_bot)** - Query 6,181 entities via Telegram:
+
+- `/ask [question]` - natural language queries routed to Firestore, ChromaDB, or web
+- `/status` - system health check
+- `/search [query]` - Brave Search web lookup
+- `/help` - command reference
+
+Features: session memory (10-min context window), rating-aware queries ("top 3 highest rated in LA"), 3-route intent classification via Gemini Flash, systemd managed with auto-restart.
+
+---
+
+## Middleware
+
+The middleware layer is the portable IAO infrastructure that stamps onto new projects. See [middleware_registry.json](data/middleware_registry.json) for the full component catalog.
+
+Key components: evaluator harness (docs/evaluator-harness.md), intent router, Firestore query module, artifact generator, gotcha archive (18 resolved patterns), event logging, bot framework, RAG pipeline.
+
+---
+
+## Phase 10 Roadmap
+
+Phase 10 brings the Bourdain pipeline (114 videos from Parts Unknown), IaC packaging for GCP, and middleware stamp validation on a new project. Bourdain dry run is 2-3 iterations into Phase 10.
+
+---
+
 ## Changelog
+
+**v9.46 (Phase 9 - Qwen Evaluator Harness + README Overhaul + Phase 9 Audit)**
+- NEW: docs/evaluator-harness.md - permanent Qwen personality file enforcing skeptical, evidence-based scoring (max 9/10, banned phrases, "What Could Be Better" mandatory)
+- UPDATED: scripts/run_evaluator.py - loads evaluator harness as system prompt for all Qwen evaluations
+- UPDATED: scripts/generate_artifacts.py - loads evaluator harness for skeptical artifact generation
+- UPDATED: scripts/utils/ollama_logged.py - system_prompt parameter support
+- UPDATED: README.md - full overhaul: Telegram Bot section, Middleware section, Phase 10 roadmap, G1-G57, v9.44-v9.46 changelog
+- UPDATED: data/middleware_registry.json - added evaluator-harness.md component
+- Phase 9 audit: 20 iterations (v9.27-v9.46), 6-tab Flutter app, 4-LLM orchestration, middleware layer
+- Multi-agent: Claude Code (primary) + Qwen3.5-9B (evaluator) + Gemini Flash (routing)
+- Kyle interventions: 0
+
+**v9.45 (Phase 9 - Phase 10 Readiness Audit + Trident Fix)**
+- Phase 10 readiness audit: 17/18 items ready, 1 blocker (Bourdain playlist URLs)
+- FIXED: Trident computation - compute_trident_values() replaces "Review..." with actual token counts and workstream ratios
+- Dependency freshness: 10 transitive deps locked by upstream (flutter_map, SDK) - not actionable (G54)
+- 18 resolved gotchas in archive, 6 active
+- Multi-agent: Claude Code + Qwen3.5-9B + Gemini Flash
+- Kyle interventions: 0
+
+**v9.44 (Phase 9 - Gemini Auth Fix + Rating Sort + Changelog Quality)**
+- FIXED: Gemini Flash auth - litellm 1.83.3, gemini/gemini-2.5-flash, GEMINI_MODEL constant (G57 resolved)
+- FIXED: Firestore rating sort - Python-side sort avoids composite index (G56 resolved)
+- UPDATED: Changelog template - NEW/UPDATED/FIXED prefixes, TBD banned, intervention count
+- UPDATED: ChromaDB re-embedded - 1,524 chunks
+- Multi-agent: Claude Code + Qwen3.5-9B + Gemini Flash
+- Kyle interventions: 0
 
 **v9.43 (Phase 9 - Bot Session Memory + Rating Queries + Post-Flight + Architecture HTML)**
 - Bot session memory: user_sessions dict keyed by Telegram user_id, 10-min TTL, "those 26" resolves to previous result set
