@@ -1,13 +1,13 @@
 {
   "metadata": {
-    "version": "v9.50",
+    "version": "v9.52",
     "updated": "2026-04-05",
     "description": "Middleware component catalog - the IP that stamps onto new projects"
   },
   "harnesses": [
-    {"name": "CLAUDE.md", "version": "v9.50", "type": "agent_instructions", "target": "claude-code"},
-    {"name": "GEMINI.md", "version": "v9.50", "type": "agent_instructions", "target": "gemini-cli"},
-    {"name": "docs/evaluator-harness.md", "version": "v9.50", "type": "evaluator_personality", "target": "qwen3.5-9b", "description": "Schema-validated assessment (v9.50): MCP constraints, agent attribution, plain-text summary mandate"}
+    {"name": "CLAUDE.md", "version": "v9.52", "type": "agent_instructions", "target": "claude-code"},
+    {"name": "GEMINI.md", "version": "v9.52", "type": "agent_instructions", "target": "gemini-cli"},
+    {"name": "docs/evaluator-harness.md", "version": "v9.52", "type": "evaluator_personality", "target": "qwen3.5-9b", "description": "Comprehensive operating manual (v9.52): 400+ lines, ADR, failure patterns, score calibration"}
   ],
   "scripts": [
     {

@@ -3,46 +3,75 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Claw3D - IAO Workspace Visualization</title>
+    <title>Claw3D - IAO Solar System Visualization</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { background: #0D1117; overflow: hidden; font-family: 'Segoe UI', sans-serif; }
-        #info {
-            position: absolute; top: 16px; left: 16px; z-index: 10;
-            color: #4ADE80; font-size: 14px;
+        body { background: #0D1117; overflow: hidden; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        #ui-container {
+            position: absolute; top: 16px; left: 16px; z-index: 100;
+            color: #4ADE80; pointer-events: none;
         }
-        #info h1 { font-size: 20px; margin-bottom: 4px; }
-        #info p { color: #8B949E; font-size: 12px; }
+        #ui-container * { pointer-events: auto; }
+        h1 { font-size: 22px; margin-bottom: 4px; text-shadow: 0 0 10px rgba(74, 222, 128, 0.5); }
+        .subtitle { color: #8B949E; font-size: 13px; margin-bottom: 16px; }
+        .controls { display: flex; align-items: center; gap: 12px; background: rgba(22, 27, 34, 0.8); padding: 8px 12px; border-radius: 8px; border: 1px solid #30363D; }
+        label { font-size: 14px; color: #C9D1D9; }
+        select { background: #21262D; color: #C9D1D9; border: 1px solid #30363D; padding: 4px 8px; border-radius: 4px; outline: none; cursor: pointer; }
         #legend {
-            position: absolute; bottom: 16px; left: 16px; z-index: 10;
-            color: #C9D1D9; font-size: 11px; line-height: 1.8;
+            position: absolute; bottom: 16px; left: 16px; z-index: 100;
+            color: #C9D1D9; font-size: 11px; line-height: 1.6;
+            background: rgba(22, 27, 34, 0.8); padding: 12px; border-radius: 8px; border: 1px solid #30363D;
         }
-        .legend-item { display: flex; align-items: center; gap: 8px; }
-        .legend-dot {
-            width: 10px; height: 10px; border-radius: 50%; display: inline-block;
-        }
+        .legend-item { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+        .legend-dot { width: 10px; height: 10px; border-radius: 50%; }
         #tooltip {
-            position: absolute; display: none; z-index: 20;
+            position: absolute; display: none; z-index: 1000;
             background: rgba(22, 27, 34, 0.95); border: 1px solid #4ADE80;
-            color: #C9D1D9; padding: 8px 12px; border-radius: 6px;
-            font-size: 12px; pointer-events: none;
+            color: #C9D1D9; padding: 10px 14px; border-radius: 6px;
+            font-size: 12px; pointer-events: none; box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+        }
+        .loading {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #0D1117; display: flex; justify-content: center;
+            align-items: center; color: #4ADE80; font-size: 24px; z-index: 9999;
         }
     </style>
 </head>
 <body>
-    <div id="info">
-        <h1>Claw3D - IAO Workspace</h1>
-        <p>kjtcom v9.50 | Drag to orbit, scroll to zoom</p>
+    <div id="loading" class="loading">Sychronizing Solar System...</div>
+    <div id="ui-container">
+        <h1>Claw3D - IAO Solar System</h1>
+        <p class="subtitle">kjtcom v9.52 | Iterative Agentic Orchestration</p>
+        <div class="controls">
+            <label for="iteration-select">Iteration:</label>
+            <select id="iteration-select">
+                <option value="v9.52">v9.52 (Current)</option>
+                <option value="v9.51">v9.51</option>
+                <option value="v9.50">v9.50</option>
+                <option value="v9.49">v9.49</option>
+                <option value="v9.48">v9.48</option>
+                <option value="v9.47">v9.47</option>
+                <option value="v9.46">v9.46</option>
+                <option value="v9.45">v9.45</option>
+                <option value="v9.44">v9.44</option>
+                <option value="v9.43">v9.43</option>
+                <option value="v9.42">v9.42</option>
+                <option value="v9.41">v9.41</option>
+            </select>
+        </div>
     </div>
+
     <div id="legend">
-        <div class="legend-item"><span class="legend-dot" style="background:#0D9488"></span> Claude Code (Opus 4.6)</div>
-        <div class="legend-item"><span class="legend-dot" style="background:#A78BFA"></span> Qwen3.5-9B</div>
-        <div class="legend-item"><span class="legend-dot" style="background:#4285F4"></span> Gemini CLI</div>
-        <div class="legend-item"><span class="legend-dot" style="background:#22D3EE"></span> Middleware</div>
-        <div class="legend-item"><span class="legend-dot" style="background:#14B8A6"></span> Data Stores</div>
-        <div class="legend-item"><span class="legend-dot" style="background:#3B82F6"></span> Infrastructure</div>
-        <div class="legend-item"><span class="legend-dot" style="background:#22C55E"></span> Frontend</div>
+        <div class="legend-item"><span class="legend-dot" style="background:#A78BFA"></span> Sun (Qwen Evaluator)</div>
+        <div class="legend-item"><span class="legend-dot" style="background:#F59E0B"></span> Inner (Nemotron, GLM)</div>
+        <div class="legend-item"><span class="legend-dot" style="background:#4ADE80"></span> Inner (Claude, Gemini)</div>
+        <div class="legend-item"><span class="legend-dot" style="background:#EC4899"></span> Asteroid Belt (MCPs)</div>
+        <div class="legend-item"><span class="legend-dot" style="background:#22D3EE"></span> Jupiter (Middleware)</div>
+        <div class="legend-item"><span class="legend-dot" style="background:#22C55E"></span> Saturn (Frontend)</div>
+        <div class="legend-item"><span class="legend-dot" style="background:#F97316"></span> Uranus (Pipeline)</div>
+        <div class="legend-item"><span class="legend-dot" style="background:#EAB308"></span> Neptune (Backend/Data)</div>
     </div>
+
     <div id="tooltip"></div>
 
     <script type="importmap">
@@ -56,16 +85,32 @@
     <script type="module">
         import * as THREE from 'three';
         import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-        import { FontLoader } from 'three/addons/loaders/FontLoader.js';
-        import { TextGeometry } from 'three/addons/geometries/TextGeometry.js';
 
-        // Scene setup
+        // --- CONFIG & DATA ---
+        let iterationData = {};
+        let currentIteration = "v9.52";
+        const nodes = new Map();
+        const orbits = [];
+
+        // Colors
+        const COLORS = {
+            sun: 0xA78BFA,
+            agent_inner: [0xF59E0B, 0xF87171, 0x4ADE80, 0x4285F4],
+            mcp: 0xEC4899,
+            nomic: 0x14B8A6,
+            middleware: 0x22D3EE,
+            frontend: 0x22C55E,
+            pipeline: 0xF97316,
+            backend: 0xEAB308
+        };
+
+        // --- SCENE SETUP ---
         const scene = new THREE.Scene();
         scene.background = new THREE.Color(0x0D1117);
-        scene.fog = new THREE.FogExp2(0x0D1117, 0.015);
+        scene.fog = new THREE.FogExp2(0x0D1117, 0.01);
 
-        const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 200);
-        camera.position.set(0, 12, 25);
+        const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.set(0, 50, 100);
 
         const renderer = new THREE.WebGLRenderer({ antialias: true });
         renderer.setSize(window.innerWidth, window.innerHeight);
@@ -75,226 +120,279 @@
         const controls = new OrbitControls(camera, renderer.domElement);
         controls.enableDamping = true;
         controls.dampingFactor = 0.05;
-        controls.autoRotate = true;
-        controls.autoRotateSpeed = 0.5;
 
         // Lighting
-        const ambient = new THREE.AmbientLight(0x404040, 0.6);
+        const ambient = new THREE.AmbientLight(0xffffff, 0.2);
         scene.add(ambient);
-        const point1 = new THREE.PointLight(0x4ADE80, 1, 60);
-        point1.position.set(10, 15, 10);
-        scene.add(point1);
-        const point2 = new THREE.PointLight(0xA78BFA, 0.5, 60);
-        point2.position.set(-10, 10, -10);
-        scene.add(point2);
+        const sunLight = new THREE.PointLight(COLORS.sun, 2, 300);
+        scene.add(sunLight);
 
-        // Grid
-        const grid = new THREE.GridHelper(40, 40, 0x1a2332, 0x111820);
-        scene.add(grid);
+        // Starfield
+        const starGeo = new THREE.BufferGeometry();
+        const starPos = [];
+        for (let i = 0; i < 5000; i++) {
+            starPos.push((Math.random() - 0.5) * 1000, (Math.random() - 0.5) * 1000, (Math.random() - 0.5) * 1000);
+        }
+        starGeo.setAttribute('position', new THREE.Float32BufferAttribute(starPos, 3));
+        const starMat = new THREE.PointsMaterial({ color: 0xffffff, size: 0.5 });
+        const stars = new THREE.Points(starGeo, starMat);
+        scene.add(stars);
 
-        // Node definitions
-        const agents = [
-            { name: 'Claude Code\n(Opus 4.6)', color: 0x0D9488, pos: [0, 6, 0], size: 1.8, type: 'agent', status: 'active' }, // 0
-            { name: 'Qwen3.5-9B\nEvaluator', color: 0xA78BFA, pos: [-6, 4, 4], size: 1.4, type: 'agent', status: 'active' }, // 1
-            { name: 'Gemini CLI', color: 0x4285F4, pos: [6, 4, 4], size: 1.2, type: 'agent', status: 'active' }, // 2
-            { name: 'Nemotron\nMini 4B', color: 0xF59E0B, pos: [-8, 3, -3], size: 1.0, type: 'agent', status: 'active' }, // 3
-            { name: 'GLM-4.6V\nFlash-9B', color: 0xF87171, pos: [8, 3, -3], size: 1.0, type: 'agent', status: 'idle' }, // 4
-        ];
+        // --- NODE CREATION HELPER ---
+        function createSphereNode(id, name, color, size, parent = scene, distance = 0, speed = 0) {
+            const group = new THREE.Group();
+            parent.add(group);
 
-        const mcpServers = [
-            { name: 'Firebase MCP', color: 0xEC4899, pos: [-4, 1.2, -6], size: 0.6, type: 'mcp' }, // 5
-            { name: 'Context7 MCP', color: 0xEC4899, pos: [-1, 1.2, -7], size: 0.6, type: 'mcp' }, // 6
-            { name: 'Firecrawl MCP', color: 0xEC4899, pos: [2, 1.2, -6], size: 0.6, type: 'mcp' }, // 7
-            { name: 'Playwright MCP', color: 0xEC4899, pos: [5, 1.2, -7], size: 0.6, type: 'mcp' }, // 8
-            { name: 'Dart MCP', color: 0xEC4899, pos: [8, 1.2, -6], size: 0.6, type: 'mcp' }, // 9
-        ];
-
-        const middleware = [
-            { name: 'Intent Router', color: 0x22D3EE, pos: [11, 2, 0], size: 0.9, type: 'middleware' }, // 10
-            { name: 'Firestore Query', color: 0x22D3EE, pos: [13, 2, -2], size: 0.7, type: 'middleware' }, // 11
-            { name: 'Brave Search', color: 0x22D3EE, pos: [13, 2, 2], size: 0.7, type: 'middleware' }, // 12
-            { name: 'ChromaDB RAG', color: 0x22D3EE, pos: [-11, 2, 0], size: 0.8, type: 'middleware' }, // 13
-            { name: 'nomic-embed', color: 0x22D3EE, pos: [-13, 2, 2], size: 0.6, type: 'middleware' }, // 14
-            { name: 'Artifact Gen', color: 0x22D3EE, pos: [0, 2, 8], size: 0.7, type: 'middleware' }, // 15
-            { name: 'Post-Flight', color: 0x22D3EE, pos: [-2, 2, 8], size: 0.7, type: 'middleware' }, // 16
-            { name: 'Eval Harness', color: 0x22D3EE, pos: [-4, 2, 8], size: 0.7, type: 'middleware' }, // 17
-            { name: 'County Enrich', color: 0x22D3EE, pos: [2, 2, 8], size: 0.7, type: 'middleware' }, // 18
-        ];
-
-        const dataStores = [
-            { name: 'Cloud Firestore', color: 0x14B8A6, pos: [15, 0.5, -4], size: 1.2, type: 'data' }, // 19
-            { name: 'ChromaDB Local', color: 0x14B8A6, pos: [-15, 0.5, -2], size: 1.0, type: 'data' }, // 20
-            { name: 'Gotcha Archive', color: 0x14B8A6, pos: [-15, 0.5, 4], size: 0.6, type: 'data' }, // 21
-            { name: 'MW Registry', color: 0x14B8A6, pos: [-13, 0.5, 6], size: 0.6, type: 'data' }, // 22
-            { name: 'Eval Schema', color: 0x14B8A6, pos: [-8, 0.5, 8], size: 0.6, type: 'data' }, // 23
-            { name: 'Schema Ref', color: 0x14B8A6, pos: [15, 0.5, 2], size: 0.6, type: 'data' }, // 24
-        ];
-
-        const infrastructure = [
-            { name: 'Telegram Bot', color: 0x3B82F6, pos: [10, 4, 8], size: 0.8, type: 'infrastructure' }, // 25
-            { name: 'systemd Bot', color: 0x3B82F6, pos: [12, 4, 10], size: 0.6, type: 'infrastructure' }, // 26
-        ];
-
-        const frontend = [
-            { name: 'Flutter Web App', color: 0x22C55E, pos: [0, 0, 12], size: 1.5, type: 'frontend' }, // 27
-            { name: 'MW Tab', color: 0x22C55E, pos: [2, 0, 14], size: 0.8, type: 'frontend' }, // 28
-        ];
-
-        const allNodes = [...agents, ...mcpServers, ...middleware, ...dataStores, ...infrastructure, ...frontend];
-        const meshes = [];
-
-        // Create nodes
-        allNodes.forEach(node => {
-            let geometry;
-            if (node.type === 'mcp' || node.type === 'data') {
-                geometry = new THREE.BoxGeometry(node.size, node.size, node.size);
-            } else if (node.type === 'middleware' || node.type === 'infrastructure') {
-                geometry = new THREE.OctahedronGeometry(node.size, 0);
-            } else if (node.type === 'frontend') {
-                geometry = new THREE.TorusGeometry(node.size * 0.6, node.size * 0.2, 16, 100);
-            } else {
-                geometry = new THREE.SphereGeometry(node.size, 32, 32);
-            }
-
+            const geometry = new THREE.SphereGeometry(size, 32, 32);
             const material = new THREE.MeshPhongMaterial({
-                color: node.color,
-                emissive: node.color,
-                emissiveIntensity: node.status === 'active' ? 0.3 : 0.1,
+                color: color,
+                emissive: color,
+                emissiveIntensity: 0.4,
                 transparent: true,
-                opacity: node.status === 'idle' ? 0.5 : 0.9,
+                opacity: 0.9
             });
-
             const mesh = new THREE.Mesh(geometry, material);
-            mesh.position.set(...node.pos);
-            mesh.userData = node;
-            scene.add(mesh);
-            meshes.push(mesh);
+            mesh.position.x = distance;
+            group.add(mesh);
 
-            // Glow ring for active agents
-            if (node.type === 'agent' && node.status === 'active') {
-                const ringGeo = new THREE.RingGeometry(node.size + 0.3, node.size + 0.5, 32);
-                const ringMat = new THREE.MeshBasicMaterial({
-                    color: node.color, transparent: true, opacity: 0.3, side: THREE.DoubleSide
-                });
-                const ring = new THREE.Mesh(ringGeo, ringMat);
-                ring.position.set(...node.pos);
-                ring.rotation.x = Math.PI / 2;
-                scene.add(ring);
+            // Orbit line
+            if (distance > 0) {
+                const orbitGeo = new THREE.RingGeometry(distance - 0.1, distance + 0.1, 64);
+                const orbitMat = new THREE.MeshBasicMaterial({ color: 0x30363D, side: THREE.DoubleSide, transparent: true, opacity: 0.2 });
+                const orbit = new THREE.Mesh(orbitGeo, orbitMat);
+                orbit.rotation.x = Math.PI / 2;
+                parent.add(orbit);
             }
-        });
 
-        // Connections (edges)
-        const connections = [
-            // Claude connects to all MCPs
-            [0, 5], [0, 6], [0, 7], [0, 8], [0, 9],
-            // Agents to each other
-            [0, 1], [0, 2], [1, 2],
-            // Evaluator cycle
-            [1, 17], [17, 23], [15, 1],
-            // Bot flow
-            [25, 10], [10, 11], [10, 12], [10, 13],
-            [11, 19], [13, 20], [14, 13],
-            [26, 25],
-            // Frontend
-            [27, 28], [27, 19], [28, 22], [28, 21],
-            // Post-flight connections
-            [16, 27], [16, 25], [16, 15],
-            // Enrichment
-            [18, 19], [18, 24]
-        ];
+            const node = { id, name, group, mesh, material, distance, speed, angle: Math.random() * Math.PI * 2 };
+            nodes.set(id, node);
+            return node;
+        }
 
-        const lineMaterial = new THREE.LineBasicMaterial({
-            color: 0x2D3748, transparent: true, opacity: 0.4
-        });
+        function createCubeNode(id, name, color, size, parent = scene, distance = 0, speed = 0) {
+            const group = new THREE.Group();
+            parent.add(group);
 
-        connections.forEach(([from, to]) => {
-            const points = [
-                new THREE.Vector3(...allNodes[from].pos),
-                new THREE.Vector3(...allNodes[to].pos)
-            ];
-            const lineGeo = new THREE.BufferGeometry().setFromPoints(points);
-            const line = new THREE.Line(lineGeo, lineMaterial);
-            scene.add(line);
-        });
-
-        // Animated particles along connections
-        const particles = [];
-        const particleGeo = new THREE.SphereGeometry(0.08, 8, 8);
-
-        connections.forEach(([from, to]) => {
-            const particleMat = new THREE.MeshBasicMaterial({
-                color: allNodes[from].color, transparent: true, opacity: 0.8
+            const geometry = new THREE.BoxGeometry(size, size, size);
+            const material = new THREE.MeshPhongMaterial({
+                color: color,
+                emissive: color,
+                emissiveIntensity: 0.4,
+                transparent: true,
+                opacity: 0.9
             });
-            const particle = new THREE.Mesh(particleGeo, particleMat);
-            particle.userData = {
-                from: new THREE.Vector3(...allNodes[from].pos),
-                to: new THREE.Vector3(...allNodes[to].pos),
-                t: Math.random(),
-                speed: 0.003 + Math.random() * 0.005
-            };
-            scene.add(particle);
-            particles.push(particle);
+            const mesh = new THREE.Mesh(geometry, material);
+            mesh.position.x = distance;
+            group.add(mesh);
+
+            const node = { id, name, group, mesh, material, distance, speed, angle: Math.random() * Math.PI * 2 };
+            nodes.set(id, node);
+            return node;
+        }
+
+        // --- BUILD SYSTEM ---
+        
+        // SUN
+        createSphereNode('qwen', 'Qwen Evaluator', COLORS.sun, 5);
+
+        // INNER PLANETS
+        createSphereNode('nemotron', 'Nemotron Mini 4B', COLORS.agent_inner[0], 1.2, scene, 15, 0.02);
+        createSphereNode('glm', 'GLM-4.6V-Flash', COLORS.agent_inner[1], 1.4, scene, 22, 0.015);
+        createSphereNode('claude', 'Claude Code', COLORS.agent_inner[2], 2.2, scene, 30, 0.01);
+        createSphereNode('gemini', 'Gemini CLI', COLORS.agent_inner[3], 2.0, scene, 38, 0.008);
+
+        // ASTEROID BELT (MCPs)
+        const beltDistance = 48;
+        const mcps = [
+            {id: 'firebase_mcp', name: 'Firebase MCP'},
+            {id: 'context7_mcp', name: 'Context7 MCP'},
+            {id: 'firecrawl_mcp', name: 'Firecrawl MCP'},
+            {id: 'playwright_mcp', name: 'Playwright MCP'},
+            {id: 'dart_mcp', name: 'Dart MCP'},
+            {id: 'nomic_embed', name: 'nomic-embed-text'}
+        ];
+        mcps.forEach((m, i) => {
+            const angle = (i / mcps.length) * Math.PI * 2;
+            const node = createCubeNode(m.id, m.name, i === 5 ? COLORS.nomic : COLORS.mcp, 0.8, scene, beltDistance, 0.005);
+            node.angle = angle;
         });
 
-        // Tooltip/hover
+        // GAS GIANTS
+        const middleware = createSphereNode('middleware', 'Jupiter (Middleware)', COLORS.middleware, 6, scene, 65, 0.004);
+        const frontend = createSphereNode('frontend', 'Saturn (Frontend)', COLORS.frontend, 5.5, scene, 85, 0.003);
+        const pipeline = createSphereNode('pipeline', 'Uranus (Pipeline)', COLORS.pipeline, 4.5, scene, 105, 0.002);
+        const backend = createSphereNode('backend', 'Neptune (Backend/Data)', COLORS.backend, 4.2, scene, 125, 0.0015);
+
+        // Saturn Rings
+        const ringGeo = new THREE.RingGeometry(7, 10, 64);
+        const ringMat = new THREE.MeshBasicMaterial({ color: COLORS.frontend, side: THREE.DoubleSide, transparent: true, opacity: 0.3 });
+        const saturnRing = new THREE.Mesh(ringGeo, ringMat);
+        saturnRing.rotation.x = Math.PI / 2.5;
+        frontend.mesh.add(saturnRing);
+
+        // MOONS (Components)
+        
+        // Middleware Moons
+        const mwMoons = [
+            {id: 'intent_router', name: 'intent_router'},
+            {id: 'firestore_query', name: 'firestore_query'},
+            {id: 'artifact_generator', name: 'artifact_generator'},
+            {id: 'evaluator_harness', name: 'evaluator_harness'},
+            {id: 'gotcha_archive', name: 'gotcha_archive'},
+            {id: 'middleware_registry', name: 'middleware_registry'},
+            {id: 'event_logging', name: 'event_logging'},
+            {id: 'post_flight', name: 'post_flight'},
+            {id: 'cleanup_docs', name: 'cleanup_docs'},
+            {id: 'ollama_config', name: 'ollama_config'}
+        ];
+        mwMoons.forEach((m, i) => {
+            createSphereNode(m.id, m.name, COLORS.middleware, 0.6, middleware.mesh, 8 + i * 0.5, 0.05 + i * 0.01);
+        });
+
+        // Frontend Moons
+        const feMoons = [
+            {id: 'results_tab', name: 'Results tab'},
+            {id: 'map_tab', name: 'Map tab'},
+            {id: 'globe_tab', name: 'Globe tab'},
+            {id: 'iao_tab', name: 'IAO tab'},
+            {id: 'mw_tab', name: 'MW tab'},
+            {id: 'schema_tab', name: 'Schema tab'},
+            {id: 'query_editor', name: 'query_editor'},
+            {id: 'detail_panel', name: 'detail_panel'}
+        ];
+        feMoons.forEach((m, i) => {
+            createSphereNode(m.id, m.name, COLORS.frontend, 0.5, frontend.mesh, 7 + i * 0.6, 0.04 + i * 0.01);
+        });
+
+        // Pipeline Moons
+        const plMoons = [
+            {id: 'yt_dlp', name: 'yt-dlp'},
+            {id: 'whisper', name: 'faster-whisper'},
+            {id: 'extract', name: 'Gemini Extract'},
+            {id: 'normalize', name: 'normalize'},
+            {id: 'geocode', name: 'geocode'},
+            {id: 'enrich', name: 'enrich'},
+            {id: 'load', name: 'load'}
+        ];
+        plMoons.forEach((m, i) => {
+            createSphereNode(m.id, m.name, COLORS.pipeline, 0.5, pipeline.mesh, 6 + i * 0.7, 0.03 + i * 0.01);
+        });
+
+        // Backend Moons
+        const beMoons = [
+            {id: 'firestore', name: 'Firestore'},
+            {id: 'functions', name: 'Cloud Functions'},
+            {id: 'hosting', name: 'Firebase Hosting'},
+            {id: 'chromadb', name: 'ChromaDB'},
+            {id: 'schema_ref', name: 'schema_reference'},
+            {id: 'eval_schema', name: 'eval_schema'}
+        ];
+        beMoons.forEach((m, i) => {
+            createSphereNode(m.id, m.name, COLORS.backend, 0.5, backend.mesh, 6 + i * 0.7, 0.03 + i * 0.01);
+        });
+
+        // --- INTERACTIVITY ---
         const raycaster = new THREE.Raycaster();
         const mouse = new THREE.Vector2();
         const tooltip = document.getElementById('tooltip');
 
-        renderer.domElement.addEventListener('mousemove', (e) => {
-            mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
-            mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
+        window.addEventListener('mousemove', (event) => {
+            mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+            mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
 
             raycaster.setFromCamera(mouse, camera);
+            const meshes = Array.from(nodes.values()).map(n => n.mesh);
             const intersects = raycaster.intersectObjects(meshes);
 
             if (intersects.length > 0) {
-                const node = intersects[0].object.userData;
+                const node = Array.from(nodes.values()).find(n => n.mesh === intersects[0].object);
                 tooltip.style.display = 'block';
-                tooltip.style.left = e.clientX + 12 + 'px';
-                tooltip.style.top = e.clientY + 12 + 'px';
-                tooltip.innerHTML = `<b>${node.name.replace('\n', ' ')}</b><br>` +
-                    `Type: ${node.type}<br>Status: ${node.status || 'active'}`;
+                tooltip.style.left = (event.clientX + 15) + 'px';
+                tooltip.style.top = (event.clientY + 15) + 'px';
+                tooltip.innerHTML = `<strong>${node.name}</strong><br>ID: ${node.id}`;
             } else {
                 tooltip.style.display = 'none';
             }
         });
 
-        // Animation loop
+        // --- UPDATE LOGIC ---
+        function updateIteration(ver) {
+            currentIteration = ver;
+            const activeNodes = iterationData[ver] || [];
+            const isAll = activeNodes.includes('ALL');
+
+            nodes.forEach((node, id) => {
+                const isActive = isAll || activeNodes.includes(id) || ['middleware', 'frontend', 'pipeline', 'backend'].includes(id);
+                
+                if (isActive) {
+                    node.material.opacity = 0.9;
+                    node.material.emissiveIntensity = 0.4;
+                    node.mesh.visible = true;
+                    // If it's a wireframe fallback in real app, here we just set high opacity
+                } else {
+                    node.material.opacity = 0.15;
+                    node.material.emissiveIntensity = 0.05;
+                    // node.mesh.visible = true; // Still show as ghost
+                }
+            });
+        }
+
+        document.getElementById('iteration-select').addEventListener('change', (e) => {
+            updateIteration(e.target.value);
+        });
+
+        // --- ANIMATION LOOP ---
         function animate() {
             requestAnimationFrame(animate);
 
-            // Animate particles
-            particles.forEach(p => {
-                p.userData.t += p.userData.speed;
-                if (p.userData.t > 1) p.userData.t = 0;
-                p.position.lerpVectors(p.userData.from, p.userData.to, p.userData.t);
+            const time = Date.now() * 0.001;
+
+            nodes.forEach(node => {
+                if (node.distance > 0) {
+                    node.angle += node.speed;
+                    node.group.position.x = Math.cos(node.angle) * node.distance;
+                    node.group.position.z = Math.sin(node.angle) * node.distance;
+                }
+                // Rotation
+                node.mesh.rotation.y += 0.01;
             });
 
-            // Pulse active agent nodes
-            const time = Date.now() * 0.001;
-            meshes.forEach((m, i) => {
-                if (m.userData.type === 'agent' && m.userData.status === 'active') {
-                    m.material.emissiveIntensity = 0.2 + Math.sin(time * 2 + i) * 0.15;
-                }
-                // Gentle bob
-                if (m.userData.type === 'agent') {
-                    m.position.y = m.userData.pos[1] + Math.sin(time + i * 0.5) * 0.2;
-                }
-            });
+            // Sun pulse
+            const sun = nodes.get('qwen');
+            if (sun) {
+                sun.material.emissiveIntensity = 0.4 + Math.sin(time * 2) * 0.1;
+            }
 
             controls.update();
             renderer.render(scene, camera);
         }
 
-        animate();
+        // --- INITIALIZATION ---
+        async function init() {
+            try {
+                const response = await fetch('../../data/claw3d_iterations.json');
+                iterationData = await response.json();
+                
+                document.getElementById('loading').style.display = 'none';
+                updateIteration(currentIteration);
+                animate();
+            } catch (err) {
+                console.error("Failed to load iteration data:", err);
+                // Fallback if file missing
+                iterationData = { "v9.52": ["ALL"] };
+                document.getElementById('loading').style.display = 'none';
+                updateIteration("v9.52");
+                animate();
+            }
+        }
 
-        // Resize handler
         window.addEventListener('resize', () => {
             camera.aspect = window.innerWidth / window.innerHeight;
             camera.updateProjectionMatrix();
             renderer.setSize(window.innerWidth, window.innerHeight);
         });
+
+        init();
     </script>
 </body>
 </html>

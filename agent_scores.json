@@ -1525,5 +1525,111 @@
       "total_tokens": 4110
     },
     "date": "2026-04-05"
+  },
+  {
+    "iteration": "v9.52",
+    "summary": "Evaluation generated via fallback due to schema validation failure after 3 attempts.",
+    "workstreams": [
+      {
+        "id": "W1",
+        "name": "Evaluator harness rebuild (400+ lines)",
+        "priority": "P1",
+        "outcome": "partial",
+        "evidence": "Evaluation generated via fallback due to schema validation failure",
+        "agents": [
+          "claude-code"
+        ],
+        "llms": [
+          "qwen3.5:9b"
+        ],
+        "mcps": [
+          "-"
+        ],
+        "score": 5,
+        "improvements": [
+          "Schema validation failed - manual review needed",
+          "Qwen output did not conform after 3 attempts"
+        ]
+      },
+      {
+        "id": "W2",
+        "name": "Claw3D solar system redesign",
+        "priority": "P1",
+        "outcome": "partial",
+        "evidence": "Evaluation generated via fallback due to schema validation failure",
+        "agents": [
+          "claude-code"
+        ],
+        "llms": [
+          "qwen3.5:9b"
+        ],
+        "mcps": [
+          "-"
+        ],
+        "score": 5,
+        "improvements": [
+          "Schema validation failed - manual review needed",
+          "Qwen output did not conform after 3 attempts"
+        ]
+      },
+      {
+        "id": "W3",
+        "name": "Phase 10 systems check (all agents, MCPs, LLMs)",
+        "priority": "P2",
+        "outcome": "partial",
+        "evidence": "Evaluation generated via fallback due to schema validation failure",
+        "agents": [
+          "claude-code"
+        ],
+        "llms": [
+          "qwen3.5:9b"
+        ],
+        "mcps": [
+          "-"
+        ],
+        "score": 5,
+        "improvements": [
+          "Schema validation failed - manual review needed",
+          "Qwen output did not conform after 3 attempts"
+        ]
+      },
+      {
+        "id": "W4",
+        "name": "Post-flight + living docs + README cadence",
+        "priority": "P2",
+        "outcome": "partial",
+        "evidence": "Evaluation generated via fallback due to schema validation failure",
+        "agents": [
+          "claude-code"
+        ],
+        "llms": [
+          "qwen3.5:9b"
+        ],
+        "mcps": [
+          "-"
+        ],
+        "score": 5,
+        "improvements": [
+          "Schema validation failed - manual review needed",
+          "Qwen output did not conform after 3 attempts"
+        ]
+      }
+    ],
+    "trident": {
+      "cost": "Within target - local Ollama inference",
+      "delivery": "0/4 workstreams verified (fallback)",
+      "performance": "Qwen schema compliance failed after 3 attempts"
+    },
+    "what_could_be_better": [
+      "Qwen output did not conform to eval_schema.json after 3 retries",
+      "Consider adjusting prompt structure for better schema compliance",
+      "Manual evaluation may be needed for this iteration"
+    ],
+    "evaluator_tokens": {
+      "prompt_tokens": 4096,
+      "eval_tokens": 1101,
+      "total_tokens": 5197
+    },
+    "date": "2026-04-05"
   }
 ]

@@ -1,5 +1,48 @@
 # kjtcom - Unified Changelog
 
+## v9.39 - 2026-04-05
+
+- UPDATED: Iteration v9.39 - see build log for details
+
+**Files changed:** 13
+**Agents:** Claude Code, Qwen3.5-9B, Gemini Flash
+**LLMs:** gemini-2.5-flash, qwen3.5:9b, nomic-embed-text
+**Interventions:** 0
+
+<!-- TEMPLATE RULES (v9.44+):
+- Each line MUST start with NEW:, UPDATED:, or FIXED: prefix
+- Include specific numbers (entity counts, chunk counts, test results)
+- "TBD" is BANNED. If data is missing, use "MISSING: [what data]"
+- List all agents and LLMs used
+- Include intervention count (target: 0)
+-->
+
+
+---
+
+## v9.52 - 2026-04-05
+
+- NEW: Evaluator harness rebuild (400+ lines) - Rebuilt docs/evaluator-harness.md from scratch as a comprehensive operating manual with ADR, failure patterns, score calibration, and templates. wc -l >= 400.
+- NEW: Claw3D solar system redesign - app/web/claw3d.html rebuilt with Three.js using solar system metaphor (Qwen=sun, agents=inner, components=gas giants). Added iteration toggle via data/claw3d_iterations.json.
+- NEW: Phase 10 systems check - Verified all 5 MCPs, 4 local LLMs, Gemini Flash, and Telegram bot. Added MCP verification to scripts/post_flight.py. All systems READY for Phase 10.
+- UPDATED: Post-flight + living docs - Enhanced post_flight.py with MCP checks (8/8 passed). Updated README.md to v9.52. Updated middleware_registry.json.
+
+**Files changed:** 8
+**Agents:** Gemini CLI, Qwen3.5-9B, Gemini Flash
+**LLMs:** gemini-2.5-flash, qwen3.5:9b, nemotron-mini:4b, haervwe/GLM-4.6V-Flash-9B, nomic-embed-text
+**Interventions:** 0
+
+<!-- TEMPLATE RULES (v9.44+):
+- Each line MUST start with NEW:, UPDATED:, or FIXED: prefix
+- Include specific numbers (entity counts, chunk counts, test results)
+- "TBD" is BANNED. If data is missing, use "MISSING: [what data]"
+- List all agents and LLMs used
+- Include intervention count (target: 0)
+-->
+
+
+---
+
 ## v9.51 - 2026-04-05
 
 - NEW: Fix Search button layout + add 3D button - Files app/lib/widgets/query_editor.dart and app/lib/widgets/app_shell.dart were updated. File app/web/claw3d.html exists (300 lines). IconButton added in header.

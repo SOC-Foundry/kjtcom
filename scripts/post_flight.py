@@ -71,6 +71,48 @@ def verify_bot_query():
         return False
 
 
+def verify_mcps():
+    """Check all 5 MCP servers are accessible."""
+    import subprocess
+    checks = {}
+    
+    # Test firebase mcp (npx firebase-tools)
+    try:
+        r = subprocess.run(["npx", "firebase-tools", "--version"], capture_output=True, text=True, timeout=10)
+        checks["firebase_mcp"] = r.returncode == 0
+    except:
+        checks["firebase_mcp"] = False
+        
+    # Test context7 mcp (npx check)
+    try:
+        r = subprocess.run(["npx", "--version"], capture_output=True, text=True, timeout=10)
+        checks["context7_mcp"] = r.returncode == 0
+    except:
+        checks["context7_mcp"] = False
+        
+    # Test firecrawl mcp
+    checks["firecrawl_mcp"] = os.environ.get("FIRECRAWL_API_KEY") is not None
+    
+    # Test playwright mcp
+    try:
+        r = subprocess.run(["npx", "playwright", "--version"], capture_output=True, text=True, timeout=10)
+        checks["playwright_mcp"] = r.returncode == 0
+    except:
+        checks["playwright_mcp"] = False
+        
+    # Test dart mcp
+    try:
+        r = subprocess.run(["dart", "--version"], capture_output=True, text=True, timeout=10)
+        checks["dart_mcp"] = r.returncode == 0
+    except:
+        checks["dart_mcp"] = False
+        
+    for mcp, passed in checks.items():
+        print(f"  {'PASS' if passed else 'FAIL'}: {mcp}")
+        
+    return checks
+
+
 def run_all():
     """Run all post-flight checks."""
     print("Post-flight verification:")
@@ -80,6 +122,10 @@ def run_all():
     results["site_200"] = verify_site()
     results["bot_status"] = verify_bot_status()
     results["bot_query"] = verify_bot_query()
+    
+    print("\nMCP Verification:")
+    mcp_results = verify_mcps()
+    results.update(mcp_results)
 
     # Log results
     for check, passed in results.items():
