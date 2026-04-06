@@ -90,6 +90,42 @@ def compute_geohashes(lat: float, lon: float) -> list[str]:
     return [full[:4], full[:5], full[:6]]
 
 
+def flatten_nested_lists(val):
+    """Recursively flatten nested lists to ensure Firestore compatibility (no arrays of arrays)."""
+    if not isinstance(val, list):
+        return val
+    
+    needs_flattening = any(isinstance(i, list) for i in val)
+    if not needs_flattening:
+        return val
+        
+    flat = []
+    for item in val:
+        if isinstance(item, list):
+            # Recursively flatten the sub-list
+            sub_flat = flatten_nested_lists(item)
+            if isinstance(sub_flat, list):
+                flat.extend(sub_flat)
+            else:
+                flat.append(sub_flat)
+        else:
+            flat.append(item)
+    return flat
+
+
+def make_firestore_safe(data):
+    """Recursively process a dictionary or list to ensure it's Firestore-safe."""
+    if isinstance(data, dict):
+        return {k: make_firestore_safe(v) for k, v in data.items()}
+    elif isinstance(data, list):
+        # First, flatten if it's a nested list
+        flattened = flatten_nested_lists(data)
+        # Then, recursively process items (for cases like list of dicts)
+        return [make_firestore_safe(i) for i in flattened]
+    else:
+        return data
+
+
 def normalize_entity(raw: dict, schema: dict) -> dict:
     """Normalize a raw extracted entity into Thompson Schema format.
 
@@ -128,10 +164,15 @@ def normalize_entity(raw: dict, schema: dict) -> dict:
 
         if method == "direct":
             if isinstance(value, list):
-                normalized[target_field].extend([str(v).lower() for v in value])
+                # Flatten first, then stringify
+                flat_value = flatten_nested_lists(value)
+                normalized[target_field].extend([str(v).lower() for v in flat_value])
             else:
                 normalized[target_field].append(str(value).lower())
         elif method == "tokenize":
+            # Flatten first, then tokenize
+            if isinstance(value, list):
+                value = " ".join([str(v) for v in flatten_nested_lists(value)])
             tokens = tokenize_for_search(str(value))
             normalized[target_field].extend(tokens)
 
@@ -143,7 +184,7 @@ def normalize_entity(raw: dict, schema: dict) -> dict:
             if not normalized[key]:
                 del normalized[key]
 
-    # 4. Source fields - preserve original
-    normalized["source"] = raw
+    # 4. Source fields - preserve original but ensure Firestore-safe
+    normalized["source"] = make_firestore_safe(raw)
 
     return normalized

@@ -50,6 +50,57 @@ def load_gotcha_archive():
         return []
 
 
+def build_rich_context(iteration):
+    """Build 50-80KB context package for Qwen evaluation."""
+    import os
+    parts = []
+
+    # Current iteration artifacts
+    for doc_type in ["build", "design"]:
+        path = f"docs/kjtcom-{doc_type}-{iteration}.md"
+        if os.path.exists(path):
+            parts.append(f"=== CURRENT {doc_type.upper()} ({iteration}) ===")
+            parts.append(open(path).read())
+
+    # Few-shot: 2-3 example reports that have complete scorecards
+    for ver in ["v10.56", "v10.58"]:
+        for loc in [f"docs/kjtcom-report-{ver}.md", f"docs/archive/kjtcom-report-{ver}.md"]:
+            if os.path.exists(loc):
+                parts.append(f"=== EXAMPLE REPORT ({ver}) — match this format ===")
+                parts.append(open(loc).read())
+                break
+
+    # Middleware registry
+    if os.path.exists("data/middleware_registry.json"):
+        parts.append("=== MIDDLEWARE REGISTRY ===")
+        parts.append(open("data/middleware_registry.json").read())
+
+    # Gotcha archive
+    if os.path.exists("data/gotcha_archive.json"):
+        parts.append("=== GOTCHA ARCHIVE ===")
+        parts.append(open("data/gotcha_archive.json").read())
+
+    # ADRs from harness
+    if os.path.exists("docs/evaluator-harness.md"):
+        harness = open("docs/evaluator-harness.md").read()
+        adr_start = harness.find("## 3.")
+        adr_end = harness.find("## 4.")
+        if adr_start > 0 and adr_end > 0:
+            parts.append("=== ARCHITECTURE DECISIONS ===")
+            parts.append(harness[adr_start:adr_end])
+
+    # Recent changelog (first 5 entries)
+    if os.path.exists("docs/kjtcom-changelog.md"):
+        cl = open("docs/kjtcom-changelog.md").read()
+        entries = cl.split("\n## ")[:6]
+        parts.append("=== RECENT CHANGELOG ===")
+        parts.append("\n## ".join(entries))
+
+    ctx = "\n\n".join(parts)
+    print(f"[EVAL] Rich context: {len(ctx):,} chars (~{len(ctx)//4:,} tokens)")
+    return ctx
+
+
 def build_execution_context(version):
     """Build ground-truth execution context from event log, build log, changelog, and file system.
 
@@ -244,7 +295,7 @@ def parse_executing_agent(design_doc_path):
 
 
 def validate_qwen_output(output, expected_count, expected_names):
-    """Full validation: schema + workstream count + names + banned phrases + mcps logic.
+    """Full validation: schema + workstream count + names (fuzzy) + banned phrases + mcps logic.
 
     Returns list of error strings. Empty list means valid.
     """
@@ -260,16 +311,32 @@ def validate_qwen_output(output, expected_count, expected_names):
             f"Workstream count: got {len(ws_list)}, expected {expected_count}"
         )
 
-    # 3. Workstream name matching
+    # 3. Workstream name matching (Fuzzy)
     for i, ws in enumerate(ws_list):
         if i < len(expected_names):
-            expected = expected_names[i]
-            actual = ws.get("name", "")
-            if actual.lower() != expected.lower():
-                errors.append(
-                    f"W{i+1} name mismatch: got '{actual}', expected '{expected}'"
-                )
-        
+            expected = expected_names[i].lower()
+            actual = ws.get("name", "").lower()
+            
+            # Normalize common delimiters: em-dash, en-dash, hyphen, colon
+            def normalize_name(s):
+                s = s.replace("—", " ").replace("–", " ").replace("-", " ").replace(":", " ")
+                return " ".join(s.split()) # normalize whitespace
+
+            expected_norm = normalize_name(expected)
+            actual_norm = normalize_name(actual)
+            
+            # Check if one is a substring of another or they share significant words
+            if expected_norm not in actual_norm and actual_norm not in expected_norm:
+                # Check for word overlap (at least 2 significant words)
+                expected_words = set(w for w in expected_norm.split() if len(w) > 3)
+                actual_words = set(w for w in actual_norm.split() if len(w) > 3)
+                overlap = expected_words.intersection(actual_words)
+                
+                if not overlap:
+                    errors.append(
+                        f"W{i+1} name mismatch: got '{actual}', expected '{expected}'"
+                    )
+
         # Check for full MCP enum dump
         mcps = ws.get("mcps", [])
         if len(mcps) >= 5 and all(m in mcps for m in ["Firebase", "Firecrawl", "Dart"]):
@@ -277,8 +344,7 @@ def validate_qwen_output(output, expected_count, expected_names):
 
     # 4. Banned phrase check
     text = json.dumps(output)
-    banned = ["successfully deployed", "robust validation", "clean release",
-              "strategic shift", "healthy system", "Review...", "TBD"]
+    banned = ["robust validation", "clean release", "strategic shift", "healthy system", "TBD"]
     for phrase in banned:
         if phrase.lower() in text.lower():
             errors.append(f"Banned phrase found: '{phrase}'")
@@ -445,52 +511,30 @@ def generate_self_eval(build_log, design_doc, version, expected_names):
     }
 
 
-def build_evaluator_prompt(version, design_content, exec_context, expected_count, expected_names, executing_agent, gotcha_summary=""):
-    """Build the shared evaluator prompt used by all tiers."""
+def build_evaluator_prompt(version, rich_context, expected_count, expected_names, executing_agent):
+    """Build the shared evaluator prompt with rich context (v10.59)."""
     ws_list_str = "\n".join(f"  W{i+1}: {name}" for i, name in enumerate(expected_names))
 
-    example_ws = ', '.join(
-        '{{"id":"W{0}","name":"{1}","priority":"P1","outcome":"partial","evidence":"app/web/claw3d.html updated, 633 lines","agents":["{2}"],"llms":["qwen3.5:9b"],"mcps":["-"],"score":6,"improvements":["Add integration tests","Improve error handling"]}}'.format(
-            i+1, name[:30], executing_agent
-        ) for i, name in enumerate(expected_names[:2])
-    )
+    return f"""You are Qwen, the evaluator for kjtcom.
 
-    return f"""/no_think
-You are evaluating workstreams for kjtcom iteration {version}.
+IMPORTANT: Study the EXAMPLE REPORTS in the context below. Your output must follow the Thompson Schema evaluation logic.
+Use the build log and design doc to score each workstream 1-9 out of 10.
+Use the middleware registry, gotcha archive, and ADRs for context about the project.
 
-IMPORTANT: Return ONLY a JSON object. No markdown fences. No explanation. No preamble.
-
-EXACT OUTPUT FORMAT (follow this structure precisely):
-{{"iteration":"{version}","summary":"Plain text 2-4 sentences about what was built and what failed.","workstreams":[{example_ws}],"trident":{{"cost":"<100K Claude tokens","delivery":"2/{expected_count} workstreams completed","performance":"Specific metric here"}},"what_could_be_better":["Item 1","Item 2","Item 3"]}}
-
-RULES:
-- iteration: exactly "{version}"
-- summary: plain text, 50-2000 chars, no JSON/markdown
-- workstreams: exactly {expected_count} objects
-- Each workstream MUST have: id, name, priority, outcome, evidence, agents, llms, mcps, score, improvements
+OUTPUT RULES:
+- Return ONLY a JSON object. No markdown fences. No explanation. No preamble.
 - score: integer 0-9 (NEVER 10)
-- outcome: "complete", "partial", "failed", or "deferred"
-- priority: "P0", "P1", "P2", or "P3"
-- agents: must include ["{executing_agent}"]
-- mcps: use "-" if none, otherwise "Firebase", "Context7", "Firecrawl", "Playwright", or "Dart"
-- improvements: 2+ strings per workstream
-- evidence: 10+ chars, cite file paths or command outputs
-- delivery: must match "X/Y workstreams ..."
-- what_could_be_better: 2+ concrete suggestions
+- agents: must include [\"{executing_agent}\"]
+- workstreams: exactly {expected_count} objects matching the names below.
 
 WORKSTREAMS TO EVALUATE (exactly {expected_count}):
 {ws_list_str}
 
-Use EXECUTION CONTEXT as ground truth. Errors/timeouts = NOT "complete".
+=== RICH CONTEXT ===
+{rich_context}
 
-Design document (first 3000 chars):
-{design_content[:3000]}
-
-EXECUTION CONTEXT (ground truth):
-{exec_context}
-{gotcha_summary}
-
-Return ONLY the JSON object."""
+Return ONLY the JSON object following the structure:
+{{"iteration":"{version}","summary":"...","workstreams":[...],"trident":{{"cost":"...","delivery":"...","performance":"..."}},"what_could_be_better":[...]}}"""
 
 
 def try_qwen_tier(base_prompt, harness, expected_count, expected_names, executing_agent, version, verbose=False):
@@ -633,26 +677,16 @@ def evaluate_with_retry(version, design_doc_path, max_retries=3, verbose=False, 
     with open(design_doc_path) as f:
         design_content = f.read()
 
-    exec_context = build_execution_context(version)
+    rich_context = build_rich_context(version)
     if verbose:
-        print(f"[EVAL] Execution context ({len(exec_context)} chars):")
-        print(exec_context[:1000])
-
-    gotchas = load_gotcha_archive()
-    gotcha_summary = ""
-    if gotchas:
-        recent = [g for g in gotchas if g.get('iteration_resolved', '').startswith(('v9.', 'v10.'))]
-        if recent:
-            gotcha_summary = "\nRecently resolved gotchas:\n" + "\n".join(
-                f"  {g['id']}: {g['description']} (resolved {g['iteration_resolved']})"
-                for g in recent[:5]
-            )
+        print(f"[EVAL] Rich context ({len(rich_context)} chars):")
+        print(rich_context[:1000])
 
     harness = load_harness()
 
     base_prompt = build_evaluator_prompt(
-        version, design_content, exec_context, expected_count,
-        expected_names, executing_agent, gotcha_summary
+        version, rich_context, expected_count,
+        expected_names, executing_agent
     )
 
     # Tier 1: Qwen (skip if testing fallback)

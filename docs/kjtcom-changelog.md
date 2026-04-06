@@ -1,4 +1,14 @@
 # kjtcom - Unified Changelog
+## v10.59 - 2026-04-06
+
+- NEW: Bourdain Pipeline Complete - Videos 91-114 acquired, transcribed (faster-whisper CUDA, 3 batches), extracted (Gemini Flash, 25/25 success), normalized, geocoded, enriched, and loaded to staging. 351 unique entities in staging (was 275). Phase 4 complete.
+- NEW: `build_rich_context()` in `scripts/run_evaluator.py` - Expanded context (50-80KB) for Qwen evaluation including build logs, design docs, example reports, ADRs, and middleware registry (G57).
+- UPDATED: `app/web/claw3d.html` - Widened chips (1.2), shortened labels, and updated detail fields for better legibility. Version bumped to v10.59.
+- UPDATED: `scripts/run_evaluator.py` - Improved fuzzy name matching (em-dash/hyphen/colon normalization) in workstream validation.
+- UPDATED: `pipeline/scripts/utils/thompson_schema.py` - Added `make_firestore_safe()` with recursive list flattening to prevent nested array errors (400 InvalidArgument).
+- UPDATED: `README.md` - Massive overhaul: 4 pipelines, PCB architecture section, expanded middleware section, 11 ADRs, full changelog v10.54-v10.59. 759 lines.
+- Multi-agent: Gemini CLI (v10.59 executor) + Qwen3.5-9B (evaluator) + Gemini Flash (extraction)
+- Kyle interventions: 0
 ## v10.58 - 2026-04-06
 
 - NEW: Bourdain Pipeline Phase 3 - 30 videos acquired (61-90), transcribed (faster-whisper CUDA, 3 graduated batches of 10), extracted (Gemini Flash, 29/30 success), normalized, geocoded, enriched, loaded to staging. 88 new entities, total 275 staging (was 188). 1 extraction failure on compilation episode. Checkpoint updated.

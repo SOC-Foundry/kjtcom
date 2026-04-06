@@ -57,7 +57,7 @@
         <button id="backBtn" onclick="zoomOut()">All boards</button>
         <select id="iterSelect" onchange="selectIteration(this.value)"></select>
     </div>
-    <div id="title">kjtcom PCB Architecture v10.58</div>
+    <div id="title">kjtcom PCB Architecture v10.59</div>
     <div id="legend">
         <div class="legend-row"><span class="legend-dot" style="background:#4ADE80"></span> Active</div>
         <div class="legend-row"><span class="legend-dot" style="background:#EF9F27"></span> Degraded</div>
@@ -79,16 +79,16 @@
                 id: "frontend", label: "Frontend", color: 0x0D9488,
                 pos: [-3, 5.5, 0], size: [5, 3],
                 chips: [
-                    {id:"query_editor", status:"active", detail:"NoSQL parser"},
-                    {id:"results_table", status:"active", detail:"Paginated grid"},
-                    {id:"detail_panel", status:"active", detail:"Entity inspector"},
-                    {id:"map_tab", status:"active", detail:"OpenStreetMap markers"},
-                    {id:"globe_tab", status:"active", detail:"Continent cards"},
-                    {id:"iao_tab", status:"active", detail:"Trident + 10 pillars"},
+                    {id:"query_ed", status:"active", detail:"NoSQL parser (query_editor)"},
+                    {id:"results", status:"active", detail:"Paginated grid (results_table)"},
+                    {id:"detail", status:"active", detail:"Entity inspector (detail_panel)"},
+                    {id:"map", status:"active", detail:"OpenStreetMap markers (map_tab)"},
+                    {id:"globe", status:"active", detail:"Continent cards (globe_tab)"},
+                    {id:"iao", status:"active", detail:"Trident + 10 pillars (iao_tab)"},
                     {id:"mw_tab", status:"active", detail:"33 components"},
-                    {id:"schema_tab", status:"active", detail:"22 t_any_* fields"},
+                    {id:"schema", status:"active", detail:"22 t_any_* fields (schema_tab)"},
                     {id:"claw3d", status:"active", detail:"PCB architecture viz"},
-                    {id:"firebase_hosting", status:"active", detail:"CDN + SSL"}
+                    {id:"fb_host", status:"active", detail:"CDN + SSL (firebase_hosting)"}
                 ]
             },
             {
@@ -96,13 +96,13 @@
                 pos: [3, 5.5, 0], size: [5, 3],
                 chips: [
                     {id:"yt_dlp", status:"active", detail:"YouTube audio download"},
-                    {id:"faster_whisper", status:"active", detail:"CUDA transcription"},
-                    {id:"gemini_extract", status:"active", detail:"Entity extraction API"},
+                    {id:"whisper", status:"active", detail:"CUDA transcription (faster_whisper)"},
+                    {id:"extract", status:"active", detail:"Entity extraction API (gemini_extract)"},
                     {id:"normalize", status:"active", detail:"Schema v3 t_any_*"},
                     {id:"geocode", status:"active", detail:"Nominatim 1 req/sec"},
                     {id:"enrich", status:"active", detail:"Google Places API"},
                     {id:"load", status:"active", detail:"Firebase Admin SDK"},
-                    {id:"tmux_runner", status:"active", detail:"Graduated GPU batches"},
+                    {id:"tmux", status:"active", detail:"Graduated GPU batches (tmux_runner)"},
                     {id:"checkpoint", status:"active", detail:"JSON state persistence"}
                 ]
             },
@@ -111,27 +111,27 @@
                 pos: [0, 0, 0], size: [12, 6],
                 chips: [
                     {id:"evaluator", status:"active", detail:"Qwen fallback chain, G55 resolved"},
-                    {id:"harness", status:"active", detail:"601-line operating manual"},
-                    {id:"ADR", status:"active", detail:"10 architecture decisions"},
-                    {id:"artifact_gen", status:"active", detail:"4-doc loop"},
-                    {id:"gotcha_archive", status:"active", detail:"G1-G56, 18+ resolved"},
-                    {id:"agent_scores", status:"active", detail:"5-dim scoring, append-only"},
+                    {id:"harness", status:"active", detail:"727-line operating manual"},
+                    {id:"ADR", status:"active", detail:"11 architecture decisions"},
+                    {id:"artifact", status:"active", detail:"4-doc loop (artifact_gen)"},
+                    {id:"gotchas", status:"active", detail:"G1-G57, 20+ resolved (gotcha_archive)"},
+                    {id:"scores", status:"active", detail:"5-dim scoring, append-only (agent_scores)"},
                     {id:"pre_flight", status:"active", detail:"Environment validation"},
                     {id:"post_flight", status:"active", detail:"14+ checks"},
-                    {id:"intent_router", status:"active", detail:"3-route Gemini Flash"},
-                    {id:"telegram_bot", status:"active", detail:"systemd, session memory"},
-                    {id:"rag_pipeline", status:"active", detail:"1,819 ChromaDB chunks"},
+                    {id:"router", status:"active", detail:"3-route Gemini Flash (intent_router)"},
+                    {id:"tg_bot", status:"active", detail:"systemd, session memory (telegram_bot)"},
+                    {id:"rag", status:"active", detail:"1,819 ChromaDB chunks (rag_pipeline)"},
                     {id:"qwen_9b", status:"active", detail:"Evaluator LLM, 256K ctx"},
-                    {id:"nemotron_4b", status:"active", detail:"Code review, 4K ctx"},
-                    {id:"gemini_flash", status:"active", detail:"Intent routing + extraction"},
-                    {id:"firebase_mcp", status:"active", detail:"G53 recurring reauth"},
-                    {id:"context7_mcp", status:"active", detail:"API docs lookup"},
-                    {id:"playwright_mcp", status:"active", detail:"Browser automation"},
-                    {id:"firecrawl_mcp", status:"active", detail:"Web scraping"},
+                    {id:"nemotron", status:"active", detail:"Code review, 4K ctx (nemotron_4b)"},
+                    {id:"gflash", status:"active", detail:"Intent routing + extraction (gemini_flash)"},
+                    {id:"fb_mcp", status:"active", detail:"G53 recurring reauth (firebase_mcp)"},
+                    {id:"c7_mcp", status:"active", detail:"API docs lookup (context7_mcp)"},
+                    {id:"pw_mcp", status:"active", detail:"Browser automation (playwright_mcp)"},
+                    {id:"fc_mcp", status:"active", detail:"Web scraping (firecrawl_mcp)"},
                     {id:"dart_mcp", status:"active", detail:"Flutter/Dart analysis"},
-                    {id:"claude_code", status:"active", detail:"Primary executor, Phases 6-7"},
-                    {id:"gemini_cli", status:"active", detail:"Primary executor, Phases 1-5"},
-                    {id:"iao_logger", status:"active", detail:"JSONL event log, P3 diligence"}
+                    {id:"claude", status:"active", detail:"Primary executor, Phases 6-7 (claude_code)"},
+                    {id:"gemini", status:"active", detail:"Primary executor, Phases 1-5 (gemini_cli)"},
+                    {id:"logger", status:"active", detail:"JSONL event log, P3 diligence (iao_logger)"}
                 ]
             },
             {
@@ -139,12 +139,12 @@
                 pos: [0, -6, 0], size: [12, 3],
                 chips: [
                     {id:"firestore", status:"active", detail:"Single locations collection"},
-                    {id:"production_db", status:"active", detail:"6,181 entities"},
-                    {id:"staging_db", status:"active", detail:"188 Bourdain entities"},
+                    {id:"prod_db", status:"active", detail:"6,181 entities (production_db)"},
+                    {id:"stg_db", status:"active", detail:"351 Bourdain entities (staging_db)"},
                     {id:"calgold", status:"active", detail:"899 entities", color:0xDA7E12},
                     {id:"ricksteves", status:"active", detail:"4,182 entities", color:0x3B82F6},
                     {id:"tripledb", status:"active", detail:"1,100 entities", color:0xDD3333},
-                    {id:"bourdain", status:"degraded", detail:"275 staging, Phase 3", color:0x8B5CF6}
+                    {id:"bourdain", status:"active", detail:"351 staging, Phase 4 Complete", color:0x8B5CF6}
                 ]
             }
         ];
@@ -156,54 +156,55 @@
         ];
 
         var ITERATIONS = {
+            "v10.59": ["ALL"],
             "v10.58": ["ALL"],
             "v10.57": [
-                "query_editor","results_table","detail_panel","map_tab","globe_tab",
-                "iao_tab","mw_tab","schema_tab","claw3d","firebase_hosting",
-                "yt_dlp","faster_whisper","gemini_extract","normalize","geocode","enrich","load",
-                "tmux_runner","checkpoint",
-                "evaluator","harness","ADR","artifact_gen","gotcha_archive","agent_scores",
-                "pre_flight","post_flight","intent_router","telegram_bot","rag_pipeline",
-                "qwen_9b","nemotron_4b","gemini_flash",
-                "firebase_mcp","context7_mcp","playwright_mcp","firecrawl_mcp","dart_mcp",
-                "claude_code","gemini_cli",
-                "firestore","production_db","staging_db",
+                "query_ed","results","detail","map","globe",
+                "iao","mw_tab","schema","claw3d","fb_host",
+                "yt_dlp","whisper","extract","normalize","geocode","enrich","load",
+                "tmux","checkpoint",
+                "evaluator","harness","ADR","artifact","gotchas","scores",
+                "pre_flight","post_flight","router","tg_bot","rag",
+                "qwen_9b","nemotron","gflash",
+                "fb_mcp","c7_mcp","pw_mcp","fc_mcp","dart_mcp",
+                "claude","gemini",
+                "firestore","prod_db","stg_db",
                 "calgold","ricksteves","tripledb","bourdain"
             ],
             "v10.56": [
-                "query_editor","results_table","detail_panel","map_tab","globe_tab",
-                "iao_tab","mw_tab","schema_tab","claw3d","firebase_hosting",
-                "evaluator","harness","ADR","artifact_gen","gotcha_archive","agent_scores",
-                "pre_flight","post_flight","intent_router","telegram_bot","rag_pipeline",
-                "qwen_9b","nemotron_4b","gemini_flash",
-                "firebase_mcp","context7_mcp","playwright_mcp","firecrawl_mcp","dart_mcp",
-                "claude_code","gemini_cli",
-                "firestore","production_db","staging_db",
+                "query_ed","results","detail","map","globe",
+                "iao","mw_tab","schema","claw3d","fb_host",
+                "evaluator","harness","ADR","artifact","gotchas","scores",
+                "pre_flight","post_flight","router","tg_bot","rag",
+                "qwen_9b","nemotron","gflash",
+                "fb_mcp","c7_mcp","pw_mcp","fc_mcp","dart_mcp",
+                "claude","gemini",
+                "firestore","prod_db","stg_db",
                 "calgold","ricksteves","tripledb","bourdain",
-                "yt_dlp","faster_whisper","gemini_extract","normalize","geocode","enrich","load",
-                "tmux_runner","checkpoint"
+                "yt_dlp","whisper","extract","normalize","geocode","enrich","load",
+                "tmux","checkpoint"
             ],
             "v10.55": [
-                "query_editor","results_table","detail_panel","map_tab","globe_tab",
-                "iao_tab","mw_tab","schema_tab","firebase_hosting",
-                "evaluator","harness","ADR","artifact_gen","gotcha_archive","agent_scores",
-                "pre_flight","post_flight","intent_router","telegram_bot","rag_pipeline",
-                "qwen_9b","gemini_flash",
-                "firebase_mcp","context7_mcp","playwright_mcp",
-                "claude_code","gemini_cli",
-                "firestore","production_db","staging_db",
+                "query_ed","results","detail","map","globe",
+                "iao","mw_tab","schema","fb_host",
+                "evaluator","harness","ADR","artifact","gotchas","scores",
+                "pre_flight","post_flight","router","tg_bot","rag",
+                "qwen_9b","gflash",
+                "fb_mcp","c7_mcp","pw_mcp",
+                "claude","gemini",
+                "firestore","prod_db","stg_db",
                 "calgold","ricksteves","tripledb","bourdain",
-                "yt_dlp","faster_whisper","gemini_extract","normalize","geocode","enrich","load"
+                "yt_dlp","whisper","extract","normalize","geocode","enrich","load"
             ],
             "v10.54": [
-                "query_editor","results_table","detail_panel","map_tab","globe_tab",
-                "iao_tab","mw_tab","schema_tab","firebase_hosting",
-                "evaluator","harness","artifact_gen","gotcha_archive",
-                "pre_flight","post_flight","intent_router","telegram_bot",
-                "qwen_9b","gemini_flash",
-                "firebase_mcp","context7_mcp",
-                "claude_code","gemini_cli",
-                "firestore","production_db",
+                "query_ed","results","detail","map","globe",
+                "iao","mw_tab","schema","fb_host",
+                "evaluator","harness","artifact","gotchas",
+                "pre_flight","post_flight","router","tg_bot",
+                "qwen_9b","gflash",
+                "fb_mcp","c7_mcp",
+                "claude","gemini",
+                "firestore","prod_db",
                 "calgold","ricksteves","tripledb"
             ]
         };
@@ -438,16 +439,16 @@
             var cols, chipW, chipH, padX, padY;
             if (board.id === "middleware") {
                 cols = 7;
-                chipW = 1.3; chipH = 0.6;
-                padX = 0.35; padY = 0.5;
+                chipW = 1.5; chipH = 0.6;
+                padX = 0.2; padY = 0.5;
             } else if (board.id === "backend") {
                 cols = 7;
-                chipW = 1.3; chipH = 0.6;
-                padX = 0.35; padY = 0.5;
+                chipW = 1.5; chipH = 0.6;
+                padX = 0.2; padY = 0.5;
             } else {
                 cols = 5;
-                chipW = 0.8; chipH = 0.45;
-                padX = 0.2; padY = 0.35;
+                chipW = 1.2; chipH = 0.45;
+                padX = 0.15; padY = 0.35;
             }
 
             var rows = Math.ceil(count / cols);

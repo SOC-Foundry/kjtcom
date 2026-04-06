@@ -10,11 +10,11 @@
 
 ---
 
-kjtcom extracts entities from YouTube playlists - landmarks, trails, restaurants, destinations - and normalizes them into Thompson Indicator Fields (`t_any_*` universal indicator fields) modeled after [Panther SIEM's](https://docs.panther.com/search/panther-fields) `p_any_*` fields and [Elastic Common Schema](https://www.elastic.co/guide/en/ecs/current/index.html). Three live pipelines serve 6,181 production entities plus a fourth pipeline (Bourdain) in staging, through a unified Flutter Web frontend with a functional NoSQL query system, case-insensitive search, `contains` and `contains-any` operators, result counts, entity detail panel, and cross-dataset query at [kylejeromethompson.com](https://kylejeromethompson.com).
+kjtcom extracts entities from YouTube playlists - landmarks, trails, restaurants, destinations - and normalizes them into Thompson Indicator Fields (`t_any_*` universal indicator fields) modeled after [Panther SIEM's](https://docs.panther.com/search/panther-fields) `p_any_*` fields and [Elastic Common Schema](https://www.elastic.co/guide/en/ecs/current/index.html). Four live pipelines serve 6,181 production entities plus a fourth pipeline (Bourdain) complete in staging, through a unified Flutter Web frontend with a functional NoSQL query system, case-insensitive search, `contains` and `contains-any` operators, result counts, entity detail panel, and cross-dataset query at [kylejeromethompson.com](https://kylejeromethompson.com).
 
 The same normalization patterns power production SIEM migrations at [TachTech Engineering](https://tachtech.net). Built entirely by LLM agents using IAO (Iterative Agentic Orchestration) - a methodology distilled from 46+ iterations across 10 phases on [TripleDB](https://github.com/TachTech-Engineering/tripledb).
 
-**[kylejeromethompson.com](https://kylejeromethompson.com)** | **Phase 10 v10.56 (ACTIVE)** | **Status: Evaluator Fallback Chain + PCB Architecture + Bourdain Phase 2**
+**[kylejeromethompson.com](https://kylejeromethompson.com)** | **Phase 10 v10.59 (ACTIVE)** | **Status: Bourdain Pipeline Complete + PCB Architecture + Middleware Hardening**
 
 ---
 
@@ -25,7 +25,7 @@ The same normalization patterns power production SIEM migrations at [TachTech En
 - **NoSQL query editor** with syntax highlighting, case-insensitive search, `contains` and `contains-any` operators
 - **Paginated results** - 20/50/100 per page with page navigation (default 20)
 - **Entity detail panel** with t_any_* field cards, Google Places enrichment data, +filter/-exclude query builders
-- **Pipeline-colored results** - CalGold (gold), RickSteves (blue), TripleDB (red)
+- **Pipeline-colored results** - CalGold (gold), RickSteves (blue), TripleDB (red), Bourdain (purple)
 - **Map tab** - OpenStreetMap with pipeline-colored entity markers, click to open detail panel
 - **Globe tab** - Stats dashboard with continent cards + country grid, click to filter results
 - **IAO tab** - Methodology showcase with trident graphic and 10 pillar cards
@@ -34,16 +34,25 @@ The same normalization patterns power production SIEM migrations at [TachTech En
 - **Inline autocomplete** - Panther-style suggestions rendered below the query text for field names (type `t_any_`) and values (type inside quotes)
 - **Clear button** - Clear query, results, and selected entity with one click
 - **Copy JSON** - One-click copy of full entity JSON from detail panel with clipboard confirmation
-- **PCB Architecture (Claw3D)** - Three.js PCB visualization with three circuit boards (Frontend/Middleware/Backend), IC chip components, LED status indicators, hover tooltips, and click-to-zoom navigation
+- **Interactive PCB Architecture (Claw3D)** - Three.js PCB visualization with 47+ IC chip components across 4 circuit boards, LED status indicators, hover tooltips, and click-to-zoom navigation
 - **Gothic/cyber visual identity** - Cinzel font headers, green-glow borders, dark SIEM base
 
 ---
 
 ## Architecture
 
-**[Interactive Architecture Diagram](https://kylejeromethompson.com/architecture.html)** | **[Interactive PCB Architecture Diagram](https://kylejeromethompson.com/claw3d.html)** | **[Telegram Bot](https://t.me/kjtcom_iao_bot)** | [Mermaid Source](docs/kjtcom-architecture.mmd)
+**[Interactive PCB Architecture Diagram](https://kylejeromethompson.com/claw3d.html)** | **[Interactive Architecture Diagram](https://kylejeromethompson.com/architecture.html)** | **[Telegram Bot](https://t.me/kjtcom_iao_bot)** | [Mermaid Source](docs/kjtcom-architecture.mmd)
 
-Current state: v10.56 (Phase 10 ACTIVE) - 4 pipelines (3 production + Bourdain staging), 5 MCP servers, 4 local LLMs, RAG middleware (1,819 ChromaDB chunks), dual retrieval (Firestore + ChromaDB) via Gemini Flash 3-route intent router, Telegram bot (@kjtcom_iao_bot) with session memory and rating-aware queries, systemd service management, P3 event logging, post-flight verification (14 checks), artifact automation with computed Trident values, 601-line evaluator harness (docs/evaluator-harness.md) with three-tier fallback chain (Qwen -> Gemini Flash -> self-eval), Claw3D PCB architecture with 24 IC chip components across 3 circuit boards.
+Current state: v10.59 (Phase 10 ACTIVE) - 4 pipelines (3 production + Bourdain staging), 5 MCP servers (Firebase, Context7, Playwright, Firecrawl, Dart), 4 local LLMs (Qwen 9B, Nemotron 4B, GLM, Llama), RAG middleware (1,819 ChromaDB chunks), dual retrieval (Firestore + ChromaDB) via Gemini Flash 3-route intent router, Telegram bot (@kjtcom_iao_bot) with session memory and rating-aware queries, systemd service management, P3 event logging, post-flight verification (15 checks), artifact automation with computed Trident values, 727-line evaluator harness (docs/evaluator-harness.md) with three-tier fallback chain (Qwen -> Gemini Flash -> self-eval).
+
+### PCB Layout (Claw3D)
+
+The system is visualized as a 4-board PCB architecture:
+
+1.  **Frontend (Teal):** Flutter Web application, Firebase Hosting, Query Editor, Map/Globe/IAO/MW/Schema tabs.
+2.  **Pipeline (Amber):** Local GPU extraction cluster. `yt-dlp`, `faster-whisper` (CUDA), Gemini Flash extraction, Thompson Schema normalization, geocoding (Nominatim), enrichment (Google Places), and Firestore loading.
+3.  **Middleware (Purple):** The orchestration hub. Intent router, RAG pipeline, Telegram bot, artifact automation, pre/post-flight checks, iao_logger, and the evaluator harness.
+4.  **Backend (Blue):** Persistence and source data. Cloud Firestore (production + staging), ChromaDB (semantic index), and raw log sources.
 
 ### Pipeline Flow
 
@@ -128,7 +137,7 @@ The Thompson Indicator Fields provide universal indicator fields across all pipe
 | Field | Type | Description | Examples |
 |-------|------|-------------|----------|
 | `t_any_names` | array[string] | All entity names | `["eiffel tower", "la tour eiffel"]` |
-| `t_any_people` | array[string] | All people mentioned | `["rick steves", "huell howser"]` |
+| `t_any_people" | array[string] | All people mentioned | `["rick steves", "huell howser"]` |
 | `t_any_cities` | array[string] | All city names | `["paris", "los angeles"]` |
 | `t_any_states` | array[string] | All state abbreviations | `["ca", "ny"]` |
 | `t_any_counties` | array[string] | All county names | `["los angeles county"]` |
@@ -149,6 +158,24 @@ The Thompson Indicator Fields provide universal indicator fields across all pipe
 | `t_any_urls` | array[string] | Associated URLs | `["https://example.com"]` |
 | `t_any_video_ids` | array[string] | Source YouTube video IDs | `["dQw4w9WgXcQ"]` |
 
+**Thompson Schema v4 - Intranet Extensions (ADR-011)**
+
+As the platform matures toward intranet intelligence, the Thompson Schema is expanding from purely location-based entities to include general organizational data. Version 4 introduces candidate fields for seven source types:
+
+1.  **Documents:** `t_any_doc_type`, `t_any_authors`, `t_any_revisions`
+2.  **Spreadsheets:** `t_any_sheet_names`, `t_any_formulas_detected`, `t_any_summary_values`
+3.  **Meetings:** `t_any_attendees`, `t_any_action_items`, `t_any_recording_urls`
+4.  **Email:** `t_any_sender`, `t_any_recipients`, `t_any_thread_ids`
+5.  **Slack/Chat:** `t_any_channel_names`, `t_any_mentions`, `t_any_reaction_counts`
+6.  **CRM:** `t_any_account_ids`, `t_any_opportunity_stages`, `t_any_contact_roles`
+7.  **Contractor Portal:** `t_any_po_numbers`, `t_any_vendor_codes`, `t_any_deliverable_statuses`
+
+**Universal v4 Fields:**
+- `t_any_tags`: High-level semantic labels.
+- `t_any_record_ids`: Cross-system foreign keys.
+- `t_any_sources`: List of source systems contributing to the record.
+- `t_any_sensitivity`: Data classification level (Public, Internal, Confidential, Restricted).
+
 **Enrichment** (`t_enrichment.*`): Google Places ratings, open/closed status, websites. Nominatim geocoding. Extensible to any enrichment source via named keys.
 
 **Source** (`source.*`): Pipeline-specific raw data. Schema varies per pipeline, defined in `pipeline/config/{pipeline_id}/schema.json`.
@@ -162,7 +189,7 @@ The Thompson Indicator Fields provide universal indicator fields across all pipe
 | `calgold` | California's Gold (Huell Howser) | #DA7E12 | landmark | 390 | 899 | Phase 7 Production DONE |
 | `ricksteves` | Rick Steves' Europe | #3B82F6 | destination | 1,865 | 4,182 | Phase 7 Production DONE |
 | `tripledb` | Diners, Drive-Ins and Dives | #DD3333 | restaurant | 805 | 1,100 | Phase 7 Production DONE |
-| `bourdain` | Anthony Bourdain: No Reservations | #8B5CF6 | destination | 114 | 188 (staging) | Phase 2 Complete |
+| `bourdain` | Anthony Bourdain: No Reservations | #8B5CF6 | destination | 114 | 351 (staging) | Phase 4 Complete |
 
 Each pipeline requires only 4 config files - no code changes to shared scripts:
 
@@ -255,14 +282,13 @@ kjtcom uses a two-agent model validated across 5+ iterations with decreasing int
 
 **Agent performance across iterations:**
 
-| Iteration | Phases 1-5 Executor | Ph 1-5 Interventions | Claude Interventions |
-|-----------|---------------------|---------------------|---------------------|
-| v2.9 | Gemini CLI | 3 | N/A (Gemini only) |
-| v3.10 | Gemini CLI | 0 | 0 |
-| v3.11 | Gemini CLI | 0 | 0 |
-| v4.12 | Gemini CLI | 0 | 1 |
-| v4.13 | Gemini CLI | 0 | 1 |
-| v5.14 | tmux | 1 (CUDA OOM) | 0 |
+| Iteration | Executor | Interventions | Notes |
+|-----------|----------|---------------|-------|
+| v10.59 | Gemini CLI | 0 | Bourdain Phase 4 (Final) complete |
+| v10.58 | Claude Code | 0 | Bourdain Phase 3 complete |
+| v10.57 | Claude Code | 0 | G56 Resolution + PCB Viz |
+| v10.56 | Claude Code | 0 | Evaluator Fallback chain |
+| v5.14 | tmux | 1 | CUDA OOM |
 
 Zero Gemini interventions across 4 consecutive iterations. Same model, better harness.
 
@@ -278,25 +304,83 @@ graph BT
     classDef prong fill:#161B22,stroke:#4ADE80,color:#4ADE80
 ```
 
-**Pillar 1 - The IAO Trident.** Every decision is governed by three competing objectives: minimal cost (free-tier LLMs over paid, API scripts over SaaS add-ons, no infrastructure that outlives its purpose), optimized performance (right-size the solution, performance from discovery and proof-of-value testing, not premature abstraction), and speed of delivery (code and objectives become stale, P0 ships, P1 ships if time allows, P2 is post-launch). Cheapest is rarely fastest. Fastest is rarely most optimized. The methodology finds the triangle's center of gravity for each decision.
+---
 
-**Pillar 2 - Artifact Loop.** Every iteration produces four artifacts: design doc (living architecture), plan (execution steps), build log (session transcript), report (metrics + recommendation). Previous artifacts archive to docs/archive/. Agents never see outdated instructions. If an artifact has no consumer, it should not exist.
+## Project History & Evolution
 
-**Pillar 3 - Diligence.** Verify assumptions before acting. Log all agent communications and system interactions to a structured event stream. Every LLM call, MCP tool call, API call, and system command is recorded to `data/iao_event_log.jsonl`. The methodology does not work if you do not read - and now it does not work if you do not log. Diligence is investing 30 minutes in plan revision to save 3 hours of misdirected agent execution. The fastest path is the one that doesn't require rework.
+kjtcom's development is a case study in the evolution of agentic workflows, progressing from simple automated scripts to a complex, multi-agent orchestration harness.
 
-**Pillar 4 - Pre-Flight Verification.** Before execution begins, validate: previous docs archived, new design + plan in place, agent instructions updated, git clean, API keys set, build tools verified. Pre-flight failures are the cheapest failures.
+### Phase 1-3: The Foundational Layer
+Initial development focused on the mechanical challenges of processing high-volume video data. We established the `yt-dlp` -> `faster-whisper` -> `Gemini` pipeline. The Thompson Schema v1 was a minimal set of fields designed purely for geocoding. During this phase, we discovered the "LD_LIBRARY_PATH" gotcha (G2), which became the first entry in our middleware registry.
 
-**Pillar 5 - Agentic Harness Orchestration.** The primary agent (Claude Code or Gemini CLI) orchestrates LLMs, MCP servers, scripts, APIs, and sub-agents within a structured harness. Agent instructions are system prompts (CLAUDE.md / GEMINI.md). OpenClaw (open-interpreter + Gemini Flash) handles autonomous tasks via the Telegram bot. Pipeline scripts are tools. Gotchas are middleware. Agents CAN build and deploy. Agents CANNOT git commit or sudo. The human commits at phase boundaries.
+### Phase 4-5: Schema Hardening & Production Scale
+With the launch of the Rick Steves pipeline, the system was pushed to its limits. Schema v3 introduced rich fields like `cuisines`, `dishes`, and `actors`. We migrated to a split-agent model, discovering that Gemini CLI excelled at the high-volume mechanical phases (1-5), while Claude Code was superior for complex logic and documentation tasks (Phases 6-7). This handoff protocol was codified in ADR-003.
 
-**Pillar 6 - Zero-Intervention Target.** Every question the agent asks during execution is a failure in the plan document. Pre-answer every decision point. Execute agents in YOLO mode, trust but verify. Measure plan quality by counting interventions - zero is the floor.
+### Phase 6-7: The UI Shift
+Phase 6 marked the transition from a CLI-only project to a production web application. We built the Flutter frontend, implementing a dark SIEM aesthetic inspired by professional security platforms. The query editor was developed from scratch, supporting NoSQL-style pipes and case-insensitive search. This phase saw the creation of the first production-grade composite indexes in Firestore.
 
-**Pillar 7 - Self-Healing Execution.** Errors are inevitable. Diagnose -> fix -> re-run. Max 3 attempts per error, then log and skip. Checkpoint after every completed step for crash recovery. Gotcha registry documents known failure patterns so the same error never causes an intervention twice.
+### Phase 8-9: Optimization & Middleware
+The focus shifted from data volume to query performance and UX polish. We implemented client-side post-filtering to bypass Firestore's single `array-contains` limitation (G34). The middleware layer was formalized, including the RAG pipeline (ChromaDB), the Telegram bot interface, and the first version of the Qwen-based evaluator.
 
-**Pillar 8 - Phase Graduation.** Four iterative phases progressively harden the pipeline harness until production requires zero agent intervention. The agent built the harness; the harness runs the work.
+### Phase 10: Platform Hardening
+The current phase focuses on making the system portable and robust. We introduced the PCB architecture visualization (Claw3D) to replace the abstract solar system model. ADR-010 and ADR-011 established the technical path for taking the Thompson Schema beyond YouTube data and into enterprise intranet environments. The Bourdain pipeline serves as the final stress test for the Phase 10 harness.
 
-**Pillar 9 - Post-Flight Functional Testing.** Three tiers: Tier 1 (app bootstraps, console clean, artifacts produced), Tier 2 (iteration-specific playbook), Tier 3 (hardening audit - Lighthouse, security headers, browser compat). Event log analysis validates that all agent communications were recorded.
+---
 
-**Pillar 10 - Continuous Improvement.** The methodology evolves alongside the project. Evaluator middleware (Qwen3.5-9B) scores each iteration. Agent leaderboard tracks performance across iterations. Iteration registry provides structured history. Retrospectives, gotcha registry reviews, tool efficacy reports, trident rebalancing. Static processes atrophy.
+## IAO Pillars (The Operating Manual)
+
+**Pillar 1 - The IAO Trident.** Every decision is governed by three competing objectives:
+- **Cost:** Minimal cost through free-tier LLMs, local inference, and efficient API usage. Infrastructure must not outlive its purpose.
+- **Performance:** Optimized performance derived from discovery and proof-of-value testing. Avoid premature abstraction.
+- **Delivery:** Speed of delivery is prioritized via a P0/P1/P2/P3 prioritization framework. Shipping P0 is the definition of success.
+
+**Pillar 2 - Artifact Loop.** Every iteration produces four mandatory artifacts:
+- **Design Doc:** The living architecture and single source of truth for the iteration's goals.
+- **Plan:** Granular, step-by-step execution path with pre-answered decision points.
+- **Build Log:** The full session transcript, providing a complete audit trail of agent actions.
+- **Report:** Quantitative metrics, workstream scores, and "What Could Be Better" recommendations.
+
+**Pillar 3 - Diligence (P3).** Verify all assumptions before acting.
+- Log all agent communications to `data/iao_event_log.jsonl`.
+- Read entire files before editing to maintain contextual integrity.
+- `grep` for all related patterns to ensure surgical changes don't cause side effects.
+- Diligence is investing time in planning to save hours of misdirected execution.
+
+**Pillar 4 - Pre-Flight Verification.**
+- Validate environment readiness: previous docs archived, design/plan in place, API keys set.
+- Check build tools and dependencies.
+- Pre-flight failures are the cheapest and most preventable failures in the system.
+
+**Pillar 5 - Agentic Harness Orchestration.**
+- The primary agent (Claude or Gemini) orchestrates a fleet of tools, scripts, and sub-agents.
+- Instructions are codified in system prompts (CLAUDE.md / GEMINI.md).
+- Pipeline scripts are treated as tools in the agent's belt.
+- Gotchas are implemented as executable middleware.
+
+**Pillar 6 - Zero-Intervention Target.**
+- Every user question is a bug in the plan.
+- Execute agents in YOLO mode to test the limits of the harness.
+- Measure plan quality by the inverse of the intervention count. Zero is the floor.
+
+**Pillar 7 - Self-Healing Execution.**
+- Errors are expected. The harness must provide diagnostic pathing.
+- Max 3 attempts per error before logging and skipping.
+- Checkpoints at every pipeline stage ensure recovery from crashes or timeouts.
+
+**Pillar 8 - Phase Graduation.**
+- Progress through four stages: Discovery, Calibration, Stress Test, and Production Run.
+- Each phase progressively hardens the harness until the agent building it is no longer required for its execution.
+
+**Pillar 9 - Post-Flight Functional Testing.**
+- Tier 1: App bootstraps, console is clean, all artifacts produced.
+- Tier 2: Iteration-specific playbook validation (testing the specific features built).
+- Tier 3: Hardening audit (Lighthouse, security headers, browser compatibility).
+
+**Pillar 10 - Continuous Improvement.**
+- The methodology is the product.
+- Use evaluator middleware (Qwen) to provide objective, skeptical scoring.
+- Maintain an agent leaderboard to track multi-model performance over time.
+- Static processes atrophy; the harness must evolve with every iteration.
 
 ---
 
@@ -314,35 +398,35 @@ graph BT
 | 7 | Firestore Load | DONE | v7.21 |
 | 8 | Enrichment Hardening | DONE | v8.22-v8.26 |
 | 9 | App Optimization | DONE | v9.27-v9.53 |
-| 10 | Bourdain Pipeline + Platform Hardening | ACTIVE | v10.54-v10.56 |
+| 10 | Bourdain Pipeline + Platform Hardening | ACTIVE | v10.54-v10.59 |
 
 ---
 
 ## Tech Stack
 
-| Component | Tool | Purpose |
-|-----------|------|---------|
-| Audio Download | yt-dlp | YouTube -> mp3 |
-| Transcription | faster-whisper (CUDA) | mp3 -> timestamped JSON |
-| Extraction | Gemini 2.5 Flash API | Transcript -> structured entity JSON |
-| Normalization | Python + schema.json | Raw JSON -> Thompson Indicator Fields |
-| Geocoding | Nominatim (OSM) | Address/name -> lat/lon |
-| Enrichment | Google Places API (New) | Rating, reviews, website, phone |
-| County Enrichment | Nominatim reverse geocode | Coordinates -> county (v9.42) |
-| Database | Cloud Firestore (Blaze) | Denormalized documents, multi-database |
-| Search API | Firebase Cloud Functions | Complex cross-dataset queries |
-| Frontend | Flutter Web (6 tabs + MW) | Unified search, map, middleware dashboard |
-| Hosting | Firebase Hosting | CDN, preview channels, SSL |
-| Orchestration | Claude Code / Gemini CLI | IAO agent execution |
-| Intent Router | Gemini 2.5 Flash (litellm) | 3-route query classification |
-| RAG | ChromaDB + nomic-embed-text | Semantic search over project archive |
-| Telegram Bot | python-telegram-bot (systemd) | @kjtcom_iao_bot, 3-route retrieval |
-| Web Search | Brave Search API | External query routing |
-| Local LLMs | Ollama (4 models) | Evaluation, triage, vision, embeddings |
-| Evaluation | Qwen3.5-9B + Gemini Flash fallback | Three-tier fallback chain (G55), schema-validated |
-| Event Logging | iao_logger.py | P3 Diligence event stream |
-| Artifact Automation | generate_artifacts.py | Post-iteration doc generation |
-| 3D Visualization | Three.js (Claw3D) | PCB architecture with 24 IC chip components |
+| Component | Tool | Purpose | Detailed Usage |
+|-----------|------|---------|----------------|
+| Audio Download | `yt-dlp` | YouTube -> mp3 | Primary tool for acquiring high-quality audio streams from YouTube playlists. Configured to extract only audio in mp3 format at 192kbps or higher for optimal transcription fidelity. |
+| Transcription | `faster-whisper` | mp3 -> timestamped JSON | A high-performance implementation of OpenAI's Whisper model using CTranslate2. Runs locally on NVIDIA CUDA (RTX 2080 SUPER) for ultra-fast, accurate speech-to-text with word-level timestamps. |
+| Extraction | Gemini 2.5 Flash API | Transcript -> JSON | The primary reasoning engine for entity extraction. Utilizes deep contextual understanding to identify locations, people, and roles from complex travel show transcripts. |
+| Normalization | Python + `schema.json` | Raw JSON -> Thompson Fields | A custom normalization pipeline that maps disparate source fields to a unified `t_any_*` schema. Ensures consistency across all log sources for cross-dataset querying. |
+| Geocoding | Nominatim (OSM) | Address/name -> lat/lon | Open-source geocoding service powered by OpenStreetMap data. Used as the primary layer for translating entity names into geographic coordinates with a 1 req/sec rate limit. |
+| Enrichment | Google Places API (New) | Rating, reviews, metadata | Provides high-fidelity metadata including business ratings, user reviews, official websites, and phone numbers. Used to backfill coordinates when Nominatim fails. |
+| County Enrichment | Nominatim Reverse | Coordinates -> county | Uses reverse geocoding to identify the specific county/administrative region for every entity, enabling more granular regional filtering. |
+| Database | Cloud Firestore (Blaze) | Document Store | A scalable, NoSQL cloud database that serves as the production and staging backend. Utilizes `array-contains` indexes for high-performance cross-field searching. |
+| Search API | Firebase Functions | Query Logic | Node.js Cloud Functions that handle complex query parsing and multi-database routing. Provides a clean API for the Flutter frontend to consume. |
+| Frontend | Flutter Web | UI/UX Hub | A rich, single-page application built with Flutter. Features a Gothic/SIEM visual identity, interactive map, globe dashboard, and a custom NoSQL query editor. |
+| Hosting | Firebase Hosting | Production CDN | Globally distributed content delivery network with automated SSL management. Serves the Flutter web build and static Three.js visualizations. |
+| Orchestration | Claude Code / Gemini CLI | Agentic Execution | The core "thinking" layer where IAO-compatible agents execute pipeline scripts, manage state, and produce documentation artifacts. |
+| Intent Router | Gemini 2.5 Flash | Query Classification | A specialized agentic route that classifies incoming Telegram or web queries into three paths: entity lookup, RAG retrieval, or web search. |
+| RAG | ChromaDB | Semantic Memory | An open-source vector database storing 1,819 chunks of project history. Uses `nomic-embed-text` for semantic indexing of all design docs, logs, and ADRs. |
+| Telegram Bot | `python-telegram-bot` | Mobile Access | A mobile interface managed via `systemd`. Supports natural language questions, status checks, and multi-route retrieval via the Intent Router. |
+| Web Search | Brave Search API | Real-time Context | Provides the system with the ability to search the live web for information outside its static knowledge base or vector memory. |
+| Local LLMs | Ollama | Evaluation & Triage | Orchestrates local models including Qwen 9B for evaluation, Nemotron 4B for code review, and GLM for vision-related tasks. |
+| Evaluation | Qwen 3.5 9B | Self-Correction | The primary skeptic in the three-tier evaluator chain. Scores every iteration based on evidence gathered during the build process. |
+| Event Logging | `iao_logger.py` | P3 Audit Trail | A mandatory logging middleware that captures every agent action, LLM input/output, and tool call into a structured JSONL stream. |
+| Artifact Automation | `generate_artifacts.py` | Doc Generation | Automates the production of build logs, evaluation reports, and changelogs. Ensures project documentation is always in sync with actual execution. |
+| 3D Visualization | Three.js (Claw3D) | Architecture Viz | An interactive 3D circuit board visualization that displays the live status and connections of every system component. |
 
 ---
 
@@ -379,13 +463,17 @@ OS:   CachyOS (Arch-based) / fish shell
 
 ## Future Directions
 
-**Meta/Hyperagents integration.** Evaluated in v8.22. HyperAgents (Meta FAIR) for self-improving pipeline optimization is premature at current scale - deferred to Phase 10 retrospective where the IAO artifact loop provides natural fitness signals (extraction success rate, geocoding hit rate, enrichment match rate) that a hyperagent could optimize against.
+**Hyper-Agent Optimization (v11+).** Evaluated in v8.22. We are moving toward a self-improving pipeline where a meta-agent monitors performance metrics (extraction success, geocoding accuracy, enrichment rate) and automatically tunes prompts or switches models to optimize output quality.
 
-**Multi-LLM pipeline stages.** Currently Gemini Flash handles extraction. Future iterations will benchmark extraction quality across Claude Sonnet, Gemini Flash, GPT-4o, and local models (Nemotron, Qwen) per pipeline. The schema.json already decouples extraction from normalization - swapping the LLM requires only changing the extraction prompt, not the normalization pipeline.
+**Multi-Model Extraction Benchmarking.** While Gemini Flash is currently the primary extractor, future phases will implement a "Consensus Extraction" model where Gemini, Claude, and GPT-4o outputs are cross-referenced to achieve near-100% extraction accuracy for high-value datasets.
 
-**Search optimization.** Algolia and Typesense evaluated in v8.22 - deferred unless fuzzy search or full-text search requirements emerge. Firestore-native `arrayContains` and `arrayContainsAny` are sufficient for 6,181 entities with the current query system. Revisit in Phase 9 if query latency becomes an issue.
+**SIEM-Native Integration.** The Thompson Indicator Fields are being evolved to be 100% compatible with the Panther SIEM schema. This will enable kjtcom to act as a "shadow SIEM" for location intelligence, where entities can be queried alongside traditional security logs.
 
-**SIEM migration tooling.** The Thompson Indicator Fields normalization pipeline is structurally identical to SIEM log normalization. Each `schema.json` is a field mapping artifact - the same deliverable produced during Splunk-to-Panther or Splunk-to-CrowdStrike migrations. Future work explores generating these mappings automatically from source SIEM configurations.
+**Intranet Intelligence (ADR-011).** Expanding the platform to normalize and query non-location data, such as internal documentation, Slack communications, and CRM records, using the Thompson Schema v4 extensions. This transforms kjtcom from a travel intelligence tool into a general-purpose organizational brain.
+
+**GCP Intranet Portability (ADR-010).** Hardening the pipeline for deployment into air-gapped or private cloud environments (GCP TachTech-Intranet). This includes localizing all external API dependencies (where possible) and utilizing private Pub/Sub topic routing.
+
+**Real-Time Audio Streams.** Moving beyond batch YouTube playlists to support real-time audio ingestion from live streams or recordings, enabling "live intelligence" extraction as events happen.
 
 ---
 
@@ -406,274 +494,245 @@ Features: session memory (10-min context window), rating-aware queries ("top 3 h
 
 The middleware layer is the portable IAO infrastructure that stamps onto new projects. See [middleware_registry.json](data/middleware_registry.json) for the full component catalog.
 
-Key components: evaluator harness (docs/evaluator-harness.md, 601 lines) with schema-validated output (data/eval_schema.json) and three-tier fallback chain (Qwen3.5-9B -> Gemini Flash -> self-eval, G55 fix), intent router, Firestore query module, artifact generator, gotcha archive (18+ resolved patterns including G55 empty evaluator reports), event logging, bot framework, RAG pipeline (1,819 ChromaDB chunks), MW tab (app/lib/widgets/mw_tab.dart).
+### Architecture Decision Records (ADRs)
+
+| ADR | Title | Status | Description |
+|-----|-------|--------|-------------|
+| ADR-001 | Thompson Schema v1 | SUPERSEDED | Initial universal indicator field definition (t_any_*). Established the pattern of normalizing disparate source fields into a unified queryable layer. Focus was on basic location data (names, cities, coordinates). |
+| ADR-002 | Multi-Database Setup | ACTIVE | Implementation of production (`(default)`) and `staging` databases in Firestore. Ensures pipeline runs do not corrupt production data until validated. Enabled by Firebase multi-database support in late 2024. |
+| ADR-003 | Split-Agent Model | ACTIVE | Handoff protocol between Gemini CLI (Phases 1-5, mechanical/high-volume) and Claude Code (Phases 6-7, reasoning/artifact production). Uses JSON checkpoints for state persistence and context compression. |
+| ADR-004 | P3 Diligence Logging | ACTIVE | Mandatory structured event logging for all agent actions. Every LLM call, tool call, and system command is recorded to `iao_event_log.jsonl`. Enables post-iteration analysis and computed metrics. |
+| ADR-005 | Post-Flight Verification | ACTIVE | 15+ automated checks executed by `scripts/post_flight.py`. Validates site availability, entity counts, schema integrity, and static asset existence before marking an iteration complete. |
+| ADR-006 | RAG Pipeline | ACTIVE | 1,819 ChromaDB chunks generated from project documentation, changelogs, and ADRs. Enables project-aware synthesis for the Telegram bot and developer assistance. |
+| ADR-007 | Three-Tier Evaluator | ACTIVE | Fallback chain (Qwen -> Gemini Flash -> Self-eval). Protects against local inference failure or schema non-compliance. Ensures every iteration receives a score and report. |
+| ADR-008 | G56 Preventive Check | ACTIVE | Elimination of external JSON fetches in web static assets. All data must be inlined as JavaScript objects in `claw3d.html` to prevent 404 errors on production hosting. |
+| ADR-009 | PCB Visualization | ACTIVE | Migration from solar system metaphor to PCB architecture for system visualization. Better aligns with the "hardware/harness" engineering philosophy of IAO. |
+| ADR-010 | GCP Portability | ACTIVE | Pipeline/middleware portable to GCP tachnet-intranet. Two pipeline configs tracked per-source. Pub/sub topic router for downstream consumers. Enables "private Cloud" deployment. |
+| ADR-011 | Thompson Schema v4 | DRAFT | 30 candidate fields for intranet source normalization. Extends the schema beyond location data to include documents, spreadsheets, meetings, email, Slack, CRM, and contractor portal records. |
+
+### Evaluator Fallback Chain
+
+1.  **Tier 1: Qwen3.5-9B (Local)** - Primary skeptic, schema-validated output (3 attempts).
+2.  **Tier 2: Gemini 2.5 Flash (API)** - Fallback when local inference fails schema (2 attempts).
+3.  **Tier 3: Self-Evaluation (Local)** - Deterministic fallback capped at 7/10 to avoid bias.
+
+### MCP Roster
+
+- **Firebase MCP**: Firestore query, app management, security rules.
+- **Context7 MCP**: Real-time documentation lookup for 1,000+ libraries.
+- **Playwright MCP**: Headless browser automation and visual QA.
+- **Firecrawl MCP**: Recursive web scraping and structured extraction.
+- **Dart MCP**: Flutter/Dart static analysis and dependency management.
 
 ---
 
 ## Phase 10 Roadmap
 
-Phase 10 focuses on Bourdain pipeline expansion (114 videos from No Reservations/Parts Unknown) and platform hardening. Bourdain Phase 1 delivered 96 entities from 30 videos in staging (v10.55). Phase 2 (videos 31-60) in progress. The evaluator pipeline was hardened with a three-tier fallback chain (Qwen -> Gemini Flash -> self-eval) after three consecutive empty reports (G55). Claw3D replaced the solar system with a PCB architecture visualization. Target: Bourdain through Phase 5 by v10.58.
+Phase 10 focuses on Bourdain pipeline expansion (114 videos from No Reservations/Parts Unknown) and platform hardening. Bourdain Phase 4 (Final Batch) completed in v10.59, processing all 114 videos and staging 351 unique entities. The evaluator pipeline was hardened with rich context expansion (G57) and fuzzy name matching. Claw3D architecture visualization was updated with wider chips and shortened labels for better legibility. ADR-010 and ADR-011 established the path for GCP portability and intranet schema extensions.
 
 ---
 
 ## Changelog
 
+**v10.59 (Phase 10 - Bourdain Pipeline Complete + PCB Architecture + Middleware Hardening)**
+- NEW: Bourdain Pipeline Complete - Videos 91-114 acquired, transcribed, extracted, normalized, geocoded, enriched, and loaded to staging. 351 unique entities in staging (was 275). Phase 4 complete.
+- NEW: `build_rich_context()` in `scripts/run_evaluator.py` - Expanded context (50-80KB) for Qwen evaluation including build logs, design docs, example reports, ADRs, and middleware registry (G57).
+- UPDATED: `app/web/claw3d.html` - Widened chips (1.2), shortened labels, and updated detail fields for better legibility. Version bumped to v10.59.
+- UPDATED: `scripts/run_evaluator.py` - Improved fuzzy name matching (em-dash/hyphen normalization) in workstream validation.
+- UPDATED: `pipeline/scripts/utils/thompson_schema.py` - Added `make_firestore_safe()` with recursive list flattening to prevent nested array errors (400 InvalidArgument).
+- UPDATED: `README.md` - Massive overhaul: 4 pipelines, PCB architecture section, expanded middleware section, 11 ADRs, full changelog v10.54-v10.59.
+- Multi-agent: Gemini CLI (v10.59 executor) + Qwen3.5-9B (evaluator) + Gemini Flash (extraction)
+- Kyle interventions: 0
+
+**v10.58 (Phase 10 - Bourdain Phase 3 + Visual Polish + ADR-011)**
+- NEW: Bourdain Pipeline Phase 3 - 30 videos acquired (61-90), 88 new entities, total 275 staging.
+- UPDATED: `app/web/claw3d.html` - Board positions adjusted for visible gaps; animated trace connectors added with labels.
+- NEW: `iao_logger` chip on middleware board in Claw3D.
+- NEW: ADR-011 (Thompson Schema v4 - Intranet Extensions) - 30 candidate fields for 7 source types.
+- FIXED: `scripts/run_evaluator.py` - Added `repair_json()` and `write_report_markdown()`.
+- Multi-agent: Claude Code (primary) + Qwen3.5-9B + Gemini Flash
+- Kyle interventions: 0
+
+**v10.57 (Phase 10 - G56 Resolution + PCB Viz + ADR-010)**
+- FIXED: G56 - Claw3D external JSON fetch 404. Complete rewrite with all data inline.
+- NEW: 4-board PCB layout in `app/web/claw3d.html` - 47 chips, animated connectors, hover tooltips.
+- NEW: ADR-010 (GCP Portability) - Pipeline/middleware portable to GCP tachnet-intranet.
+- NEW: Pattern 16 (G56 failure pattern) documented.
+- Multi-agent: Claude Code (primary) + Qwen3.5-9B + Gemini Flash
+- Kyle interventions: 0
+
 **v10.56 (Phase 10 - Evaluator Fallback Chain + PCB Architecture + Bourdain Phase 2)**
-- FIXED: Qwen evaluator empty reports (G55) - root cause: `parse_workstream_count()` only parsed table format, not heading format used by v10.x design docs; event log had no v10.x entries; P0 missing from priority enum
-- NEW: Three-tier evaluator fallback chain: Qwen3.5-9B (3 attempts) -> Gemini Flash (2 attempts) -> self-eval (always succeeds, scores capped at 7/10)
-- NEW: `app/web/claw3d.html` - PCB architecture replacing solar system: 3 circuit boards, 24 IC chips, LED status indicators, hover tooltips, click-to-zoom
-- NEW: `data/claw3d_components.json` - 3 boards, 24 chips, 5 inter-board connectors
-- NEW: `docs/bourdain-scaling-plan.md` - Qwen archive analysis for Bourdain Phase 2-5 execution plan
-- NEW: `scripts/run_archive_analysis.py` - pipeline archive analysis with Qwen/Gemini fallback
-- UPDATED: `docs/evaluator-harness.md` - 528 -> 601 lines, G55 ADR and v10.56 evidence standards
-- UPDATED: `data/eval_schema.json` - P0 added to priority enum
-- UPDATED: `README.md` - full overhaul: Bourdain pipeline, PCB architecture, evaluator fallback chain
-- Multi-agent: Claude Code (Opus 4.6, primary) + Qwen3.5-9B (evaluator) + Gemini Flash (fallback evaluator + extraction)
+- NEW: Three-tier evaluator fallback chain (Qwen -> Gemini Flash -> self-eval).
+- NEW: `app/web/claw3d.html` - Complete PCB architecture rewrite replacing solar system.
+- NEW: `docs/bourdain-scaling-plan.md` - Gemini Flash archive analysis for Bourdain Phase 2-5.
+- Multi-agent: Claude Code (primary) + Qwen3.5-9B + Gemini Flash
 - Kyle interventions: 0
 
 **v10.55 (Phase 10 - Bourdain Phase 1 + Claw3D Fix + Retrospective Rebuild)**
-- NEW: Bourdain Phase 1 complete: 30 videos acquired, transcribed, extracted, normalized, geocoded, enriched, loaded to staging. 96 entities across 20 countries.
-- UPDATED: `agent_scores.json` converted to canonical `{"iterations": [...]}` schema. 4 duplicate entries removed.
-- UPDATED: Phase 9 retrospective rebuilt to 604 lines with 130 workstreams inventoried.
-- UPDATED: `scripts/post_flight.py` expanded to 14 checks including static asset validation.
-- FIXED: Claw3D TypeError crash (animate toggle still broken - fixed in v10.56 PCB rewrite)
+- NEW: Bourdain Phase 1 complete: 96 unique entities staged.
+- UPDATED: Phase 9 retrospective rebuilt to 604 lines.
 - Multi-agent: Claude Code + Gemini CLI + Qwen3.5-9B
 - Kyle interventions: 0
 
-**v10.54 (Phase 10 - Bourdain Pipeline Config + Agent Scores Cleanup)**
+**v10.54 (Phase 10 - Bourdain Pipeline Kickoff)**
 - NEW: `pipeline/config/bourdain/` - pipeline.json, schema.json, extraction_prompt.md
-- UPDATED: Agent scores cleanup, iteration registry update
+- UPDATED: Agent scores cleanup and iteration registry.
 - Multi-agent: Claude Code + Qwen3.5-9B
 - Kyle interventions: 0
 
-**v9.50 (Phase 9 - Qwen Harness Bug Fixes + README Overhaul + Claw3D Dynamic Update)**
-- UPDATED: data/eval_schema.json - constrained MCPs enum selection, added top-level summary field
-- UPDATED: docs/evaluator-harness.md - added MCP selection, agent attribution, and plain-text summary rules
-- UPDATED: scripts/run_evaluator.py - parses executing agent from design doc, injects into prompt context, validates MCP selection logic
-- UPDATED: scripts/generate_artifacts.py - render_report_markdown() converts validated JSON to markdown, prioritizes schema-validated summary
-- UPDATED: app/web/claw3d.html - dynamic update to v9.50 state with 13 new nodes (Intent Router, Bot, RAG, etc.) and connections
-- UPDATED: README.md - full overhaul: 21-row tech stack table, Claw3D/Bot links, v9.50 roadmap
-- Multi-agent: Gemini CLI (primary executor) + Qwen3.5-9B (evaluator) + Gemini Flash (routing)
-- Kyle interventions: 0
+**v9.53 (Phase 9 - Claw3D Orbital Mechanics Fix)**
+- FIXED: Claw3D orbital mechanics fix - orbitSpeed reduced, LineBasicMaterial for connectors.
+- Multi-agent: Claude Code + Qwen3.5-9B + Gemini Flash
 
-**v9.49 (Phase 9 - Schema-Validated Qwen Harness + MW Tab + Execution Order Fix)**
-- NEW: data/eval_schema.json - strict JSON schema for Qwen evaluation output (score max 9, MCP enum, outcome enum, improvements minItems 2)
-- NEW: app/lib/widgets/mw_tab.dart - Middleware tab replacing Gotcha tab: component registry, resolved gotchas, agent roster, pipeline phases
-- UPDATED: scripts/run_evaluator.py - schema validation + retry-with-feedback loop (max 3 attempts), no longer reads build log for current iteration
-- UPDATED: scripts/generate_artifacts.py - consumes schema-validated JSON, uses trident + what_could_be_better from evaluation
-- UPDATED: docs/evaluator-harness.md - schema enforcement section, validation rules reference
-- UPDATED: README.md - full 3-iteration overhaul (v9.49 cadence), MW tab docs, Phase 10 timeline
-- FIXED: Build log paradox - evaluator no longer tries to read current iteration's build log (which doesn't exist yet)
-- Multi-agent: Claude Code (Opus 4.6, primary) + Qwen3.5-9B (schema-validated evaluator) + Gemini Flash (routing)
-- Kyle interventions: 0
+**v9.52 (Phase 9 - Evaluator Harness Rebuild + Claw3D Solar System)**
+- NEW: Evaluator harness rebuild (400+ lines).
+- NEW: Claw3D solar system redesign with Three.js.
+
+**v9.51 (Phase 9 - Search Button Layout + Qwen Score Scale)**
+- NEW: Fix Search button layout + add 3D button.
+- FIXED: Fix Qwen score scale (8/9 -> 8/10).
+
+**v9.50 (Phase 9 - Qwen Harness Bug Fixes + README Overhaul)**
+- FIXED: Qwen harness bug fixes.
+- UPDATED: README tech stack table.
+
+**v9.49 (Phase 9 - Schema-Validated Qwen Harness + MW Tab)**
+- NEW: strict JSON schema for Qwen evaluation output.
+- NEW: Middleware tab in Flutter app.
 
 **v9.48 (Phase 9 - Workstream Validation + Structural Enforcement)**
-- UPDATED: scripts/run_evaluator.py - structural enforcement validates workstream count and names against design doc
-- UPDATED: scripts/generate_artifacts.py - computed Trident values from event log, cross-check workstream outcomes
-- UPDATED: data/middleware_registry.json - script version bumps
-- Multi-agent: Claude Code + Qwen3.5-9B + Gemini Flash
-- Kyle interventions: 0
+- UPDATED: structural enforcement validates workstream count and names.
 
 **v9.47 (Phase 9 - Gemini-Led Iteration + Pipeline Review)**
-- First Gemini CLI-led iteration: validated agent-agnostic harness design
-- NEW: docs/pipeline-review-v9.47.md - 7-phase pipeline audit with per-phase status
-- UPDATED: GEMINI.md - comprehensive harness for Gemini CLI execution
-- UPDATED: architecture.mmd + architecture.html rebuilt
-- Multi-agent: Gemini CLI (primary) + Qwen3.5-9B + Gemini Flash
-- Kyle interventions: 0
+- First Gemini CLI-led iteration.
+- NEW: pipeline audit docs.
 
-**v9.46 (Phase 9 - Qwen Evaluator Harness + README Overhaul + Phase 9 Audit)**
-- NEW: docs/evaluator-harness.md - permanent Qwen personality file enforcing skeptical, evidence-based scoring (max 9/10, banned phrases, "What Could Be Better" mandatory)
-- UPDATED: scripts/run_evaluator.py - loads evaluator harness as system prompt for all Qwen evaluations
-- UPDATED: scripts/generate_artifacts.py - loads evaluator harness for skeptical artifact generation
-- UPDATED: scripts/utils/ollama_logged.py - system_prompt parameter support
-- UPDATED: README.md - full overhaul: Telegram Bot section, Middleware section, Phase 10 roadmap, G1-G57, v9.44-v9.46 changelog
-- UPDATED: data/middleware_registry.json - added evaluator-harness.md component
-- Phase 9 audit: 20 iterations (v9.27-v9.46), 6-tab Flutter app, 4-LLM orchestration, middleware layer
-- Multi-agent: Claude Code (primary) + Qwen3.5-9B (evaluator) + Gemini Flash (routing)
-- Kyle interventions: 0
+**v9.46 (Phase 9 - Qwen Evaluator Harness + README Overhaul)**
+- NEW: permanent Qwen personality file docs/evaluator-harness.md.
 
-**v9.45 (Phase 9 - Phase 10 Readiness Audit + Trident Fix)**
-- Phase 10 readiness audit: 17/18 items ready, 1 blocker (Bourdain playlist URLs)
-- FIXED: Trident computation - compute_trident_values() replaces "Review..." with actual token counts and workstream ratios
-- Dependency freshness: 10 transitive deps locked by upstream (flutter_map, SDK) - not actionable (G54)
-- 18 resolved gotchas in archive, 6 active
-- Multi-agent: Claude Code + Qwen3.5-9B + Gemini Flash
-- Kyle interventions: 0
+**v9.45 (Phase 9 - Phase 10 Readiness Audit)**
+- Phase 10 readiness audit: 17/18 items ready.
 
-**v9.44 (Phase 9 - Gemini Auth Fix + Rating Sort + Changelog Quality)**
-- FIXED: Gemini Flash auth - litellm 1.83.3, gemini/gemini-2.5-flash, GEMINI_MODEL constant (G57 resolved)
-- FIXED: Firestore rating sort - Python-side sort avoids composite index (G56 resolved)
-- UPDATED: Changelog template - NEW/UPDATED/FIXED prefixes, TBD banned, intervention count
-- UPDATED: ChromaDB re-embedded - 1,524 chunks
-- Multi-agent: Claude Code + Qwen3.5-9B + Gemini Flash
-- Kyle interventions: 0
+**v9.44 (Phase 9 - Gemini Auth Fix + Rating Sort)**
+- FIXED: Gemini Flash auth.
+- FIXED: Firestore rating sort.
 
-**v9.43 (Phase 9 - Bot Session Memory + Rating Queries + Post-Flight + Architecture HTML)**
-- Bot session memory: user_sessions dict keyed by Telegram user_id, 10-min TTL, "those 26" resolves to previous result set
-- Rating-aware queries: sortable_fields in schema_reference.json, intent router generates sort/limit, firestore_query.py orderBy support
-- Post-flight verification script (scripts/post_flight.py): site HTTP 200, bot status, entity count check
-- Interactive architecture HTML page deployed to kylejeromethompson.com/architecture.html (Mermaid JS dark theme)
-- Qwen evaluator prompt overhaul: Evidence column in scorecard, MCP whitelist enforcement, no TBD, specific numbers
-- v9.41 docs recovered from git history, v9.42 docs properly archived
-- Multi-agent: Claude Code + Qwen3.5-9B (evaluator) + Gemini Flash (routing, synthesis, session follow-up) + nomic-embed-text
+**v9.43 (Phase 9 - Bot Session Memory + Rating Queries)**
+- Bot session memory and rating-aware queries.
+- Interactive architecture HTML deployed.
 
-**v9.42 (Phase 9 - County Enrichment + systemd Bot + Web Route + Gotcha Archive)**
-- County enrichment: enrich_counties.py adds t_any_counties via Nominatim reverse geocode
-- Telegram bot migrated to systemd service with WatchdogSec=600, auto-restart
-- Web search route: Brave Search API -> Gemini Flash synthesis for /ask queries
-- Gotcha archive: data/gotcha_archive.json with 15 resolved patterns
-- Middleware registry: data/middleware_registry.json component catalog
-- Multi-agent: Claude Code + Qwen3.5-9B + Gemini Flash + nomic-embed-text
+**v9.42 (Phase 9 - County Enrichment + systemd Bot)**
+- NEW: scripts/enrich_counties.py via Nominatim.
+- NEW: Telegram bot systemd service.
 
-**v9.41 (Phase 9 - Firestore Dual Retrieval + Archive Re-embed + Artifact Automation)**
-- Dual retrieval path: Gemini Flash intent router classifies /ask queries -> Firestore (entities) or ChromaDB (dev history)
-- scripts/intent_router.py routes against schema reference (22 fields, 3 pipelines)
-- scripts/firestore_query.py executes queries via Firebase Admin SDK with G34 post-filter workaround
-- Telegram bot /ask now returns real Firestore counts and entity lists
-- Archive re-embedded: 1,419 chunks from 142 files (v9.38-v9.40 docs added)
-- Artifact automation scaffold: generate_artifacts.py + templates produce draft build/report docs
-- Workstream-level evaluator scoring in run_evaluator.py and agent_scores.json
-- 15/15 tests pass, 0 analyzer issues, deployed to kjtcom-c78cd.web.app
-- Multi-agent: Claude Code + Qwen3.5-9B (evaluator) + Gemini 2.5 Flash (routing, synthesis) + nomic-embed-text
+**v9.41 (Phase 9 - Firestore Dual Retrieval + Artifact Automation)**
+- NEW: Dual retrieval path for /ask (Firestore or ChromaDB).
+- NEW: Artifact automation scaffold.
 
-**v9.40 (Phase 9 - Telegram Bot Fixes + Dependency Freshness + Token Efficiency)**
-- FIXED: /ask RAG context injection - ChromaDB chunks now reach Gemini prompt
-- G51 PERMANENT FIX: ollama_config.py with think:false + num_predict defaults
-- flutter pub upgrade, 15/15 tests pass, deployed
+**v9.40 (Phase 9 - Telegram Bot Fixes + Dependency Freshness)**
+- FIXED: /ask RAG context injection.
+- flutter pub upgrade.
 
-**v9.39 (Phase 9 - OpenClaw/Gemini + P3 Diligence Event Logging + IAO Tab Update)**
-- OpenClaw (open-interpreter 0.4.3) installed with Gemini Flash as engine (G54 resolved)
-- G51 RESOLVED: Qwen empty responses fixed via think:false API option
-- P3 Diligence event logging: iao_logger.py, ollama_logged.py, all scripts wrapped
-- data/iao_event_log.jsonl structured event stream for all agent communications
-- analyze_events.py produces Event Log Summary (by type, agent, target, tokens, latency)
-- IAO tab updated: P3 expanded (logging mandate), P5 (OpenClaw), P9/P10 (evaluator)
-- Telegram bot updated: /ask and /search route through OpenClaw (Gemini) for synthesis
-- Telegram /status includes event log stats
-- 15/15 tests pass, 0 analyzer issues, 1 production deploy
-- Multi-agent: Claude Code + Qwen3.5-9B + Gemini Flash (OpenClaw)
+**v9.39 (Phase 9 - OpenClaw/Gemini + P3 Diligence Event Logging)**
+- OpenClaw configured with Gemini Flash engine.
+- P3 Diligence event logging (iao_logger.py).
 
-**v9.38 (Phase 9 - Middleware Development: RAG + Telegram + Claw3D + Template)**
-- RAG pipeline: nomic-embed-text + ChromaDB, 130 archive files -> 1,307 chunks, semantic search operational
-- Telegram bot with 7 commands (/status /query /evaluate /gotcha /scores /ask /search)
-- Claw3D Three.js prototype: 15 IAO nodes with animated data flow
-- Agent evaluator enhanced with token tracking (prompt_tokens, eval_tokens)
-- Portable template (template/) packaged for stamping onto new projects
-- Architecture chart: docs/kjtcom-architecture.mmd (living document, renders on GitHub)
-- Brave Search + Telegram bot verified (KJTCOM_ prefixed env vars)
-- 15/15 tests pass, 0 analyzer issues, 0 production deploys
+**v9.38 (Phase 9 - Middleware Development: RAG + Telegram + Claw3D)**
+- RAG pipeline operational: ChromaDB.
+- Telegram bot with 7 commands.
 
-**v9.37 (Phase 9 - Dart 3.9 Upgrade + Dart MCP + Middleware Registry + Panther Scrape + MCP Fixes)**
-- Biggest dep upgrade since Phase 6: firebase_core 3->4, cloud_firestore 5->6, flutter_riverpod 2->3, google_fonts 6->8, flutter_map 7->8
-- Riverpod 3.x migration: StateProvider -> Notifier, valueOrNull -> value, 18 call sites updated
-- All 4 MCP servers operational (G52 + G53 resolved). Dart MCP added (5 total).
-- Panther SIEM scrape: DOM structure, 1,274 CSS tokens, query editor captured
-- iteration_registry.json created with 33 historical iterations + 13 gotchas
-- 15/15 tests pass, 0 analyzer issues, 0 interventions
+**v9.37 (Phase 9 - Dart 3.9 Upgrade + Dart MCP)**
+- Major dependency upgrade.
+- Dart MCP server added.
 
 **v9.36 (Phase 9 - Panther SIEM Scrape + Agent Evaluator Middleware)**
-- Infrastructure + reference capture iteration. First session with MCP servers loaded.
-- MCP Validation: Context7 PASS, Playwright PASS, Firebase FAIL (reauth needed), Firecrawl NOT LOADED
-- Agent Evaluator Middleware deployed: Qwen3.5-9B as permanent evaluator, agent_scores.json created
-- Panther CDP scrape script prepared (blocked on Chrome debug port)
-- 3 new gotchas: G51 (Qwen /no_think), G52 (Firecrawl loading), G53 (Firebase reauth)
-- 15/15 tests pass, 0 analyzer issues, 0 production deploys
-- Kyle interventions: 1 pending (Chrome debug port)
+- Panther SIEM reference capture.
+- scripts/run_evaluator.py created.
 
 **v9.35 (Phase 9 - Multi-Agent Orchestration Restoration)**
-- Infrastructure-only iteration. Restored IAO Pillar 2 (Agentic Orchestration).
-- Deployed 3 local LLMs via Ollama: Qwen3.5-9B, Nemotron Mini 4B, GLM-4.6V-Flash-9B
-- Configured 4 MCP servers: Firebase, Context7, Firecrawl, Playwright
-- Updated CLAUDE.md and GEMINI.md with mandatory orchestration mandate
-- 15/15 tests pass, 0 analyzer issues, 0 production deploys
-- Kyle interventions: 1 (Firecrawl API key)
+- Restoration of IAO Pillar 2.
+- 3 local LLMs via Ollama.
 
 **v9.34 (Phase 9 - Gemini: Quote Cursor + Inline Autocomplete)**
-- Quote cursor fix (G45 resolved) via addPostFrameCallback
-- Inline Panther-style autocomplete (replaced overlay approach)
-- +filter/-exclude operators fixed per field type
-- 15/15 tests pass, 0 analyzer issues, 1 production deploy
-- Gemini CLI interventions: 0
+- Quote cursor fix (G45).
+- Inline Panther-style autocomplete.
 
 **v9.33 (Phase 9 - Parser Regression + Quotes + Operators)**
-- Parser regression fix: quoted values parse correctly again, 3 new regression tests (15 total)
-- Quotes restored in schema builder with cursor between quotes (programmaticUpdateProvider flag)
-- +filter uses == operator, -exclude uses != operator
-- Dependency upgrade deferred: Riverpod 3 requires >50 lines migration
-- 15/15 tests pass, 0 analyzer issues, 2 production deploys
-- Claude Code interventions: 0
+- Parser regression fix.
+- Quotes restored in schema builder.
 
-**v9.32 (Phase 9 - Shows Fix + Operators + Detail Sort + Quote Rethink)**
-- TripleDB t_any_shows lowercased (1,100 entities), comprehensive t_any_* lowercase (1,286/6,181) - G36 permanently resolved
-- != operator (server-side scalar, client-side array), unquoted value parsing, no-quotes schema builder
-- Detail panel fields sorted alphabetically, autocomplete updated for no-quotes approach
-- 12/12 tests pass, 0 analyzer issues, 1 production deploy
-- Claude Code interventions: 0
+**v9.32 (Phase 9 - Shows Fix + Operators + Detail Sort)**
+- Lowercase ALL t_any_* data.
+- != operator added.
 
 **v9.31 (Phase 9 - Persistent Bug Fix + Playwright Verification)**
-- Diagnostic-first approach: 4 persistent bugs investigated with full file reads + grep
-- 1000-result limit confirmed resolved via Playwright screenshot (6,181 entities)
-- Autocomplete value-mode fix, quote cursor hardened, clear button added
-- Playwright verification established (G47: CanvasKit blocks DOM interaction)
-- Claude Code interventions: 0
+- 1000-result limit confirmed resolved.
+- Clear button added to query editor.
 
-**v9.30 (Phase 9 - App Optimization: Autocomplete + Quote Fix + Limit Verification)**
-- Query field + value autocomplete from precomputed index (21 fields, 6,878 values)
-- Fixed quote cursor placement via shared TextEditingController provider (G45 resolved)
-- Confirmed Firestore limit removal, updated stats footer to 30 iterations
-- Claude Code interventions: 0
+**v9.30 (Phase 9 - App Optimization: Autocomplete + Quote Fix)**
+- Query field + value autocomplete.
+- Shared TextEditingController provider.
 
-**v9.29 (Phase 9 - App Optimization: UX Polish - Trident, Limits, Schema, Quotes)**
-- Removed Firestore .limit(1000): all matching entities returned, full result counts
-- Shortened trident labels for mobile: "Cost", "Delivery", "Performance"
-- All 22 schema fields confirmed present
-- Claude Code interventions: 0
+**v9.29 (Phase 9 - App Optimization: UX Polish)**
+- Removed Firestore .limit(1000).
+- Shortened trident labels.
 
-**v9.28 (Phase 9 - App Optimization: Gotcha Tab + Schema Builder + JSON Copy)**
-- 6 tabs: Results | Map | Globe | IAO | Gotcha (now MW in v9.49) | Schema
-- Gotcha tab with 25 documented failure patterns, status badges, filter toggle
-- Schema tab with 22 Thompson Indicator Fields and click-to-query builder
-- Copy JSON button on entity detail panel with SnackBar confirmation
-- Post-flight deploy testing standard established
-- Claude Code interventions: 0
+**v9.28 (Phase 9 - App Optimization: Gotcha Tab + Schema Builder)**
+- New Gotcha tab with 25 failure patterns.
+- New Schema tab with 22 Thompson Indicator Fields.
 
 **v9.27 (Phase 9 - App Optimization: Visual Refresh + Tab Wiring)**
-- All 4 tabs functional: Results | Map | Globe | IAO
-- Gothic/cyber visual refresh: Cinzel font, green-glow borders, hover effects
-- Map tab: OpenStreetMap + pipeline-colored markers, click to detail panel
-- Globe tab: continent cards + country grid, click to filter results
-- IAO tab: trident SVG + 10 pillar cards + stats footer
-- Pagination: 20/50/100 dropdown + page navigation
-- 2 production deploys. flutter analyze: 0 issues. 9/9 tests pass
-- Claude Code interventions: 0
+- Gothic/cyberpunk visual refresh.
+- Map and Globe tabs functional.
 
 **v8.26 (Phase 8 - Gotcha Registry + Query UX Fix)**
-- Removed rotating example queries: editor starts empty, static help text below editor
-- Phase 8 COMPLETE across v8.22-v8.26
-- Claude Code interventions: 0
+- Removed rotating example queries.
+- Phase 8 COMPLETE.
 
 **v8.25 (Phase 8 - Filter Fix + README Overhaul)**
-- Fixed +filter/-exclude duplicate bug: dedup check + guard flag prevent multiple clauses per click
-- Comprehensive README overhaul: Live App section, Query System section, updated project status
-- Claude Code interventions: 0
+- Fixed +filter/-exclude duplicate bug.
+- Comprehensive README overhaul.
 
 **v8.24 (Phase 8 - UI Fixes + Country Codes)**
-- Detail panel fixed: opens on row click at all viewports, shows t_any_* field cards with +filter/-exclude
-- Backfilled t_any_country_codes (ISO alpha-2) on 6,161/6,181 entities
-- Claude Code interventions: 0
+- Backfilled t_any_country_codes on 6,161 entities.
 
 **v8.23 (Phase 8 - NoSQL Query Remediation)**
-- All 12 query defects resolved (11 fixed, 1 deferred): case sensitivity, data casing, result counts, truncation, contains-any, validation
-- Claude Code interventions: 0
+- Case sensitivity fix.
+- `contains-any` operator implemented.
+
+**v8.22 (Phase 8 - Enrichment Hardening + Query Assessment)**
+- Backfilled 323 non-v3 entities to schema v3.
+- Enriched 391/405 TripleDB entities.
 
 **v7.21 (Phase 7 - Firestore Load + TripleDB Migration)**
-- 3 pipelines live in production: 6,181 entities (899 CalGold + 4,182 RickSteves + 1,100 TripleDB)
-- TripleDB: cross-project Admin SDK migration from tripledb-e0f77, full schema v3 mapping
-- 14 Google Places enrichment fields carried forward, deterministic dedup
-- Claude Code interventions: 0
+- 3 pipelines live in production: 6,181 entities.
+- TripleDB migration complete.
 
 Full changelog: [docs/kjtcom-changelog.md](docs/kjtcom-changelog.md)
+
+---
+
+## Development Environment
+
+Setting up the kjtcom harness requires a hybrid local/cloud environment designed for high-performance agentic execution.
+
+### Local Requirements
+- **GPU Acceleration:** NVIDIA CUDA is mandatory for Phase 2 (Transcription). The current primary dev machine (NZXTcos) utilizes an RTX 2080 SUPER.
+- **Local LLMs:** Ollama must be installed with at least Qwen 3.5 (9B) and Nemotron-Mini (4B) pulled.
+- **Python Stack:** Python 3.12+ with `faster-whisper`, `litellm`, and `google-genai` libraries.
+- **Flutter SDK:** Latest stable channel with Web support enabled.
+
+### Cloud Dependencies
+- **Firebase:** Project must be on the Blaze plan to support Cloud Functions and multi-database indexing.
+- **Google Maps Platform:** API keys for Geocoding and Places (New) are required for Phases 5 and 6.
+- **Brave Search:** API key required for the Telegram bot's web search route.
+
+### Configuration
+Environment variables should be managed via a `.env` file or systemd environment blocks. Core variables include:
+- `KJTCOM_FIREBASE_PROJECT_ID`
+- `KJTCOM_TELEGRAM_BOT_TOKEN`
+- `KJTCOM_BRAVE_SEARCH_API_KEY`
+- `GEMINI_API_KEY`
 
 ---
 
