@@ -17,6 +17,8 @@
         .controls { display: flex; align-items: center; gap: 12px; background: rgba(22, 27, 34, 0.8); padding: 8px 12px; border-radius: 8px; border: 1px solid #30363D; }
         label { font-size: 14px; color: #C9D1D9; }
         select { background: #21262D; color: #C9D1D9; border: 1px solid #30363D; padding: 4px 8px; border-radius: 4px; outline: none; cursor: pointer; }
+        button { background: #21262D; color: #C9D1D9; border: 1px solid #30363D; padding: 4px 10px; border-radius: 4px; cursor: pointer; font-size: 13px; }
+        button:hover { border-color: #4ADE80; }
         #tooltip {
             position: absolute; display: none; z-index: 1000;
             background: rgba(22, 27, 34, 0.95); border: 1px solid #4ADE80;
@@ -39,15 +41,16 @@
     </style>
 </head>
 <body>
-    <div id="loading" class="loading">Loading Static Solar System v10.54...</div>
+    <div id="loading" class="loading">Loading Static Solar System v10.55...</div>
     
     <div id="ui-container">
         <h1>Claw3D Architecture</h1>
-        <p class="subtitle">v10.54 | Static Elliptical Rebuild</p>
+        <p class="subtitle">v10.55 | Static Elliptical Rebuild</p>
         <div class="controls">
             <label for="iteration-select">Iteration:</label>
             <select id="iteration-select">
-                <option value="v10.54">v10.54 (Current)</option>
+                <option value="v10.55">v10.55 (Current)</option>
+                <option value="v10.54">v10.54</option>
                 <option value="v9.53">v9.53</option>
                 <option value="v9.52">v9.52</option>
                 <option value="v9.49">v9.49</option>
@@ -57,6 +60,7 @@
                 <option value="v9.35">v9.35</option>
                 <option value="v9.27">v9.27</option>
             </select>
+            <button id="anim-toggle">Animate</button>
         </div>
     </div>
 
@@ -264,22 +268,23 @@
         NODES.forEach(createNode);
 
         // Position Moons
-        NODES.filter(n => n.parent).forEach(moon => {
-            const parent = nodeMap.get(moon.parent);
-            if (!parent) return;
-            
+        NODES.filter(n => n.parent).forEach(moonData => {
+            const moon = nodeMap.get(moonData.id);
+            const parent = nodeMap.get(moonData.parent);
+            if (!moon || !parent) return;
+
             // Cluster on sun-facing side (towards 0,0,0)
             const parentPos = parent.group.position.clone();
             const toSun = parentPos.clone().negate().normalize();
-            
+
             // Semicircle arrangement
-            const moonCount = NODES.filter(n => n.parent === moon.parent).length;
+            const moonCount = NODES.filter(n => n.parent === moonData.parent).length;
             const spread = Math.PI / 2.5;
-            const angle = (spread * (moon.offset / (moonCount - 1))) - (spread / 2);
-            
-            const offsetDist = parent.size + 4 + (moon.offset * 0.5);
+            const angle = (spread * (moonData.offset / (moonCount - 1))) - (spread / 2);
+
+            const offsetDist = parent.size + 4 + (moonData.offset * 0.5);
             const moonPos = toSun.clone().applyAxisAngle(new THREE.Vector3(0, 1, 0), angle).multiplyScalar(offsetDist);
-            
+
             moon.group.position.copy(parentPos.clone().add(moonPos));
         });
 
@@ -333,7 +338,7 @@
                 tooltip.style.left = (e.clientX + 15) + 'px';
                 tooltip.style.top = (e.clientY + 15) + 'px';
                 tooltip.innerHTML = `
-                    <div style="color:${node.color.toString(16).padStart(6, '0')}"><strong>${node.name}</strong></div>
+                    <div style="color:#${node.color.toString(16).padStart(6, '0')}"><strong>${node.name}</strong></div>
                     <div style="font-size:10px; color:#8B949E; margin-bottom:4px;">${node.type} | Active since ${node.since}</div>
                     <div>${node.func || 'System core component'}</div>
                     ${node.file ? `<div style="font-family:monospace; font-size:9px; margin-top:4px; color:#4ADE80">${node.file}</div>` : ''}
@@ -379,28 +384,37 @@
         });
 
         // --- ANIMATION ---
+        let animating = false;
+
         function animate() {
             requestAnimationFrame(animate);
             const time = Date.now() * 0.001;
 
-            // Animate active links
-            linkMeshes.forEach(l => {
-                const from = nodeMap.get(l.fromId);
-                const to = nodeMap.get(l.toId);
-                if (from.isActive && to.isActive) {
-                    l.mat.dashOffset -= 0.01;
-                }
-            });
+            if (animating) {
+                // Animate active links
+                linkMeshes.forEach(l => {
+                    const from = nodeMap.get(l.fromId);
+                    const to = nodeMap.get(l.toId);
+                    if (from.isActive && to.isActive) {
+                        l.mat.dashOffset -= 0.01;
+                    }
+                });
 
-            // Sun pulse
-            const sun = nodeMap.get('qwen');
-            if (sun) {
-                sun.solidMat.emissiveIntensity = 0.3 + Math.sin(time * 2) * 0.1;
+                // Sun pulse
+                const sun = nodeMap.get('qwen');
+                if (sun) {
+                    sun.solidMat.emissiveIntensity = 0.3 + Math.sin(time * 2) * 0.1;
+                }
             }
 
             controls.update();
             renderer.render(scene, camera);
         }
+
+        document.getElementById('anim-toggle').addEventListener('click', (e) => {
+            animating = !animating;
+            e.target.textContent = animating ? 'Stop' : 'Animate';
+        });
 
         // --- INIT ---
         window.addEventListener('resize', () => {
@@ -411,7 +425,7 @@
 
         setTimeout(() => {
             document.getElementById('loading').style.display = 'none';
-            updateIteration('v10.54');
+            updateIteration('v10.55');
             animate();
         }, 800);
 

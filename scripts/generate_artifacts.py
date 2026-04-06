@@ -126,13 +126,15 @@ def get_agent_scores(iteration):
     """
     try:
         with open(SCORES_PATH) as f:
-            scores = json.load(f)
-        if isinstance(scores, list):
-            for entry in scores:
-                if entry.get('iteration') == iteration:
-                    return entry
-        elif isinstance(scores, dict) and scores.get('iteration') == iteration:
-            return scores
+            raw = json.load(f)
+        # Handle canonical {iterations: [...]} and legacy flat array
+        if isinstance(raw, dict):
+            entries = raw.get('iterations', [raw] if raw.get('iteration') else [])
+        else:
+            entries = raw
+        for entry in entries:
+            if entry.get('iteration') == iteration:
+                return entry
     except (FileNotFoundError, json.JSONDecodeError):
         pass
     return None

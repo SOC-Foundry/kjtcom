@@ -9,7 +9,10 @@ SCORES_PATH = os.path.join(os.path.dirname(__file__), '..', 'agent_scores.json')
 
 def generate():
     with open(SCORES_PATH) as f:
-        data = json.load(f)
+        raw = json.load(f)
+
+    # Handle both canonical {iterations: [...]} and legacy flat array
+    data = raw.get('iterations', raw) if isinstance(raw, dict) else raw
 
     # Aggregate per agent
     agents = {}

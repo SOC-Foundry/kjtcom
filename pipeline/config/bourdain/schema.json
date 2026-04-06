@@ -1,0 +1,53 @@
+{
+  "pipeline_id": "bourdain",
+  "display_name": "Anthony Bourdain",
+  "entity_type": "location",
+  "t_schema_version": 3,
+
+  "indicators": {
+    "name":              { "extract_into": "t_any_names" },
+    "people":            { "extract_into": "t_any_people" },
+    "city":              { "extract_into": "t_any_cities" },
+    "country":           { "extract_into": "t_any_countries" },
+    "country_code":      { "extract_into": "t_any_country_codes" },
+    "continent":         { "extract_into": "t_any_continents" },
+    "state":             { "extract_into": "t_any_states" },
+    "county":            { "extract_into": "t_any_counties" },
+    "neighborhood":      { "extract_into": "t_any_regions" },
+    "categories":        { "extract_into": "t_any_categories" },
+    "keywords":          { "extract_into": "t_any_keywords" },
+    "description":       { "extract_into": "t_any_keywords", "method": "tokenize" },
+    "actors":            { "extract_into": "t_any_actors" },
+    "roles":             { "extract_into": "t_any_roles" },
+    "shows":             { "extract_into": "t_any_shows" },
+    "cuisines":          { "extract_into": "t_any_cuisines" },
+    "dishes":            { "extract_into": "t_any_dishes" },
+    "eras":              { "extract_into": "t_any_eras" }
+  },
+
+  "enrichment_sources": ["nominatim", "google_places"],
+
+  "source_schema": {
+    "name": { "type": "string", "required": true },
+    "description": { "type": "string", "required": true },
+    "city": { "type": "string", "required": true },
+    "country": { "type": "string", "required": true },
+    "country_code": { "type": "string", "required": false },
+    "continent": { "type": "string", "required": false },
+    "state": { "type": "string", "required": false },
+    "county": { "type": "string", "required": false },
+    "neighborhood": { "type": "string", "required": false },
+    "address": { "type": "string", "required": false },
+    "people": { "type": "array", "required": false },
+    "actors": { "type": "array", "required": false },
+    "roles": { "type": "array", "required": false },
+    "shows": { "type": "array", "required": false },
+    "cuisines": { "type": "array", "required": false },
+    "dishes": { "type": "array", "required": false },
+    "eras": { "type": "array", "required": false },
+    "keywords": { "type": "array", "required": false },
+    "categories": { "type": "array", "required": false },
+    "bourdain_quote": { "type": "string", "required": false },
+    "visits": { "type": "array", "required": true }
+  }
+}

@@ -1,1726 +1,1492 @@
-[
-  {
-    "iteration": "v9.35",
-    "date": "2026-04-04",
-    "evaluator": "qwen3.5:9b",
-    "scores": [
-      {
-        "agent": "Claude Code (Opus 4.6)",
-        "role": "Primary executor",
-        "problem_analysis": 7,
-        "code_correctness": 7,
-        "efficiency": 7,
-        "gotcha_avoidance": 7,
-        "novel_contribution": 4,
-        "total": 32,
-        "notes": "Primary executor with multiple infrastructure changes including .mcp.json config and install scripts. Some API key interventions indicate minor friction."
-      },
-      {
-        "agent": "Qwen3.5-9B",
-        "role": "Code reviewer",
-        "problem_analysis": 6,
-        "code_correctness": 6,
-        "efficiency": 6,
-        "gotcha_avoidance": 6,
-        "novel_contribution": 4,
-        "total": 28,
-        "notes": "Caught firebase version concern, 1 incorrect suggestion (package name)."
-      },
-      {
-        "agent": "Nemotron Mini 4B",
-        "role": "Verification",
-        "problem_analysis": 3,
-        "code_correctness": 3,
-        "efficiency": 3,
-        "gotcha_avoidance": 3,
-        "novel_contribution": 2,
-        "total": 14,
-        "notes": "Minimal verification role - responded to test prompts only."
-      },
-      {
-        "agent": "GLM-4.6V-Flash-9B",
-        "role": "Verification",
-        "problem_analysis": 3,
-        "code_correctness": 3,
-        "efficiency": 3,
-        "gotcha_avoidance": 3,
-        "novel_contribution": 2,
-        "total": 14,
-        "notes": "Minimal verification role - responded to test prompts only."
+{
+  "iterations": [
+    {
+      "iteration": "v9.35",
+      "date": "2026-04-04",
+      "evaluator": "qwen3.5:9b",
+      "scores": [
+        {
+          "agent": "Claude Code (Opus 4.6)",
+          "role": "Primary executor",
+          "problem_analysis": 7,
+          "code_correctness": 7,
+          "efficiency": 7,
+          "gotcha_avoidance": 7,
+          "novel_contribution": 4,
+          "total": 32,
+          "notes": "Primary executor with multiple infrastructure changes including .mcp.json config and install scripts. Some API key interventions indicate minor friction."
+        },
+        {
+          "agent": "Qwen3.5-9B",
+          "role": "Code reviewer",
+          "problem_analysis": 6,
+          "code_correctness": 6,
+          "efficiency": 6,
+          "gotcha_avoidance": 6,
+          "novel_contribution": 4,
+          "total": 28,
+          "notes": "Caught firebase version concern, 1 incorrect suggestion (package name)."
+        },
+        {
+          "agent": "Nemotron Mini 4B",
+          "role": "Verification",
+          "problem_analysis": 3,
+          "code_correctness": 3,
+          "efficiency": 3,
+          "gotcha_avoidance": 3,
+          "novel_contribution": 2,
+          "total": 14,
+          "notes": "Minimal verification role - responded to test prompts only."
+        },
+        {
+          "agent": "GLM-4.6V-Flash-9B",
+          "role": "Verification",
+          "problem_analysis": 3,
+          "code_correctness": 3,
+          "efficiency": 3,
+          "gotcha_avoidance": 3,
+          "novel_contribution": 2,
+          "total": 14,
+          "notes": "Minimal verification role - responded to test prompts only."
+        }
+      ],
+      "gotcha_events": []
+    },
+    {
+      "iteration": "v9.36",
+      "date": "2026-04-04",
+      "evaluator": "qwen3.5:9b",
+      "scores": [
+        {
+          "agent": "Claude Code (Opus 4.6)",
+          "role": "Primary executor",
+          "problem_analysis": 9,
+          "code_correctness": 7,
+          "efficiency": 8,
+          "gotcha_avoidance": 8,
+          "novel_contribution": 9,
+          "total": 41,
+          "notes": "Installed Playwright, tested 4 MCP servers, created evaluator middleware, wrote CDP scrape script, produced all artifacts, discovered 3 new gotchas. Panther scrape blocked on Chrome port intervention."
+        },
+        {
+          "agent": "Qwen3.5-9B",
+          "role": "DOM advisor + evaluator",
+          "problem_analysis": 7,
+          "code_correctness": 7,
+          "efficiency": 6,
+          "gotcha_avoidance": 7,
+          "novel_contribution": 6,
+          "total": 33,
+          "notes": "Provided 8 DOM selector recommendations for Panther React app. Scored v9.35 agents. Required /no_think workaround for JSON output (G51)."
+        }
+      ],
+      "gotcha_events": [
+        {
+          "id": "G51",
+          "description": "Qwen thinking mode produces empty responses without /no_think"
+        },
+        {
+          "id": "G52",
+          "description": "Firecrawl MCP not loading despite .mcp.json config"
+        },
+        {
+          "id": "G53",
+          "description": "Firebase MCP needs fresh login each session"
+        }
+      ]
+    },
+    {
+      "iteration": "v9.37",
+      "date": "2026-04-04",
+      "evaluator": "qwen3.5:9b",
+      "scores": [
+        {
+          "agent": "Claude Code (Opus 4.6)",
+          "role": "Primary executor",
+          "problem_analysis": 9,
+          "code_correctness": 9,
+          "efficiency": 9,
+          "gotcha_avoidance": 9,
+          "novel_contribution": 8,
+          "total": 44,
+          "notes": "Upgraded 5 major deps with Riverpod 3.x migration (8 errors, 38 warnings, all fixed). 15/15 tests, 0 analyze issues. All 4 MCP servers verified operational. Panther scrape executed with security-compliant data handling. 0 interventions."
+        },
+        {
+          "agent": "Qwen3.5-9B",
+          "role": "Upgrade risk advisor + evaluator",
+          "problem_analysis": 7,
+          "code_correctness": 7,
+          "efficiency": 6,
+          "gotcha_avoidance": 7,
+          "novel_contribution": 6,
+          "total": 33,
+          "notes": "Identified 3 upgrade risks (Firestore API, Riverpod lifecycle, web compat). Processing middleware registry. Scored v9.37 agents."
+        }
+      ],
+      "gotcha_events": [
+        {
+          "id": "G52",
+          "description": "Firecrawl MCP RESOLVED - transient loading issue cleared"
+        },
+        {
+          "id": "G53",
+          "description": "Firebase MCP RESOLVED for session - reauth completed by Kyle"
+        }
+      ]
+    },
+    {
+      "iteration": "v9.38",
+      "date": "2026-04-05",
+      "evaluator": "nemotron-mini:4b (fallback - Qwen G51 regression)",
+      "scores": [
+        {
+          "agent": "Claude Code (Opus 4.6)",
+          "role": "Primary executor",
+          "problem_analysis": 9,
+          "code_correctness": 8,
+          "efficiency": 9,
+          "gotcha_avoidance": 8,
+          "novel_contribution": 9,
+          "total": 43,
+          "prompt_tokens": 150000,
+          "eval_tokens": 0,
+          "total_tokens": 150000,
+          "notes": "6/7 workstreams delivered. 6 new scripts, Claw3D prototype, portable template. RAG pipeline operational (1307 chunks). OpenClaw deferred per P7. 0 analyze issues, 15/15 tests."
+        },
+        {
+          "agent": "Qwen3.5-9B",
+          "role": "Security advisor + evaluator (G51 regression)",
+          "problem_analysis": 5,
+          "code_correctness": 4,
+          "efficiency": 3,
+          "gotcha_avoidance": 4,
+          "novel_contribution": 5,
+          "total": 21,
+          "prompt_tokens": 3000,
+          "eval_tokens": 5000,
+          "total_tokens": 8000,
+          "notes": "G51 regression: returning empty content despite consuming tokens. /no_think not suppressing thinking. Security consultation attempted but no output. Registry scoring produced token usage but no parseable JSON."
+        },
+        {
+          "agent": "nomic-embed-text",
+          "role": "Embedding model",
+          "problem_analysis": 8,
+          "code_correctness": 9,
+          "efficiency": 9,
+          "gotcha_avoidance": 9,
+          "novel_contribution": 7,
+          "total": 42,
+          "prompt_tokens": 0,
+          "eval_tokens": 0,
+          "total_tokens": 0,
+          "notes": "1307 chunks embedded from 130 archive files. No VRAM conflicts. Batched 20 at a time. RAG queries return 0.727-0.730 relevance scores."
+        }
+      ],
+      "gotcha_events": [
+        {
+          "id": "G51",
+          "description": "Qwen3.5-9B /no_think REGRESSION - returns empty content despite consuming tokens. All eval tokens used for internal thinking, nothing in output."
+        },
+        {
+          "id": "G54",
+          "description": "open-interpreter (OpenClaw) cannot build tiktoken wheel for Python 3.14 (CP314). DEFERRED to v9.39."
+        }
+      ],
+      "evaluator_tokens": {
+        "prompt_tokens": 401,
+        "eval_tokens": 167,
+        "total_tokens": 568
       }
-    ],
-    "gotcha_events": []
-  },
-  {
-    "iteration": "v9.36",
-    "date": "2026-04-04",
-    "evaluator": "qwen3.5:9b",
-    "scores": [
-      {
-        "agent": "Claude Code (Opus 4.6)",
-        "role": "Primary executor",
-        "problem_analysis": 9,
-        "code_correctness": 7,
-        "efficiency": 8,
-        "gotcha_avoidance": 8,
-        "novel_contribution": 9,
-        "total": 41,
-        "notes": "Installed Playwright, tested 4 MCP servers, created evaluator middleware, wrote CDP scrape script, produced all artifacts, discovered 3 new gotchas. Panther scrape blocked on Chrome port intervention."
-      },
-      {
-        "agent": "Qwen3.5-9B",
-        "role": "DOM advisor + evaluator",
-        "problem_analysis": 7,
-        "code_correctness": 7,
-        "efficiency": 6,
-        "gotcha_avoidance": 7,
-        "novel_contribution": 6,
-        "total": 33,
-        "notes": "Provided 8 DOM selector recommendations for Panther React app. Scored v9.35 agents. Required /no_think workaround for JSON output (G51)."
+    },
+    {
+      "iteration": "v9.39",
+      "date": "2026-04-05",
+      "evaluator": "qwen3.5:9b",
+      "scores": [
+        {
+          "agent": "Claude Code (Opus 4.6)",
+          "role": "Lead Developer & Architect",
+          "problem_analysis": 10,
+          "code_correctness": 10,
+          "efficiency": 9,
+          "gotcha_avoidance": 10,
+          "novel_contribution": 10,
+          "total": 49,
+          "notes": "Successfully resolved G54 (OpenClaw/PkgResource conflicts on Python 3.14) via surgical patching. Correctly identified G51 (Qwen 'thinking' phase wasting tokens) and implemented 'think:false' fix. Introduced novel IAO event logging infrastructure (iao_logger.py, analyze_events.py) to enable rigorous agent auditing, a significant contribution to the project's transparency.",
+          "prompt_tokens": 0,
+          "eval_tokens": 0,
+          "total_tokens": 0
+        }
+      ],
+      "gotcha_events": [
+        "G51: Avoided by disabling Qwen internal thinking for direct token evaluation.",
+        "G54: Avoided by patching OpenClaw imports to handle missing pkg_resources on Python 3.14."
+      ],
+      "evaluator_tokens": {
+        "prompt_tokens": 1461,
+        "eval_tokens": 302,
+        "total_tokens": 1763
       }
-    ],
-    "gotcha_events": [
-      {
-        "id": "G51",
-        "description": "Qwen thinking mode produces empty responses without /no_think"
-      },
-      {
-        "id": "G52",
-        "description": "Firecrawl MCP not loading despite .mcp.json config"
-      },
-      {
-        "id": "G53",
-        "description": "Firebase MCP needs fresh login each session"
+    },
+    {
+      "iteration": "v9.40",
+      "date": "2026-04-05",
+      "evaluator": "claude-code-self-report",
+      "scores": [
+        {
+          "agent": "Claude Code (Opus 4.6)",
+          "role": "Primary executor",
+          "problem_analysis": 9,
+          "code_correctness": 9,
+          "efficiency": 9,
+          "gotcha_avoidance": 10,
+          "novel_contribution": 7,
+          "total": 44,
+          "notes": "5/5 workstreams, 0 interventions, RAG bug root-caused and fixed"
+        }
+      ],
+      "gotcha_events": [
+        {
+          "id": "G55",
+          "description": "query_rag.py CLI: --json flag parsed as version_filter positional arg",
+          "status": "resolved",
+          "resolution": "Bypassed CLI entirely - direct import in telegram_bot.py"
+        }
+      ]
+    },
+    {
+      "iteration": "v9.41",
+      "date": "2026-04-05",
+      "workstreams": [
+        {
+          "id": "W1",
+          "name": "Firestore dual retrieval path",
+          "priority": "P1",
+          "outcome": "complete",
+          "agents": [
+            "claude-code"
+          ],
+          "llms": [
+            "gemini-flash"
+          ],
+          "mcps": [
+            "firebase"
+          ],
+          "score": 9,
+          "notes": "Intent router and Firestore query module are operational for the bot."
+        },
+        {
+          "id": "W2",
+          "name": "Re-embed archive with v9.38-v9.40 docs",
+          "priority": "P1",
+          "outcome": "complete",
+          "agents": [
+            "claude-code"
+          ],
+          "llms": [
+            "gemini-flash"
+          ],
+          "mcps": [],
+          "score": 8,
+          "notes": "Archive re-embedding script executed successfully to update ChromaDB."
+        },
+        {
+          "id": "W3",
+          "name": "Artifact automation scaffold",
+          "priority": "P2",
+          "outcome": "complete",
+          "agents": [
+            "claude-code"
+          ],
+          "llms": [
+            "qwen",
+            "gemini-flash"
+          ],
+          "mcps": [],
+          "score": 9,
+          "notes": "generate_artifacts.py and templates deployed for post-iteration drafting."
+        },
+        {
+          "id": "W4",
+          "name": "Rebuild iteration_registry.json",
+          "priority": "P2",
+          "outcome": "complete",
+          "agents": [
+            "claude-code"
+          ],
+          "llms": [
+            "qwen"
+          ],
+          "mcps": [],
+          "score": 10,
+          "notes": "Registry rebuilt successfully with OOM issues resolved via RAG optimization."
+        },
+        {
+          "id": "W5",
+          "name": "Living doc updates",
+          "priority": "P3",
+          "outcome": "deferred",
+          "agents": [
+            "claude-code"
+          ],
+          "llms": [
+            "qwen"
+          ],
+          "mcps": [],
+          "score": 6,
+          "notes": "Architecture and install docs pending manual review and updates per v9.41 scope."
+        }
+      ]
+    },
+    {
+      "iteration": "v9.42",
+      "date": "2026-04-05",
+      "workstreams": [
+        {
+          "id": "W1",
+          "name": "TripleDB County Enrichment",
+          "priority": "P1",
+          "outcome": "complete",
+          "agents": [
+            "claude-code"
+          ],
+          "llms": [
+            "gemini-2.5-flash"
+          ],
+          "mcps": [
+            "firebase"
+          ],
+          "score": 9,
+          "notes": "Successful county enrichment execution verified by existence of scripts/enrich_counties.py."
+        },
+        {
+          "id": "W2",
+          "name": "Bot Resiliency",
+          "priority": "P2",
+          "outcome": "complete",
+          "agents": [
+            "claude-code"
+          ],
+          "llms": [
+            "gemini-2.5-flash"
+          ],
+          "mcps": [
+            "telegram"
+          ],
+          "score": 8,
+          "notes": "Bot service file exists, indicating resiliency configuration was deployed."
+        },
+        {
+          "id": "W3",
+          "name": "Artifact Workflow Fixes",
+          "priority": "P1",
+          "outcome": "complete",
+          "agents": [
+            "claude-code"
+          ],
+          "llms": [
+            "gemini-2.5-flash"
+          ],
+          "mcps": [
+            "firebase",
+            "qwen-drafts"
+          ],
+          "score": 9,
+          "notes": "Workflow corrections implemented, evidenced by resolved draft promotion logic in execution context."
+        },
+        {
+          "id": "W4",
+          "name": "Internet Query Stream",
+          "priority": "P2",
+          "outcome": "complete",
+          "agents": [
+            "claude-code"
+          ],
+          "llms": [
+            "gemini-2.5-flash"
+          ],
+          "mcps": [
+            "internet-search"
+          ],
+          "score": 8,
+          "notes": "Query stream operational, though specific output files for this stream were not explicitly listed in the context."
+        },
+        {
+          "id": "W5",
+          "name": "Gotcha Archive",
+          "priority": "P2",
+          "outcome": "complete",
+          "agents": [
+            "claude-code"
+          ],
+          "llms": [
+            "gemini-2.5-flash"
+          ],
+          "mcps": [
+            "firebase"
+          ],
+          "score": 10,
+          "notes": "Gotcha archive successfully updated with resolved issues G36-G50 as confirmed by data/gotcha_archive.json."
+        },
+        {
+          "id": "W6",
+          "name": "Harness Registry",
+          "priority": "P3",
+          "outcome": "complete",
+          "agents": [
+            "claude-code"
+          ],
+          "llms": [
+            "gemini-2.5-flash"
+          ],
+          "mcps": [
+            "file-system"
+          ],
+          "score": 9,
+          "notes": "Registry updates verified through existence of docs/cross-project/intranet-update-v9.42.md."
+        }
+      ]
+    },
+    {
+      "iteration": "v9.43",
+      "date": "2026-04-05",
+      "workstreams": [
+        {
+          "id": "W1",
+          "name": "App Optimization",
+          "priority": "P1",
+          "outcome": "complete",
+          "evidence": "EXISTENCE: app/web/architecture.html, scripts/build_architecture_html.py",
+          "agents": [
+            "claude-code"
+          ],
+          "llms": [
+            "gemini-2.5-flash"
+          ],
+          "mcps": [
+            "-"
+          ],
+          "score": 10,
+          "notes": "Built architecture.html and registry files; no errors in core optimization tasks."
+        },
+        {
+          "id": "W2",
+          "name": "Bot Session Memory",
+          "priority": "P1",
+          "outcome": "failed",
+          "evidence": "error: litellm.AuthenticationError: GeminiException - { code: 400 }",
+          "agents": [
+            "claude-code"
+          ],
+          "llms": [
+            "gemini-2.5-flash"
+          ],
+          "mcps": [
+            "-"
+          ],
+          "score": 0,
+          "notes": "Failed due to AuthenticationError during route execution; required index not created per error context."
+        },
+        {
+          "id": "W3",
+          "name": "Rating Queries",
+          "priority": "P1",
+          "outcome": "failed",
+          "evidence": "error: 400 The query requires an index. You can create it here: https://console.firebas",
+          "agents": [
+            "claude-code"
+          ],
+          "llms": [
+            "gemini-2.5-flash"
+          ],
+          "mcps": [
+            "-"
+          ],
+          "score": 0,
+          "notes": "Failed because query returned 400 requiring Firebase index creation; count check failed."
+        },
+        {
+          "id": "W4",
+          "name": "Post-Flight Verification",
+          "priority": "P1",
+          "outcome": "deferred",
+          "evidence": "exists: data/gotcha_archive.json; status_check_status: missing",
+          "agents": [
+            "claude-code"
+          ],
+          "llms": [
+            "gemini-2.5-flash"
+          ],
+          "mcps": [
+            "-"
+          ],
+          "score": 0,
+          "notes": "Verification deferred due to prior workstream failures preventing /status and entity count checks."
+        },
+        {
+          "id": "W5",
+          "name": "Architecture HTML",
+          "priority": "P2",
+          "outcome": "complete",
+          "evidence": "EXISTENCE: app/web/architecture.html, scripts/build_architecture_html.py",
+          "agents": [
+            "claude-code"
+          ],
+          "llms": [
+            "gemini-2.5-flash"
+          ],
+          "mcps": [
+            "-"
+          ],
+          "score": 10,
+          "notes": "Generated architecture.html successfully using build_architecture_html.py script."
+        },
+        {
+          "id": "W6",
+          "name": "Qwen Report Quality",
+          "priority": "P2",
+          "outcome": "partial",
+          "evidence": "Total events: 87, errors/timeouts: 2; W2/W3 failed authentication/index errors",
+          "agents": [
+            "gemini-2.5-flash"
+          ],
+          "llms": [
+            "gemini-2.5-flash"
+          ],
+          "mcps": [
+            "-"
+          ],
+          "score": 5,
+          "notes": "Report quality compromised by 2 errors (W2/W3); evidence counts match execution context but completeness is low."
+        }
+      ]
+    },
+    {
+      "iteration": "v9.44",
+      "date": "2026-04-05",
+      "workstreams": [
+        {
+          "id": "W1",
+          "name": "Fix Gemini Flash auth error",
+          "priority": "P1",
+          "outcome": "complete",
+          "evidence": "litellm.completion(model=gemini/gemini-2.5-flash) returns SUCCESS. GEMINI_MODEL centralized in ollama_config.py. intent_router.py and telegram_bot.py import GEMINI_MODEL.",
+          "agents": [
+            "claude-code"
+          ],
+          "llms": [
+            "gemini-2.5-flash"
+          ],
+          "mcps": [
+            "-"
+          ],
+          "score": 9,
+          "notes": "Gemini Flash auth fixed. litellm 1.83.3 + gemini/gemini-2.5-flash + thinking disabled works. G57 resolved."
+        },
+        {
+          "id": "W2",
+          "name": "Create Firestore composite index",
+          "priority": "P1",
+          "outcome": "complete",
+          "evidence": "Python-side sort returns top 3 DDD LA by rating: crush craft (4.9), el sazon (4.9), la unica birria (4.7). 0 interventions needed.",
+          "agents": [
+            "claude-code"
+          ],
+          "llms": [],
+          "mcps": [
+            "Firebase"
+          ],
+          "score": 9,
+          "notes": "Python-side sort in firestore_query.py avoids composite index. 26 DDD LA docs fetched and sorted client-side. G56 resolved."
+        },
+        {
+          "id": "W3",
+          "name": "Re-run bot session memory + rating queries",
+          "priority": "P1",
+          "outcome": "complete",
+          "evidence": "Intent router routes all 5 test cases correctly. Firestore returns 26 DDD LA, top 3 by rating. Session memory code verified in telegram_bot.py. Bot needs sudo restart to pick up changes.",
+          "agents": [
+            "claude-code"
+          ],
+          "llms": [
+            "gemini-2.5-flash"
+          ],
+          "mcps": [
+            "Firebase"
+          ],
+          "score": 8,
+          "notes": "All routes work: firestore (count/list/sort), chromadb, web. Bot code verified but live Telegram test pending sudo restart."
+        },
+        {
+          "id": "W4",
+          "name": "Post-flight verification pass",
+          "priority": "P1",
+          "outcome": "complete",
+          "evidence": "post_flight.py: 3/3 passed. site_200=PASS, bot_status=PASS (@kjtcom_iao_bot), bot_query=PASS (6181 entities).",
+          "agents": [
+            "claude-code"
+          ],
+          "llms": [],
+          "mcps": [
+            "-"
+          ],
+          "score": 10,
+          "notes": "All post-flight checks pass. 6,181 entities confirmed."
+        },
+        {
+          "id": "W5",
+          "name": "Doc recovery + archival enforcement",
+          "priority": "P2",
+          "outcome": "complete",
+          "evidence": "v9.41/v9.42 docs already in archive (recovered in v9.43). v9.43 docs archived (169 total files). CLAUDE.md has rm guard.",
+          "agents": [
+            "claude-code"
+          ],
+          "llms": [],
+          "mcps": [
+            "-"
+          ],
+          "score": 9,
+          "notes": "169 archive files. v9.41-v9.43 all present. No docs deleted."
+        },
+        {
+          "id": "W6",
+          "name": "Changelog and report quality fix",
+          "priority": "P2",
+          "outcome": "complete",
+          "evidence": "changelog-template.md updated with NEW/UPDATED/FIXED prefixes, TBD banned. run_evaluator.py has exact W# naming rule. generate_artifacts.py pulls from event log.",
+          "agents": [
+            "claude-code"
+          ],
+          "llms": [],
+          "mcps": [
+            "-"
+          ],
+          "score": 8,
+          "notes": "Templates updated. Changelog generates from event log + workstream data. TBD banned."
+        }
+      ]
+    },
+    {
+      "iteration": "v9.45",
+      "date": "2026-04-05",
+      "evaluator": "qwen3.5:9b",
+      "scores": [
+        {
+          "agent": "Claude Code (Opus 4.6)",
+          "role": "Primary Execution & Optimization",
+          "problem_analysis": 9.5,
+          "code_correctness": 10.0,
+          "efficiency": 9.0,
+          "gotcha_avoidance": 10.0,
+          "novel_contribution": 8.5,
+          "total": 9.4,
+          "notes": "Successfully identified that 10 outdated dependencies were transitive and locked by parent constraints (flutter_map, test), correctly deferring the upgrade plan rather than attempting a forced upgrade that would fail. Executed all verification steps (analyze, test, build) cleanly. Implemented the critical 'Trident' scoring fix, replacing hardcoded placeholders with dynamic calculations. Maintained all post-flight checks and archive integrity.",
+          "prompt_tokens": 0,
+          "eval_tokens": 0,
+          "total_tokens": 0
+        }
+      ],
+      "gotcha_events": [],
+      "evaluator_tokens": {
+        "prompt_tokens": 1645,
+        "eval_tokens": 257,
+        "total_tokens": 1902
       }
-    ]
-  },
-  {
-    "iteration": "v9.37",
-    "date": "2026-04-04",
-    "evaluator": "qwen3.5:9b",
-    "scores": [
-      {
-        "agent": "Claude Code (Opus 4.6)",
-        "role": "Primary executor",
-        "problem_analysis": 9,
-        "code_correctness": 9,
-        "efficiency": 9,
-        "gotcha_avoidance": 9,
-        "novel_contribution": 8,
-        "total": 44,
-        "notes": "Upgraded 5 major deps with Riverpod 3.x migration (8 errors, 38 warnings, all fixed). 15/15 tests, 0 analyze issues. All 4 MCP servers verified operational. Panther scrape executed with security-compliant data handling. 0 interventions."
-      },
-      {
-        "agent": "Qwen3.5-9B",
-        "role": "Upgrade risk advisor + evaluator",
-        "problem_analysis": 7,
-        "code_correctness": 7,
-        "efficiency": 6,
-        "gotcha_avoidance": 7,
-        "novel_contribution": 6,
-        "total": 33,
-        "notes": "Identified 3 upgrade risks (Firestore API, Riverpod lifecycle, web compat). Processing middleware registry. Scored v9.37 agents."
+    },
+    {
+      "iteration": "v9.46",
+      "date": "2026-04-05",
+      "workstreams": [
+        {
+          "id": "W1",
+          "name": "Qwen evaluator harness",
+          "priority": "P1",
+          "outcome": "partial",
+          "evidence": "MISSING: docs/evaluator-harness.md not found in file existence check; run_evaluator.py and generate_artifacts.py modifications not verified in execution log",
+          "agents": [
+            "claude-code"
+          ],
+          "llms": [
+            "qwen-3.5-9b"
+          ],
+          "mcps": [
+            "-"
+          ],
+          "score": 5,
+          "notes": "Harness file creation failed to materialize despite 98 successful events, likely due to a silent skip or context truncation preventing the doc write."
+        },
+        {
+          "id": "W2",
+          "name": "README overhaul",
+          "priority": "P1",
+          "outcome": "complete",
+          "evidence": "docs/README.md updated with v9.46 changelog entry, Phase 9 section verified against data/gotcha_archive.json",
+          "agents": [
+            "claude-code"
+          ],
+          "llms": [
+            "qwen-3.5-9b"
+          ],
+          "mcps": [
+            "-"
+          ],
+          "score": 8,
+          "notes": "Changelog refreshed, but stale references in Section 4.2 regarding Phase 8 artifacts were missed during the full audit."
+        },
+        {
+          "id": "W3",
+          "name": "Phase 9 final audit",
+          "priority": "P2",
+          "outcome": "complete",
+          "evidence": "data/middleware_registry.json shows 15 entries; comparison between v9.27 and v9.46 logged in docs/phase-9-audit.md",
+          "agents": [
+            "claude-code"
+          ],
+          "llms": [
+            "qwen-3.5-9b"
+          ],
+          "mcps": [
+            "-"
+          ],
+          "score": 9,
+          "notes": "Audit identified G36-G50 resolutions, but documentation for G46 query cap resolution lacks specific token counts."
+        },
+        {
+          "id": "W4",
+          "name": "Post-flight + middleware registry update",
+          "priority": "P2",
+          "outcome": "complete",
+          "evidence": "scripts/post_flight.py executed successfully; data/middleware_registry.json exists with 15 middleware entries registered",
+          "agents": [
+            "claude-code"
+          ],
+          "llms": [
+            "qwen-3.5-9b"
+          ],
+          "mcps": [
+            "Dart"
+          ],
+          "score": 8,
+          "notes": "Registry updated correctly, but scripts/enrich_counties.py logic was skipped because it was not part of the Phase 9 design."
+        }
+      ]
+    },
+    {
+      "iteration": "v9.47",
+      "date": "2026-04-05",
+      "evaluator": "qwen3.5:9b",
+      "scores": [
+        {
+          "agent": "gemini-cli",
+          "role": "build-orchestrator",
+          "problem_analysis": 8,
+          "code_correctness": 9,
+          "efficiency": 5,
+          "gotcha_avoidance": 4,
+          "novel_contribution": 4,
+          "total": 6,
+          "notes": "Agent claimed 4 workstreams completed but provided no specific evidence or naming for them, violating the Workstream Fidelity rule which mandates matching the design doc row count exactly. The agent inferred workstreams from file changes rather than verifying the design document, a critical logical flaw. Efficiency is poor (5/10) because token costs were not reported, violating Trident rules. The new web artifact claw3d.html was listed as 'new' with zero verification of its functional status. The agent failed to test the new database binary performance or validate the HTML artifact.",
+          "prompt_tokens": 0,
+          "eval_tokens": 0,
+          "total_tokens": 0
+        }
+      ],
+      "gotcha_events": [
+        "G34: Workstream definition drift - inferred workstreams instead of counting from the design doc",
+        "G47: Evidence gap - claimed completion without specific file path, command output, or test result",
+        "G53: Trident violation - omitted token cost metrics for LLM calls"
+      ],
+      "evaluator_tokens": {
+        "prompt_tokens": 2301,
+        "eval_tokens": 340,
+        "total_tokens": 2641
       }
-    ],
-    "gotcha_events": [
-      {
-        "id": "G52",
-        "description": "Firecrawl MCP RESOLVED - transient loading issue cleared"
+    },
+    {
+      "iteration": "v9.48",
+      "date": "2026-04-05",
+      "workstreams": [
+        {
+          "id": "W1",
+          "name": "File Management Fix",
+          "priority": "P1",
+          "outcome": "complete",
+          "evidence": "scripts/cleanup_docs.py (36 lines) EXISTS",
+          "agents": [
+            "gemini-cli"
+          ],
+          "llms": [
+            "gemini-2.5-flash"
+          ],
+          "mcps": [
+            "-"
+          ],
+          "score": 9,
+          "notes": "New cleanup script created, but verify if docs/drafts/ was actually wiped per file management rules"
+        },
+        {
+          "id": "W2",
+          "name": "Harness Growth Enforcement",
+          "priority": "P1",
+          "outcome": "complete",
+          "evidence": "CLAUDE.md (269 lines) and GEMINI.md (269 lines) exist and meet length requirement",
+          "agents": [
+            "gemini-cli"
+          ],
+          "llms": [
+            "gemini-2.5-flash"
+          ],
+          "mcps": [
+            "-"
+          ],
+          "score": 8,
+          "notes": "Harness files grew but need confirmation that previous iteration lengths were checked before update"
+        },
+        {
+          "id": "W3",
+          "name": "Qwen Structural Enforcement",
+          "priority": "P1",
+          "outcome": "partial",
+          "evidence": "scripts/run_evaluator.py (509 lines) updated with robust fallback",
+          "agents": [
+            "gemini-cli"
+          ],
+          "llms": [
+            "gemini-2.5-flash"
+          ],
+          "mcps": [
+            "-"
+          ],
+          "score": 7,
+          "notes": "Fallback logic added but actual run_evaluator.py parsing of design doc W# count must be verified via test output"
+        },
+        {
+          "id": "W4",
+          "name": "App Optimization (Flutter Build)",
+          "priority": "P2",
+          "outcome": "complete",
+          "evidence": "flutter build web completed successfully",
+          "agents": [
+            "gemini-cli"
+          ],
+          "llms": [
+            "gemini-2.5-flash"
+          ],
+          "mcps": [
+            "-"
+          ],
+          "score": 8,
+          "notes": "Web build passed but need build time and asset size metrics from event log"
+        }
+      ]
+    },
+    {
+      "iteration": "v9.49",
+      "workstreams": [
+        {
+          "id": "W1",
+          "name": "Qwen schema-validated harness",
+          "priority": "P1",
+          "outcome": "complete",
+          "evidence": "scripts/data/eval_schema.json exists (48 lines); event log shows 5 successes with 0 errors.",
+          "agents": [
+            "Qwen"
+          ],
+          "llms": [
+            "Qwen"
+          ],
+          "mcps": [
+            "Firebase",
+            "Context7",
+            "Firecrawl",
+            "Playwright",
+            "Dart",
+            "-"
+          ],
+          "score": 8,
+          "improvements": [
+            "Consider pre-generating schema templates before LLM call to reduce token usage on error recovery.",
+            "Add explicit validation for array MCPS presence rather than assuming array completeness."
+          ]
+        },
+        {
+          "id": "W2",
+          "name": "Fix execution order (build log paradox)",
+          "priority": "P1",
+          "outcome": "complete",
+          "evidence": "scripts/run_evaluator.py (455 lines) exists; post-flight PASS confirms no build log dependency violation.",
+          "agents": [
+            "Qwen"
+          ],
+          "llms": [
+            "Qwen"
+          ],
+          "mcps": [
+            "Firebase",
+            "Context7",
+            "Firecrawl",
+            "Playwright",
+            "Dart",
+            "-"
+          ],
+          "score": 8,
+          "improvements": [
+            "Document execution order in README with a step-by-step flowchart to reduce onboarding friction.",
+            "Add unit tests for run_evaluator.py to assert independence from build log presence."
+          ]
+        },
+        {
+          "id": "W3",
+          "name": "Middleware tab in Flutter app",
+          "priority": "P1",
+          "outcome": "complete",
+          "evidence": "app/lib/widgets/mw_tab.dart exists (558 lines); post-flight PASS confirms widget integration.",
+          "agents": [
+            "Qwen"
+          ],
+          "llms": [
+            "Qwen"
+          ],
+          "mcps": [
+            "Firebase",
+            "Context7",
+            "Firecrawl",
+            "Playwright",
+            "Dart",
+            "-"
+          ],
+          "score": 7,
+          "improvements": [
+            "Add linting rules to mw_tab.dart to enforce consistent widget structure.",
+            "Include unit tests for middleware tab state transitions to catch UI regressions."
+          ]
+        },
+        {
+          "id": "W4",
+          "name": "README overhaul (3-iteration cadence)",
+          "priority": "P1",
+          "outcome": "deferred",
+          "evidence": "No README file found in execution context; docs/kjtcom-changelog.md references README but file not in key file existence list.",
+          "agents": [
+            "Qwen"
+          ],
+          "llms": [
+            "Qwen"
+          ],
+          "mcps": [
+            "Firebase",
+            "Context7",
+            "Firecrawl",
+            "Playwright",
+            "Dart",
+            "-"
+          ],
+          "score": 4,
+          "improvements": [
+            "Schedule README update task explicitly in next iteration to avoid missing cadence checkpoints.",
+            "Implement automated README diff check to catch stale documentation in CI pipeline."
+          ]
+        },
+        {
+          "id": "W5",
+          "name": "Post-flight + living docs",
+          "priority": "P1",
+          "outcome": "complete",
+          "evidence": "Post-flight PASS (3x); docs/kjtcom-changelog.md (544 lines) updated with NEW: resolved v9.49 events.",
+          "agents": [
+            "Qwen"
+          ],
+          "llms": [
+            "Qwen"
+          ],
+          "mcps": [
+            "Firebase",
+            "Context7",
+            "Firecrawl",
+            "Playwright",
+            "Dart",
+            "-"
+          ],
+          "score": 8,
+          "improvements": [
+            "Automate changelog generation to reduce manual entry errors.",
+            "Add cross-references between changelog entries and specific file paths to ensure traceability."
+          ]
+        }
+      ],
+      "trident": {
+        "cost": "1,200 tokens (estimated from 5 successful LLM calls)",
+        "delivery": "4/5 workstreams complete",
+        "performance": "0 errors in event log; post-flight passed all 3 verification cycles"
       },
-      {
-        "id": "G53",
-        "description": "Firebase MCP RESOLVED for session - reauth completed by Kyle"
-      }
-    ]
-  },
-  {
-    "iteration": "v9.38",
-    "date": "2026-04-05",
-    "evaluator": "nemotron-mini:4b (fallback - Qwen G51 regression)",
-    "scores": [
-      {
-        "agent": "Claude Code (Opus 4.6)",
-        "role": "Primary executor",
-        "problem_analysis": 9,
-        "code_correctness": 8,
-        "efficiency": 9,
-        "gotcha_avoidance": 8,
-        "novel_contribution": 9,
-        "total": 43,
-        "prompt_tokens": 150000,
-        "eval_tokens": 0,
-        "total_tokens": 150000,
-        "notes": "6/7 workstreams delivered. 6 new scripts, Claw3D prototype, portable template. RAG pipeline operational (1307 chunks). OpenClaw deferred per P7. 0 analyze issues, 15/15 tests."
+      "what_could_be_better": [
+        "README file missing from execution context suggests W4 was deferred; prioritize scheduling for next iteration.",
+        "W1 harness could benefit from adding pre-call schema templates to reduce retry token overhead.",
+        "W3 middleware tab lacks unit tests; adding state transition tests would improve reliability."
+      ],
+      "evaluator_tokens": {
+        "prompt_tokens": 2399,
+        "eval_tokens": 1193,
+        "total_tokens": 3592
       },
-      {
-        "agent": "Qwen3.5-9B",
-        "role": "Security advisor + evaluator (G51 regression)",
-        "problem_analysis": 5,
-        "code_correctness": 4,
-        "efficiency": 3,
-        "gotcha_avoidance": 4,
-        "novel_contribution": 5,
-        "total": 21,
-        "prompt_tokens": 3000,
-        "eval_tokens": 5000,
-        "total_tokens": 8000,
-        "notes": "G51 regression: returning empty content despite consuming tokens. /no_think not suppressing thinking. Security consultation attempted but no output. Registry scoring produced token usage but no parseable JSON."
+      "date": "2026-04-05"
+    },
+    {
+      "iteration": "v9.50",
+      "summary": "This iteration fixed Qwen harness bugs, updated the README, synced Claw3D docs, and generated post-flight records. All four workstreams succeeded without errors. Deliverables include corrected schema files, updated documentation, and architectural syncs. Quality was strong but documentation formatting remains a minor gap for next iteration.",
+      "workstreams": [
+        {
+          "id": "W1",
+          "name": "Qwen harness bug fixes (3 patterns)",
+          "priority": "P1",
+          "outcome": "complete",
+          "evidence": "scripts/run_evaluator.py (483 lines) updated with agent attribution and MCPS filtering logic.",
+          "agents": [
+            "claude-code"
+          ],
+          "llms": [
+            "qwen-max"
+          ],
+          "mcps": [
+            "-"
+          ],
+          "score": 8,
+          "improvements": [
+            "Add automated unit tests for schema enforcement to prevent future JSON formatting regressions.",
+            "Document expected agent/LLM/MCP combinations per workstream type for better prompt tuning."
+          ]
+        },
+        {
+          "id": "W2",
+          "name": "README overhaul",
+          "priority": "P1",
+          "outcome": "complete",
+          "evidence": "docs/README.md (untracked) reflects updated tech stack table with Claw3D link added.",
+          "agents": [
+            "claude-code"
+          ],
+          "llms": [
+            "qwen-max"
+          ],
+          "mcps": [
+            "-"
+          ],
+          "score": 8,
+          "improvements": [
+            "Run automated diff check before committing README to catch outdated tech stack references early.",
+            "Include a live preview link in PR descriptions for documentation changes."
+          ]
+        },
+        {
+          "id": "W3",
+          "name": "Claw3D dynamic update",
+          "priority": "P1",
+          "outcome": "complete",
+          "evidence": "app/web/claw3d.html (300 lines) contains intent router nodes and middleware registry updates.",
+          "agents": [
+            "claude-code"
+          ],
+          "llms": [
+            "qwen-max"
+          ],
+          "mcps": [
+            "Firebase"
+          ],
+          "score": 9,
+          "improvements": [
+            "Add automated snapshot validation for HTML content to ensure schema nodes are always in sync.",
+            "Document each middleware node's purpose to reduce future integration errors."
+          ]
+        },
+        {
+          "id": "W4",
+          "name": "Post-flight + living docs",
+          "priority": "P2",
+          "outcome": "complete",
+          "evidence": "docs/kjtcom-changelog.md (567 lines) appended with NEW: entry listing agents, LLMs, and resolved gotchas.",
+          "agents": [
+            "claude-code"
+          ],
+          "llms": [
+            "qwen-max"
+          ],
+          "mcps": [
+            "-"
+          ],
+          "score": 7,
+          "improvements": [
+            "Automatically generate changelog entries from git commit messages to reduce manual entry errors.",
+            "Add a pre-commit hook that validates changelog format against schema requirements."
+          ]
+        }
+      ],
+      "trident": {
+        "cost": "0 tokens (no LLM calls recorded in event log)",
+        "delivery": "4/4 workstreams complete",
+        "performance": "10 successes, 0 errors"
       },
-      {
-        "agent": "nomic-embed-text",
-        "role": "Embedding model",
-        "problem_analysis": 8,
-        "code_correctness": 9,
-        "efficiency": 9,
-        "gotcha_avoidance": 9,
-        "novel_contribution": 7,
-        "total": 42,
-        "prompt_tokens": 0,
-        "eval_tokens": 0,
-        "total_tokens": 0,
-        "notes": "1307 chunks embedded from 130 archive files. No VRAM conflicts. Batched 20 at a time. RAG queries return 0.727-0.730 relevance scores."
-      }
-    ],
-    "gotcha_events": [
-      {
-        "id": "G51",
-        "description": "Qwen3.5-9B /no_think REGRESSION - returns empty content despite consuming tokens. All eval tokens used for internal thinking, nothing in output."
+      "what_could_be_better": [
+        "Automate changelog entry generation to reduce manual formatting mistakes.",
+        "Add visual diff previews in CI for documentation changes before commit.",
+        "Introduce a middleware registry schema validator to catch registration errors early."
+      ],
+      "evaluator_tokens": {
+        "prompt_tokens": 2748,
+        "eval_tokens": 844,
+        "total_tokens": 3592
       },
-      {
-        "id": "G54",
-        "description": "open-interpreter (OpenClaw) cannot build tiktoken wheel for Python 3.14 (CP314). DEFERRED to v9.39."
-      }
-    ],
-    "evaluator_tokens": {
-      "prompt_tokens": 401,
-      "eval_tokens": 167,
-      "total_tokens": 568
+      "date": "2026-04-05"
+    },
+    {
+      "iteration": "v9.51",
+      "summary": "Iteration v9.51 completed all five workstreams with a delivery of 5/5 complete. UI fixes for the search button and 3D link were applied. The Qwen score scale was corrected to 8/10. Build logs now render as markdown prose. The Qwen harness was hardened and living docs were updated. No errors occurred in the event log.",
+      "workstreams": [
+        {
+          "id": "W1",
+          "name": "Fix Search button layout + add 3D button",
+          "priority": "P1",
+          "outcome": "complete",
+          "evidence": "Files app/lib/widgets/query_editor.dart and app/lib/widgets/app_shell.dart were updated. File app/web/claw3d.html exists (300 lines). IconButton added in header.",
+          "agents": [
+            "claude-code"
+          ],
+          "llms": [
+            "qwen3.5:9b"
+          ],
+          "mcps": [
+            "Firebase",
+            "-"
+          ],
+          "score": 9,
+          "improvements": [
+            "Verify the 3D button icon renders correctly on all device orientations.",
+            "Add unit tests for the query editor search button padding across different screen sizes."
+          ]
+        },
+        {
+          "id": "W2",
+          "name": "Fix Qwen score scale (8/9 -> 8/10)",
+          "priority": "P1",
+          "outcome": "complete",
+          "evidence": "Updated data/eval_schema.json score description to clarify 10-point scale. Updated docs/evaluator-harness.md score reporting rules. Modified scripts/generate_artifacts.py to format output as X/10.",
+          "agents": [
+            "claude-code"
+          ],
+          "llms": [
+            "qwen3.5:9b"
+          ],
+          "mcps": [
+            "Firebase",
+            "-"
+          ],
+          "score": 9,
+          "improvements": [
+            "Add a regression test case to eval_schema.json to verify X/10 formatting.",
+            "Update any downstream documentation that references the old 8/9 scale."
+          ]
+        },
+        {
+          "id": "W3",
+          "name": "Fix build log raw JSON rendering",
+          "priority": "P1",
+          "outcome": "complete",
+          "evidence": "Revised scripts/generate_artifacts.py to parse and render build logs as markdown prose instead of raw JSON. Verified output no longer contains raw JSON strings in the execution section.",
+          "agents": [
+            "claude-code"
+          ],
+          "llms": [
+            "qwen3.5:9b"
+          ],
+          "mcps": [
+            "Firebase",
+            "-"
+          ],
+          "score": 8,
+          "improvements": [
+            "Ensure the markdown rendering handles nested objects consistently.",
+            "Review edge cases where build logs might be empty or malformed."
+          ]
+        },
+        {
+          "id": "W4",
+          "name": "Qwen harness hardening (continued)",
+          "priority": "P1",
+          "outcome": "complete",
+          "evidence": "Reviewed v9.50 output and tightened rules in CLAUDE.md. Added specific test cases for schema validation logic to catch future regressions.",
+          "agents": [
+            "claude-code"
+          ],
+          "llms": [
+            "qwen3.5:9b"
+          ],
+          "mcps": [
+            "Firebase",
+            "-"
+          ],
+          "score": 9,
+          "improvements": [
+            "Expand test coverage to include more complex prompt injection scenarios.",
+            "Document the rationale for each harness rule change in the changelog."
+          ]
+        },
+        {
+          "id": "W5",
+          "name": "Post-flight + living docs",
+          "priority": "P2",
+          "outcome": "complete",
+          "evidence": "Post-flight passes recorded for three iterations. README version bumped to v9.51. Changelog (docs/kjtcom-changelog.md) appended with NEW: entries listing agents, LLMs, and fixes.",
+          "agents": [
+            "claude-code"
+          ],
+          "llms": [
+            "qwen3.5:9b"
+          ],
+          "mcps": [
+            "Firebase",
+            "-"
+          ],
+          "score": 8,
+          "improvements": [
+            "Automate README version bumping via script to reduce manual error risk.",
+            "Verify that all NEW: changelog entries follow the required format exactly."
+          ]
+        }
+      ],
+      "trident": {
+        "cost": "5 LLM calls (tokens not tracked)",
+        "delivery": "5/5 workstreams complete",
+        "performance": "0 errors in event log"
+      },
+      "what_could_be_better": [
+        "Increase test coverage for UI layout fixes to include all tablet orientations.",
+        "Implement automated schema validation in CI/CD to catch 8/9 vs 8/10 errors instantly.",
+        "Integrate error tracking for UI rendering issues in production deployments."
+      ],
+      "evaluator_tokens": {
+        "prompt_tokens": 3014,
+        "eval_tokens": 1096,
+        "total_tokens": 4110
+      },
+      "date": "2026-04-05"
+    },
+    {
+      "iteration": "v9.52",
+      "summary": "Evaluation generated via fallback due to schema validation failure after 3 attempts.",
+      "workstreams": [
+        {
+          "id": "W1",
+          "name": "Evaluator harness rebuild (400+ lines)",
+          "priority": "P1",
+          "outcome": "partial",
+          "evidence": "Evaluation generated via fallback due to schema validation failure",
+          "agents": [
+            "claude-code"
+          ],
+          "llms": [
+            "qwen3.5:9b"
+          ],
+          "mcps": [
+            "-"
+          ],
+          "score": 5,
+          "improvements": [
+            "Schema validation failed - manual review needed",
+            "Qwen output did not conform after 3 attempts"
+          ]
+        },
+        {
+          "id": "W2",
+          "name": "Claw3D solar system redesign",
+          "priority": "P1",
+          "outcome": "partial",
+          "evidence": "Evaluation generated via fallback due to schema validation failure",
+          "agents": [
+            "claude-code"
+          ],
+          "llms": [
+            "qwen3.5:9b"
+          ],
+          "mcps": [
+            "-"
+          ],
+          "score": 5,
+          "improvements": [
+            "Schema validation failed - manual review needed",
+            "Qwen output did not conform after 3 attempts"
+          ]
+        },
+        {
+          "id": "W3",
+          "name": "Phase 10 systems check (all agents, MCPs, LLMs)",
+          "priority": "P2",
+          "outcome": "partial",
+          "evidence": "Evaluation generated via fallback due to schema validation failure",
+          "agents": [
+            "claude-code"
+          ],
+          "llms": [
+            "qwen3.5:9b"
+          ],
+          "mcps": [
+            "-"
+          ],
+          "score": 5,
+          "improvements": [
+            "Schema validation failed - manual review needed",
+            "Qwen output did not conform after 3 attempts"
+          ]
+        },
+        {
+          "id": "W4",
+          "name": "Post-flight + living docs + README cadence",
+          "priority": "P2",
+          "outcome": "partial",
+          "evidence": "Evaluation generated via fallback due to schema validation failure",
+          "agents": [
+            "claude-code"
+          ],
+          "llms": [
+            "qwen3.5:9b"
+          ],
+          "mcps": [
+            "-"
+          ],
+          "score": 5,
+          "improvements": [
+            "Schema validation failed - manual review needed",
+            "Qwen output did not conform after 3 attempts"
+          ]
+        }
+      ],
+      "trident": {
+        "cost": "Within target - local Ollama inference",
+        "delivery": "0/4 workstreams verified (fallback)",
+        "performance": "Qwen schema compliance failed after 3 attempts"
+      },
+      "what_could_be_better": [
+        "Qwen output did not conform to eval_schema.json after 3 retries",
+        "Consider adjusting prompt structure for better schema compliance",
+        "Manual evaluation may be needed for this iteration"
+      ],
+      "evaluator_tokens": {
+        "prompt_tokens": 4096,
+        "eval_tokens": 1101,
+        "total_tokens": 5197
+      },
+      "date": "2026-04-05"
+    },
+    {
+      "iteration": "v9.53",
+      "summary": "Phase 9 completed with two primary workstreams delivered: the Claw3D orbital mechanics fix (W1) successfully updated app/web/claw3d.html to reduce speeds, tighten radii, add connector lines, and enforce tidal locking. The Final Qwen harness tuning (W2) addressed schema retry logic and validation standards, while the Post-flight close-out (W3) confirmed system stability. No errors or timeouts occurred in the execution context.",
+      "workstreams": [
+        {
+          "id": "W1",
+          "name": "Claw3D orbital mechanics fix",
+          "priority": "P1",
+          "outcome": "complete",
+          "evidence": "app/web/claw3d.html updated with orbitSpeed *= 0.25, radius reduction, LineBasicMaterial for connectors, and rotation logic removed.",
+          "agents": [
+            "claude-code"
+          ],
+          "llms": [
+            "Firebase",
+            "Dart"
+          ],
+          "mcps": [
+            "-",
+            "Dart"
+          ],
+          "score": 8,
+          "improvements": [
+            "Reduced orbital speeds and radii to fit all planets in initial viewport without scrolling.",
+            "Added subtle data flow lines using Three.js LineBasicMaterial between sun/planets and moons."
+          ]
+        },
+        {
+          "id": "W2",
+          "name": "Final Qwen harness tuning",
+          "priority": "P1",
+          "outcome": "complete",
+          "evidence": "scripts/run_evaluator.py updated to include specific field-path error specificity (v9.53), reducing fallback usage to ~10%.",
+          "agents": [
+            "claude-code"
+          ],
+          "llms": [
+            "Context7",
+            "Firebase"
+          ],
+          "mcps": [
+            "Firebase",
+            "Context7"
+          ],
+          "score": 9,
+          "improvements": [
+            "Enhanced retry logic with exact field-path and value mismatch details in feedback prompts.",
+            "Removed duplicate sections and added Patterns 16-18 to harness validation logic."
+          ]
+        },
+        {
+          "id": "W3",
+          "name": "Post-flight + Phase 9 close-out",
+          "priority": "P2",
+          "outcome": "complete",
+          "evidence": "MCP checks passed with zero errors/timeouts; scripts/run_evaluator.py (505 lines) and generate_artifacts.py (668 lines) ready for v9.53 deployment.",
+          "agents": [
+            "claude-code"
+          ],
+          "llms": [
+            "Firecrawl",
+            "-"
+          ],
+          "mcps": [
+            "-",
+            "Firecrawl"
+          ],
+          "score": 8,
+          "improvements": [
+            "Validated all recently resolved gotchas (G36-G50) against TripleDB and Firestore queries.",
+            "Confirmed harness expansion from 84 to 400+ lines is driven by real failure patterns."
+          ]
+        }
+      ],
+      "trident": {
+        "cost": "Optimized by reducing computational load in orbital physics and refining retry logic.",
+        "delivery": "2/3 workstreams delivered P1 critical fixes; W3 ensures Phase 9 closure.",
+        "performance": "Enhanced through tidal locking constraints and tighter spread geometry in Claw3D."
+      },
+      "what_could_be_better": [
+        "Consider implementing dynamic orbit adjustment based on user viewport size for W1.",
+        "Add automated regression testing for schema validation changes in W2 before next iteration.",
+        "Expand mcps usage in W3 to include Playwright for visual regression checks of the solar system."
+      ],
+      "evaluator_tokens": {
+        "prompt_tokens": 4096,
+        "eval_tokens": 885,
+        "total_tokens": 4981
+      },
+      "date": "2026-04-05"
+    },
+    {
+      "iteration": "v10.55",
+      "summary": "Iteration v10.55 successfully validated the system state for the Bourdain Pipeline and Claw3D assets, confirming file existence for core scripts and web assets. No workstreams were executed in this specific run to avoid the previous build/report mismatch seen in v10.54; the focus was on rigorous pre-flight validation using `run_evaluator.py` and `post_flight.py`. A minor validation error regarding the `trident.performance` length has been corrected.",
+      "workstreams": [],
+      "trident": {
+        "cost": "$0.00 (No active processing)",
+        "delivery": "0/0 workstreams delivered (Validation only)",
+        "performance": "100% (System health check passed)"
+      },
+      "what_could_be_better": [
+        "Integrate the Claw3D HTML validation directly into the main `post_flight.py` loop to prevent future deployment failures.",
+        "Automate the retrospective section of the report by parsing all `kjtcom-report-v9.XX.md` files to populate the v10.55 summary automatically.",
+        "Refactor the `agent_scores.json` appending logic to ensure atomic writes and prevent partial updates during concurrent evaluation runs."
+      ],
+      "evaluator_tokens": {
+        "prompt_tokens": 4096,
+        "eval_tokens": 287,
+        "total_tokens": 4383
+      },
+      "date": "2026-04-05"
     }
-  },
-  {
-    "iteration": "v9.39",
-    "date": "2026-04-05",
-    "evaluator": "qwen3.5:9b",
-    "scores": [
-      {
-        "agent": "Claude Code (Opus 4.6)",
-        "role": "Lead Developer & Architect",
-        "problem_analysis": 10,
-        "code_correctness": 10,
-        "efficiency": 9,
-        "gotcha_avoidance": 10,
-        "novel_contribution": 10,
-        "total": 49,
-        "notes": "Successfully resolved G54 (OpenClaw/PkgResource conflicts on Python 3.14) via surgical patching. Correctly identified G51 (Qwen 'thinking' phase wasting tokens) and implemented 'think:false' fix. Introduced novel IAO event logging infrastructure (iao_logger.py, analyze_events.py) to enable rigorous agent auditing, a significant contribution to the project's transparency.",
-        "prompt_tokens": 0,
-        "eval_tokens": 0,
-        "total_tokens": 0
-      }
-    ],
-    "gotcha_events": [
-      "G51: Avoided by disabling Qwen internal thinking for direct token evaluation.",
-      "G54: Avoided by patching OpenClaw imports to handle missing pkg_resources on Python 3.14."
-    ],
-    "evaluator_tokens": {
-      "prompt_tokens": 1461,
-      "eval_tokens": 302,
-      "total_tokens": 1763
-    }
-  },
-  {
-    "iteration": "v9.40",
-    "date": "2026-04-05",
-    "evaluator": "claude-code-self-report",
-    "scores": [
-      {
-        "agent": "Claude Code (Opus 4.6)",
-        "role": "Primary executor",
-        "problem_analysis": 9,
-        "code_correctness": 9,
-        "efficiency": 9,
-        "gotcha_avoidance": 10,
-        "novel_contribution": 7,
-        "total": 44,
-        "notes": "5/5 workstreams, 0 interventions, RAG bug root-caused and fixed"
-      }
-    ],
-    "gotcha_events": [
-      {
-        "id": "G55",
-        "description": "query_rag.py CLI: --json flag parsed as version_filter positional arg",
-        "status": "resolved",
-        "resolution": "Bypassed CLI entirely - direct import in telegram_bot.py"
-      }
-    ]
-  },
-  {
-    "iteration": "v9.41",
-    "date": "2026-04-05",
-    "workstreams": [
-      {
-        "id": "W1",
-        "name": "Firestore dual retrieval path",
-        "priority": "P1",
-        "outcome": "complete",
-        "agents": [
-          "claude-code"
-        ],
-        "llms": [
-          "gemini-flash"
-        ],
-        "mcps": [
-          "firebase"
-        ],
-        "score": 9,
-        "notes": "Intent router and Firestore query module are operational for the bot."
-      },
-      {
-        "id": "W2",
-        "name": "Re-embed archive with v9.38-v9.40 docs",
-        "priority": "P1",
-        "outcome": "complete",
-        "agents": [
-          "claude-code"
-        ],
-        "llms": [
-          "gemini-flash"
-        ],
-        "mcps": [],
-        "score": 8,
-        "notes": "Archive re-embedding script executed successfully to update ChromaDB."
-      },
-      {
-        "id": "W3",
-        "name": "Artifact automation scaffold",
-        "priority": "P2",
-        "outcome": "complete",
-        "agents": [
-          "claude-code"
-        ],
-        "llms": [
-          "qwen",
-          "gemini-flash"
-        ],
-        "mcps": [],
-        "score": 9,
-        "notes": "generate_artifacts.py and templates deployed for post-iteration drafting."
-      },
-      {
-        "id": "W4",
-        "name": "Rebuild iteration_registry.json",
-        "priority": "P2",
-        "outcome": "complete",
-        "agents": [
-          "claude-code"
-        ],
-        "llms": [
-          "qwen"
-        ],
-        "mcps": [],
-        "score": 10,
-        "notes": "Registry rebuilt successfully with OOM issues resolved via RAG optimization."
-      },
-      {
-        "id": "W5",
-        "name": "Living doc updates",
-        "priority": "P3",
-        "outcome": "deferred",
-        "agents": [
-          "claude-code"
-        ],
-        "llms": [
-          "qwen"
-        ],
-        "mcps": [],
-        "score": 6,
-        "notes": "Architecture and install docs pending manual review and updates per v9.41 scope."
-      }
-    ]
-  },
-  {
-    "iteration": "v9.42",
-    "date": "2026-04-05",
-    "workstreams": [
-      {
-        "id": "W1",
-        "name": "TripleDB County Enrichment",
-        "priority": "P1",
-        "outcome": "complete",
-        "agents": [
-          "claude-code"
-        ],
-        "llms": [
-          "gemini-2.5-flash"
-        ],
-        "mcps": [
-          "firebase"
-        ],
-        "score": 9,
-        "notes": "Successful county enrichment execution verified by existence of scripts/enrich_counties.py."
-      },
-      {
-        "id": "W2",
-        "name": "Bot Resiliency",
-        "priority": "P2",
-        "outcome": "complete",
-        "agents": [
-          "claude-code"
-        ],
-        "llms": [
-          "gemini-2.5-flash"
-        ],
-        "mcps": [
-          "telegram"
-        ],
-        "score": 8,
-        "notes": "Bot service file exists, indicating resiliency configuration was deployed."
-      },
-      {
-        "id": "W3",
-        "name": "Artifact Workflow Fixes",
-        "priority": "P1",
-        "outcome": "complete",
-        "agents": [
-          "claude-code"
-        ],
-        "llms": [
-          "gemini-2.5-flash"
-        ],
-        "mcps": [
-          "firebase",
-          "qwen-drafts"
-        ],
-        "score": 9,
-        "notes": "Workflow corrections implemented, evidenced by resolved draft promotion logic in execution context."
-      },
-      {
-        "id": "W4",
-        "name": "Internet Query Stream",
-        "priority": "P2",
-        "outcome": "complete",
-        "agents": [
-          "claude-code"
-        ],
-        "llms": [
-          "gemini-2.5-flash"
-        ],
-        "mcps": [
-          "internet-search"
-        ],
-        "score": 8,
-        "notes": "Query stream operational, though specific output files for this stream were not explicitly listed in the context."
-      },
-      {
-        "id": "W5",
-        "name": "Gotcha Archive",
-        "priority": "P2",
-        "outcome": "complete",
-        "agents": [
-          "claude-code"
-        ],
-        "llms": [
-          "gemini-2.5-flash"
-        ],
-        "mcps": [
-          "firebase"
-        ],
-        "score": 10,
-        "notes": "Gotcha archive successfully updated with resolved issues G36-G50 as confirmed by data/gotcha_archive.json."
-      },
-      {
-        "id": "W6",
-        "name": "Harness Registry",
-        "priority": "P3",
-        "outcome": "complete",
-        "agents": [
-          "claude-code"
-        ],
-        "llms": [
-          "gemini-2.5-flash"
-        ],
-        "mcps": [
-          "file-system"
-        ],
-        "score": 9,
-        "notes": "Registry updates verified through existence of docs/cross-project/intranet-update-v9.42.md."
-      }
-    ]
-  },
-  {
-    "iteration": "v9.43",
-    "date": "2026-04-05",
-    "workstreams": [
-      {
-        "id": "W1",
-        "name": "App Optimization",
-        "priority": "P1",
-        "outcome": "complete",
-        "evidence": "EXISTENCE: app/web/architecture.html, scripts/build_architecture_html.py",
-        "agents": [
-          "claude-code"
-        ],
-        "llms": [
-          "gemini-2.5-flash"
-        ],
-        "mcps": [
-          "-"
-        ],
-        "score": 10,
-        "notes": "Built architecture.html and registry files; no errors in core optimization tasks."
-      },
-      {
-        "id": "W2",
-        "name": "Bot Session Memory",
-        "priority": "P1",
-        "outcome": "failed",
-        "evidence": "error: litellm.AuthenticationError: GeminiException - { code: 400 }",
-        "agents": [
-          "claude-code"
-        ],
-        "llms": [
-          "gemini-2.5-flash"
-        ],
-        "mcps": [
-          "-"
-        ],
-        "score": 0,
-        "notes": "Failed due to AuthenticationError during route execution; required index not created per error context."
-      },
-      {
-        "id": "W3",
-        "name": "Rating Queries",
-        "priority": "P1",
-        "outcome": "failed",
-        "evidence": "error: 400 The query requires an index. You can create it here: https://console.firebas",
-        "agents": [
-          "claude-code"
-        ],
-        "llms": [
-          "gemini-2.5-flash"
-        ],
-        "mcps": [
-          "-"
-        ],
-        "score": 0,
-        "notes": "Failed because query returned 400 requiring Firebase index creation; count check failed."
-      },
-      {
-        "id": "W4",
-        "name": "Post-Flight Verification",
-        "priority": "P1",
-        "outcome": "deferred",
-        "evidence": "exists: data/gotcha_archive.json; status_check_status: missing",
-        "agents": [
-          "claude-code"
-        ],
-        "llms": [
-          "gemini-2.5-flash"
-        ],
-        "mcps": [
-          "-"
-        ],
-        "score": 0,
-        "notes": "Verification deferred due to prior workstream failures preventing /status and entity count checks."
-      },
-      {
-        "id": "W5",
-        "name": "Architecture HTML",
-        "priority": "P2",
-        "outcome": "complete",
-        "evidence": "EXISTENCE: app/web/architecture.html, scripts/build_architecture_html.py",
-        "agents": [
-          "claude-code"
-        ],
-        "llms": [
-          "gemini-2.5-flash"
-        ],
-        "mcps": [
-          "-"
-        ],
-        "score": 10,
-        "notes": "Generated architecture.html successfully using build_architecture_html.py script."
-      },
-      {
-        "id": "W6",
-        "name": "Qwen Report Quality",
-        "priority": "P2",
-        "outcome": "partial",
-        "evidence": "Total events: 87, errors/timeouts: 2; W2/W3 failed authentication/index errors",
-        "agents": [
-          "gemini-2.5-flash"
-        ],
-        "llms": [
-          "gemini-2.5-flash"
-        ],
-        "mcps": [
-          "-"
-        ],
-        "score": 5,
-        "notes": "Report quality compromised by 2 errors (W2/W3); evidence counts match execution context but completeness is low."
-      }
-    ]
-  },
-  {
-    "iteration": "v9.44",
-    "date": "2026-04-05",
-    "workstreams": [
-      {
-        "id": "W1",
-        "name": "Fix Gemini Flash auth error",
-        "priority": "P1",
-        "outcome": "complete",
-        "evidence": "litellm.completion(model=gemini/gemini-2.5-flash) returns SUCCESS. GEMINI_MODEL centralized in ollama_config.py. intent_router.py and telegram_bot.py import GEMINI_MODEL.",
-        "agents": [
-          "claude-code"
-        ],
-        "llms": [
-          "gemini-2.5-flash"
-        ],
-        "mcps": [
-          "-"
-        ],
-        "score": 9,
-        "notes": "Gemini Flash auth fixed. litellm 1.83.3 + gemini/gemini-2.5-flash + thinking disabled works. G57 resolved."
-      },
-      {
-        "id": "W2",
-        "name": "Create Firestore composite index",
-        "priority": "P1",
-        "outcome": "complete",
-        "evidence": "Python-side sort returns top 3 DDD LA by rating: crush craft (4.9), el sazon (4.9), la unica birria (4.7). 0 interventions needed.",
-        "agents": [
-          "claude-code"
-        ],
-        "llms": [],
-        "mcps": [
-          "Firebase"
-        ],
-        "score": 9,
-        "notes": "Python-side sort in firestore_query.py avoids composite index. 26 DDD LA docs fetched and sorted client-side. G56 resolved."
-      },
-      {
-        "id": "W3",
-        "name": "Re-run bot session memory + rating queries",
-        "priority": "P1",
-        "outcome": "complete",
-        "evidence": "Intent router routes all 5 test cases correctly. Firestore returns 26 DDD LA, top 3 by rating. Session memory code verified in telegram_bot.py. Bot needs sudo restart to pick up changes.",
-        "agents": [
-          "claude-code"
-        ],
-        "llms": [
-          "gemini-2.5-flash"
-        ],
-        "mcps": [
-          "Firebase"
-        ],
-        "score": 8,
-        "notes": "All routes work: firestore (count/list/sort), chromadb, web. Bot code verified but live Telegram test pending sudo restart."
-      },
-      {
-        "id": "W4",
-        "name": "Post-flight verification pass",
-        "priority": "P1",
-        "outcome": "complete",
-        "evidence": "post_flight.py: 3/3 passed. site_200=PASS, bot_status=PASS (@kjtcom_iao_bot), bot_query=PASS (6181 entities).",
-        "agents": [
-          "claude-code"
-        ],
-        "llms": [],
-        "mcps": [
-          "-"
-        ],
-        "score": 10,
-        "notes": "All post-flight checks pass. 6,181 entities confirmed."
-      },
-      {
-        "id": "W5",
-        "name": "Doc recovery + archival enforcement",
-        "priority": "P2",
-        "outcome": "complete",
-        "evidence": "v9.41/v9.42 docs already in archive (recovered in v9.43). v9.43 docs archived (169 total files). CLAUDE.md has rm guard.",
-        "agents": [
-          "claude-code"
-        ],
-        "llms": [],
-        "mcps": [
-          "-"
-        ],
-        "score": 9,
-        "notes": "169 archive files. v9.41-v9.43 all present. No docs deleted."
-      },
-      {
-        "id": "W6",
-        "name": "Changelog and report quality fix",
-        "priority": "P2",
-        "outcome": "complete",
-        "evidence": "changelog-template.md updated with NEW/UPDATED/FIXED prefixes, TBD banned. run_evaluator.py has exact W# naming rule. generate_artifacts.py pulls from event log.",
-        "agents": [
-          "claude-code"
-        ],
-        "llms": [],
-        "mcps": [
-          "-"
-        ],
-        "score": 8,
-        "notes": "Templates updated. Changelog generates from event log + workstream data. TBD banned."
-      }
-    ]
-  },
-  {
-    "iteration": "v9.45",
-    "date": "2026-04-05",
-    "workstreams": [
-      {
-        "id": "W1",
-        "name": "Major dep upgrade: mgrs_dart 2->3 + proj4dart 2->3",
-        "priority": "P1",
-        "outcome": "deferred",
-        "evidence": "Missing: pubspec.lock changes showing mgrs_dart and proj4dart major versions; no Map tab verification file or breaking change log found.",
-        "agents": [
-          "none"
-        ],
-        "llms": [
-          "none"
-        ],
-        "mcps": [
-          "-",
-          "Context7"
-        ],
-        "score": 0,
-        "notes": "Upgrades deferred due to missing evidence of execution, no breaking change documentation, and Context7 MCP usage not reflected in output."
-      },
-      {
-        "id": "W2",
-        "name": "Major dep upgrade: analyzer + _fe_analyzer_shared",
-        "priority": "P1",
-        "outcome": "deferred",
-        "evidence": "Missing: pubspec.lock showing analyzer 12 or _fe_analyzer_shared 98; no flutter analyze output or breaking changes documented.",
-        "agents": [
-          "none"
-        ],
-        "llms": [
-          "none"
-        ],
-        "mcps": [
-          "-",
-          "Context7"
-        ],
-        "score": 0,
-        "notes": "Upgrades deferred due to lack of pubspec.lock evidence, missing flutter analyze output, and Context7 MCP usage not reflected in output."
-      },
-      {
-        "id": "W3",
-        "name": "Minor dep upgrades: meta, test, test_api, test_core, unicode, vector_math",
-        "priority": "P1",
-        "outcome": "deferred",
-        "evidence": "Missing: pubspec.lock showing minor version bumps for listed packages; no test results or breaking change logs.",
-        "agents": [
-          "none"
-        ],
-        "llms": [
-          "none"
-        ],
-        "mcps": [
-          "-"
-        ],
-        "score": 0,
-        "notes": "Upgrades deferred due to missing pubspec.lock evidence, no test results, and no breaking change documentation."
-      },
-      {
-        "id": "W4",
-        "name": "Post-upgrade verification",
-        "priority": "P1",
-        "outcome": "failed",
-        "evidence": "Missing: flutter analyze output (0 issues), flutter test results (15/15), flutter build web success log, or Map tab verification notes.",
-        "agents": [
-          "none"
-        ],
-        "llms": [
-          "none"
-        ],
-        "mcps": [
-          "-"
-        ],
-        "score": 0,
-        "notes": "Verification failed due to missing evidence of tool execution and results for all three Flutter commands."
-      },
-      {
-        "id": "W5",
-        "name": "Phase 10 readiness checklist",
-        "priority": "P2",
-        "outcome": "partial",
-        "evidence": "Partially verified: data/middleware_registry.json EXISTS; scripts/post_flight.py EXISTS; scripts/build_architecture_html.py EXISTS; data/gotcha_archive.json EXISTS; app/web/architecture.html EXISTS.",
-        "agents": [
-          "none"
-        ],
-        "llms": [
-          "none"
-        ],
-        "mcps": [
-          "-",
-          "Firebase"
-        ],
-        "score": 6,
-        "notes": "Partial completion: verified file existence, but missing verification of install.fish currentness or Phase 10 readiness assessment results."
-      },
-      {
-        "id": "W6",
-        "name": "Post-flight + Qwen Trident fix",
-        "priority": "P2",
-        "outcome": "deferred",
-        "evidence": "Missing: output of scripts/post_flight.py; no evidence Qwen evaluator was fixed to stop reporting 'Review...' or 'TBD'; no event log data populated.",
-        "agents": [
-          "none"
-        ],
-        "llms": [
-          "none"
-        ],
-        "mcps": [
-          "-"
-        ],
-        "score": 0,
-        "notes": "Deferred due to missing post_flight.py output, no Qwen evaluator fix evidence, and event log data not populated."
-      }
-    ]
-  },
-  {
-    "iteration": "v9.45",
-    "date": "2026-04-05",
-    "evaluator": "qwen3.5:9b",
-    "scores": [
-      {
-        "agent": "Claude Code (Opus 4.6)",
-        "role": "Primary Execution & Optimization",
-        "problem_analysis": 9.5,
-        "code_correctness": 10.0,
-        "efficiency": 9.0,
-        "gotcha_avoidance": 10.0,
-        "novel_contribution": 8.5,
-        "total": 9.4,
-        "notes": "Successfully identified that 10 outdated dependencies were transitive and locked by parent constraints (flutter_map, test), correctly deferring the upgrade plan rather than attempting a forced upgrade that would fail. Executed all verification steps (analyze, test, build) cleanly. Implemented the critical 'Trident' scoring fix, replacing hardcoded placeholders with dynamic calculations. Maintained all post-flight checks and archive integrity.",
-        "prompt_tokens": 0,
-        "eval_tokens": 0,
-        "total_tokens": 0
-      }
-    ],
-    "gotcha_events": [],
-    "evaluator_tokens": {
-      "prompt_tokens": 1645,
-      "eval_tokens": 257,
-      "total_tokens": 1902
-    }
-  },
-  {
-    "iteration": "v9.46",
-    "date": "2026-04-05",
-    "workstreams": [
-      {
-        "id": "W1",
-        "name": "Qwen evaluator harness",
-        "priority": "P1",
-        "outcome": "partial",
-        "evidence": "MISSING: docs/evaluator-harness.md not found in file existence check; run_evaluator.py and generate_artifacts.py modifications not verified in execution log",
-        "agents": [
-          "claude-code"
-        ],
-        "llms": [
-          "qwen-3.5-9b"
-        ],
-        "mcps": [
-          "-"
-        ],
-        "score": 5,
-        "notes": "Harness file creation failed to materialize despite 98 successful events, likely due to a silent skip or context truncation preventing the doc write."
-      },
-      {
-        "id": "W2",
-        "name": "README overhaul",
-        "priority": "P1",
-        "outcome": "complete",
-        "evidence": "docs/README.md updated with v9.46 changelog entry, Phase 9 section verified against data/gotcha_archive.json",
-        "agents": [
-          "claude-code"
-        ],
-        "llms": [
-          "qwen-3.5-9b"
-        ],
-        "mcps": [
-          "-"
-        ],
-        "score": 8,
-        "notes": "Changelog refreshed, but stale references in Section 4.2 regarding Phase 8 artifacts were missed during the full audit."
-      },
-      {
-        "id": "W3",
-        "name": "Phase 9 final audit",
-        "priority": "P2",
-        "outcome": "complete",
-        "evidence": "data/middleware_registry.json shows 15 entries; comparison between v9.27 and v9.46 logged in docs/phase-9-audit.md",
-        "agents": [
-          "claude-code"
-        ],
-        "llms": [
-          "qwen-3.5-9b"
-        ],
-        "mcps": [
-          "-"
-        ],
-        "score": 9,
-        "notes": "Audit identified G36-G50 resolutions, but documentation for G46 query cap resolution lacks specific token counts."
-      },
-      {
-        "id": "W4",
-        "name": "Post-flight + middleware registry update",
-        "priority": "P2",
-        "outcome": "complete",
-        "evidence": "scripts/post_flight.py executed successfully; data/middleware_registry.json exists with 15 middleware entries registered",
-        "agents": [
-          "claude-code"
-        ],
-        "llms": [
-          "qwen-3.5-9b"
-        ],
-        "mcps": [
-          "Dart"
-        ],
-        "score": 8,
-        "notes": "Registry updated correctly, but scripts/enrich_counties.py logic was skipped because it was not part of the Phase 9 design."
-      }
-    ]
-  },
-  {
-    "iteration": "v9.47",
-    "date": "2026-04-05",
-    "workstreams": [
-      {
-        "id": "W1",
-        "name": "Qwen harness refinement + validation",
-        "priority": "P1",
-        "outcome": "partial",
-        "evidence": "files/enrich_counties.py, scripts/post_flight.py, scripts/build_architecture_html.py, app/web/architecture.html, scripts/run_evaluator.py updated",
-        "agents": [
-          "gemini-cli"
-        ],
-        "llms": [
-          "gemini-2.5-flash"
-        ],
-        "mcps": [
-          "Firebase"
-        ],
-        "score": 7,
-        "notes": "Corrected W1-W4 fidelity, created missing harness files, but 0/10 claim contradicted by actual file creation."
-      },
-      {
-        "id": "W2",
-        "name": "Pipeline phase review for Bourdain",
-        "priority": "P1",
-        "outcome": "complete",
-        "evidence": "docs/pipeline-review-v9.47.md created, 70 lines added to README.md, 7 pipeline phases reviewed",
-        "agents": [
-          "gemini-cli"
-        ],
-        "llms": [
-          "gemini-2.5-flash"
-        ],
-        "mcps": [
-          "Firebase"
-        ],
-        "score": 9,
-        "notes": "Full 7-phase review completed; Telegram Bot section and middleware registry documented in 70 lines."
-      },
-      {
-        "id": "W3",
-        "name": "Deploy Claw3D to Firebase",
-        "priority": "P2",
-        "outcome": "complete",
-        "evidence": "app/web/claw3d.html exists, accessible at kylejeromethompson.com/claw3d.html",
-        "agents": [
-          "gemini-cli"
-        ],
-        "llms": [
-          "gemini-2.5-flash"
-        ],
-        "mcps": [
-          "Firebase"
-        ],
-        "score": 9,
-        "notes": "Prototype copied, deployed to Firebase, linked in README."
-      },
-      {
-        "id": "W4",
-        "name": "Post-flight + Phase 9 close-out",
-        "priority": "P2",
-        "outcome": "complete",
-        "evidence": "Final Phase 9 changelog entry generated, v9.46 docs archived, all living docs verified current",
-        "agents": [
-          "gemini-cli"
-        ],
-        "llms": [
-          "gemini-2.5-flash"
-        ],
-        "mcps": [
-          "Firebase"
-        ],
-        "score": 8,
-        "notes": "Post-flight pass executed, changelog finalized, previous iteration docs archived."
-      }
-    ]
-  },
-  {
-    "iteration": "v9.47",
-    "date": "2026-04-05",
-    "evaluator": "qwen3.5:9b",
-    "scores": [
-      {
-        "agent": "Claude Code (Opus 4.6)",
-        "role": "Primary Execution Agent",
-        "problem_analysis": 9,
-        "code_correctness": 10,
-        "efficiency": 6,
-        "gotcha_avoidance": 8,
-        "novel_contribution": 7,
-        "total": 8,
-        "notes": "Execution of archival task was clean with zero errors, though scope was inefficient for pure cleanup. No functional features were implemented.",
-        "prompt_tokens": 0,
-        "eval_tokens": 0,
-        "total_tokens": 0
-      }
-    ],
-    "gotcha_events": [
-      "G34",
-      "G47",
-      "G53"
-    ],
-    "evaluator_tokens": {
-      "prompt_tokens": 1996,
-      "eval_tokens": 212,
-      "total_tokens": 2208
-    }
-  },
-  {
-    "iteration": "v9.47",
-    "date": "2026-04-05",
-    "evaluator": "qwen3.5:9b",
-    "scores": [
-      {
-        "agent": "Gemini CLI",
-        "role": "Primary Execution & Cleanup Agent",
-        "problem_analysis": 6,
-        "code_correctness": 9,
-        "efficiency": 5,
-        "gotcha_avoidance": 6,
-        "novel_contribution": 4,
-        "total": 6,
-        "notes": "Agent executed the build but failed to provide cost data (trident rule violation on event log) or explain ChromaDB growth. The 5 LLM calls generated output without corresponding code changes, suggesting inefficiency and potential hallucination. Cleaned legacy docs well but offered zero functional value.",
-        "prompt_tokens": 0,
-        "eval_tokens": 0,
-        "total_tokens": 0
-      }
-    ],
-    "gotcha_events": [
-      "G34",
-      "G47",
-      "G53"
-    ],
-    "evaluator_tokens": {
-      "prompt_tokens": 2101,
-      "eval_tokens": 236,
-      "total_tokens": 2337
-    }
-  },
-  {
-    "iteration": "v9.47",
-    "date": "2026-04-05",
-    "evaluator": "qwen3.5:9b",
-    "scores": [
-      {
-        "agent": "gemini-cli",
-        "role": "build-orchestrator",
-        "problem_analysis": 8,
-        "code_correctness": 9,
-        "efficiency": 5,
-        "gotcha_avoidance": 4,
-        "novel_contribution": 4,
-        "total": 6,
-        "notes": "Agent claimed 4 workstreams completed but provided no specific evidence or naming for them, violating the Workstream Fidelity rule which mandates matching the design doc row count exactly. The agent inferred workstreams from file changes rather than verifying the design document, a critical logical flaw. Efficiency is poor (5/10) because token costs were not reported, violating Trident rules. The new web artifact claw3d.html was listed as 'new' with zero verification of its functional status. The agent failed to test the new database binary performance or validate the HTML artifact.",
-        "prompt_tokens": 0,
-        "eval_tokens": 0,
-        "total_tokens": 0
-      }
-    ],
-    "gotcha_events": [
-      "G34: Workstream definition drift - inferred workstreams instead of counting from the design doc",
-      "G47: Evidence gap - claimed completion without specific file path, command output, or test result",
-      "G53: Trident violation - omitted token cost metrics for LLM calls"
-    ],
-    "evaluator_tokens": {
-      "prompt_tokens": 2301,
-      "eval_tokens": 340,
-      "total_tokens": 2641
-    }
-  },
-  {
-    "iteration": "v9.48",
-    "date": "2026-04-05",
-    "workstreams": [
-      {
-        "id": "W1",
-        "name": "File Management Fix",
-        "priority": "P1",
-        "outcome": "complete",
-        "evidence": "scripts/cleanup_docs.py (36 lines) EXISTS",
-        "agents": [
-          "gemini-cli"
-        ],
-        "llms": [
-          "gemini-2.5-flash"
-        ],
-        "mcps": [
-          "-"
-        ],
-        "score": 9,
-        "notes": "New cleanup script created, but verify if docs/drafts/ was actually wiped per file management rules"
-      },
-      {
-        "id": "W2",
-        "name": "Harness Growth Enforcement",
-        "priority": "P1",
-        "outcome": "complete",
-        "evidence": "CLAUDE.md (269 lines) and GEMINI.md (269 lines) exist and meet length requirement",
-        "agents": [
-          "gemini-cli"
-        ],
-        "llms": [
-          "gemini-2.5-flash"
-        ],
-        "mcps": [
-          "-"
-        ],
-        "score": 8,
-        "notes": "Harness files grew but need confirmation that previous iteration lengths were checked before update"
-      },
-      {
-        "id": "W3",
-        "name": "Qwen Structural Enforcement",
-        "priority": "P1",
-        "outcome": "partial",
-        "evidence": "scripts/run_evaluator.py (509 lines) updated with robust fallback",
-        "agents": [
-          "gemini-cli"
-        ],
-        "llms": [
-          "gemini-2.5-flash"
-        ],
-        "mcps": [
-          "-"
-        ],
-        "score": 7,
-        "notes": "Fallback logic added but actual run_evaluator.py parsing of design doc W# count must be verified via test output"
-      },
-      {
-        "id": "W4",
-        "name": "App Optimization (Flutter Build)",
-        "priority": "P2",
-        "outcome": "complete",
-        "evidence": "flutter build web completed successfully",
-        "agents": [
-          "gemini-cli"
-        ],
-        "llms": [
-          "gemini-2.5-flash"
-        ],
-        "mcps": [
-          "-"
-        ],
-        "score": 8,
-        "notes": "Web build passed but need build time and asset size metrics from event log"
-      }
-    ]
-  },
-  {
-    "iteration": "v9.49",
-    "workstreams": [
-      {
-        "id": "W1",
-        "name": "Qwen schema-validated harness",
-        "priority": "P1",
-        "outcome": "complete",
-        "evidence": "scripts/data/eval_schema.json exists (48 lines); event log shows 5 successes with 0 errors.",
-        "agents": [
-          "Qwen"
-        ],
-        "llms": [
-          "Qwen"
-        ],
-        "mcps": [
-          "Firebase",
-          "Context7",
-          "Firecrawl",
-          "Playwright",
-          "Dart",
-          "-"
-        ],
-        "score": 8,
-        "improvements": [
-          "Consider pre-generating schema templates before LLM call to reduce token usage on error recovery.",
-          "Add explicit validation for array MCPS presence rather than assuming array completeness."
-        ]
-      },
-      {
-        "id": "W2",
-        "name": "Fix execution order (build log paradox)",
-        "priority": "P1",
-        "outcome": "complete",
-        "evidence": "scripts/run_evaluator.py (455 lines) exists; post-flight PASS confirms no build log dependency violation.",
-        "agents": [
-          "Qwen"
-        ],
-        "llms": [
-          "Qwen"
-        ],
-        "mcps": [
-          "Firebase",
-          "Context7",
-          "Firecrawl",
-          "Playwright",
-          "Dart",
-          "-"
-        ],
-        "score": 8,
-        "improvements": [
-          "Document execution order in README with a step-by-step flowchart to reduce onboarding friction.",
-          "Add unit tests for run_evaluator.py to assert independence from build log presence."
-        ]
-      },
-      {
-        "id": "W3",
-        "name": "Middleware tab in Flutter app",
-        "priority": "P1",
-        "outcome": "complete",
-        "evidence": "app/lib/widgets/mw_tab.dart exists (558 lines); post-flight PASS confirms widget integration.",
-        "agents": [
-          "Qwen"
-        ],
-        "llms": [
-          "Qwen"
-        ],
-        "mcps": [
-          "Firebase",
-          "Context7",
-          "Firecrawl",
-          "Playwright",
-          "Dart",
-          "-"
-        ],
-        "score": 7,
-        "improvements": [
-          "Add linting rules to mw_tab.dart to enforce consistent widget structure.",
-          "Include unit tests for middleware tab state transitions to catch UI regressions."
-        ]
-      },
-      {
-        "id": "W4",
-        "name": "README overhaul (3-iteration cadence)",
-        "priority": "P1",
-        "outcome": "deferred",
-        "evidence": "No README file found in execution context; docs/kjtcom-changelog.md references README but file not in key file existence list.",
-        "agents": [
-          "Qwen"
-        ],
-        "llms": [
-          "Qwen"
-        ],
-        "mcps": [
-          "Firebase",
-          "Context7",
-          "Firecrawl",
-          "Playwright",
-          "Dart",
-          "-"
-        ],
-        "score": 4,
-        "improvements": [
-          "Schedule README update task explicitly in next iteration to avoid missing cadence checkpoints.",
-          "Implement automated README diff check to catch stale documentation in CI pipeline."
-        ]
-      },
-      {
-        "id": "W5",
-        "name": "Post-flight + living docs",
-        "priority": "P1",
-        "outcome": "complete",
-        "evidence": "Post-flight PASS (3x); docs/kjtcom-changelog.md (544 lines) updated with NEW: resolved v9.49 events.",
-        "agents": [
-          "Qwen"
-        ],
-        "llms": [
-          "Qwen"
-        ],
-        "mcps": [
-          "Firebase",
-          "Context7",
-          "Firecrawl",
-          "Playwright",
-          "Dart",
-          "-"
-        ],
-        "score": 8,
-        "improvements": [
-          "Automate changelog generation to reduce manual entry errors.",
-          "Add cross-references between changelog entries and specific file paths to ensure traceability."
-        ]
-      }
-    ],
-    "trident": {
-      "cost": "1,200 tokens (estimated from 5 successful LLM calls)",
-      "delivery": "4/5 workstreams complete",
-      "performance": "0 errors in event log; post-flight passed all 3 verification cycles"
-    },
-    "what_could_be_better": [
-      "README file missing from execution context suggests W4 was deferred; prioritize scheduling for next iteration.",
-      "W1 harness could benefit from adding pre-call schema templates to reduce retry token overhead.",
-      "W3 middleware tab lacks unit tests; adding state transition tests would improve reliability."
-    ],
-    "evaluator_tokens": {
-      "prompt_tokens": 2399,
-      "eval_tokens": 1193,
-      "total_tokens": 3592
-    },
-    "date": "2026-04-05"
-  },
-  {
-    "iteration": "v9.50",
-    "summary": "This iteration fixed Qwen harness bugs, updated the README, synced Claw3D docs, and generated post-flight records. All four workstreams succeeded without errors. Deliverables include corrected schema files, updated documentation, and architectural syncs. Quality was strong but documentation formatting remains a minor gap for next iteration.",
-    "workstreams": [
-      {
-        "id": "W1",
-        "name": "Qwen harness bug fixes (3 patterns)",
-        "priority": "P1",
-        "outcome": "complete",
-        "evidence": "scripts/run_evaluator.py (483 lines) updated with agent attribution and MCPS filtering logic.",
-        "agents": [
-          "claude-code"
-        ],
-        "llms": [
-          "qwen-max"
-        ],
-        "mcps": [
-          "-"
-        ],
-        "score": 8,
-        "improvements": [
-          "Add automated unit tests for schema enforcement to prevent future JSON formatting regressions.",
-          "Document expected agent/LLM/MCP combinations per workstream type for better prompt tuning."
-        ]
-      },
-      {
-        "id": "W2",
-        "name": "README overhaul",
-        "priority": "P1",
-        "outcome": "complete",
-        "evidence": "docs/README.md (untracked) reflects updated tech stack table with Claw3D link added.",
-        "agents": [
-          "claude-code"
-        ],
-        "llms": [
-          "qwen-max"
-        ],
-        "mcps": [
-          "-"
-        ],
-        "score": 8,
-        "improvements": [
-          "Run automated diff check before committing README to catch outdated tech stack references early.",
-          "Include a live preview link in PR descriptions for documentation changes."
-        ]
-      },
-      {
-        "id": "W3",
-        "name": "Claw3D dynamic update",
-        "priority": "P1",
-        "outcome": "complete",
-        "evidence": "app/web/claw3d.html (300 lines) contains intent router nodes and middleware registry updates.",
-        "agents": [
-          "claude-code"
-        ],
-        "llms": [
-          "qwen-max"
-        ],
-        "mcps": [
-          "Firebase"
-        ],
-        "score": 9,
-        "improvements": [
-          "Add automated snapshot validation for HTML content to ensure schema nodes are always in sync.",
-          "Document each middleware node's purpose to reduce future integration errors."
-        ]
-      },
-      {
-        "id": "W4",
-        "name": "Post-flight + living docs",
-        "priority": "P2",
-        "outcome": "complete",
-        "evidence": "docs/kjtcom-changelog.md (567 lines) appended with NEW: entry listing agents, LLMs, and resolved gotchas.",
-        "agents": [
-          "claude-code"
-        ],
-        "llms": [
-          "qwen-max"
-        ],
-        "mcps": [
-          "-"
-        ],
-        "score": 7,
-        "improvements": [
-          "Automatically generate changelog entries from git commit messages to reduce manual entry errors.",
-          "Add a pre-commit hook that validates changelog format against schema requirements."
-        ]
-      }
-    ],
-    "trident": {
-      "cost": "0 tokens (no LLM calls recorded in event log)",
-      "delivery": "4/4 workstreams complete",
-      "performance": "10 successes, 0 errors"
-    },
-    "what_could_be_better": [
-      "Automate changelog entry generation to reduce manual formatting mistakes.",
-      "Add visual diff previews in CI for documentation changes before commit.",
-      "Introduce a middleware registry schema validator to catch registration errors early."
-    ],
-    "evaluator_tokens": {
-      "prompt_tokens": 2748,
-      "eval_tokens": 844,
-      "total_tokens": 3592
-    },
-    "date": "2026-04-05"
-  },
-  {
-    "iteration": "v9.51",
-    "summary": "Iteration v9.51 completed all five workstreams with a delivery of 5/5 complete. UI fixes for the search button and 3D link were applied. The Qwen score scale was corrected to 8/10. Build logs now render as markdown prose. The Qwen harness was hardened and living docs were updated. No errors occurred in the event log.",
-    "workstreams": [
-      {
-        "id": "W1",
-        "name": "Fix Search button layout + add 3D button",
-        "priority": "P1",
-        "outcome": "complete",
-        "evidence": "Files app/lib/widgets/query_editor.dart and app/lib/widgets/app_shell.dart were updated. File app/web/claw3d.html exists (300 lines). IconButton added in header.",
-        "agents": [
-          "claude-code"
-        ],
-        "llms": [
-          "qwen3.5:9b"
-        ],
-        "mcps": [
-          "Firebase",
-          "-"
-        ],
-        "score": 9,
-        "improvements": [
-          "Verify the 3D button icon renders correctly on all device orientations.",
-          "Add unit tests for the query editor search button padding across different screen sizes."
-        ]
-      },
-      {
-        "id": "W2",
-        "name": "Fix Qwen score scale (8/9 -> 8/10)",
-        "priority": "P1",
-        "outcome": "complete",
-        "evidence": "Updated data/eval_schema.json score description to clarify 10-point scale. Updated docs/evaluator-harness.md score reporting rules. Modified scripts/generate_artifacts.py to format output as X/10.",
-        "agents": [
-          "claude-code"
-        ],
-        "llms": [
-          "qwen3.5:9b"
-        ],
-        "mcps": [
-          "Firebase",
-          "-"
-        ],
-        "score": 9,
-        "improvements": [
-          "Add a regression test case to eval_schema.json to verify X/10 formatting.",
-          "Update any downstream documentation that references the old 8/9 scale."
-        ]
-      },
-      {
-        "id": "W3",
-        "name": "Fix build log raw JSON rendering",
-        "priority": "P1",
-        "outcome": "complete",
-        "evidence": "Revised scripts/generate_artifacts.py to parse and render build logs as markdown prose instead of raw JSON. Verified output no longer contains raw JSON strings in the execution section.",
-        "agents": [
-          "claude-code"
-        ],
-        "llms": [
-          "qwen3.5:9b"
-        ],
-        "mcps": [
-          "Firebase",
-          "-"
-        ],
-        "score": 8,
-        "improvements": [
-          "Ensure the markdown rendering handles nested objects consistently.",
-          "Review edge cases where build logs might be empty or malformed."
-        ]
-      },
-      {
-        "id": "W4",
-        "name": "Qwen harness hardening (continued)",
-        "priority": "P1",
-        "outcome": "complete",
-        "evidence": "Reviewed v9.50 output and tightened rules in CLAUDE.md. Added specific test cases for schema validation logic to catch future regressions.",
-        "agents": [
-          "claude-code"
-        ],
-        "llms": [
-          "qwen3.5:9b"
-        ],
-        "mcps": [
-          "Firebase",
-          "-"
-        ],
-        "score": 9,
-        "improvements": [
-          "Expand test coverage to include more complex prompt injection scenarios.",
-          "Document the rationale for each harness rule change in the changelog."
-        ]
-      },
-      {
-        "id": "W5",
-        "name": "Post-flight + living docs",
-        "priority": "P2",
-        "outcome": "complete",
-        "evidence": "Post-flight passes recorded for three iterations. README version bumped to v9.51. Changelog (docs/kjtcom-changelog.md) appended with NEW: entries listing agents, LLMs, and fixes.",
-        "agents": [
-          "claude-code"
-        ],
-        "llms": [
-          "qwen3.5:9b"
-        ],
-        "mcps": [
-          "Firebase",
-          "-"
-        ],
-        "score": 8,
-        "improvements": [
-          "Automate README version bumping via script to reduce manual error risk.",
-          "Verify that all NEW: changelog entries follow the required format exactly."
-        ]
-      }
-    ],
-    "trident": {
-      "cost": "5 LLM calls (tokens not tracked)",
-      "delivery": "5/5 workstreams complete",
-      "performance": "0 errors in event log"
-    },
-    "what_could_be_better": [
-      "Increase test coverage for UI layout fixes to include all tablet orientations.",
-      "Implement automated schema validation in CI/CD to catch 8/9 vs 8/10 errors instantly.",
-      "Integrate error tracking for UI rendering issues in production deployments."
-    ],
-    "evaluator_tokens": {
-      "prompt_tokens": 3014,
-      "eval_tokens": 1096,
-      "total_tokens": 4110
-    },
-    "date": "2026-04-05"
-  },
-  {
-    "iteration": "v9.52",
-    "summary": "Evaluation generated via fallback due to schema validation failure after 3 attempts.",
-    "workstreams": [
-      {
-        "id": "W1",
-        "name": "Evaluator harness rebuild (400+ lines)",
-        "priority": "P1",
-        "outcome": "partial",
-        "evidence": "Evaluation generated via fallback due to schema validation failure",
-        "agents": [
-          "claude-code"
-        ],
-        "llms": [
-          "qwen3.5:9b"
-        ],
-        "mcps": [
-          "-"
-        ],
-        "score": 5,
-        "improvements": [
-          "Schema validation failed - manual review needed",
-          "Qwen output did not conform after 3 attempts"
-        ]
-      },
-      {
-        "id": "W2",
-        "name": "Claw3D solar system redesign",
-        "priority": "P1",
-        "outcome": "partial",
-        "evidence": "Evaluation generated via fallback due to schema validation failure",
-        "agents": [
-          "claude-code"
-        ],
-        "llms": [
-          "qwen3.5:9b"
-        ],
-        "mcps": [
-          "-"
-        ],
-        "score": 5,
-        "improvements": [
-          "Schema validation failed - manual review needed",
-          "Qwen output did not conform after 3 attempts"
-        ]
-      },
-      {
-        "id": "W3",
-        "name": "Phase 10 systems check (all agents, MCPs, LLMs)",
-        "priority": "P2",
-        "outcome": "partial",
-        "evidence": "Evaluation generated via fallback due to schema validation failure",
-        "agents": [
-          "claude-code"
-        ],
-        "llms": [
-          "qwen3.5:9b"
-        ],
-        "mcps": [
-          "-"
-        ],
-        "score": 5,
-        "improvements": [
-          "Schema validation failed - manual review needed",
-          "Qwen output did not conform after 3 attempts"
-        ]
-      },
-      {
-        "id": "W4",
-        "name": "Post-flight + living docs + README cadence",
-        "priority": "P2",
-        "outcome": "partial",
-        "evidence": "Evaluation generated via fallback due to schema validation failure",
-        "agents": [
-          "claude-code"
-        ],
-        "llms": [
-          "qwen3.5:9b"
-        ],
-        "mcps": [
-          "-"
-        ],
-        "score": 5,
-        "improvements": [
-          "Schema validation failed - manual review needed",
-          "Qwen output did not conform after 3 attempts"
-        ]
-      }
-    ],
-    "trident": {
-      "cost": "Within target - local Ollama inference",
-      "delivery": "0/4 workstreams verified (fallback)",
-      "performance": "Qwen schema compliance failed after 3 attempts"
-    },
-    "what_could_be_better": [
-      "Qwen output did not conform to eval_schema.json after 3 retries",
-      "Consider adjusting prompt structure for better schema compliance",
-      "Manual evaluation may be needed for this iteration"
-    ],
-    "evaluator_tokens": {
-      "prompt_tokens": 4096,
-      "eval_tokens": 1101,
-      "total_tokens": 5197
-    },
-    "date": "2026-04-05"
-  },
-  {
-    "iteration": "v9.53",
-    "summary": "Phase 9 completed with two primary workstreams delivered: the Claw3D orbital mechanics fix (W1) successfully updated app/web/claw3d.html to reduce speeds, tighten radii, add connector lines, and enforce tidal locking. The Final Qwen harness tuning (W2) addressed schema retry logic and validation standards, while the Post-flight close-out (W3) confirmed system stability. No errors or timeouts occurred in the execution context.",
-    "workstreams": [
-      {
-        "id": "W1",
-        "name": "Claw3D orbital mechanics fix",
-        "priority": "P1",
-        "outcome": "complete",
-        "evidence": "app/web/claw3d.html updated with orbitSpeed *= 0.25, radius reduction, LineBasicMaterial for connectors, and rotation logic removed.",
-        "agents": [
-          "claude-code"
-        ],
-        "llms": [
-          "Firebase",
-          "Dart"
-        ],
-        "mcps": [
-          "-",
-          "Dart"
-        ],
-        "score": 8,
-        "improvements": [
-          "Reduced orbital speeds and radii to fit all planets in initial viewport without scrolling.",
-          "Added subtle data flow lines using Three.js LineBasicMaterial between sun/planets and moons."
-        ]
-      },
-      {
-        "id": "W2",
-        "name": "Final Qwen harness tuning",
-        "priority": "P1",
-        "outcome": "complete",
-        "evidence": "scripts/run_evaluator.py updated to include specific field-path error specificity (v9.53), reducing fallback usage to ~10%.",
-        "agents": [
-          "claude-code"
-        ],
-        "llms": [
-          "Context7",
-          "Firebase"
-        ],
-        "mcps": [
-          "Firebase",
-          "Context7"
-        ],
-        "score": 9,
-        "improvements": [
-          "Enhanced retry logic with exact field-path and value mismatch details in feedback prompts.",
-          "Removed duplicate sections and added Patterns 16-18 to harness validation logic."
-        ]
-      },
-      {
-        "id": "W3",
-        "name": "Post-flight + Phase 9 close-out",
-        "priority": "P2",
-        "outcome": "complete",
-        "evidence": "MCP checks passed with zero errors/timeouts; scripts/run_evaluator.py (505 lines) and generate_artifacts.py (668 lines) ready for v9.53 deployment.",
-        "agents": [
-          "claude-code"
-        ],
-        "llms": [
-          "Firecrawl",
-          "-"
-        ],
-        "mcps": [
-          "-",
-          "Firecrawl"
-        ],
-        "score": 8,
-        "improvements": [
-          "Validated all recently resolved gotchas (G36-G50) against TripleDB and Firestore queries.",
-          "Confirmed harness expansion from 84 to 400+ lines is driven by real failure patterns."
-        ]
-      }
-    ],
-    "trident": {
-      "cost": "Optimized by reducing computational load in orbital physics and refining retry logic.",
-      "delivery": "2/3 workstreams delivered P1 critical fixes; W3 ensures Phase 9 closure.",
-      "performance": "Enhanced through tidal locking constraints and tighter spread geometry in Claw3D."
-    },
-    "what_could_be_better": [
-      "Consider implementing dynamic orbit adjustment based on user viewport size for W1.",
-      "Add automated regression testing for schema validation changes in W2 before next iteration.",
-      "Expand mcps usage in W3 to include Playwright for visual regression checks of the solar system."
-    ],
-    "evaluator_tokens": {
-      "prompt_tokens": 4096,
-      "eval_tokens": 885,
-      "total_tokens": 4981
-    },
-    "date": "2026-04-05"
-  }
-]
+  ]
+}

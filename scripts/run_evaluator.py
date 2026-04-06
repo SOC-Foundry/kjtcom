@@ -17,7 +17,7 @@ from utils.iao_logger import log_event
 from utils.ollama_config import merge_defaults
 
 OLLAMA_URL = 'http://localhost:11434/api/chat'
-SCORES_PATH = 'agent_scores.json'
+SCORES_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'agent_scores.json')
 PROJECT_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..')
 HARNESS_PATH = os.path.join(PROJECT_DIR, 'docs', 'evaluator-harness.md')
 SCHEMA_PATH = os.path.join(PROJECT_DIR, 'data', 'eval_schema.json')
@@ -454,16 +454,24 @@ Return ONLY the JSON object, no explanation."""
 
 
 def save_scores(version, evaluation):
-    """Save evaluation result to agent_scores.json."""
+    """Save evaluation result to agent_scores.json (canonical iterations wrapper)."""
     try:
         with open(SCORES_PATH) as f:
-            scores = json.load(f)
+            data = json.load(f)
     except (FileNotFoundError, json.JSONDecodeError):
-        scores = []
+        data = {}
+
+    # Handle legacy flat array format
+    if isinstance(data, list):
+        data = {'iterations': data}
+    if 'iterations' not in data:
+        data['iterations'] = []
+
+    iterations = data['iterations']
 
     # Update existing entry or append
     found = False
-    for entry in scores:
+    for entry in iterations:
         if entry.get('iteration') == version:
             entry.update(evaluation)
             found = True
@@ -471,12 +479,12 @@ def save_scores(version, evaluation):
 
     if not found:
         evaluation['date'] = time.strftime('%Y-%m-%d')
-        scores.append(evaluation)
+        iterations.append(evaluation)
 
     with open(SCORES_PATH, 'w') as f:
-        json.dump(scores, f, indent=2)
+        json.dump(data, f, indent=2)
 
-    print(f"Evaluation saved to {SCORES_PATH}")
+    print(f"Evaluation saved to {SCORES_PATH} ({len(iterations)} entries)")
 
 
 if __name__ == '__main__':

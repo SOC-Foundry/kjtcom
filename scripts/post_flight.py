@@ -147,6 +147,67 @@ def verify_mcps():
     return checks
 
 
+def verify_static_assets():
+    """Verify static assets exist, have valid HTML, and CDN is reachable."""
+    import json
+    import re
+    checks = {}
+    base = os.path.join(os.path.dirname(__file__), "..")
+
+    # 1. File existence
+    for name, path in [
+        ("claw3d_html", os.path.join(base, "app", "web", "claw3d.html")),
+        ("architecture_html", os.path.join(base, "app", "web", "architecture.html")),
+    ]:
+        exists = os.path.isfile(path)
+        checks[name] = exists
+        print(f"  {'PASS' if exists else 'FAIL'}: {name} (exists)")
+        if not exists:
+            continue
+
+        # 2. HTML structure validation
+        with open(path, "r") as f:
+            content = f.read()
+        has_html = bool(re.search(r"<html|<!doctype", content, re.IGNORECASE))
+        has_script = "<script" in content.lower()
+        valid = has_html and has_script
+        checks[name + "_structure"] = valid
+        print(f"  {'PASS' if valid else 'FAIL'}: {name}_structure (html={has_html}, script={has_script})")
+
+        # 4. Three.js CDN reachability (only for claw3d)
+        if name == "claw3d_html":
+            cdn_urls = re.findall(r'https://[^"\']+three[^"\']*\.js', content)
+            if not cdn_urls:
+                # Check importmap
+                cdn_urls = re.findall(r'"(https://[^"]+three[^"]*)"', content)
+            if cdn_urls:
+                import requests
+                url = cdn_urls[0]
+                try:
+                    r = requests.head(url, timeout=10)
+                    cdn_ok = r.status_code == 200
+                except Exception:
+                    cdn_ok = False
+                checks["threejs_cdn"] = cdn_ok
+                print(f"  {'PASS' if cdn_ok else 'FAIL'}: threejs_cdn ({url})")
+
+    # 3. JSON validation for claw3d_iterations.json
+    json_path = os.path.join(base, "data", "claw3d_iterations.json")
+    try:
+        with open(json_path, "r") as f:
+            json.load(f)
+        checks["claw3d_json"] = True
+        print(f"  PASS: claw3d_json (valid)")
+    except FileNotFoundError:
+        checks["claw3d_json"] = False
+        print(f"  FAIL: claw3d_json (file not found)")
+    except json.JSONDecodeError as e:
+        checks["claw3d_json"] = False
+        print(f"  FAIL: claw3d_json (invalid: {e})")
+
+    return checks
+
+
 def run_all():
     """Run all post-flight checks."""
     print("Post-flight verification:")
@@ -156,7 +217,11 @@ def run_all():
     results["site_200"] = verify_site()
     results["bot_status"] = verify_bot_status()
     results["bot_query"] = verify_bot_query()
-    
+
+    print("\nStatic Asset Verification:")
+    static_results = verify_static_assets()
+    results.update(static_results)
+
     print("\nMCP Verification:")
     mcp_results = verify_mcps()
     results.update(mcp_results)

@@ -192,7 +192,8 @@ async def cmd_gotcha(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
         scores_path = os.path.join(PROJECT_DIR, 'agent_scores.json')
         with open(scores_path) as f:
-            scores = json.load(f)
+            raw = json.load(f)
+        scores = raw.get('iterations', raw) if isinstance(raw, dict) else raw
 
         gotchas = []
         for entry in scores:
@@ -219,7 +220,8 @@ async def cmd_scores(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
         scores_path = os.path.join(PROJECT_DIR, 'agent_scores.json')
         with open(scores_path) as f:
-            scores = json.load(f)
+            raw = json.load(f)
+        scores = raw.get('iterations', raw) if isinstance(raw, dict) else raw
 
         # Aggregate per agent
         agent_totals = {}

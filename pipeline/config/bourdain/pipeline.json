@@ -1,0 +1,17 @@
+{
+  "pipeline_id": "bourdain",
+  "t_log_type": "bourdain",
+  "t_source_label": "Anthony Bourdain",
+  "color": "#8B5CF6",
+  "playlist_url": "https://www.youtube.com/playlist?list=PLEVfhwFNb44fPn5N3OXk-aEHFvLOPzXKo",
+  "total_videos": 114,
+  "phase_1_batch": "1-30",
+  "shows": [
+    "No Reservations",
+    "Parts Unknown",
+    "A Cook's Tour",
+    "The Layover"
+  ],
+  "schema_version": "v3",
+  "status": "phase_1_discovery"
+}

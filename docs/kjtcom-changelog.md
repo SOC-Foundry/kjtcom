@@ -1,4 +1,15 @@
 # kjtcom - Unified Changelog
+## v10.55 - 2026-04-06
+
+- NEW: Bourdain pipeline Phase 1 - 30 videos acquired, transcribed (faster-whisper CUDA), extracted (Gemini 2.5 Flash), normalized, geocoded, enriched. 96 unique entities across 20 countries loaded to staging Firestore. Pipeline 4 launched.
+- FIXED: app/web/claw3d.html - Root cause: moon positioning loop used raw NODES items instead of nodeMap entries (TypeError crash). Also fixed tooltip color missing # prefix, added animation toggle (default: stopped), bumped to v10.55.
+- FIXED: agent_scores.json - Converted from flat array to canonical {"iterations": [...]} wrapper. Removed 4 duplicate entries (v9.45 x2, v9.47 x4). Fixed relative SCORES_PATH bug. Updated all 4 consumer scripts (run_evaluator, generate_leaderboard, generate_artifacts, telegram_bot).
+- UPDATED: docs/phase9-retrospective.md - Rebuilt from scratch (604 lines, was 234). Zero Unknown rows. 130 workstreams inventoried across 27 iterations. 7 quantitative metrics computed from actual report data.
+- UPDATED: scripts/post_flight.py - Added 6 static asset checks: claw3d.html existence + HTML structure, architecture.html existence + HTML structure, Three.js CDN reachability, claw3d_iterations.json validation. All 14/14 checks pass.
+- UPDATED: pipeline/config/bourdain/ - extraction_prompt.md, pipeline.json, schema.json created for Bourdain pipeline.
+- Multi-agent: Claude Code (primary) + Gemini 2.5 Flash (extraction API) + Qwen3.5-9B (evaluator)
+- Kyle interventions: 0
+
 ## v10.54 - 2026-04-06 
 
 - NEW: docs/phase9-retrospective.md - Comprehensive analysis of 27 iterations (v9.27-v9.53), 144 workstreams, ~74% zero-intervention rate. 
