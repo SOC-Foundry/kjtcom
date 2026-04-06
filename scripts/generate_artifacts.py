@@ -312,8 +312,8 @@ def generate_report(iteration):
     return out_path
 
 
-def generate_changelog_entry(iteration):
-    """Generate changelog entry draft."""
+def update_unified_changelog(iteration):
+    """Generate changelog entry and prepend to docs/kjtcom-changelog.md."""
     template = load_template('changelog-template.md')
     date = datetime.now().strftime('%Y-%m-%d')
 
@@ -321,8 +321,7 @@ def generate_changelog_entry(iteration):
     lines = diff_stat.strip().split('\n')
     files_count = len([l for l in lines if l.strip() and '|' in l])
 
-    # Build changelog entries from event log (v9.44 - no TBD)
-    event_summary = get_event_log_summary(iteration)
+    # Build changelog entries from agent_scores
     scores_entry = get_agent_scores(iteration)
 
     changelog_lines = []
@@ -342,7 +341,7 @@ def generate_changelog_entry(iteration):
     if not changelog_lines:
         changelog_lines = [f"UPDATED: Iteration {iteration} - see build log for details"]
 
-    changelog_entry = "\n".join(f"- {line}" for line in changelog_lines)
+    changelog_entry_text = "\n".join(f"- {line}" for line in changelog_lines)
 
     # Count interventions from event log
     intervention_count = 0
@@ -360,21 +359,43 @@ def generate_changelog_entry(iteration):
 
     agents_used = "Gemini CLI, Qwen3.5-9B, Gemini Flash" if iteration == "v9.47" else "Claude Code, Qwen3.5-9B, Gemini Flash"
 
-    filled = template.format(
+    filled_entry = template.format(
         iteration=iteration,
         date=date,
-        changelog_entry=changelog_entry,
+        changelog_entry=changelog_entry_text,
         files_changed_count=files_count,
         agents_used=agents_used,
         llms_used="gemini-2.5-flash, qwen3.5:9b, nomic-embed-text",
         intervention_count=intervention_count
     )
 
-    out_path = os.path.join(DRAFTS_DIR, f'changelog-{iteration}.md')
-    with open(out_path, 'w') as f:
-        f.write(filled)
-    print(f"Changelog draft: {out_path}")
-    return out_path
+    changelog_path = os.path.join(DOCS_DIR, 'kjtcom-changelog.md')
+    header = "# kjtcom - Unified Changelog\n\n"
+    
+    if os.path.exists(changelog_path):
+        with open(changelog_path, 'r') as f:
+            content = f.read()
+        
+        # Remove header if present to avoid duplicates
+        if content.startswith(header):
+            body = content[len(header):]
+        else:
+            body = content
+            
+        # Check if iteration already exists to avoid double-prepending
+        if f"## {iteration}" in content:
+            print(f"Changelog entry for {iteration} already exists in {changelog_path}. Skipping prepend.")
+            return changelog_path
+            
+        new_content = header + filled_entry + "\n\n---\n\n" + body
+    else:
+        new_content = header + filled_entry
+
+    with open(changelog_path, 'w') as f:
+        f.write(new_content)
+    
+    print(f"Updated unified changelog: {changelog_path}")
+    return changelog_path
 
 
 def cross_check_workstreams(iteration):
@@ -494,10 +515,6 @@ def promote_drafts(iteration):
 
     pattern = os.path.join(DRAFTS_DIR, f'kjtcom-*-{iteration}.md')
     drafts = glob.glob(pattern)
-    # Also grab changelog
-    cl_pattern = os.path.join(DRAFTS_DIR, f'changelog-{iteration}.md')
-    cl_drafts = glob.glob(cl_pattern)
-    drafts.extend(cl_drafts)
 
     if not drafts:
         print(f"No drafts found for {iteration} in {DRAFTS_DIR}")
@@ -568,7 +585,7 @@ def main():
 
     build_path = generate_build_log(iteration)
     report_path = generate_report(iteration)
-    changelog_path = generate_changelog_entry(iteration)
+    changelog_path = update_unified_changelog(iteration)
 
     # Run cross-check automatically after generation
     print("\nRunning execution cross-check...")
@@ -578,7 +595,7 @@ def main():
     print("Run with --validate-only to verify, then --promote to finalize.")
 
     log_event("command", "generate-artifacts", "local", "generate",
-              output_summary=f"Generated build, report, changelog for {iteration}",
+              output_summary=f"Generated build, report and updated unified changelog for {iteration}",
               status="success")
 
 

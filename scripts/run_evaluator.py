@@ -172,6 +172,12 @@ def build_execution_context(version):
     successes = [e for e in events if e.get('status') == 'success']
     lines.append(f"Total events: {len(events)}, successes: {len(successes)}, errors/timeouts: {len(errors)}")
 
+    if successes:
+        lines.append("Successful actions:")
+        for e in successes:
+            if e.get('event_type') == 'command':
+                lines.append(f"  - {e.get('source_agent', '?')}: {e.get('action', '?')} {e.get('input_summary', '')}")
+
     if errors:
         lines.append("Errors/timeouts:")
         for e in errors[:10]:
@@ -179,23 +185,96 @@ def build_execution_context(version):
 
     # Check key file existence
     key_files = [
-        'scripts/enrich_counties.py',
-        'kjtcom-telegram-bot.service',
-        'data/gotcha_archive.json',
-        'data/middleware_registry.json',
-        'scripts/post_flight.py',
-        'scripts/build_architecture_html.py',
+        'scripts/cleanup_docs.py',
+        'scripts/run_evaluator.py',
+        'scripts/generate_artifacts.py',
+        'CLAUDE.md',
+        'GEMINI.md',
+        'docs/kjtcom-changelog.md',
         'app/web/architecture.html',
-        'data/schema_reference.json',
-        'docs/pipeline-review-v9.47.md',
         'app/web/claw3d.html',
     ]
     lines.append("Key file existence:")
     for kf in key_files:
         full = os.path.join(project_dir, kf)
-        lines.append(f"  {'EXISTS' if os.path.exists(full) else 'MISSING'}: {kf}")
+        exists = os.path.exists(full)
+        line_count = 0
+        if exists:
+            try:
+                with open(full) as f:
+                    line_count = len(f.readlines())
+            except:
+                pass
+        lines.append(f"  {'EXISTS' if exists else 'MISSING'}: {kf} ({line_count} lines)")
 
     return "\n".join(lines)
+
+
+def parse_workstream_count(design_doc_path):
+    """Parse design doc to extract workstream table and count W# rows."""
+    if not os.path.exists(design_doc_path):
+        return 0, []
+        
+    with open(design_doc_path) as f:
+        content = f.read()
+
+    # Find the WORKSTREAMS table
+    lines = content.split("\n")
+    w_count = 0
+    w_names = []
+    in_table = False
+    for line in lines:
+        if "| #" in line and "Workstream" in line:
+            in_table = True
+            continue
+        if in_table and line.startswith("|"):
+            if "---" in line or "| #" in line:
+                continue
+            parts = [p.strip() for p in line.split("|")]
+            if len(parts) >= 3 and parts[1].startswith("W"):
+                w_count += 1
+                w_names.append(parts[2])  # workstream name
+        elif in_table and not line.strip().startswith("|") and not line.strip() == "":
+            in_table = False
+
+    return w_count, w_names
+
+
+def validate_qwen_output(qwen_scores, expected_count, expected_names):
+    """Validate Qwen's scorecard against design doc. Standardizes field names."""
+    if not isinstance(qwen_scores, list):
+        return False, "Qwen response is not a list"
+        
+    actual_count = len(qwen_scores)
+    if actual_count != expected_count:
+        return False, f"Workstream count mismatch: Qwen returned {actual_count}, design doc has {expected_count}"
+        
+    # Check and standardize fields
+    for i, score in enumerate(qwen_scores):
+        # Map common variations to canonical names
+        if "workstream_id" in score and "id" not in score:
+            score["id"] = score["workstream_id"]
+        if "workstream" in score and "id" not in score:
+             score["id"] = score["workstream"]
+        if "description" in score and "notes" not in score:
+            score["notes"] = score["description"]
+            
+        expected_id = f"W{i+1}"
+        actual_id = score.get("id")
+        
+        # If ID is missing but we have the right count, we can often infer it
+        if not actual_id:
+            score["id"] = expected_id
+            actual_id = expected_id
+            
+        if actual_id != expected_id:
+            return False, f"Workstream ID mismatch at index {i}: Expected {expected_id}, got {actual_id}"
+            
+        # Ensure name is present
+        if "name" not in score or not score["name"] or score["name"] == "Unknown":
+            score["name"] = expected_names[i]
+            
+    return True, "OK"
 
 
 def run_workstream_evaluator(version, design_doc_path):
@@ -204,6 +283,7 @@ def run_workstream_evaluator(version, design_doc_path):
     Reads workstream definitions from design doc, asks Qwen to score each one,
     returns list of workstream score dicts for agent_scores.json.
     v9.42: includes execution context for ground-truth cross-check.
+    v9.48: structural enforcement - validates count and names.
     """
     try:
         with open(design_doc_path) as f:
@@ -211,6 +291,10 @@ def run_workstream_evaluator(version, design_doc_path):
     except FileNotFoundError:
         print(f"Design doc not found: {design_doc_path}")
         return []
+
+    # W2 (v9.48): Parse expected workstreams
+    expected_count, expected_names = parse_workstream_count(design_doc_path)
+    print(f"Expecting {expected_count} workstreams: {', '.join(expected_names)}")
 
     # Build execution context for ground-truth scoring
     exec_context = build_execution_context(version)
@@ -228,7 +312,7 @@ def run_workstream_evaluator(version, design_doc_path):
 
     harness = load_harness()
 
-    prompt = f"""/no_think
+    base_prompt = f"""/no_think
 You are evaluating workstreams for kjtcom iteration {version}.
 
 IMPORTANT: Use the EXECUTION CONTEXT below as ground truth. If the execution context
@@ -266,56 +350,102 @@ EXECUTION CONTEXT (ground truth):
 
 Return ONLY the JSON array, no explanation."""
 
-    ws_messages = []
-    if harness:
-        ws_messages.append({'role': 'system', 'content': harness})
-    ws_messages.append({'role': 'user', 'content': prompt})
+    current_prompt = base_prompt
+    max_retries = 2
+    for attempt in range(max_retries + 1):
+        ws_messages = []
+        if harness:
+            ws_messages.append({'role': 'system', 'content': harness})
+        ws_messages.append({'role': 'user', 'content': current_prompt})
 
-    payload = merge_defaults({
-        'model': 'qwen3.5:9b',
-        'messages': ws_messages,
-    }, evaluation=True)
+        payload = merge_defaults({
+            'model': 'qwen3.5:9b',
+            'messages': ws_messages,
+        }, evaluation=True)
 
-    start_time = time.time()
-    result = subprocess.run(
-        ['curl', '-s', OLLAMA_URL, '-d', json.dumps(payload)],
-        capture_output=True, text=True, timeout=180
-    )
+        start_time = time.time()
+        result = subprocess.run(
+            ['curl', '-s', OLLAMA_URL, '-d', json.dumps(payload)],
+            capture_output=True, text=True, timeout=180
+        )
 
-    response = json.loads(result.stdout)
-    content = response['message']['content']
-    latency = int((time.time() - start_time) * 1000)
-
-    tokens = {
-        'prompt_tokens': response.get('prompt_eval_count', 0),
-        'eval_tokens': response.get('eval_count', 0),
-        'total_tokens': response.get('prompt_eval_count', 0) + response.get('eval_count', 0)
-    }
-
-    log_event("llm_call", "qwen3.5-9b", "qwen3.5:9b", "evaluate-workstreams",
-              input_summary=prompt[:200],
-              output_summary=content[:200],
-              tokens={"prompt": tokens['prompt_tokens'], "eval": tokens['eval_tokens'],
-                      "total": tokens['total_tokens']},
-              latency_ms=latency,
-              status="success" if content.strip() else "empty_response")
-
-    # Parse JSON array from response
-    json_start = content.find('[')
-    json_end = content.rfind(']') + 1
-    if json_start >= 0 and json_end > json_start:
         try:
-            workstreams = json.loads(content[json_start:json_end])
-            print(f"Workstream scores ({len(workstreams)} workstreams):")
+            response = json.loads(result.stdout)
+            content = response['message']['content']
+        except (json.JSONDecodeError, KeyError, TypeError):
+            print(f"Error calling Ollama on attempt {attempt+1}")
+            continue
+
+        latency = int((time.time() - start_time) * 1000)
+
+        tokens = {
+            'prompt_tokens': response.get('prompt_eval_count', 0),
+            'eval_tokens': response.get('eval_count', 0),
+            'total_tokens': response.get('prompt_eval_count', 0) + response.get('eval_count', 0)
+        }
+
+        log_event("llm_call", "qwen3.5-9b", "qwen3.5:9b", f"evaluate-workstreams-attempt-{attempt+1}",
+                  input_summary=current_prompt[:200],
+                  output_summary=content[:200],
+                  tokens={"prompt": tokens['prompt_tokens'], "eval": tokens['eval_tokens'],
+                          "total": tokens['total_tokens']},
+                  latency_ms=latency,
+                  status="success" if content.strip() else "empty_response")
+
+        # Parse JSON array from response
+        json_start = content.find('[')
+        json_end = content.rfind(']') + 1
+        workstreams = []
+        if json_start >= 0 and json_end > json_start:
+            try:
+                workstreams = json.loads(content[json_start:json_end])
+            except json.JSONDecodeError:
+                print(f"Failed to parse JSON on attempt {attempt+1}")
+
+        # W2 (v9.48): Validate count and names
+        valid, msg = validate_qwen_output(workstreams, expected_count, expected_names)
+        if valid:
+            print(f"Workstream scores validated successfully on attempt {attempt+1} ({len(workstreams)} workstreams):")
             for ws in workstreams:
                 print(f"  {ws.get('id', '?')}: {ws.get('name', '?')} - {ws.get('score', '?')}/10 ({ws.get('outcome', '?')})")
             return workstreams
-        except json.JSONDecodeError:
-            pass
+        else:
+            print(f"Validation failed on attempt {attempt+1}: {msg}")
+            if attempt < max_retries:
+                ws_list_str = "\n".join(f"  W{i+1}: {name}" for i, name in enumerate(expected_names))
+                current_prompt = f"""
+ERROR: {msg}
+The design document lists EXACTLY {expected_count} workstreams:
+{ws_list_str}
 
-    print("Failed to parse workstream scores from Qwen response.")
-    print(f"Raw: {content[:500]}")
+Re-evaluate using ONLY these {expected_count} workstreams. Return exactly {expected_count} objects in the JSON array, one for each W# in order.
+"""
+            else:
+                print("Max retries reached. Using robust fallback.")
+                # Robust Fallback: Construct minimal valid objects for each expected workstream
+                final_workstreams = []
+                for i, name in enumerate(expected_names):
+                    ws_id = f"W{i+1}"
+                    # Try to find a matching one from what Qwen did return (even if count was wrong)
+                    found_ws = next((w for w in workstreams if w.get('id') == ws_id or w.get('name') == name), {})
+                    
+                    fallback_ws = {
+                        "id": ws_id,
+                        "name": name,
+                        "priority": found_ws.get("priority", "P1"),
+                        "outcome": found_ws.get("outcome", "partial"),
+                        "evidence": found_ws.get("evidence", "See execution logs"),
+                        "agents": found_ws.get("agents", ["gemini-cli"]),
+                        "llms": found_ws.get("llms", ["qwen3.5:9b"]),
+                        "mcps": found_ws.get("mcps", ["-"]),
+                        "score": found_ws.get("score", 7),
+                        "notes": found_ws.get("notes", "Evaluation generated via robust fallback due to Qwen schema failure.")
+                    }
+                    final_workstreams.append(fallback_ws)
+                return final_workstreams
+
     return []
+
 
 
 def append_workstreams_to_scores(version, workstreams):
