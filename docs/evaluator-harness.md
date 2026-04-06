@@ -757,5 +757,118 @@ For evaluator fix workstreams, evidence must include:
 - **Resolution:** v10.60 W1 added the immutability guard. v10.60 W3 restored the original v10.59 docs from GEMINI.md reconstruction.
 
 ---
-*Evaluator Harness v10.60 - April 6, 2026. ADR-012 (Artifact Immutability), Pattern 17 (G58), updated from v10.58.*
-*(Line count verification: 727 at v10.58, expanded with ADR-012 and Pattern 17.)*
+
+## 15. ADR-013: Pipeline Configuration Portability (v10.61)
+
+### ADR-013: Pipeline Configuration Portability
+
+- **Context:** The project has two distinct pipeline configuration models:
+  - **v1 (CalGold/RickSteves/TripleDB):** Three separate pipeline runs, each with its own
+    extraction prompt, config directory, and t_log_type. CalGold was the first attempt (most
+    gotchas originated here). RickSteves was the cleanest run (operational reference).
+    TripleDB was a structured CSV import, not a full pipeline execution.
+  - **v2 (Bourdain - No Reservations + Parts Unknown):** Single pipeline codebase, two shows
+    differentiated by `t_any_shows`. Shared extraction prompt with show-specific override.
+    Dedup logic merges `t_any_shows` arrays for cross-show entity matching.
+
+- **Decision:** v2 (Bourdain) is the template for future pipeline deployments, including the
+  tachnet-intranet GCP project. Single pipeline codebase with source-specific extraction
+  prompts and `t_any_sources` for differentiation (analogous to `t_any_shows`).
+
+- **Rationale:** v1 required duplicating pipeline infrastructure per source type. v2 proves
+  that a single pipeline can handle multiple sources with differentiation at the extraction
+  and dedup layers. Parts Unknown (v10.61 W1) validates this by adding a second show under
+  the existing Bourdain pipeline without any infrastructure changes.
+
+- **Consequences:**
+  - RickSteves pipeline execution is the operational reference (cleanest run history).
+  - New source types (Gmail, Slack, CRM, docs, recordings) each get an extraction prompt
+    but share pipeline phases 1-7 (acquire, transcribe, extract, normalize, geocode, enrich, load).
+  - Dedup logic must support array merging for multi-source entities.
+  - Pipeline scripts must be parameterized (env vars, not hardcoded paths) before intranet deployment.
+  - Full portability plan documented in `docs/gcp-portability-plan.md`.
+
+---
+
+## 16. Failure Pattern Catalog - Pattern 18 (v10.61)
+
+### Pattern 18: Chip Text Overflow Despite Repeated Fixes (G59)
+
+- **Failure:** HTML overlay text positioned via `Vector3.project()` has no relationship to
+  Three.js geometry boundaries. Text floats wherever the projected coordinate lands,
+  regardless of chip box size.
+- **Impact:** Chip labels overflow chip boundaries in every iteration from v10.57 through
+  v10.60 despite incremental fixes (label truncation, max-width CSS, chip widening).
+- **Root cause:** HTML overlays are positioned in screen space via camera projection. They
+  have no awareness of the 3D geometry they are supposed to label. CSS max-width constraints
+  operate on the HTML element, not on the projected area of the 3D chip.
+- **Detection:** Visual inspection - labels visibly extend beyond chip edges. Automated
+  detection would require comparing projected label bounds against projected chip bounds,
+  which is the fundamental problem (the two coordinate systems do not align).
+- **Prevention:** Never use HTML overlays for permanent labels on 3D geometry. Use canvas
+  textures painted directly onto the geometry face. The text is measured with
+  `ctx.measureText()` and auto-shrunk to fit the canvas dimensions before rendering.
+  The label physically cannot overflow because the texture IS the chip surface.
+- **Resolution:** v10.61 W3 replaced all chip HTML labels with `CanvasTexture` rendering.
+  `createChipTexture()` paints label text, status border, and LED indicator directly onto
+  a canvas that becomes the chip's +Z face material. Font size auto-shrinks from 16px
+  down to 6px minimum until `measureText().width` fits within canvas width minus padding.
+  HTML overlays are retained only for board titles, connector labels, and hover tooltips
+  (temporary popups that should float above geometry).
+
+---
+
+## 17. Component Review Checklist (v10.61)
+
+### Mandatory Component Audit
+
+Every iteration that modifies Claw3D must include a component review pass before finalizing.
+This prevents middleware components from being added to the codebase without appearing on the
+PCB board visualization.
+
+**Process:**
+1. List all middleware/pipeline/frontend/backend components from the actual codebase
+   (scripts/, data/, docs/, running services, MCP servers, agents).
+2. Compare against the BOARDS chip arrays in `app/web/claw3d.html`.
+3. Any component present in the codebase but missing from the board must be added.
+4. Any component on the board that no longer exists in the codebase must be removed or
+   marked as `inactive`.
+5. Document the review in the iteration's build log with a component count and any changes.
+
+**v10.61 Component Census (49 chips across 4 boards):**
+
+| Board | Chips | Components |
+|-------|-------|------------|
+| Frontend | 10 | query_ed, results, detail, map, globe, iao, mw_tab, schema, claw3d, fb_host |
+| Pipeline | 9 | yt_dlp, whisper, extract, normalize, geocode, enrich, load, tmux, checkpoint |
+| Middleware | 23 | evaluator, harness, ADR, artifact, gotchas, scores, pre_flight, post_flight, router, tg_bot, rag, qwen_9b, nemotron, gflash, fb_mcp, c7_mcp, pw_mcp, fc_mcp, dart_mcp, claude, gemini, logger, openclaw |
+| Backend | 7 | firestore, prod_db, stg_db, calgold, ricksteves, tripledb, bourdain |
+| **Total** | **49** | |
+
+**v10.61 changes:** Added `openclaw` (open-interpreter sandbox agent) to middleware board.
+Previously installed in v9.39 but missing from PCB visualization.
+
+---
+
+### Claw3D Evidence Requirements (updated v10.61)
+
+For any workstream involving Claw3D, evidence must include ALL of the following:
+
+1. **G56 grep check:** `grep -c "fetch.*\.json" app/web/claw3d.html` returns 0.
+2. **G59 containment:** All chip labels rendered as canvas textures (no HTML overlay chip labels).
+   Verify: `grep -c "label-overlay.*chip" app/web/claw3d.html` returns 0.
+3. **Board gaps:** Visible gaps between all board pairs (FE-MW, PL-MW, MW-BE).
+4. **Animated connectors:** Dashed trace connectors crossing each gap with labels.
+5. **Component review:** All codebase components represented on boards (49+ chips).
+6. **Console errors:** Browser console shows 0 errors on page load.
+7. **Functional checks:**
+   - All 4 boards visible with MW visibly larger.
+   - Hover tooltips display chip name, status LED, and detail text.
+   - Click-to-zoom on any board works.
+   - Escape or "All boards" button returns to overview.
+   - Iteration dropdown toggles chip visibility.
+8. **Post-flight pass:** `python3 scripts/post_flight.py` passes `claw3d_no_external_json` check.
+
+---
+*Evaluator Harness v10.61 - April 6, 2026. ADR-013 (Pipeline Portability), Pattern 18 (G59), Component Review Checklist, updated from v10.60.*
+*(Line count verification: 761 at v10.60, expanded with ADR-013, Pattern 18, and Component Review.)*

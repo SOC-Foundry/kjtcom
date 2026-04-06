@@ -45,12 +45,11 @@
             position: absolute; color: #8B949E; font: 10px 'Courier New', monospace;
             pointer-events: none; white-space: nowrap;
             text-shadow: 0 0 4px rgba(0,0,0,0.9);
-            overflow: hidden; text-overflow: ellipsis;
-            max-width: 70px; text-align: center;
+            max-width: 200px; text-align: center;
         }
         .label-overlay.board-label {
             font-size: 14px; font-weight: bold;
-            max-width: none; overflow: visible;
+            max-width: none;
         }
     </style>
 </head>
@@ -60,7 +59,7 @@
         <button id="backBtn" onclick="zoomOut()">All boards</button>
         <select id="iterSelect" onchange="selectIteration(this.value)"></select>
     </div>
-    <div id="title">kjtcom PCB Architecture v10.60</div>
+    <div id="title">kjtcom PCB Architecture v10.61</div>
     <div id="legend">
         <div class="legend-row"><span class="legend-dot" style="background:#4ADE80"></span> Active</div>
         <div class="legend-row"><span class="legend-dot" style="background:#EF9F27"></span> Degraded</div>
@@ -114,13 +113,13 @@
                 pos: [0, 0, 0], size: [12, 6],
                 chips: [
                     {id:"evaluator", status:"active", detail:"Qwen fallback chain, G55 resolved"},
-                    {id:"harness", status:"active", detail:"727-line operating manual"},
-                    {id:"ADR", status:"active", detail:"11 architecture decisions"},
+                    {id:"harness", status:"active", detail:"761+ line operating manual"},
+                    {id:"ADR", status:"active", detail:"13 architecture decisions"},
                     {id:"artifact", status:"active", detail:"4-doc loop (artifact_gen)"},
-                    {id:"gotchas", status:"active", detail:"G1-G58, 20+ resolved (gotcha_archive)"},
+                    {id:"gotchas", status:"active", detail:"G1-G59, 20+ resolved (gotcha_archive)"},
                     {id:"scores", status:"active", detail:"5-dim scoring, append-only (agent_scores)"},
                     {id:"pre_flight", status:"active", detail:"Environment validation"},
-                    {id:"post_flight", status:"active", detail:"14+ checks"},
+                    {id:"post_flight", status:"active", detail:"15+ checks"},
                     {id:"router", status:"active", detail:"3-route Gemini Flash (intent_router)"},
                     {id:"tg_bot", status:"active", detail:"systemd, session memory (telegram_bot)"},
                     {id:"rag", status:"active", detail:"1,819 ChromaDB chunks (rag_pipeline)"},
@@ -134,7 +133,8 @@
                     {id:"dart_mcp", status:"active", detail:"Flutter/Dart analysis"},
                     {id:"claude", status:"active", detail:"Primary executor, Phases 6-7 (claude_code)"},
                     {id:"gemini", status:"active", detail:"Primary executor, Phases 1-5 (gemini_cli)"},
-                    {id:"logger", status:"active", detail:"JSONL event log, P3 diligence (iao_logger)"}
+                    {id:"logger", status:"active", detail:"JSONL event log, P3 diligence (iao_logger)"},
+                    {id:"openclaw", status:"active", detail:"Local sandbox agent (open-interpreter)"}
                 ]
             },
             {
@@ -159,6 +159,7 @@
         ];
 
         var ITERATIONS = {
+            "v10.61": ["ALL"],
             "v10.60": ["ALL"],
             "v10.59": ["ALL"],
             "v10.58": ["ALL"],
@@ -171,7 +172,7 @@
                 "pre_flight","post_flight","router","tg_bot","rag",
                 "qwen_9b","nemotron","gflash",
                 "fb_mcp","c7_mcp","pw_mcp","fc_mcp","dart_mcp",
-                "claude","gemini",
+                "claude","gemini","logger",
                 "firestore","prod_db","stg_db",
                 "calgold","ricksteves","tripledb","bourdain"
             ],
@@ -273,12 +274,58 @@
             return div;
         }
 
-        function chipDisplayName(id, maxLen) {
-            var name = id.replace(/_/g, ' ').replace(/\b\w/g, function(c) { return c.toUpperCase(); });
-            if (maxLen && name.length > maxLen) {
-                name = name.substring(0, maxLen);
+        function chipDisplayName(id) {
+            return id.replace(/_/g, ' ').replace(/\b\w/g, function(c) { return c.toUpperCase(); });
+        }
+
+        function hexIntToCSS(hex) {
+            return '#' + hex.toString(16).padStart(6, '0');
+        }
+
+        // G59 FIX: Render chip label as CanvasTexture painted onto chip geometry.
+        // Text is measured with ctx.measureText and auto-shrunk to fit.
+        // Label physically cannot overflow because the texture IS the chip face.
+        function createChipTexture(label, status, chipW, chipH, chipColorHex) {
+            var RES = 128; // pixels per Three.js unit
+            var canvas = document.createElement('canvas');
+            canvas.width = Math.round(chipW * RES);
+            canvas.height = Math.round(chipH * RES);
+            var ctx = canvas.getContext('2d');
+            var w = canvas.width, h = canvas.height;
+
+            // Chip background
+            ctx.fillStyle = chipColorHex;
+            ctx.fillRect(0, 0, w, h);
+
+            // Status border
+            var borderColor = STATUS_HEX[status] || STATUS_HEX.inactive;
+            ctx.strokeStyle = borderColor;
+            ctx.lineWidth = 2;
+            ctx.strokeRect(1, 1, w - 2, h - 2);
+
+            // Label - auto-size to fit within chip width
+            ctx.fillStyle = '#C9D1D9';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            var fontSize = Math.min(16, Math.floor(h * 0.5));
+            ctx.font = fontSize + 'px monospace';
+            while (ctx.measureText(label).width > w - 12 && fontSize > 6) {
+                fontSize--;
+                ctx.font = fontSize + 'px monospace';
             }
-            return name;
+            ctx.fillText(label, w / 2, h / 2);
+
+            // LED dot (top-right corner)
+            var ledRadius = Math.max(3, Math.floor(h * 0.1));
+            ctx.beginPath();
+            ctx.arc(w - ledRadius - 4, ledRadius + 4, ledRadius, 0, Math.PI * 2);
+            ctx.fillStyle = borderColor;
+            ctx.fill();
+
+            var texture = new THREE.CanvasTexture(canvas);
+            texture.minFilter = THREE.LinearFilter;
+            texture.magFilter = THREE.LinearFilter;
+            return texture;
         }
 
         // ================================================================
@@ -286,6 +333,8 @@
         // ================================================================
 
         function buildScene() {
+            var sideMat = new THREE.MeshBasicMaterial({ color: 0x1F2937 });
+
             BOARDS.forEach(function(board) {
                 var bx = board.pos[0], by = board.pos[1];
                 var bw = board.size[0], bh = board.size[1];
@@ -309,7 +358,7 @@
                 edges.position.set(bx, by, 0.01);
                 scene.add(edges);
 
-                // Board label (top-left inside the board)
+                // Board label (top-left inside the board - HTML overlay)
                 var boardLabel = createLabel(board.label, true);
                 boardLabel._worldPos = new THREE.Vector3(bx - bw/2 + 0.3, by + bh/2 - 0.3, 0.1);
                 boardLabel.style.color = BOARD_COLORS_HEX[board.id];
@@ -329,38 +378,41 @@
                     scene.add(new THREE.Line(busGeo, busMat));
                 });
 
-                // Chips
-                // Max label chars: 8 for small boards (FE/PL), 10 for large (MW/BE)
-                var maxLabelLen = (board.id === 'middleware' || board.id === 'backend') ? 10 : 8;
-
+                // Chips - canvas texture labels (G59: hard containment)
                 chipRows.forEach(function(layout) {
                     var chip = layout.chip;
                     var cx = layout.cx, cy = layout.cy;
-
-                    var chipColor = chip.color ? new THREE.Color(chip.color) : new THREE.Color(0x1F2937);
                     var chipW = layout.chipW, chipH = layout.chipH;
+
+                    // Chip color: explicit or default dark
+                    var chipColorHex = chip.color ? hexIntToCSS(chip.color) : '#1F2937';
+                    var chipColorInt = chip.color || 0x1F2937;
+
+                    // Create canvas texture with label painted on chip face
+                    var label = chipDisplayName(chip.id);
+                    var texture = createChipTexture(label, chip.status, chipW, chipH, chipColorHex);
+                    var faceMat = new THREE.MeshBasicMaterial({ map: texture });
+
+                    // BoxGeometry with texture on +Z face only, solid dark on sides
                     var chipGeo = new THREE.BoxGeometry(chipW, chipH, 0.08);
-                    var chipMat = new THREE.MeshBasicMaterial({ color: chipColor });
-                    var chipMesh = new THREE.Mesh(chipGeo, chipMat);
+                    var chipSideMat = new THREE.MeshBasicMaterial({ color: chipColorInt });
+                    var chipMesh = new THREE.Mesh(chipGeo, [
+                        chipSideMat, chipSideMat,  // +X, -X
+                        chipSideMat, chipSideMat,  // +Y, -Y
+                        faceMat,                    // +Z (facing camera - has label)
+                        chipSideMat                 // -Z
+                    ]);
                     chipMesh.position.set(cx, cy, 0.05);
                     scene.add(chipMesh);
                     chipMeshes.push(chipMesh);
                     chipDataMap.set(chipMesh.uuid, {
                         id: chip.id,
-                        label: chipDisplayName(chip.id),
+                        label: label,
                         status: chip.status,
                         detail: chip.detail,
                         boardId: board.id,
                         boardColor: BOARD_COLORS_HEX[board.id]
                     });
-
-                    // LED (top-right corner of chip)
-                    var ledGeo = new THREE.SphereGeometry(0.04, 8, 8);
-                    var ledColor = STATUS_COLORS[chip.status] || STATUS_COLORS.inactive;
-                    var ledMat = new THREE.MeshBasicMaterial({ color: ledColor });
-                    var ledMesh = new THREE.Mesh(ledGeo, ledMat);
-                    ledMesh.position.set(cx + chipW/2 - 0.08, cy + chipH/2 - 0.08, 0.12);
-                    scene.add(ledMesh);
 
                     // Pins (left and right edges)
                     var pinMat = new THREE.LineBasicMaterial({ color: 0x555555 });
@@ -377,12 +429,6 @@
                         ]);
                         scene.add(new THREE.Line(rpGeo, pinMat));
                     }
-
-                    // Chip label (truncated to fit inside chip box)
-                    var chipLabel = createLabel(chipDisplayName(chip.id, maxLabelLen), false);
-                    chipLabel._worldPos = new THREE.Vector3(cx, cy, 0.15);
-                    chipLabel._chipId = chip.id;
-                    labelElements.push(chipLabel);
                 });
             });
 
@@ -428,7 +474,7 @@
                 scene.add(line);
                 dashedLines.push(line);
 
-                // Connector label at midpoint
+                // Connector label at midpoint (HTML overlay - these float between boards)
                 var labelX = (fromX + toX) / 2 + 0.2;
                 var labelY = midY;
                 var connLabel = createLabel(conn.label, false);
@@ -532,17 +578,10 @@
                 if (!data) return;
                 mesh.visible = showAll || val.indexOf(data.id) !== -1;
             });
-
-            // Also toggle chip labels
-            labelElements.forEach(function(el) {
-                if (!el._chipId) return;
-                if (showAll) { el.style.opacity = '1'; return; }
-                el.style.opacity = val.indexOf(el._chipId) !== -1 ? '1' : '0.15';
-            });
         };
 
         // ================================================================
-        // TOOLTIP
+        // TOOLTIP (HTML overlay - hover popups SHOULD float above chips)
         // ================================================================
 
         function updateTooltip(e) {
@@ -614,7 +653,7 @@
         };
 
         // ================================================================
-        // LABELS
+        // LABELS (board titles + connector labels only - chip labels are textures)
         // ================================================================
 
         function updateLabels() {
@@ -673,7 +712,7 @@
 
         buildScene();
         populateIterations();
-        selectIteration('v10.60');
+        selectIteration('v10.61');
         animate();
 
     })();
