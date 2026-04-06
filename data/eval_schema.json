@@ -29,7 +29,7 @@
             "maxItems": 3,
             "description": "List ONLY the MCP servers actually invoked during this workstream. Use '-' ONLY if no MCPs were used. Most workstreams use 0-1 MCPs."
           },
-          "score": {"type": "integer", "minimum": 0, "maximum": 9},
+          "score": {"type": "integer", "minimum": 0, "maximum": 9, "description": "Score on a 10-point scale (0-10) where 10 is prohibited. Maximum allowed is 9. Report as X/10, not X/9. Example: 8/10, not 8/9."},
           "improvements": {
             "type": "array",
             "items": {"type": "string"},

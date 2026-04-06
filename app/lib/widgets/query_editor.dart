@@ -195,64 +195,65 @@ class _QueryEditorState extends ConsumerState<QueryEditor> {
           const SizedBox(height: Tokens.space2),
           Focus(
             onKeyEvent: _handleKeyEvent,
-            child: Stack(
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    for (int i = 0; i < lines.length; i++)
-                      _buildQueryLine(i + 1, lines[i]),
-                  ],
-                ),
-                Positioned.fill(
-                  child: TextField(
-                    controller: _controller,
-                    onChanged: _onUserEdit,
-                    onSubmitted: (_) => _onSearch(),
-                    maxLines: null,
-                    style: const TextStyle(
-                      fontFamily: Tokens.fontMono,
-                      fontSize: Tokens.sizeLg,
-                      color: Colors.transparent,
-                      height: 1.75,
-                    ),
-                    decoration: const InputDecoration(
-                      border: InputBorder.none,
-                      contentPadding: EdgeInsets.only(
-                        left: Tokens.lineNumberWidth + Tokens.space2,
+                Expanded(
+                  child: Stack(
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          for (int i = 0; i < lines.length; i++)
+                            _buildQueryLine(i + 1, lines[i]),
+                        ],
                       ),
-                      isDense: true,
-                    ),
-                    cursorColor: Tokens.syntaxCursor,
+                      Positioned.fill(
+                        child: TextField(
+                          controller: _controller,
+                          onChanged: _onUserEdit,
+                          onSubmitted: (_) => _onSearch(),
+                          maxLines: null,
+                          style: const TextStyle(
+                            fontFamily: Tokens.fontMono,
+                            fontSize: Tokens.sizeLg,
+                            color: Colors.transparent,
+                            height: 1.75,
+                          ),
+                          decoration: const InputDecoration(
+                            border: InputBorder.none,
+                            contentPadding: EdgeInsets.only(
+                              left: Tokens.lineNumberWidth + Tokens.space2,
+                            ),
+                            isDense: true,
+                          ),
+                          cursorColor: Tokens.syntaxCursor,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-                Positioned(
-                  right: 0,
-                  top: 0,
-                  bottom: 0,
-                  child: Center(
-                    child: MouseRegion(
-                      cursor: SystemMouseCursors.click,
-                      child: GestureDetector(
-                        onTap: _onSearch,
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: Tokens.space4,
-                            vertical: Tokens.space2 - 2,
-                          ),
-                          decoration: BoxDecoration(
-                            color: Tokens.surfaceCta,
-                            borderRadius: BorderRadius.circular(Tokens.radiusLg),
-                          ),
-                          child: const Text(
-                            'Search',
-                            style: TextStyle(
-                              fontFamily: Tokens.fontSans,
-                              fontSize: Tokens.sizeMd,
-                              fontWeight: FontWeight.w500,
-                              color: Tokens.textOnCta,
-                            ),
-                          ),
+                const SizedBox(width: Tokens.space2),
+                MouseRegion(
+                  cursor: SystemMouseCursors.click,
+                  child: GestureDetector(
+                    onTap: _onSearch,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: Tokens.space4,
+                        vertical: Tokens.space2 - 2,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Tokens.surfaceCta,
+                        borderRadius: BorderRadius.circular(Tokens.radiusLg),
+                      ),
+                      child: const Text(
+                        'Search',
+                        style: TextStyle(
+                          fontFamily: Tokens.fontSans,
+                          fontSize: Tokens.sizeMd,
+                          fontWeight: FontWeight.w500,
+                          color: Tokens.textOnCta,
                         ),
                       ),
                     ),

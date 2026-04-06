@@ -410,7 +410,7 @@ Return ONLY the JSON object, no explanation."""
             print(f"Schema validation passed on attempt {attempt + 1}")
             parsed['evaluator_tokens'] = tokens
             for ws in parsed.get('workstreams', []):
-                print(f"  {ws['id']}: {ws['name']} - {ws['score']}/9 ({ws['outcome']})")
+                print(f"  {ws['id']}: {ws['name']} - {ws['score']}/10 ({ws['outcome']})")
             return parsed
 
         print(f"Validation failed on attempt {attempt + 1} with {len(errors)} errors:")

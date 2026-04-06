@@ -155,9 +155,30 @@ def format_workstream_rows(scores_entry):
         rows.append(
             f"| {ws['id']} | {ws['name']} | {ws.get('priority', '-')} | "
             f"{ws.get('outcome', '-')} | {evidence} | {agents} | {llms} | {mcps} | "
-            f"{ws.get('score', '-')}/9 |"
+            f"{ws.get('score', '-')}/10 |"
         )
     return "\n".join(rows)
+
+
+def render_build_markdown(eval_data):
+    """Convert evaluation JSON into markdown build log format (v9.51).
+
+    Replaces raw JSON dumps in execution section with readable prose.
+    """
+    lines = []
+    lines.append("## EXECUTION LOG\n")
+    lines.append(eval_data.get("summary", "No summary available."))
+    lines.append("")
+
+    for ws in eval_data.get("workstreams", []):
+        outcome_label = ws["outcome"].upper()
+        lines.append(f"**{ws['id']} ({ws.get('priority', 'P2')}): {ws['name']} - {outcome_label}**")
+        lines.append(f"- Evidence: {ws.get('evidence', 'None')}")
+        for imp in ws.get("improvements", []):
+            lines.append(f"- Improvement: {imp}")
+        lines.append("")
+
+    return "\n".join(lines)
 
 
 def generate_narrative(iteration, context_text):
@@ -187,9 +208,13 @@ def generate_build_log(iteration):
     diff_stat = get_git_diff_stat()
     event_summary = get_event_log_summary(iteration)
 
-    # Generate narrative from context
-    context = f"Iteration: {iteration}\nFiles changed:\n{diff_stat}\n\nEvents:\n{event_summary}"
-    narrative = generate_narrative(iteration, context)
+    # v9.51: Use render_build_markdown if scores exist, else fall back to LLM narrative
+    scores_entry = get_agent_scores(iteration)
+    if scores_entry and 'workstreams' in scores_entry:
+        narrative = render_build_markdown(scores_entry)
+    else:
+        context = f"Iteration: {iteration}\nFiles changed:\n{diff_stat}\n\nEvents:\n{event_summary}"
+        narrative = generate_narrative(iteration, context)
 
     executing_agent = "Gemini CLI" if iteration == "v9.47" else "Claude Code (Opus 4.6)"
 

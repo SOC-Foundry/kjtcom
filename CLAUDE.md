@@ -1,230 +1,215 @@
 # kjtcom - Claude Code Agent Instructions
 
-## Current Iteration: v9.49
+## Current Iteration: v9.51
 
-IMPORTANT: Read documents in this EXACT order before executing:
-
-1. This file (CLAUDE.md)
-2. docs/kjtcom-design-v9.49.md - Workstreams, architecture, amendments
-3. docs/kjtcom-plan-v9.49.md - Step-by-step execution
-4. docs/evaluator-harness.md - Qwen's evaluation personality
-
-Do NOT begin execution until files 1-3 have been read.
+Read in order: (1) This file, (2) docs/kjtcom-design-v9.51.md, (3) docs/kjtcom-plan-v9.51.md, (4) docs/evaluator-harness.md.
 
 ---
 
-## Agent Session Best Practices (v9.42+ - PERMANENT)
+## Agent Session Best Practices (PERMANENT)
 
-### Pre-Launch Checklist
-1. CLAUDE.md and GEMINI.md MUST be saved to disk in the launch directory BEFORE starting.
-2. Verify harness line counts: wc -l CLAUDE.md GEMINI.md - both >= 200. Harnesses grow, never shrink.
-3. /quit every session and start fresh. ONE iteration per session. Token context degrades.
-4. set -gx IAO_ITERATION v9.XX BEFORE launching.
-5. Verify Ollama: ollama list shows 4 models.
-6. Restart bot: sudo systemctl restart kjtcom-telegram-bot
-7. Verify Firebase SA: test -f ~/.config/gcloud/kjtcom-sa.json
-8. Verify archive: ls docs/archive/ | wc -l (>= prior count).
-9. Clean drafts: rm -f docs/drafts/*.md
-10. Clean orphaned changelogs: rm -f docs/changelog-v*.md
-11. Verify jsonschema installed: python3 -c "import jsonschema" (v9.49+)
+### Pre-Launch
+1. CLAUDE.md + GEMINI.md saved. wc -l both >= 200. Harnesses GROW.
+2. /quit between iterations. ONE per session.
+3. set -gx IAO_ITERATION v9.XX. Ollama (4 models). Restart bot systemd. Verify SA.
+4. Archive integrity. Clean drafts. Clean orphaned changelogs.
+5. jsonschema installed.
 
 ### Session Discipline
-- If session crashes, /quit and relaunch. Do not recover mid-session.
-- Every session ends with: post-flight -> evaluation -> artifact generation -> promotion.
-- Drafts cross-checked and promoted. NEVER leave unpromoted drafts.
-- Harness files GROW. Never abbreviate. The depth is the competitive advantage.
+- Post-flight -> evaluation -> artifacts -> promotion. No unpromoted drafts.
+- NEVER delete docs. Archive to docs/archive/.
+- Harness files grow. Never abbreviate.
 
-### Environment Architecture
-- GCP SA keys: ~/.config/gcloud/{project}-sa.json (NEVER in repo)
-- API keys: fish shell config, per-project prefixed (KJTCOM_*)
-- Agent launches: claude --dangerously-skip-permissions / gemini --yolo
-- Bot: systemd (kjtcom-telegram-bot.service)
-- Sleep mask: systemctl mask suspend on dev machines
-
-### CRITICAL: Document Archival
-- NEVER run rm or git rm on ANY docs/kjtcom-*.md file.
-- Use mv docs/kjtcom-*-v{X}.md docs/archive/ instead.
-- Kyle moves current docs to archive after git push.
+### Environment
+- SA: ~/.config/gcloud/{project}-sa.json. API keys: fish config, KJTCOM_* prefix.
+- claude --dangerously-skip-permissions / gemini --yolo
+- Bot: systemd kjtcom-telegram-bot.service. Sleep: systemctl mask suspend.
 
 ---
 
-## File Management Rules (v9.48+ - ABSOLUTE)
+## File Management (v9.48+ - ABSOLUTE)
 
-docs/ holds ONLY: current iteration artifacts + living docs (changelog, architecture.mmd, install.fish, evaluator-harness.md, pipeline-review, eval_schema.json).
-docs/archive/ holds: ALL prior iteration artifacts (one copy, no duplicates).
-docs/drafts/ is EPHEMERAL: wiped each iteration, empty after promotion.
-Single Changelog: ONE file docs/kjtcom-changelog.md. Append to top. Never create changelog-v{X}.md.
-NEVER delete docs. Archive to docs/archive/.
+docs/: current iteration + living docs. docs/archive/: all prior (one copy). docs/drafts/: ephemeral.
+Single changelog: kjtcom-changelog.md. Append top. Never create changelog-v{X}.md.
+NEVER delete docs.
 
 ---
 
 ## Execution Order (v9.49+ - CORRECTED)
 
-The evaluator NEVER reads the current iteration's build log (it doesn't exist yet).
-
-Correct sequence:
-1. Execute workstreams (plan Steps 1-N)
-2. python3 scripts/post_flight.py (verification)
-3. python3 scripts/run_evaluator.py --iteration v9.XX --workstreams
-   -> Reads: design doc (workstream list) + event log + file existence
-   -> Produces: validated JSON scores in agent_scores.json
-4. python3 scripts/generate_artifacts.py
-   -> Reads: agent_scores.json + event log + git diff
-   -> Produces: build log + report + changelog entry in docs/drafts/
-5. python3 scripts/generate_artifacts.py --validate-only
-6. python3 scripts/generate_artifacts.py --promote
+1. Execute workstreams -> 2. post_flight.py -> 3. run_evaluator.py (NOT current build log) -> 4. generate_artifacts.py -> 5. --validate-only -> 6. --promote
 
 ---
 
-## Qwen Schema-Validated Harness (v9.49+ - ARCHITECTURAL)
+## Qwen Schema-Validated Harness (v9.49+)
 
-All Qwen evaluation calls use strict JSON schema (data/eval_schema.json). Key constraints enforced by schema:
-- score max 9 (never 10)
-- mcps enum: Firebase, Context7, Firecrawl, Playwright, Dart, "-"
-- outcome enum: complete, partial, failed, deferred
-- improvements minItems 2 per workstream
-- what_could_be_better minItems 3
-- delivery pattern "X/Y workstreams"
-- evidence minLength 10
+data/eval_schema.json enforces: score 0-9 (report as X/10 NOT X/9 - v9.51 fix), MCPs whitelist (only used ones), outcome enum, improvements min 2, what_could_be_better min 3, summary plain text (no JSON - v9.50 fix), agents = executor not evaluator (v9.50 fix).
 
-Validation + retry loop: on schema violation, Qwen receives specific error feedback and retries (max 3). This replaces prompt-only constraints with structural enforcement.
+Validation + retry (max 3). Specific error feedback. Schema > prompt.
 
-Research basis: Typia/AutoBe at Qwen Meetup Korea showed schema + validation + feedback loops achieve 99.8% compliance vs. 6.75% for prompt-only.
+### v9.51 Fixes
+- Score scale: "8/9" bug. Schema says max=9 on 10-point scale. Report as X/10.
+- Build log: raw JSON in execution section. render_build_markdown() converts to prose.
+- LLM names: exact Ollama names (qwen3.5:9b not "qwen-max").
+- Trident cost: count llm_call events. Never "0 tokens" when events exist.
 
 ---
 
-## Post-Flight Verification (v9.43+ - MANDATORY)
+## Post-Flight (v9.43+ - MANDATORY)
 
-After workstreams, BEFORE evaluation:
-1. python3 scripts/post_flight.py - all checks pass
-2. Site HTTP 200, bot /status, bot /ask >= 6,181, architecture.html, claw3d.html
-3. Log results in POST-FLIGHT section of build log
-4. If ANY fails: fix, re-deploy, re-verify.
+post_flight.py. Site 200, bot /status, /ask >= 6,181, architecture.html, claw3d.html.
 
 ---
 
 ## Rules That Never Change
 
-- Git WRITE FORBIDDEN. Kyle handles ALL git.
-- firebase deploy ALLOWED (hosting only).
-- NEVER ask permission. The plan IS the permission.
-- Self-heal errors (3 attempts then gotcha).
-- Fish shell. pip --break-system-packages. python3 -u.
-- No em-dashes. " - " for dashes. "->" for arrows.
-- "pipelines" and "log types." Never "tables" or "datasets."
-- Build on existing code. Read before overwriting.
-- NEVER delete docs.
+Git WRITE forbidden. firebase deploy allowed. Never ask permission. Self-heal 3x.
+Fish shell. pip --break-system-packages. python3 -u. No em-dashes. NEVER delete docs.
 
 ---
 
 ## Token Efficiency (v9.40+)
 
-<50K tokens. ALL Ollama calls use ollama_config.py (think:false, G51). Gemini Flash: GEMINI_MODEL from ollama_config.py. Log via iao_logger.py.
+<50K. ollama_config.py (think:false, G51). GEMINI_MODEL constant. iao_logger.py.
 
 ---
 
-## README Refresh Cadence (v9.46+)
+## README Cadence (v9.46+)
 
-Every iteration: update changelog + version. Every 3 iterations: FULL overhaul.
-Schedule: v9.46, v9.49, v10.52, etc. v9.49 is an overhaul iteration.
-
----
-
-## Dependency Upgrade Protocol (v9.45+)
-
-ONE major version at a time. Context7 MCP for changelogs. analyze -> test -> build after each.
-v9.45 finding: 10 transitive deps locked by upstream. Not actionable.
+Every iteration: changelog + version. Every 3: full overhaul. Next overhaul: v9.52.
 
 ---
 
-## Agent-Agnostic Artifacts (v9.49+)
+## Agent-Agnostic (v9.49+)
 
-Design docs and plans work for either Claude Code or Gemini CLI. Both CLAUDE.md and GEMINI.md are comprehensive. Launch prompt: "Read [CLAUDE/GEMINI].md and execute."
-
----
-
-## Multi-Agent Orchestration (v9.35+)
-
-Minimum 2 LLMs. Document per workstream.
-
-| Agent | Engine | Use For |
-|-------|--------|---------|
-| Claude Code | Claude API | Primary executor (when leading) |
-| Gemini CLI | Gemini API | Pipeline executor, may lead iterations |
-| Qwen3.5-9B | Ollama local | Evaluation (schema-validated v9.49+) |
-| Nemotron Mini 4B | Ollama local | Fast triage |
-| GLM-4.6V-Flash | Ollama local | Vision |
-| nomic-embed-text | Ollama local | Embeddings only |
-| Gemini Flash | Gemini API (litellm) | Intent routing, synthesis |
+Artifacts work for either agent. Launch: "Read [CLAUDE/GEMINI].md and execute."
 
 ---
 
-## MCP Servers (5 - ONLY valid names)
+## Multi-Agent (v9.35+)
 
-Firebase, Context7, Firecrawl, Playwright, Dart. No others exist.
+Min 2 LLMs. Claude Code, Gemini CLI, Qwen3.5-9B (evaluator), Nemotron Mini 4B, GLM-4.6V-Flash, nomic-embed-text, Gemini Flash (litellm).
+
+## MCPs (5 - ONLY valid)
+
+Firebase, Context7, Firecrawl, Playwright, Dart. No others.
 
 ---
 
 ## Middleware as Primary IP (v9.42+)
 
-Middleware is the product. kjtcom is the lab. Components:
-- Harnesses: CLAUDE.md, GEMINI.md (200+ lines), evaluator-harness.md
-- Evaluation: run_evaluator.py (schema-validated v9.49+), eval_schema.json, agent_scores.json
-- Harness Registry: middleware_registry.json
-- RAG: embed_archive.py, query_rag.py, ChromaDB (~1,700 chunks)
-- Intent Router: intent_router.py (3 routes: firestore/chromadb/web)
-- Firestore Query: firestore_query.py (G34 workaround, Python sort)
-- County Enrichment: enrich_counties.py
-- Event Logging: iao_logger.py, iao_event_log.jsonl, analyze_events.py
-- Artifact Generator: generate_artifacts.py (single changelog, --promote, --validate-only)
-- Gotcha Archive: gotcha_archive.json (18+ resolved)
-- Bot: telegram_bot.py (systemd, session memory, rating sort, 3-route)
-- Config: ollama_config.py (defaults, batch 45-min, GEMINI_MODEL)
-- Post-Flight: post_flight.py
-- Cleanup: cleanup_docs.py
-- Architecture: build_architecture_html.py, architecture.html
-- Claw3D: claw3d.html
-- Pipeline Review: pipeline-review-v9.47.md
-- MW Tab: mw_tab.dart (NEW v9.49)
+Middleware is the product. Components: harnesses (CLAUDE.md, GEMINI.md 200+, evaluator-harness.md), eval (run_evaluator.py schema-validated, eval_schema.json, agent_scores.json, test_eval_schema.py v9.51), harness registry (middleware_registry.json), RAG (embed_archive.py, query_rag.py, ChromaDB ~1,700 chunks), intent router (3 routes), Firestore query (G34, Python sort), county enrichment, event logging (iao_logger.py), artifact generator (single changelog, --promote, --validate-only, render_build_markdown v9.51), gotcha archive (18+), bot (systemd, session memory, rating sort, 3-route), config (ollama_config.py: GEMINI_MODEL, batch 45-min), post-flight, cleanup_docs.py, architecture HTML, Claw3D (~28 nodes), MW tab (mw_tab.dart), pipeline review.
 
 ---
 
 ## Artifact Discipline (v9.42+)
 
-Every iteration: design, plan, build (POST-FLIGHT section), report (Evidence column, schema-validated scorecard, What Could Be Better), CLAUDE.md, GEMINI.md (both >= 200), changelog APPENDED.
+design + plan + build (POST-FLIGHT, markdown prose not JSON) + report (Evidence, X/10 scores, What Could Be Better) + CLAUDE.md + GEMINI.md (200+) + changelog APPENDED.
 
-Workflow: execute -> post-flight -> evaluate (schema) -> generate -> validate -> promote.
+---
+
+## Dependency Upgrade Protocol (v9.45+)
+
+ONE major at a time. Context7 MCP. analyze -> test -> build. 10 transitive deps locked upstream.
+
+---
+
+## Cross-Pipeline Schema Enrichment (v9.42+)
+
+Audit all pipelines when enriching one. TripleDB counties 918/1100.
+
+---
+
+## Bot Features (v9.41-v9.44)
+
+3-route intent router (firestore/chromadb/web). Session memory (10-min TTL). Rating sort (Python-side). systemd managed (WatchdogSec=600). Commands: /ask, /status, /search, /help, /start, /scores, /gotcha, /evaluate, /query.
+
+---
+
+## Claw3D (v9.38, updated v9.50)
+
+Three.js at kylejeromethompson.com/claw3d.html. ~28 nodes. Updated from 15 (v9.38) to 28 (v9.50). 3D button accessible from main app (v9.51).
 
 ---
 
 ## Phase Context
 
-Phase 9 (v9.27-v9.49+): App Optimization. Qwen harness must be reliable before Phase 10.
-Phase 10: Bourdain Pipeline (114 videos), IaC to GCP, middleware stamp. ~v10.51+.
+Phase 9 (v9.27-v9.51+): App Optimization. Qwen harness reliable before Phase 10.
+Phase 10: Bourdain (114 videos), IaC to GCP, middleware stamp. Several more v9.XX iterations until Qwen is trustworthy.
+
+---
+
+## Phase 9 Summary (v9.27-v9.51, 25 iterations)
+
+6-tab Flutter app + MW tab, NoSQL query, multi-agent (4 LLMs, 5 MCPs), middleware (33 components), Telegram bot (3-route, session memory, rating sort, systemd), county enrichment (918/1100), schema-validated evaluator, artifact automation, gotcha archive (18+), 3D visualization (28 nodes), architecture HTML.
+
+---
+
+## Companion Projects
+
+TachTech Intranet (ttintra.net): GCP tachnet-intranet, Flutter Web, Okta SSO planned.
+socalpha1: Production SIEM agentic model, Pub/Sub -> 4 agents -> SOAR.
+TripleDB (tripledb.net): 805 DDD videos, 1,100 restaurants, IAO methodology origin (48+ iterations).
 
 ---
 
 ## Environment
 
-| Fact | Value |
-|------|-------|
-| Machine | NZXTcos: i9-13900K, 64GB, RTX 2080 SUPER, CachyOS, fish |
-| Path | ~/dev/projects/kjtcom |
-| Firebase | kjtcom-c78cd |
-| SA | ~/.config/gcloud/kjtcom-sa.json |
-| Flutter | 3.41.6, Dart 3.11.4 |
-| Iteration | set -gx IAO_ITERATION v9.49 |
-| Bot | systemd: kjtcom-telegram-bot.service |
-| Deploy | cd ~/dev/projects/kjtcom && firebase deploy --only hosting |
+NZXTcos: i9-13900K, 64GB, RTX 2080 SUPER, CachyOS, fish | ~/dev/projects/kjtcom
+Firebase: kjtcom-c78cd | SA: ~/.config/gcloud/kjtcom-sa.json | Flutter: 3.41.6
+Bot: systemd kjtcom-telegram-bot.service | set -gx IAO_ITERATION v9.51
 
 ---
 
 ## Active Gotchas
 
-G1 (heredocs), G19 (Gemini bash), G34 (array-contains), G43 (CORS), G47 (CanvasKit DOM), G53 (Firebase MCP reauth), G54 (transitive deps). See data/gotcha_archive.json.
+G1 (heredocs), G19 (Gemini bash), G34 (array-contains), G43 (CORS), G47 (CanvasKit), G53 (Firebase MCP reauth), G54 (transitive deps). See data/gotcha_archive.json.
 
 ---
 
 ## Key Files
 
-docs/evaluator-harness.md, data/eval_schema.json (NEW v9.49), scripts/run_evaluator.py (schema-validated), scripts/generate_artifacts.py (corrected order), scripts/cleanup_docs.py, scripts/telegram_bot.py, scripts/intent_router.py, scripts/firestore_query.py, scripts/post_flight.py, scripts/build_architecture_html.py, scripts/enrich_counties.py, scripts/embed_archive.py, scripts/utils/ollama_config.py (GEMINI_MODEL), data/schema_reference.json, data/gotcha_archive.json, data/middleware_registry.json, app/web/architecture.html, app/web/claw3d.html, app/lib/widgets/mw_tab.dart (NEW v9.49), docs/pipeline-review-v9.47.md
+docs/evaluator-harness.md, data/eval_schema.json, scripts/run_evaluator.py, scripts/generate_artifacts.py, scripts/test_eval_schema.py (NEW v9.51), scripts/cleanup_docs.py, scripts/telegram_bot.py, scripts/intent_router.py, scripts/firestore_query.py, scripts/post_flight.py, scripts/build_architecture_html.py, scripts/utils/ollama_config.py, data/schema_reference.json, data/gotcha_archive.json, data/middleware_registry.json, app/web/architecture.html, app/web/claw3d.html, app/lib/widgets/mw_tab.dart, docs/pipeline-review-v9.47.md
+
+---
+
+## Qwen Harness Development History (reference)
+
+- v9.41: Workstream-level scoring introduced (per-W# outcome, agents, LLMs, MCPs)
+- v9.42: Middleware as IP mandate. Gotcha archive. Cross-pipeline enrichment.
+- v9.43: Post-flight verification mandatory. Evidence column. MCP whitelist.
+- v9.44: Gemini model string centralized (GEMINI_MODEL). Python-side sort.
+- v9.45: Dependency upgrade protocol. Phase 10 readiness audit (17/18 ready).
+- v9.46: Evaluator harness file (docs/evaluator-harness.md). Skeptical scoring. Banned phrases. "What Could Be Better" mandatory.
+- v9.47: Workstream fidelity rule. Evidence cross-check. Pipeline phase review.
+- v9.48: File management rules. Harness growth enforcement (200+ lines). Qwen structural enforcement in Python.
+- v9.49: JSON schema validation (data/eval_schema.json). Validation + retry loop. Execution order corrected.
+- v9.50: MCPs = only used (not full enum). Agent attribution = executor not evaluator. Plain text summary.
+- v9.51: Score scale X/10 not X/9. Build log rendered as markdown not JSON. LLM exact names. Schema test cases.
+
+Each iteration added structural enforcement. Prompt guidance alone produces ~6-28% compliance. Schema + validation + feedback produces 99%+ (Typia/AutoBe research, Qwen Meetup Korea 2025).
+
+---
+
+## File Inventory (complete middleware catalog)
+
+### Harnesses (3)
+CLAUDE.md, GEMINI.md, docs/evaluator-harness.md
+
+### Scripts (18)
+run_evaluator.py, generate_artifacts.py, cleanup_docs.py, telegram_bot.py, intent_router.py, firestore_query.py, post_flight.py, build_architecture_html.py, enrich_counties.py, embed_archive.py, query_rag.py, brave_search.py, build_registry_v2.py, analyze_events.py, generate_leaderboard.py, test_eval_schema.py (NEW v9.51)
+
+### Utilities (3)
+scripts/utils/iao_logger.py, scripts/utils/ollama_config.py, scripts/utils/ollama_logged.py
+
+### Data Stores (6)
+data/eval_schema.json, data/schema_reference.json, data/gotcha_archive.json, data/middleware_registry.json, data/chromadb/, data/iao_event_log.jsonl, agent_scores.json
+
+### Templates (3)
+template/artifacts/build-template.md, template/artifacts/report-template.md, template/artifacts/changelog-template.md
+
+### Web Assets (2)
+app/web/architecture.html, app/web/claw3d.html
+
+### Services (1)
+kjtcom-telegram-bot.service

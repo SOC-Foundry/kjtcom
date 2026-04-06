@@ -1,5 +1,29 @@
 # kjtcom - Unified Changelog
 
+## v9.51 - 2026-04-05
+
+- NEW: Fix Search button layout + add 3D button - Files app/lib/widgets/query_editor.dart and app/lib/widgets/app_shell.dart were updated. File app/web/claw3d.html exists (300 lines). IconButton added in header.
+- FIXED: Fix Qwen score scale (8/9 -> 8/10) - Updated data/eval_schema.json score description to clarify 10-point scale. Updated docs/evaluator-harness.md score reporting rules. Modified scripts/generate_artifacts.py to format output as X/10.
+- FIXED: Fix build log raw JSON rendering - Revised scripts/generate_artifacts.py to parse and render build logs as markdown prose instead of raw JSON. Verified output no longer contains raw JSON strings in the execution section.
+- UPDATED: Qwen harness hardening (continued) - Reviewed v9.50 output and tightened rules in CLAUDE.md. Added specific test cases for schema validation logic to catch future regressions.
+- UPDATED: Post-flight + living docs - Post-flight passes recorded for three iterations. README version bumped to v9.51. Changelog (docs/kjtcom-changelog.md) appended with NEW: entries listing agents, LLMs, and fixes.
+
+**Files changed:** 18
+**Agents:** Claude Code, Qwen3.5-9B, Gemini Flash
+**LLMs:** gemini-2.5-flash, qwen3.5:9b, nomic-embed-text
+**Interventions:** 0
+
+<!-- TEMPLATE RULES (v9.44+):
+- Each line MUST start with NEW:, UPDATED:, or FIXED: prefix
+- Include specific numbers (entity counts, chunk counts, test results)
+- "TBD" is BANNED. If data is missing, use "MISSING: [what data]"
+- List all agents and LLMs used
+- Include intervention count (target: 0)
+-->
+
+
+---
+
 ## v9.50 - 2026-04-05
 
 - FIXED: Qwen harness bug fixes (3 patterns) - scripts/run_evaluator.py (483 lines) updated with agent attribution and MCPS filtering logic.

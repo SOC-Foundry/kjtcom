@@ -1393,5 +1393,137 @@
       "total_tokens": 3592
     },
     "date": "2026-04-05"
+  },
+  {
+    "iteration": "v9.51",
+    "summary": "Iteration v9.51 completed all five workstreams with a delivery of 5/5 complete. UI fixes for the search button and 3D link were applied. The Qwen score scale was corrected to 8/10. Build logs now render as markdown prose. The Qwen harness was hardened and living docs were updated. No errors occurred in the event log.",
+    "workstreams": [
+      {
+        "id": "W1",
+        "name": "Fix Search button layout + add 3D button",
+        "priority": "P1",
+        "outcome": "complete",
+        "evidence": "Files app/lib/widgets/query_editor.dart and app/lib/widgets/app_shell.dart were updated. File app/web/claw3d.html exists (300 lines). IconButton added in header.",
+        "agents": [
+          "claude-code"
+        ],
+        "llms": [
+          "qwen3.5:9b"
+        ],
+        "mcps": [
+          "Firebase",
+          "-"
+        ],
+        "score": 9,
+        "improvements": [
+          "Verify the 3D button icon renders correctly on all device orientations.",
+          "Add unit tests for the query editor search button padding across different screen sizes."
+        ]
+      },
+      {
+        "id": "W2",
+        "name": "Fix Qwen score scale (8/9 -> 8/10)",
+        "priority": "P1",
+        "outcome": "complete",
+        "evidence": "Updated data/eval_schema.json score description to clarify 10-point scale. Updated docs/evaluator-harness.md score reporting rules. Modified scripts/generate_artifacts.py to format output as X/10.",
+        "agents": [
+          "claude-code"
+        ],
+        "llms": [
+          "qwen3.5:9b"
+        ],
+        "mcps": [
+          "Firebase",
+          "-"
+        ],
+        "score": 9,
+        "improvements": [
+          "Add a regression test case to eval_schema.json to verify X/10 formatting.",
+          "Update any downstream documentation that references the old 8/9 scale."
+        ]
+      },
+      {
+        "id": "W3",
+        "name": "Fix build log raw JSON rendering",
+        "priority": "P1",
+        "outcome": "complete",
+        "evidence": "Revised scripts/generate_artifacts.py to parse and render build logs as markdown prose instead of raw JSON. Verified output no longer contains raw JSON strings in the execution section.",
+        "agents": [
+          "claude-code"
+        ],
+        "llms": [
+          "qwen3.5:9b"
+        ],
+        "mcps": [
+          "Firebase",
+          "-"
+        ],
+        "score": 8,
+        "improvements": [
+          "Ensure the markdown rendering handles nested objects consistently.",
+          "Review edge cases where build logs might be empty or malformed."
+        ]
+      },
+      {
+        "id": "W4",
+        "name": "Qwen harness hardening (continued)",
+        "priority": "P1",
+        "outcome": "complete",
+        "evidence": "Reviewed v9.50 output and tightened rules in CLAUDE.md. Added specific test cases for schema validation logic to catch future regressions.",
+        "agents": [
+          "claude-code"
+        ],
+        "llms": [
+          "qwen3.5:9b"
+        ],
+        "mcps": [
+          "Firebase",
+          "-"
+        ],
+        "score": 9,
+        "improvements": [
+          "Expand test coverage to include more complex prompt injection scenarios.",
+          "Document the rationale for each harness rule change in the changelog."
+        ]
+      },
+      {
+        "id": "W5",
+        "name": "Post-flight + living docs",
+        "priority": "P2",
+        "outcome": "complete",
+        "evidence": "Post-flight passes recorded for three iterations. README version bumped to v9.51. Changelog (docs/kjtcom-changelog.md) appended with NEW: entries listing agents, LLMs, and fixes.",
+        "agents": [
+          "claude-code"
+        ],
+        "llms": [
+          "qwen3.5:9b"
+        ],
+        "mcps": [
+          "Firebase",
+          "-"
+        ],
+        "score": 8,
+        "improvements": [
+          "Automate README version bumping via script to reduce manual error risk.",
+          "Verify that all NEW: changelog entries follow the required format exactly."
+        ]
+      }
+    ],
+    "trident": {
+      "cost": "5 LLM calls (tokens not tracked)",
+      "delivery": "5/5 workstreams complete",
+      "performance": "0 errors in event log"
+    },
+    "what_could_be_better": [
+      "Increase test coverage for UI layout fixes to include all tablet orientations.",
+      "Implement automated schema validation in CI/CD to catch 8/9 vs 8/10 errors instantly.",
+      "Integrate error tracking for UI rendering issues in production deployments."
+    ],
+    "evaluator_tokens": {
+      "prompt_tokens": 3014,
+      "eval_tokens": 1096,
+      "total_tokens": 4110
+    },
+    "date": "2026-04-05"
   }
 ]

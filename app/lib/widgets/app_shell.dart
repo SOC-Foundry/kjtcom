@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:web/web.dart' as web;
 import '../theme/tokens.dart';
 import '../providers/selection_provider.dart';
 import '../providers/tab_provider.dart';
@@ -110,6 +111,37 @@ class AppShell extends StatelessWidget {
           ),
         ),
         const Spacer(),
+        MouseRegion(
+          cursor: SystemMouseCursors.click,
+          child: GestureDetector(
+            onTap: () => web.window.open('/claw3d.html', '_blank'),
+            child: Container(
+              padding: const EdgeInsets.symmetric(
+                horizontal: Tokens.space2,
+                vertical: 2,
+              ),
+              decoration: BoxDecoration(
+                border: Border.all(color: const Color(0x4D4ADE80)),
+                borderRadius: BorderRadius.circular(Tokens.radiusMd),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(Icons.hub, size: 16, color: Tokens.accentGreen),
+                  const SizedBox(width: 4),
+                  Text(
+                    '3D',
+                    style: TextStyle(
+                      fontFamily: Tokens.fontSans,
+                      fontSize: Tokens.sizeBase,
+                      color: Tokens.accentGreen,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
       ],
     );
   }

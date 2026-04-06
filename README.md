@@ -14,7 +14,7 @@ kjtcom extracts entities from YouTube playlists - landmarks, trails, restaurants
 
 The same normalization patterns power production SIEM migrations at [TachTech Engineering](https://tachtech.net). Built entirely by LLM agents using IAO (Iterative Agentic Orchestration) - a methodology distilled from 46+ iterations across 10 phases on [TripleDB](https://github.com/TachTech-Engineering/tripledb).
 
-**[kylejeromethompson.com](https://kylejeromethompson.com)** | **Phase 9 v9.50** | **Status: Phase 9 App Optimization - Final Iterations**
+**[kylejeromethompson.com](https://kylejeromethompson.com)** | **Phase 9 v9.51** | **Status: Phase 9 App Optimization - Final Iterations**
 
 ---
 
@@ -42,7 +42,7 @@ The same normalization patterns power production SIEM migrations at [TachTech En
 
 **[Interactive Architecture Diagram](https://kylejeromethompson.com/architecture.html)** | **[3D IAO Visualization](https://kylejeromethompson.com/claw3d.html)** | **[Telegram Bot](https://t.me/kjtcom_iao_bot)** | [Mermaid Source](docs/kjtcom-architecture.mmd)
 
-Current state: v9.50 - 3 pipelines, 5 MCP servers, 4 local LLMs, RAG middleware, dual retrieval (Firestore + ChromaDB) via Gemini Flash 3-route intent router, Telegram bot (@kjtcom_iao_bot) with session memory and rating-aware queries, systemd service management, P3 event logging, post-flight verification, artifact automation with computed Trident values, schema-validated Qwen evaluator harness (eval_schema.json + retry-with-feedback loop, v9.49).
+Current state: v9.51 - 3 pipelines, 5 MCP servers, 4 local LLMs, RAG middleware, dual retrieval (Firestore + ChromaDB) via Gemini Flash 3-route intent router, Telegram bot (@kjtcom_iao_bot) with session memory and rating-aware queries, systemd service management, P3 event logging, post-flight verification, artifact automation with computed Trident values, schema-validated Qwen evaluator harness (eval_schema.json + retry-with-feedback loop, v9.49).
 
 ### Pipeline Flow
 

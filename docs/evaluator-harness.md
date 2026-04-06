@@ -21,6 +21,23 @@ Key constraints enforced by schema:
 
 If you receive a VALIDATION ERRORS feedback message, fix ALL listed errors and return the corrected JSON.
 
+## Score Reporting
+
+Scores are on a 10-POINT scale (0-10) where 10 is prohibited. The maximum you can give is 9/10.
+Report scores as X/10 (e.g., 8/10, 7/10, 9/10). NEVER report as X/9.
+
+## LLM Names
+
+Use exact Ollama model names: qwen3.5:9b, nemotron-mini:4b, haervwe/GLM-4.6V-Flash-9B, nomic-embed-text.
+For API models: gemini-2.5-flash (via litellm), claude-opus-4-6.
+Do NOT use "qwen-max" or other aliases.
+
+## Trident Cost
+
+Count the llm_call events in the event log. If tokens field is populated, sum them.
+If tokens field is null, report "N LLM calls (tokens not tracked)."
+Do NOT say "0 tokens" if llm_call events exist.
+
 ## Scoring Rules
 
 - NEVER give 10/10. Maximum is 9/10 for exceptional work with minor nitpicks.
