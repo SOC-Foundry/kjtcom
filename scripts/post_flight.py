@@ -147,6 +147,24 @@ def verify_mcps():
     return checks
 
 
+def verify_claw3d_no_external_json():
+    """G56 check: claw3d.html must NOT fetch any external JSON files.
+    Firebase Hosting only serves app/web/ - external JSON fetches 404 on prod."""
+    import re
+    base = os.path.join(os.path.dirname(__file__), "..")
+    claw3d_path = os.path.join(base, "app", "web", "claw3d.html")
+    try:
+        with open(claw3d_path, "r") as f:
+            content = f.read()
+        fetches = re.findall(r'fetch\s*\([^)]*\.json', content)
+        passed = len(fetches) == 0
+        print(f"  {'PASS' if passed else 'FAIL'}: claw3d_no_external_json ({len(fetches)} fetch+json calls, must be 0)")
+        return passed
+    except FileNotFoundError:
+        print(f"  FAIL: claw3d_no_external_json (file not found)")
+        return False
+
+
 def verify_static_assets():
     """Verify static assets exist, have valid HTML, and CDN is reachable."""
     import json
@@ -217,6 +235,9 @@ def run_all():
     results["site_200"] = verify_site()
     results["bot_status"] = verify_bot_status()
     results["bot_query"] = verify_bot_query()
+
+    print("\nG56 Prevention Check:")
+    results["claw3d_no_external_json"] = verify_claw3d_no_external_json()
 
     print("\nStatic Asset Verification:")
     static_results = verify_static_assets()

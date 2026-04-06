@@ -1,4 +1,16 @@
 # kjtcom - Unified Changelog
+## v10.57 - 2026-04-06
+
+- FIXED: G56 - Claw3D external JSON fetch 404 on Firebase Hosting. Complete rewrite with ALL data inline as JS objects. Zero fetch() calls. 4th attempt, root cause eliminated.
+- NEW: 4-board PCB layout in app/web/claw3d.html - Frontend (teal, top-left) + Pipeline (amber, top-right) side by side, Middleware (purple, center, LARGE 12x6), Backend (blue, bottom). 47 chips, animated dashed connectors, hover tooltips, click-to-zoom.
+- NEW: ADR-010 (GCP Portability) in evaluator-harness.md - Pipeline/middleware portable to GCP tachnet-intranet. Two pipeline configs tracked. Pub/sub topic router for downstream consumers.
+- NEW: Pattern 16 (G56 failure pattern) in evaluator-harness.md - Full root cause analysis, recurrence history, prevention measures.
+- UPDATED: scripts/post_flight.py - Added G56 prevention check (claw3d_no_external_json). 15/15 checks pass (was 14/14).
+- UPDATED: docs/evaluator-harness.md - 601 -> 670 lines. ADR-010, Pattern 16, v10.57 evidence standards.
+- FIXED: scripts/run_evaluator.py - Qwen returning dict-keyed workstreams crashed validation. Added dict-to-list normalization + try/except in both Qwen and Gemini tiers.
+- Multi-agent: Claude Code (Opus 4.6, primary) + Qwen3.5-9B (evaluator, failed schema) + Gemini Flash (fallback evaluator, failed schema) + self-eval (fallback)
+- Kyle interventions: 0
+
 ## v10.56 - 2026-04-06
 
 - FIXED: Qwen evaluator empty reports (G55) - Root causes: parse_workstream_count() only parsed table format not heading format, build_execution_context() had no v10.x event log entries, eval_schema.json priority enum missing P0. All 4 root causes fixed.

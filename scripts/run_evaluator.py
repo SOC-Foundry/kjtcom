@@ -513,7 +513,15 @@ def try_qwen_tier(base_prompt, harness, expected_count, expected_names, executin
             current_prompt = base_prompt + "\n\nERROR: Your response was not valid JSON. Return ONLY a JSON object, no markdown fences, no explanation."
             continue
 
-        errors = validate_qwen_output(parsed, expected_count, expected_names)
+        # Normalize workstreams: if LLM returns a dict ({"W1": {...}}) convert to list
+        ws_raw = parsed.get("workstreams", [])
+        if isinstance(ws_raw, dict):
+            parsed["workstreams"] = list(ws_raw.values())
+
+        try:
+            errors = validate_qwen_output(parsed, expected_count, expected_names)
+        except (AttributeError, TypeError) as e:
+            errors = [f"Malformed workstream structure: {e}"]
 
         if not errors:
             print(f"[EVAL] Qwen schema validation passed on attempt {attempt + 1}")
@@ -562,7 +570,15 @@ def try_gemini_tier(base_prompt, expected_count, expected_names, verbose=False):
             current_prompt = base_prompt + "\n\nERROR: Not valid JSON. Return ONLY a JSON object."
             continue
 
-        errors = validate_qwen_output(parsed, expected_count, expected_names)
+        # Normalize workstreams: if LLM returns a dict ({"W1": {...}}) convert to list
+        ws_raw = parsed.get("workstreams", [])
+        if isinstance(ws_raw, dict):
+            parsed["workstreams"] = list(ws_raw.values())
+
+        try:
+            errors = validate_qwen_output(parsed, expected_count, expected_names)
+        except (AttributeError, TypeError) as e:
+            errors = [f"Malformed workstream structure: {e}"]
 
         if not errors:
             print(f"[EVAL] Gemini Flash schema validation passed on attempt {attempt + 1}")

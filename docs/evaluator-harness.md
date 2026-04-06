@@ -597,5 +597,74 @@ For W4 (README Overhaul), evidence must include:
 - `wc -l README.md` shows growth.
 
 ---
-*Evaluator Harness v10.56 - April 6, 2026. 590+ lines with G55 ADR and fallback chain.*
-*(Line count verification: 528 at v9.52, expanded with G55 documentation and v10.56 evidence standards.)*
+
+### ADR-010: GCP Portability Design
+- **Context:** Pipeline and middleware are designed to be portable from local machines (NZXTcos, tsP3-cos) to GCP (tachnet-intranet). Two pipeline configurations are tracked: v1 (CalGold/RickSteves/TripleDB, established production) and v2 (Bourdain, current staging). RickSteves serves as the reference pipeline for portability testing.
+- **Decision:** Middleware scripts must not hardcode local paths. All path resolution uses environment variables or config files. Intranet deployment will have different log sources (docs, spreadsheets, PDFs, meeting transcripts, Gmail, Slack, CRM) but the same Thompson Indicator Fields normalization layer. A pub/sub topic router in intranet middleware enables Firestore to push to downstream consumers (tachtrack.com portals).
+- **Rationale:** The kjtcom extraction pipeline proves the pattern works for YouTube-sourced location intelligence. The intranet variant applies the same normalization (t_any_* schema) to enterprise data sources. Keeping middleware portable means one codebase serves both deployments. Pub/sub decouples Firestore writes from downstream consumption, enabling tachtrack.com portals to subscribe to specific entity types.
+- **Consequences:**
+  - `pipeline.json` configs must use `${PIPELINE_ROOT}` variable, not absolute paths.
+  - Scripts must resolve paths relative to config, not hardcoded `/home/kthompson/...`.
+  - Two deployment targets tracked: `local` (current) and `gcp-intranet` (future).
+  - Integration tests must pass on both targets before pipeline config changes are merged.
+  - Pub/sub topic structure: `projects/{project}/topics/{t_log_type}-entities` per pipeline.
+
+---
+
+## 10. Failure Pattern Catalog
+
+### Pattern 16: External JSON fetch on Firebase Hosting (G56)
+
+**Symptom:** Claw3D page shows "Error loading data. Check console." on the live site but works locally.
+
+**Root cause:** `claw3d.html` uses `fetch('../../data/claw3d_components.json')` to load component data. Firebase Hosting only serves the `app/web/` build output directory. Files in `data/` are never deployed. The fetch returns 404.
+
+**Why it recurred (v10.54, v10.55, v10.56):** Each rewrite of Claw3D introduced external data loading because it is the "natural" pattern. Post-flight checked that the JSON file existed on disk (`data/claw3d_iterations.json`), which always passes locally. No check verified the HTML was self-contained.
+
+**Fix:** ALL data must be inline JavaScript objects inside `claw3d.html`. Zero `fetch()` calls for any `.json` file. The file must be 100% self-contained.
+
+**Prevention:**
+1. Post-flight check: `grep -c "fetch.*\.json" app/web/claw3d.html` must return 0.
+2. CLAUDE.md Rule 12: "Claw3D JSON must be INLINE in the HTML file."
+3. This pattern documented here for evaluator reference.
+
+**Detection gap:** File existence checks in post-flight are insufficient for hosted assets. The check must verify the HTML does NOT reference external files, not that the external files exist.
+
+---
+
+## 11. Evidence Standards (v10.57)
+
+### Claw3D Evidence Requirements
+
+For any workstream involving Claw3D, evidence must include ALL of the following:
+
+1. **G56 grep check:** `grep -c "fetch.*\.json" app/web/claw3d.html` returns 0.
+2. **Screenshot:** Page loads at kylejeromethompson.com/claw3d.html showing expected layout.
+3. **Console errors:** Browser console shows 0 errors on page load.
+4. **Functional checks:**
+   - All expected boards visible (v10.57: 4 boards, MW visibly larger than FE/PL/BE).
+   - Hover tooltips display chip name, status LED, and detail text.
+   - Click-to-zoom on any board works (camera lerps to close-up).
+   - Escape key or "All boards" button returns to overview.
+   - Iteration dropdown toggles chip visibility per iteration history.
+5. **Post-flight pass:** `python3 scripts/post_flight.py` passes the `claw3d_no_external_json` check.
+
+### General Evidence Standards (carried from v10.56)
+
+For W2 (Bourdain Pipeline Phase 3), evidence must include:
+- Entity count increase in staging.
+- `data/bourdain/checkpoint.json` updated.
+- Schema v3 compliance verified.
+
+For W3 (ADR-010 + Harness), evidence must include:
+- ADR-010 present in evaluator-harness.md.
+- G56 pattern present in failure catalog.
+- `wc -l docs/evaluator-harness.md` exceeds 601.
+
+For W4 (Post-Flight Hardening), evidence must include:
+- `claw3d_no_external_json` check present in post_flight.py.
+- Post-flight passes all checks.
+
+---
+*Evaluator Harness v10.57 - April 6, 2026. ADR-010 (GCP Portability), G56 failure pattern, updated evidence standards.*
+*(Line count verification: 601 at v10.56, expanded with ADR-010, Pattern 16, and v10.57 evidence standards.)*

@@ -3,89 +3,66 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Claw3D - PCB Architecture</title>
+    <title>kjtcom - PCB Architecture</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { background: #0D1117; overflow: hidden; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-
-        #ui-container {
-            position: absolute; top: 16px; left: 16px; z-index: 100;
-            color: #4ADE80; pointer-events: none;
-        }
-        #ui-container * { pointer-events: auto; }
-        h1 { font-size: 22px; margin-bottom: 4px; text-shadow: 0 0 10px rgba(74, 222, 128, 0.5); }
-        .subtitle { color: #8B949E; font-size: 13px; margin-bottom: 16px; }
-        .controls {
-            display: flex; align-items: center; gap: 12px;
-            background: rgba(22, 27, 34, 0.8); padding: 8px 12px;
-            border-radius: 8px; border: 1px solid #30363D;
-        }
-        label { font-size: 14px; color: #C9D1D9; }
-        select {
-            background: #21262D; color: #C9D1D9; border: 1px solid #30363D;
-            padding: 4px 8px; border-radius: 4px; outline: none; cursor: pointer;
-        }
-        button {
-            background: #21262D; color: #C9D1D9; border: 1px solid #30363D;
-            padding: 4px 10px; border-radius: 4px; cursor: pointer; font-size: 13px;
-        }
-        button:hover { border-color: #4ADE80; }
-        #btn-all-boards { display: none; }
+        body { background: #0D1117; overflow: hidden; font-family: monospace; }
 
         #tooltip {
             position: absolute; display: none; z-index: 1000;
             background: rgba(22, 27, 34, 0.95); border: 1px solid #4ADE80;
             color: #C9D1D9; padding: 10px 14px; border-radius: 6px;
-            font-family: 'Courier New', monospace; font-size: 12px;
-            pointer-events: none; box-shadow: 0 4px 20px rgba(0,0,0,0.5);
-            max-width: 300px; line-height: 1.5;
+            font: 12px 'Courier New', monospace; pointer-events: none;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5); max-width: 300px; line-height: 1.5;
+        }
+
+        #controls {
+            position: absolute; top: 12px; left: 12px; z-index: 50;
+        }
+        #controls button, #controls select {
+            background: #161B22; color: #C9D1D9; border: 1px solid #4ADE80;
+            padding: 4px 10px; border-radius: 4px; font: 12px monospace;
+            cursor: pointer; margin-right: 8px; vertical-align: middle;
+        }
+        #controls button:hover, #controls select:hover { border-color: #58E89A; }
+        #backBtn { display: none; }
+
+        #title {
+            position: absolute; bottom: 12px; left: 12px; color: #4ADE80;
+            font: 14px monospace; z-index: 50;
         }
 
         #legend {
-            position: absolute; bottom: 16px; left: 16px; z-index: 100;
-            color: #C9D1D9; font-size: 11px; line-height: 1.6;
-            background: rgba(22, 27, 34, 0.8); padding: 12px;
-            border-radius: 8px; border: 1px solid #30363D;
+            position: absolute; bottom: 12px; right: 12px; z-index: 50;
+            color: #C9D1D9; font: 11px monospace; line-height: 1.8;
+            background: rgba(22, 27, 34, 0.8); padding: 10px 14px;
+            border-radius: 6px; border: 1px solid #30363D;
         }
-        .legend-item { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
-        .legend-dot { width: 10px; height: 10px; border-radius: 50%; }
-
-        .loading {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: #0D1117; display: flex; justify-content: center;
-            align-items: center; color: #4ADE80; font-size: 20px; z-index: 9999;
-        }
+        .legend-row { display: flex; align-items: center; gap: 8px; }
+        .legend-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
 
         .label-overlay {
-            position: absolute; color: #8B949E; font-family: 'Courier New', monospace;
-            font-size: 10px; pointer-events: none; white-space: nowrap;
-            text-shadow: 0 0 4px rgba(0,0,0,0.8);
+            position: absolute; color: #8B949E; font: 10px 'Courier New', monospace;
+            pointer-events: none; white-space: nowrap;
+            text-shadow: 0 0 4px rgba(0,0,0,0.9);
         }
         .label-overlay.board-label {
-            font-size: 13px; color: #C9D1D9; font-weight: bold;
+            font-size: 14px; font-weight: bold;
         }
     </style>
 </head>
 <body>
-    <div id="loading" class="loading">Loading PCB Architecture...</div>
-
-    <div id="ui-container">
-        <h1>Claw3D Architecture</h1>
-        <p class="subtitle">v10.56 | PCB Architecture</p>
-        <div class="controls">
-            <label for="iteration-select">Iteration:</label>
-            <select id="iteration-select"></select>
-            <button id="btn-all-boards">All boards</button>
-        </div>
-    </div>
-
-    <div id="legend">
-        <div class="legend-item"><span class="legend-dot" style="background:#4ADE80"></span> Active</div>
-        <div class="legend-item"><span class="legend-dot" style="background:#EF9F27"></span> Degraded</div>
-        <div class="legend-item"><span class="legend-dot" style="background:#666666"></span> Inactive</div>
-    </div>
-
     <div id="tooltip"></div>
+    <div id="controls">
+        <button id="backBtn" onclick="zoomOut()">All boards</button>
+        <select id="iterSelect" onchange="selectIteration(this.value)"></select>
+    </div>
+    <div id="title">kjtcom PCB Architecture v10.57</div>
+    <div id="legend">
+        <div class="legend-row"><span class="legend-dot" style="background:#4ADE80"></span> Active</div>
+        <div class="legend-row"><span class="legend-dot" style="background:#EF9F27"></span> Degraded</div>
+        <div class="legend-row"><span class="legend-dot" style="background:#666666"></span> Inactive</div>
+    </div>
     <div id="label-container"></div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -93,26 +70,148 @@
     (function() {
         'use strict';
 
-        // --- Constants ---
+        // ================================================================
+        // INLINE DATA (G56: NEVER fetch external JSON on Firebase Hosting)
+        // ================================================================
+
+        var BOARDS = [
+            {
+                id: "frontend", label: "Frontend", color: 0x0D9488,
+                pos: [-3.5, 3, 0], size: [5, 3],
+                chips: [
+                    {id:"query_editor", status:"active", detail:"NoSQL parser"},
+                    {id:"results_table", status:"active", detail:"Paginated grid"},
+                    {id:"detail_panel", status:"active", detail:"Entity inspector"},
+                    {id:"map_tab", status:"active", detail:"OpenStreetMap markers"},
+                    {id:"globe_tab", status:"active", detail:"Continent cards"},
+                    {id:"iao_tab", status:"active", detail:"Trident + 10 pillars"},
+                    {id:"mw_tab", status:"active", detail:"33 components"},
+                    {id:"schema_tab", status:"active", detail:"22 t_any_* fields"},
+                    {id:"claw3d", status:"active", detail:"PCB architecture viz"},
+                    {id:"firebase_hosting", status:"active", detail:"CDN + SSL"}
+                ]
+            },
+            {
+                id: "pipeline", label: "Pipeline", color: 0xDA7E12,
+                pos: [3.5, 3, 0], size: [5, 3],
+                chips: [
+                    {id:"yt_dlp", status:"active", detail:"YouTube audio download"},
+                    {id:"faster_whisper", status:"active", detail:"CUDA transcription"},
+                    {id:"gemini_extract", status:"active", detail:"Entity extraction API"},
+                    {id:"normalize", status:"active", detail:"Schema v3 t_any_*"},
+                    {id:"geocode", status:"active", detail:"Nominatim 1 req/sec"},
+                    {id:"enrich", status:"active", detail:"Google Places API"},
+                    {id:"load", status:"active", detail:"Firebase Admin SDK"},
+                    {id:"tmux_runner", status:"active", detail:"Graduated GPU batches"},
+                    {id:"checkpoint", status:"active", detail:"JSON state persistence"}
+                ]
+            },
+            {
+                id: "middleware", label: "Middleware", color: 0x8B5CF6,
+                pos: [0, -1.5, 0], size: [12, 6],
+                chips: [
+                    {id:"evaluator", status:"active", detail:"Qwen fallback chain, G55 resolved"},
+                    {id:"harness", status:"active", detail:"601-line operating manual"},
+                    {id:"ADR", status:"active", detail:"10 architecture decisions"},
+                    {id:"artifact_gen", status:"active", detail:"4-doc loop"},
+                    {id:"gotcha_archive", status:"active", detail:"G1-G56, 18+ resolved"},
+                    {id:"agent_scores", status:"active", detail:"5-dim scoring, append-only"},
+                    {id:"pre_flight", status:"active", detail:"Environment validation"},
+                    {id:"post_flight", status:"active", detail:"14+ checks"},
+                    {id:"intent_router", status:"active", detail:"3-route Gemini Flash"},
+                    {id:"telegram_bot", status:"active", detail:"systemd, session memory"},
+                    {id:"rag_pipeline", status:"active", detail:"1,819 ChromaDB chunks"},
+                    {id:"qwen_9b", status:"active", detail:"Evaluator LLM, 256K ctx"},
+                    {id:"nemotron_4b", status:"active", detail:"Code review, 4K ctx"},
+                    {id:"gemini_flash", status:"active", detail:"Intent routing + extraction"},
+                    {id:"firebase_mcp", status:"active", detail:"G53 recurring reauth"},
+                    {id:"context7_mcp", status:"active", detail:"API docs lookup"},
+                    {id:"playwright_mcp", status:"active", detail:"Browser automation"},
+                    {id:"firecrawl_mcp", status:"active", detail:"Web scraping"},
+                    {id:"dart_mcp", status:"active", detail:"Flutter/Dart analysis"},
+                    {id:"claude_code", status:"active", detail:"Primary executor, Phases 6-7"},
+                    {id:"gemini_cli", status:"active", detail:"Primary executor, Phases 1-5"}
+                ]
+            },
+            {
+                id: "backend", label: "Backend", color: 0x3B82F6,
+                pos: [0, -6.5, 0], size: [12, 3],
+                chips: [
+                    {id:"firestore", status:"active", detail:"Single locations collection"},
+                    {id:"production_db", status:"active", detail:"6,181 entities"},
+                    {id:"staging_db", status:"active", detail:"188 Bourdain entities"},
+                    {id:"calgold", status:"active", detail:"899 entities", color:0xDA7E12},
+                    {id:"ricksteves", status:"active", detail:"4,182 entities", color:0x3B82F6},
+                    {id:"tripledb", status:"active", detail:"1,100 entities", color:0xDD3333},
+                    {id:"bourdain", status:"degraded", detail:"188 staging, Phase 2", color:0x8B5CF6}
+                ]
+            }
+        ];
+
+        var CONNECTORS = [
+            {from: "frontend", to: "middleware", label: "Riverpod / Firestore stream", color: "#0D9488"},
+            {from: "pipeline", to: "middleware", label: "Pipeline scripts / checkpoint", color: "#DA7E12"},
+            {from: "middleware", to: "backend", label: "Admin SDK / Ollama / ChromaDB", color: "#8B5CF6"}
+        ];
+
+        var ITERATIONS = {
+            "v10.57": ["ALL"],
+            "v10.56": [
+                "query_editor","results_table","detail_panel","map_tab","globe_tab",
+                "iao_tab","mw_tab","schema_tab","claw3d","firebase_hosting",
+                "evaluator","harness","ADR","artifact_gen","gotcha_archive","agent_scores",
+                "pre_flight","post_flight","intent_router","telegram_bot","rag_pipeline",
+                "qwen_9b","nemotron_4b","gemini_flash",
+                "firebase_mcp","context7_mcp","playwright_mcp","firecrawl_mcp","dart_mcp",
+                "claude_code","gemini_cli",
+                "firestore","production_db","staging_db",
+                "calgold","ricksteves","tripledb","bourdain",
+                "yt_dlp","faster_whisper","gemini_extract","normalize","geocode","enrich","load",
+                "tmux_runner","checkpoint"
+            ],
+            "v10.55": [
+                "query_editor","results_table","detail_panel","map_tab","globe_tab",
+                "iao_tab","mw_tab","schema_tab","firebase_hosting",
+                "evaluator","harness","ADR","artifact_gen","gotcha_archive","agent_scores",
+                "pre_flight","post_flight","intent_router","telegram_bot","rag_pipeline",
+                "qwen_9b","gemini_flash",
+                "firebase_mcp","context7_mcp","playwright_mcp",
+                "claude_code","gemini_cli",
+                "firestore","production_db","staging_db",
+                "calgold","ricksteves","tripledb","bourdain",
+                "yt_dlp","faster_whisper","gemini_extract","normalize","geocode","enrich","load"
+            ],
+            "v10.54": [
+                "query_editor","results_table","detail_panel","map_tab","globe_tab",
+                "iao_tab","mw_tab","schema_tab","firebase_hosting",
+                "evaluator","harness","artifact_gen","gotcha_archive",
+                "pre_flight","post_flight","intent_router","telegram_bot",
+                "qwen_9b","gemini_flash",
+                "firebase_mcp","context7_mcp",
+                "claude_code","gemini_cli",
+                "firestore","production_db",
+                "calgold","ricksteves","tripledb"
+            ]
+        };
+
+        // ================================================================
+        // CONSTANTS
+        // ================================================================
+
         var STATUS_COLORS = { active: 0x4ADE80, degraded: 0xEF9F27, inactive: 0x666666 };
         var STATUS_HEX = { active: '#4ADE80', degraded: '#EF9F27', inactive: '#666666' };
-        var BG_COLOR = 0x0D1117;
-        var CHIP_COLOR = 0x1F2937;
-        var BOARD_Y = { frontend: 3, middleware: 0, backend: -3 };
-        var CHIP_X = [-4.5, -1.5, 1.5, 4.5];
-        var CHIP_Z = [-0.8, 0.8];
+        var BOARD_COLORS_HEX = { frontend: '#0D9488', pipeline: '#DA7E12', middleware: '#8B5CF6', backend: '#3B82F6' };
 
-        // Camera targets
-        var OVERVIEW = { pos: new THREE.Vector3(0, 5, 14), lookAt: new THREE.Vector3(0, 0, 0) };
+        // Camera positions
+        var OVERVIEW = { pos: new THREE.Vector3(0, -1, 18), lookAt: new THREE.Vector3(0, -1.5, 0) };
         var ZOOM_TARGETS = {
-            frontend:   { pos: new THREE.Vector3(0, 6, 6),  lookAt: new THREE.Vector3(0, 3, 0) },
-            middleware:  { pos: new THREE.Vector3(0, 3, 6),  lookAt: new THREE.Vector3(0, 0, 0) },
-            backend:    { pos: new THREE.Vector3(0, 0, 6),  lookAt: new THREE.Vector3(0, -3, 0) }
+            frontend:  { pos: new THREE.Vector3(-3.5, 3, 8),  lookAt: new THREE.Vector3(-3.5, 3, 0) },
+            pipeline:  { pos: new THREE.Vector3(3.5, 3, 8),   lookAt: new THREE.Vector3(3.5, 3, 0) },
+            middleware: { pos: new THREE.Vector3(0, -1.5, 10), lookAt: new THREE.Vector3(0, -1.5, 0) },
+            backend:   { pos: new THREE.Vector3(0, -6.5, 8),  lookAt: new THREE.Vector3(0, -6.5, 0) }
         };
 
         // State
-        var boardData = null;
-        var iterationData = null;
         var chipMeshes = [];
         var boardMeshes = [];
         var chipDataMap = new Map();
@@ -123,9 +222,12 @@
         var currentLookAt = OVERVIEW.lookAt.clone();
         var zoomedBoard = null;
 
-        // --- Scene Setup ---
+        // ================================================================
+        // SCENE SETUP
+        // ================================================================
+
         var scene = new THREE.Scene();
-        scene.background = new THREE.Color(BG_COLOR);
+        scene.background = new THREE.Color(0x0D1117);
 
         var camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 500);
         camera.position.copy(OVERVIEW.pos);
@@ -140,10 +242,9 @@
         var tooltip = document.getElementById('tooltip');
         var labelContainer = document.getElementById('label-container');
 
-        // --- Helpers ---
-        function hexToThreeColor(hex) {
-            return new THREE.Color(hex);
-        }
+        // ================================================================
+        // HELPERS
+        // ================================================================
 
         function createLabel(text, isBoard) {
             var div = document.createElement('div');
@@ -153,138 +254,144 @@
             return div;
         }
 
-        // --- Build Scene ---
+        function chipDisplayName(id) {
+            return id.replace(/_/g, ' ').replace(/\b\w/g, function(c) { return c.toUpperCase(); });
+        }
+
+        // ================================================================
+        // BUILD SCENE
+        // ================================================================
+
         function buildScene() {
-            var boards = boardData.boards;
-            var connectors = boardData.connectors;
+            BOARDS.forEach(function(board) {
+                var bx = board.pos[0], by = board.pos[1];
+                var bw = board.size[0], bh = board.size[1];
+                var boardColor = new THREE.Color(board.color);
 
-            boards.forEach(function(board) {
-                var yPos = BOARD_Y[board.id];
-                var boardColor = hexToThreeColor(board.color);
-
-                // Board plane
-                var planeGeo = new THREE.PlaneGeometry(12, 4);
+                // Board plane (XY plane, no rotation needed - camera looks down Z)
+                var planeGeo = new THREE.PlaneGeometry(bw, bh);
                 var planeMat = new THREE.MeshBasicMaterial({
-                    color: 0x0D1117, side: THREE.DoubleSide, transparent: true, opacity: 0.8
+                    color: 0x0D1117, side: THREE.DoubleSide, transparent: true, opacity: 0.85
                 });
                 var planeMesh = new THREE.Mesh(planeGeo, planeMat);
-                planeMesh.rotation.x = -Math.PI / 2;
-                planeMesh.position.set(0, yPos, 0);
+                planeMesh.position.set(bx, by, 0);
                 scene.add(planeMesh);
                 boardMeshes.push(planeMesh);
                 boardDataMap.set(planeMesh.uuid, board.id);
 
-                // Board border
+                // Board border (EdgesGeometry)
                 var edgesGeo = new THREE.EdgesGeometry(planeGeo);
                 var edgesMat = new THREE.LineBasicMaterial({ color: boardColor });
                 var edges = new THREE.LineSegments(edgesGeo, edgesMat);
-                edges.rotation.x = -Math.PI / 2;
-                edges.position.set(0, yPos + 0.01, 0);
+                edges.position.set(bx, by, 0.01);
                 scene.add(edges);
 
-                // Board label
+                // Board label (top-left inside the board)
                 var boardLabel = createLabel(board.label, true);
-                boardLabel._worldPos = new THREE.Vector3(0, yPos + 0.2, -2.3);
-                boardLabel.style.color = board.color;
+                boardLabel._worldPos = new THREE.Vector3(bx - bw/2 + 0.3, by + bh/2 - 0.3, 0.1);
+                boardLabel.style.color = BOARD_COLORS_HEX[board.id];
                 labelElements.push(boardLabel);
 
-                // Intra-board bus traces (horizontal lines through both rows)
-                var busColor = boardColor.clone();
-                var busMat = new THREE.LineBasicMaterial({ color: busColor, transparent: true, opacity: 0.25 });
-                CHIP_Z.forEach(function(z) {
-                    var busPoints = [
-                        new THREE.Vector3(-5.5, yPos + 0.06, z),
-                        new THREE.Vector3(5.5, yPos + 0.06, z)
-                    ];
-                    var busGeo = new THREE.BufferGeometry().setFromPoints(busPoints);
-                    var busLine = new THREE.Line(busGeo, busMat);
-                    scene.add(busLine);
+                // Bus traces (horizontal lines through chip rows)
+                var busMat = new THREE.LineBasicMaterial({ color: boardColor, transparent: true, opacity: 0.15 });
+                var chipRows = getChipLayout(board);
+                var rowYs = {};
+                chipRows.forEach(function(c) { rowYs[c.cy] = true; });
+                Object.keys(rowYs).forEach(function(cy) {
+                    var y = parseFloat(cy);
+                    var busGeo = new THREE.BufferGeometry().setFromPoints([
+                        new THREE.Vector3(bx - bw/2 + 0.2, y, 0.02),
+                        new THREE.Vector3(bx + bw/2 - 0.2, y, 0.02)
+                    ]);
+                    scene.add(new THREE.Line(busGeo, busMat));
                 });
 
                 // Chips
-                board.components.forEach(function(comp, idx) {
-                    var col = idx % 4;
-                    var row = Math.floor(idx / 4);
-                    var cx = CHIP_X[col];
-                    var cz = CHIP_Z[row];
-                    var cy = yPos + 0.06;
+                chipRows.forEach(function(layout) {
+                    var chip = layout.chip;
+                    var cx = layout.cx, cy = layout.cy;
 
-                    // Chip body
-                    var chipColor = comp.color ? hexToThreeColor(comp.color) : new THREE.Color(CHIP_COLOR);
-                    var chipGeo = new THREE.BoxGeometry(1.2, 0.1, 0.7);
+                    var chipColor = chip.color ? new THREE.Color(chip.color) : new THREE.Color(0x1F2937);
+                    var chipW = layout.chipW, chipH = layout.chipH;
+                    var chipGeo = new THREE.BoxGeometry(chipW, chipH, 0.08);
                     var chipMat = new THREE.MeshBasicMaterial({ color: chipColor });
                     var chipMesh = new THREE.Mesh(chipGeo, chipMat);
-                    chipMesh.position.set(cx, cy, cz);
+                    chipMesh.position.set(cx, cy, 0.05);
                     scene.add(chipMesh);
                     chipMeshes.push(chipMesh);
                     chipDataMap.set(chipMesh.uuid, {
-                        id: comp.id,
-                        label: comp.label,
-                        status: comp.status,
-                        detail: comp.detail,
+                        id: chip.id,
+                        label: chipDisplayName(chip.id),
+                        status: chip.status,
+                        detail: chip.detail,
                         boardId: board.id,
-                        boardColor: board.color
+                        boardColor: BOARD_COLORS_HEX[board.id]
                     });
 
-                    // LED indicator (top-right corner)
-                    var ledGeo = new THREE.SphereGeometry(0.05, 8, 8);
-                    var ledColor = STATUS_COLORS[comp.status] || STATUS_COLORS.inactive;
+                    // LED (top-right corner of chip)
+                    var ledGeo = new THREE.SphereGeometry(0.04, 8, 8);
+                    var ledColor = STATUS_COLORS[chip.status] || STATUS_COLORS.inactive;
                     var ledMat = new THREE.MeshBasicMaterial({ color: ledColor });
                     var ledMesh = new THREE.Mesh(ledGeo, ledMat);
-                    ledMesh.position.set(cx + 0.5, cy + 0.06, cz - 0.25);
+                    ledMesh.position.set(cx + chipW/2 - 0.08, cy + chipH/2 - 0.08, 0.12);
                     scene.add(ledMesh);
 
-                    // Pin arrays (small lines extending from chip edges)
+                    // Pins (left and right edges)
                     var pinMat = new THREE.LineBasicMaterial({ color: 0x555555 });
-                    var pinLen = 0.15;
-                    // Left and right pins
-                    for (var p = 0; p < 4; p++) {
-                        var pz = cz - 0.25 + p * 0.15;
-                        // Left pins
+                    for (var p = 0; p < 3; p++) {
+                        var py = cy - chipH/2 + 0.1 + p * (chipH - 0.2) / 2;
                         var lpGeo = new THREE.BufferGeometry().setFromPoints([
-                            new THREE.Vector3(cx - 0.6, cy, pz),
-                            new THREE.Vector3(cx - 0.6 - pinLen, cy, pz)
+                            new THREE.Vector3(cx - chipW/2, py, 0.05),
+                            new THREE.Vector3(cx - chipW/2 - 0.12, py, 0.05)
                         ]);
                         scene.add(new THREE.Line(lpGeo, pinMat));
-                        // Right pins
                         var rpGeo = new THREE.BufferGeometry().setFromPoints([
-                            new THREE.Vector3(cx + 0.6, cy, pz),
-                            new THREE.Vector3(cx + 0.6 + pinLen, cy, pz)
+                            new THREE.Vector3(cx + chipW/2, py, 0.05),
+                            new THREE.Vector3(cx + chipW/2 + 0.12, py, 0.05)
                         ]);
                         scene.add(new THREE.Line(rpGeo, pinMat));
                     }
 
                     // Chip label
-                    var chipLabel = createLabel(comp.label, false);
-                    chipLabel._worldPos = new THREE.Vector3(cx, cy + 0.15, cz);
+                    var chipLabel = createLabel(chipDisplayName(chip.id), false);
+                    chipLabel._worldPos = new THREE.Vector3(cx, cy, 0.15);
+                    chipLabel._chipId = chip.id;
                     labelElements.push(chipLabel);
                 });
             });
 
-            // Inter-board connectors (animated dashed lines with L-bends)
-            connectors.forEach(function(conn, idx) {
-                var fromY = BOARD_Y[conn.from];
-                var toY = BOARD_Y[conn.to];
-                var connColor = hexToThreeColor(conn.color);
+            // Inter-board connectors (animated dashed lines)
+            CONNECTORS.forEach(function(conn) {
+                var fromBoard = BOARDS.filter(function(b) { return b.id === conn.from; })[0];
+                var toBoard = BOARDS.filter(function(b) { return b.id === conn.to; })[0];
+                if (!fromBoard || !toBoard) return;
 
-                // Spread connectors horizontally to avoid overlap
-                var count = connectors.filter(function(c) { return c.from === conn.from && c.to === conn.to; }).length;
-                var sameGroup = connectors.filter(function(c) { return c.from === conn.from && c.to === conn.to; });
-                var groupIdx = sameGroup.indexOf(conn);
-                var spread = 2.0;
-                var xOffset = (groupIdx - (count - 1) / 2) * spread;
+                var fromY = fromBoard.pos[1] - fromBoard.size[1] / 2;
+                var toY = toBoard.pos[1] + toBoard.size[1] / 2;
+                var fromX = fromBoard.pos[0];
+                var toX = toBoard.pos[0];
 
-                // L-bend routing: go down from source, then across
                 var midY = (fromY + toY) / 2;
-                var points = [
-                    new THREE.Vector3(xOffset, fromY - 0.05, 0),
-                    new THREE.Vector3(xOffset, midY, 0),
-                    new THREE.Vector3(xOffset, toY + 0.05, 0)
-                ];
+                var points;
+                if (Math.abs(fromX - toX) < 0.1) {
+                    // Straight vertical
+                    points = [
+                        new THREE.Vector3(fromX, fromY, 0.01),
+                        new THREE.Vector3(toX, toY, 0.01)
+                    ];
+                } else {
+                    // L-bend: go down from source, then across to target
+                    points = [
+                        new THREE.Vector3(fromX, fromY, 0.01),
+                        new THREE.Vector3(fromX, midY, 0.01),
+                        new THREE.Vector3(toX, midY, 0.01),
+                        new THREE.Vector3(toX, toY, 0.01)
+                    ];
+                }
 
                 var lineGeo = new THREE.BufferGeometry().setFromPoints(points);
                 var lineMat = new THREE.LineDashedMaterial({
-                    color: connColor,
+                    color: new THREE.Color(conn.color),
                     dashSize: 0.3,
                     gapSize: 0.15,
                     transparent: true,
@@ -296,43 +403,98 @@
                 dashedLines.push(line);
 
                 // Connector label at midpoint
+                var labelX = (fromX + toX) / 2 + 0.2;
+                var labelY = midY;
                 var connLabel = createLabel(conn.label, false);
-                connLabel._worldPos = new THREE.Vector3(xOffset + 0.15, midY, 0);
+                connLabel._worldPos = new THREE.Vector3(labelX, labelY, 0.1);
                 connLabel.style.color = conn.color;
                 connLabel.style.fontSize = '9px';
                 labelElements.push(connLabel);
             });
         }
 
-        // --- Iteration dropdown ---
+        // Layout chips in a grid within the board boundaries
+        function getChipLayout(board) {
+            var bx = board.pos[0], by = board.pos[1];
+            var bw = board.size[0], bh = board.size[1];
+            var chips = board.chips;
+            var count = chips.length;
+
+            // Determine grid: cols based on board width, rows to fit all chips
+            var cols, chipW, chipH, padX, padY;
+            if (board.id === "middleware") {
+                cols = 7;
+                chipW = 1.3; chipH = 0.6;
+                padX = 0.35; padY = 0.5;
+            } else if (board.id === "backend") {
+                cols = 7;
+                chipW = 1.3; chipH = 0.6;
+                padX = 0.35; padY = 0.5;
+            } else {
+                cols = 5;
+                chipW = 0.8; chipH = 0.45;
+                padX = 0.2; padY = 0.35;
+            }
+
+            var rows = Math.ceil(count / cols);
+            var totalW = cols * chipW + (cols - 1) * padX;
+            var totalH = rows * chipH + (rows - 1) * padY;
+            var startX = bx - totalW / 2 + chipW / 2;
+            var startY = by + totalH / 2 - chipH / 2;
+
+            var result = [];
+            chips.forEach(function(chip, idx) {
+                var col = idx % cols;
+                var row = Math.floor(idx / cols);
+                result.push({
+                    chip: chip,
+                    cx: startX + col * (chipW + padX),
+                    cy: startY - row * (chipH + padY),
+                    chipW: chipW,
+                    chipH: chipH
+                });
+            });
+            return result;
+        }
+
+        // ================================================================
+        // ITERATION DROPDOWN
+        // ================================================================
+
         function populateIterations() {
-            var select = document.getElementById('iteration-select');
-            var keys = Object.keys(iterationData).reverse();
+            var select = document.getElementById('iterSelect');
+            var keys = Object.keys(ITERATIONS);
             keys.forEach(function(key, i) {
                 var opt = document.createElement('option');
                 opt.value = key;
                 opt.textContent = key + (i === 0 ? ' (Current)' : '');
                 select.appendChild(opt);
             });
-            select.addEventListener('change', function() {
-                applyIteration(select.value);
-            });
         }
 
-        function applyIteration(ver) {
-            var val = iterationData[ver];
+        window.selectIteration = function(ver) {
+            var val = ITERATIONS[ver];
             if (!val) return;
             var showAll = (Array.isArray(val) && val[0] === 'ALL');
 
             chipMeshes.forEach(function(mesh) {
                 var data = chipDataMap.get(mesh.uuid);
                 if (!data) return;
-                var visible = showAll || val.indexOf(data.id) !== -1;
-                mesh.visible = visible;
+                mesh.visible = showAll || val.indexOf(data.id) !== -1;
             });
-        }
 
-        // --- Tooltip ---
+            // Also toggle chip labels
+            labelElements.forEach(function(el) {
+                if (!el._chipId) return;
+                if (showAll) { el.style.opacity = '1'; return; }
+                el.style.opacity = val.indexOf(el._chipId) !== -1 ? '1' : '0.15';
+            });
+        };
+
+        // ================================================================
+        // TOOLTIP
+        // ================================================================
+
         function updateTooltip(e) {
             mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
             mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
@@ -349,8 +511,6 @@
                         '<div style="margin-bottom:4px;">' + statusDot + data.status + '</div>' +
                         '<div style="color:#8B949E;">' + data.detail + '</div>';
                     tooltip.style.display = 'block';
-
-                    // Clamp to viewport
                     var tx = e.clientX + 15;
                     var ty = e.clientY + 15;
                     var tw = tooltip.offsetWidth;
@@ -359,23 +519,26 @@
                     if (ty + th > window.innerHeight - 10) ty = e.clientY - th - 15;
                     tooltip.style.left = tx + 'px';
                     tooltip.style.top = ty + 'px';
+                    document.body.style.cursor = 'pointer';
                     return;
                 }
             }
             tooltip.style.display = 'none';
+            document.body.style.cursor = 'default';
         }
 
-        // --- Click-to-zoom ---
+        // ================================================================
+        // CLICK-TO-ZOOM
+        // ================================================================
+
         function handleClick(e) {
             mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
             mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
             raycaster.setFromCamera(mouse, camera);
 
-            // Check chip click first (do nothing special on chip click - tooltip handles it)
             var chipHits = raycaster.intersectObjects(chipMeshes);
             if (chipHits.length > 0 && chipHits[0].object.visible) return;
 
-            // Check board click
             var boardHits = raycaster.intersectObjects(boardMeshes);
             if (boardHits.length > 0) {
                 var boardId = boardDataMap.get(boardHits[0].object.uuid);
@@ -390,17 +553,20 @@
             cameraTarget.pos.copy(target.pos);
             cameraTarget.lookAt.copy(target.lookAt);
             zoomedBoard = boardId;
-            document.getElementById('btn-all-boards').style.display = 'inline-block';
+            document.getElementById('backBtn').style.display = 'inline-block';
         }
 
-        function zoomToOverview() {
+        window.zoomOut = function() {
             cameraTarget.pos.copy(OVERVIEW.pos);
             cameraTarget.lookAt.copy(OVERVIEW.lookAt);
             zoomedBoard = null;
-            document.getElementById('btn-all-boards').style.display = 'none';
-        }
+            document.getElementById('backBtn').style.display = 'none';
+        };
 
-        // --- Labels ---
+        // ================================================================
+        // LABELS
+        // ================================================================
+
         function updateLabels() {
             var halfW = window.innerWidth / 2;
             var halfH = window.innerHeight / 2;
@@ -408,12 +574,7 @@
             labelElements.forEach(function(el) {
                 var pos = el._worldPos.clone();
                 pos.project(camera);
-
-                if (pos.z > 1) {
-                    el.style.display = 'none';
-                    return;
-                }
-
+                if (pos.z > 1) { el.style.display = 'none'; return; }
                 var sx = (pos.x * halfW) + halfW;
                 var sy = -(pos.y * halfH) + halfH;
                 el.style.display = 'block';
@@ -423,36 +584,31 @@
             });
         }
 
-        // --- Render Loop ---
+        // ================================================================
+        // RENDER LOOP
+        // ================================================================
+
         function animate() {
             requestAnimationFrame(animate);
-
-            // Camera lerp
             camera.position.lerp(cameraTarget.pos, 0.05);
             currentLookAt.lerp(cameraTarget.lookAt, 0.05);
             camera.lookAt(currentLookAt);
-
-            // Animate dashed line offsets
-            dashedLines.forEach(function(line) {
-                line.material.dashOffset -= 0.02;
-            });
-
-            // Update HTML label positions
+            dashedLines.forEach(function(line) { line.material.dashOffset -= 0.02; });
             updateLabels();
-
             renderer.render(scene, camera);
         }
 
-        // --- Events ---
+        // ================================================================
+        // EVENTS
+        // ================================================================
+
         window.addEventListener('mousemove', updateTooltip);
         window.addEventListener('click', handleClick);
 
-        document.getElementById('btn-all-boards').addEventListener('click', zoomToOverview);
+        document.getElementById('backBtn').addEventListener('click', window.zoomOut);
 
         window.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape' && zoomedBoard) {
-                zoomToOverview();
-            }
+            if (e.key === 'Escape' && zoomedBoard) window.zoomOut();
         });
 
         window.addEventListener('resize', function() {
@@ -461,24 +617,14 @@
             renderer.setSize(window.innerWidth, window.innerHeight);
         });
 
-        // --- Load Data ---
-        Promise.all([
-            fetch('../../data/claw3d_components.json').then(function(r) { return r.json(); }),
-            fetch('../../data/claw3d_iterations.json').then(function(r) { return r.json(); })
-        ]).then(function(results) {
-            boardData = results[0];
-            iterationData = results[1];
+        // ================================================================
+        // INIT (no fetch - all data is inline above)
+        // ================================================================
 
-            buildScene();
-            populateIterations();
-            applyIteration('v10.56');
-
-            document.getElementById('loading').style.display = 'none';
-            animate();
-        }).catch(function(err) {
-            console.error('Failed to load data:', err);
-            document.getElementById('loading').textContent = 'Error loading data. Check console.';
-        });
+        buildScene();
+        populateIterations();
+        selectIteration('v10.57');
+        animate();
 
     })();
     </script>
