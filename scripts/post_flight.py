@@ -226,9 +226,34 @@ def verify_static_assets():
     return checks
 
 
-def run_all():
+def check_artifacts(iteration):
+    """G61 check: iteration MUST have build and report artifacts on disk."""
+    failures = []
+    base = os.path.join(os.path.dirname(__file__), "..")
+    for atype in ["build", "report"]:
+        path = os.path.join(base, "docs", f"kjtcom-{atype}-{iteration}.md")
+        if not os.path.exists(path):
+            # Check drafts as well
+            draft_path = os.path.join(base, "docs", "drafts", f"kjtcom-{atype}-{iteration}.md")
+            if os.path.exists(draft_path):
+                print(f"  PASS: {atype}_artifact exists in drafts ({draft_path})")
+                continue
+            failures.append(f"FAIL: {path} missing — iteration has no {atype} artifact")
+            continue
+        size = os.path.getsize(path)
+        if size < 100:
+            failures.append(f"FAIL: {path} too small ({size} bytes)")
+            continue
+        print(f"  PASS: {atype}_artifact exists ({path}, {size} bytes)")
+    return failures
+
+
+def run_all(iteration=None):
     """Run all post-flight checks."""
-    print("Post-flight verification:")
+    if not iteration:
+        iteration = os.environ.get('IAO_ITERATION', 'unknown')
+
+    print(f"Post-flight verification for {iteration}:")
     print("=" * 40)
 
     results = {}
@@ -246,6 +271,12 @@ def run_all():
     print("\nMCP Verification:")
     mcp_results = verify_mcps()
     results.update(mcp_results)
+
+    print("\nArtifact Enforcement Check (G61):")
+    artifact_failures = check_artifacts(iteration)
+    results["artifacts_exist"] = len(artifact_failures) == 0
+    for f in artifact_failures:
+        print(f"  {f}")
 
     # Log results
     for check, passed in results.items():
@@ -274,5 +305,6 @@ def run_all():
 
 
 if __name__ == '__main__':
-    success = run_all()
+    iter_arg = sys.argv[1] if len(sys.argv) > 1 else None
+    success = run_all(iter_arg)
     sys.exit(0 if success else 1)

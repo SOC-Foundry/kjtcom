@@ -75,6 +75,17 @@ def main():
             if text.startswith("```"):
                 text = text.split("\n", 1)[1].rsplit("```", 1)[0].strip()
             entities = json.loads(text)
+
+            # G62: Force show name for pu_ prefixed files
+            if video_id.startswith("pu_"):
+                show_name = "Parts Unknown"
+                # Check for "A Cooks Tour" in filename to be more precise
+                if "A Cooks Tour" in video_id or "A Cook's Tour" in video_id:
+                    show_name = "A Cook's Tour"
+                
+                for ent in entities:
+                    ent["shows"] = [show_name]
+
         except Exception as e:
             print(f"  FAILED: {e}")
             continue

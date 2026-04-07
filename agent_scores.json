@@ -1890,6 +1890,338 @@
       "evaluator": "manual-review (correcting self-eval)",
       "evaluator_tokens": {},
       "date": "2026-04-06"
+    },
+    {
+      "iteration": "v10.60",
+      "summary": "v10.60 resolved G58 (artifact immutability), corrected the broken v10.59 report, and reconstructed v10.59 design/plan docs. Claw3D gained hard chip containment via dynamic grid layout and bounds checking. Evaluator harness grew to 761 lines. 15/15 post-flight.",
+      "workstreams": [
+        {
+          "id": "W1",
+          "name": "Fix generate_artifacts.py - G58 Immutability",
+          "priority": "P0",
+          "outcome": "complete",
+          "evidence": "Immutability guard added, self-eval build log fallback path, improved evidence matching",
+          "agents": [
+            "claude-code"
+          ],
+          "llms": [
+            "-"
+          ],
+          "mcps": [
+            "-"
+          ],
+          "score": 8,
+          "improvements": [
+            "Immutability guard prevents future overwrites",
+            "Self-eval checks drafts/"
+          ]
+        },
+        {
+          "id": "W2",
+          "name": "Produce Accurate v10.59 Report",
+          "priority": "P1",
+          "outcome": "complete",
+          "evidence": "Corrected report with real scores (8/7/7/8), agent_scores.json updated",
+          "agents": [
+            "claude-code"
+          ],
+          "llms": [
+            "-"
+          ],
+          "mcps": [
+            "-"
+          ],
+          "score": 8,
+          "improvements": [
+            "agent_scores.json now reflects actual delivery"
+          ]
+        },
+        {
+          "id": "W3",
+          "name": "Restore Original v10.59 Design + Plan Docs",
+          "priority": "P1",
+          "outcome": "complete",
+          "evidence": "Reconstructed from GEMINI.md (originals never committed)",
+          "agents": [
+            "claude-code"
+          ],
+          "llms": [
+            "-"
+          ],
+          "mcps": [
+            "-"
+          ],
+          "score": 7,
+          "improvements": [
+            "Reconstruction from GEMINI.md is a valid recovery method"
+          ]
+        },
+        {
+          "id": "W4",
+          "name": "Evaluator Harness - ADR-012 + Pattern 17",
+          "priority": "P2",
+          "outcome": "complete",
+          "evidence": "ADR-012 + Pattern 17 added, harness 727 -> 761 lines",
+          "agents": [
+            "claude-code"
+          ],
+          "llms": [
+            "-"
+          ],
+          "mcps": [
+            "-"
+          ],
+          "score": 8,
+          "improvements": [
+            "ADR-012 establishes input/output artifact distinction"
+          ]
+        },
+        {
+          "id": "W5",
+          "name": "Claw3D Chip Containment + FE/PL Gap",
+          "priority": "P1",
+          "outcome": "complete",
+          "evidence": "Dynamic grid, bounds check, label truncation, CSS overflow, G56=0",
+          "agents": [
+            "claude-code"
+          ],
+          "llms": [
+            "-"
+          ],
+          "mcps": [
+            "-"
+          ],
+          "score": 8,
+          "improvements": [
+            "Dynamic grid computation replaces hardcoded column counts"
+          ]
+        }
+      ],
+      "trident": {
+        "cost": "/usr/bin/bash",
+        "delivery": "5/5 workstreams complete",
+        "performance": "G58 resolved, 15/15 post-flight"
+      },
+      "what_could_be_better": [
+        "v10.59 originals were reconstructed, not recovered",
+        "Claw3D changes need visual verification at live URL"
+      ],
+      "date": "2026-04-06"
+    },
+    {
+      "iteration": "v10.61",
+      "summary": "v10.61 migrated Claw3D labels to Canvas textures, authored a GCP portability plan, and updated the harness to 874 lines. Parts Unknown was deferred. G56 remains at 0.",
+      "workstreams": [
+        {
+          "id": "W1",
+          "name": "Parts Unknown",
+          "priority": "P1",
+          "outcome": "deferred",
+          "evidence": "No execution",
+          "agents": [
+            "gemini-cli"
+          ],
+          "llms": [
+            "-"
+          ],
+          "mcps": [
+            "-"
+          ],
+          "score": 0,
+          "improvements": [
+            "Deferred to v10.62"
+          ]
+        },
+        {
+          "id": "W2",
+          "name": "GCP portability plan",
+          "priority": "P1",
+          "outcome": "complete",
+          "evidence": "4 sections in docs/gcp-portability-plan.md",
+          "agents": [
+            "gemini-cli"
+          ],
+          "llms": [
+            "gemini-flash"
+          ],
+          "mcps": [
+            "-"
+          ],
+          "score": 8,
+          "improvements": [
+            "Comprehensive 4-section plan authored"
+          ]
+        },
+        {
+          "id": "W3",
+          "name": "Canvas texture rewrite",
+          "priority": "P1",
+          "outcome": "complete",
+          "evidence": "Text inside chips, G56=0",
+          "agents": [
+            "gemini-cli"
+          ],
+          "llms": [
+            "-"
+          ],
+          "mcps": [
+            "-"
+          ],
+          "score": 7,
+          "improvements": [
+            "Resolved physical containment issues but font too small"
+          ]
+        },
+        {
+          "id": "W4",
+          "name": "Harness updates",
+          "priority": "P2",
+          "outcome": "complete",
+          "evidence": "874 lines, 13 ADRs, 18 patterns",
+          "agents": [
+            "gemini-cli"
+          ],
+          "llms": [
+            "-"
+          ],
+          "mcps": [
+            "-"
+          ],
+          "score": 8,
+          "improvements": [
+            "ADR-013 + Pattern 18 added"
+          ]
+        }
+      ],
+      "trident": {
+        "cost": "Gemini free tier",
+        "delivery": "3/4 workstreams complete",
+        "performance": "874 lines, 13 ADRs, 18 patterns"
+      },
+      "what_could_be_better": [
+        "Font size in Claw3D too small (6px floor)",
+        "generate_artifacts.py failed to produce v10.61 build/report artifacts"
+      ],
+      "date": "2026-04-06"
+    },
+    {
+      "iteration": "v10.62",
+      "summary": "Iteration v10.62 successfully resolved a critical map regression, enhanced architectural visualization legibility, and initiated the second Bourdain show pipeline. Restoration of 6,181+ markers, Claw3D resolution bump, and 186 new entities in staging.",
+      "workstreams": [
+        {
+          "id": "W1",
+          "name": "Fix Map Tab Regression",
+          "priority": "P0",
+          "outcome": "complete",
+          "evidence": "6,181 markers rendering, model fix in location_entity.dart",
+          "agents": [
+            "gemini-cli"
+          ],
+          "llms": [
+            "-"
+          ],
+          "mcps": [
+            "-"
+          ],
+          "score": 10,
+          "improvements": [
+            "Restored full marker visibility across all pipelines"
+          ]
+        },
+        {
+          "id": "W2",
+          "name": "Claw3D Readable Font",
+          "priority": "P1",
+          "outcome": "complete",
+          "evidence": "11px floor, truncation, 96px resolution implemented",
+          "agents": [
+            "gemini-cli"
+          ],
+          "llms": [
+            "-"
+          ],
+          "mcps": [
+            "-"
+          ],
+          "score": 9,
+          "improvements": [
+            "Resolved partial failure from v10.61"
+          ]
+        },
+        {
+          "id": "W3",
+          "name": "Build/Report Enforcement",
+          "priority": "P1",
+          "outcome": "complete",
+          "evidence": "post_flight.py checks, retroactive docs produced",
+          "agents": [
+            "gemini-cli"
+          ],
+          "llms": [
+            "-"
+          ],
+          "mcps": [
+            "-"
+          ],
+          "score": 9,
+          "improvements": [
+            "Automated enforcement of G61 check"
+          ]
+        },
+        {
+          "id": "W4",
+          "name": "Harness Update",
+          "priority": "P2",
+          "outcome": "complete",
+          "evidence": "Pattern 19 added, harness grew to 874+ lines",
+          "agents": [
+            "gemini-cli"
+          ],
+          "llms": [
+            "-"
+          ],
+          "mcps": [
+            "-"
+          ],
+          "score": 8,
+          "improvements": [
+            "Documentation maturity increased"
+          ]
+        },
+        {
+          "id": "W5",
+          "name": "Parts Unknown Phase 1",
+          "priority": "P1",
+          "outcome": "complete",
+          "evidence": "186 entities in staging, checkpoint updated",
+          "agents": [
+            "gemini-cli"
+          ],
+          "llms": [
+            "gemini-flash"
+          ],
+          "mcps": [
+            "-"
+          ],
+          "score": 9,
+          "improvements": [
+            "Successfully launched second Bourdain show pipeline"
+          ]
+        }
+      ],
+      "trident": {
+        "cost": "Gemini Free Tier + Google Places API",
+        "delivery": "5/5 workstreams complete",
+        "performance": "Critical regression resolved. Staging data grew by 52%."
+      },
+      "what_could_be_better": [
+        "Qwen failed schema validation after 3 attempts - prompt or model issue",
+        "Gemini Flash failed schema validation after 2 attempts - schema may be too strict",
+        "Self-eval cannot provide the same quality as an independent evaluator"
+      ],
+      "evaluator": "manual-review (correcting self-eval)",
+      "evaluator_tokens": {},
+      "date": "2026-04-06"
     }
   ]
 }

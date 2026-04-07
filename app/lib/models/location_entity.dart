@@ -36,13 +36,30 @@ class LocationEntity {
   List<String> get countryCodes => _stringList('t_any_country_codes');
 
   /// Returns [lat, lng] if t_any_coordinates is present and valid.
+  /// Supports both List of numbers [lat, lng] and List of maps [{"lat": X, "lon": Y}].
   (double, double)? get coordinates {
     final val = raw['t_any_coordinates'];
-    if (val is List && val.length >= 2) {
+    if (val is! List || val.isEmpty) return null;
+
+    // Format 1: [lat, lon, ...]
+    if (val.length >= 2 && val[0] is! Map) {
       final lat = val[0] is num ? (val[0] as num).toDouble() : double.tryParse(val[0].toString());
       final lng = val[1] is num ? (val[1] as num).toDouble() : double.tryParse(val[1].toString());
       if (lat != null && lng != null) return (lat, lng);
     }
+
+    // Format 2: [{"lat": 33.1, "lon": -117.3}]
+    if (val[0] is Map) {
+      final map = val[0] as Map;
+      final latVal = map['lat'] ?? map['latitude'];
+      final lngVal = map['lon'] ?? map['lng'] ?? map['longitude'];
+
+      final lat = latVal is num ? latVal.toDouble() : double.tryParse(latVal.toString());
+      final lng = lngVal is num ? lngVal.toDouble() : double.tryParse(lngVal.toString());
+
+      if (lat != null && lng != null) return (lat, lng);
+    }
+
     return null;
   }
 

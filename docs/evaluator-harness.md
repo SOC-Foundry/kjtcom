@@ -869,6 +869,14 @@ For any workstream involving Claw3D, evidence must include ALL of the following:
    - Iteration dropdown toggles chip visibility.
 8. **Post-flight pass:** `python3 scripts/post_flight.py` passes `claw3d_no_external_json` check.
 
+### Pattern 19: Iteration completes without build/report artifacts (G61)
+
+- **Failure:** Agent runs all workstreams, passes post-flight, but generate_artifacts.py is never called or silently skips build/report
+- **Impact:** Iteration has no audit trail. Scores lost. Cannot evaluate retroactively without filesystem archaeology.
+- **Detection:** Post-flight file existence + minimum size check
+- **Prevention:** Post-flight FAILS if either kjtcom-build-v{X.XX}.md or kjtcom-report-v{X.XX}.md missing or under 100 bytes
+- **Resolution:** Reconstruct from execution log + filesystem evidence
+
 ---
-*Evaluator Harness v10.61 - April 6, 2026. ADR-013 (Pipeline Portability), Pattern 18 (G59), Component Review Checklist, updated from v10.60.*
-*(Line count verification: 761 at v10.60, expanded with ADR-013, Pattern 18, and Component Review.)*
+*Evaluator Harness v10.62 - April 6, 2026. ADR-013, Pattern 18, Pattern 19 (G61), Component Review Checklist, updated from v10.61.*
+*(Line count verification: 874 at v10.61, expanded with Pattern 19.)*

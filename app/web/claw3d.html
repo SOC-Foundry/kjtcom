@@ -59,7 +59,7 @@
         <button id="backBtn" onclick="zoomOut()">All boards</button>
         <select id="iterSelect" onchange="selectIteration(this.value)"></select>
     </div>
-    <div id="title">kjtcom PCB Architecture v10.61</div>
+    <div id="title">kjtcom PCB Architecture v10.62</div>
     <div id="legend">
         <div class="legend-row"><span class="legend-dot" style="background:#4ADE80"></span> Active</div>
         <div class="legend-row"><span class="legend-dot" style="background:#EF9F27"></span> Degraded</div>
@@ -159,6 +159,7 @@
         ];
 
         var ITERATIONS = {
+            "v10.62": ["ALL"],
             "v10.61": ["ALL"],
             "v10.60": ["ALL"],
             "v10.59": ["ALL"],
@@ -285,47 +286,54 @@
         // G59 FIX: Render chip label as CanvasTexture painted onto chip geometry.
         // Text is measured with ctx.measureText and auto-shrunk to fit.
         // Label physically cannot overflow because the texture IS the chip face.
-        function createChipTexture(label, status, chipW, chipH, chipColorHex) {
-            var RES = 128; // pixels per Three.js unit
-            var canvas = document.createElement('canvas');
-            canvas.width = Math.round(chipW * RES);
-            canvas.height = Math.round(chipH * RES);
-            var ctx = canvas.getContext('2d');
-            var w = canvas.width, h = canvas.height;
-
-            // Chip background
-            ctx.fillStyle = chipColorHex;
-            ctx.fillRect(0, 0, w, h);
-
-            // Status border
-            var borderColor = STATUS_HEX[status] || STATUS_HEX.inactive;
-            ctx.strokeStyle = borderColor;
+        function createChipTexture(label, status, w, h) {
+            const canvas = document.createElement('canvas');
+            const res = 96;  // BUMP from 64 → 96 for sharper text
+            canvas.width = w * res;
+            canvas.height = h * res;
+            const ctx = canvas.getContext('2d');
+            
+            // Background
+            ctx.fillStyle = '#1F2937';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Border
+            ctx.strokeStyle = status === 'active' ? '#4ADE80' :
+                              status === 'degraded' ? '#EF9F27' : '#555';
             ctx.lineWidth = 2;
-            ctx.strokeRect(1, 1, w - 2, h - 2);
-
-            // Label - auto-size to fit within chip width
+            ctx.strokeRect(1, 1, canvas.width - 2, canvas.height - 2);
+            
+            // Label — auto-shrink to 11px floor, then truncate
             ctx.fillStyle = '#C9D1D9';
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
-            var fontSize = Math.min(16, Math.floor(h * 0.5));
-            ctx.font = fontSize + 'px monospace';
-            while (ctx.measureText(label).width > w - 12 && fontSize > 6) {
-                fontSize--;
-                ctx.font = fontSize + 'px monospace';
+            let displayLabel = label;
+            let fs = 16;
+            ctx.font = fs + 'px monospace';
+            while (ctx.measureText(displayLabel).width > canvas.width - 12 && fs > 11) {
+                fs--;
+                ctx.font = fs + 'px monospace';
             }
-            ctx.fillText(label, w / 2, h / 2);
-
-            // LED dot (top-right corner)
-            var ledRadius = Math.max(3, Math.floor(h * 0.1));
+            // If still doesn't fit at 11px, truncate the label with '..'
+            if (ctx.measureText(displayLabel).width > canvas.width - 12) {
+                while (ctx.measureText(displayLabel + '..').width > canvas.width - 12 
+                       && displayLabel.length > 3) {
+                    displayLabel = displayLabel.slice(0, -1);
+                }
+                displayLabel = displayLabel + '..';
+            }
+            ctx.fillText(displayLabel, canvas.width / 2, canvas.height / 2);
+            
+            // LED dot
             ctx.beginPath();
-            ctx.arc(w - ledRadius - 4, ledRadius + 4, ledRadius, 0, Math.PI * 2);
-            ctx.fillStyle = borderColor;
+            ctx.arc(canvas.width - 10, 10, 5, 0, Math.PI * 2);
+            ctx.fillStyle = status === 'active' ? '#4ADE80' :
+                            status === 'degraded' ? '#EF9F27' : '#555';
             ctx.fill();
-
-            var texture = new THREE.CanvasTexture(canvas);
-            texture.minFilter = THREE.LinearFilter;
-            texture.magFilter = THREE.LinearFilter;
-            return texture;
+            
+            const tex = new THREE.CanvasTexture(canvas);
+            tex.needsUpdate = true;
+            return tex;
         }
 
         // ================================================================
@@ -712,7 +720,7 @@
 
         buildScene();
         populateIterations();
-        selectIteration('v10.61');
+        selectIteration('v10.62');
         animate();
 
     })();
