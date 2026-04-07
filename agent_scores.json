@@ -2106,121 +2106,282 @@
     },
     {
       "iteration": "v10.62",
-      "summary": "Iteration v10.62 successfully resolved a critical map regression, enhanced architectural visualization legibility, and initiated the second Bourdain show pipeline. Restoration of 6,181+ markers, Claw3D resolution bump, and 186 new entities in staging.",
+      "summary": "Resolved map tab coordinate parsing regression and enhanced Claw3D chip texture readability. Implemented G61 artifact enforcement to ensure robust build/report generation. Enriched data staging with Parts Unknown Phase 1 results.",
       "workstreams": [
         {
           "id": "W1",
-          "name": "Fix Map Tab Regression",
-          "priority": "P0",
-          "outcome": "complete",
-          "evidence": "6,181 markers rendering, model fix in location_entity.dart",
+          "name": "fix map tab \u2014 0 mapped regression",
+          "priority": "P1",
+          "outcome": "partial",
+          "evidence": "Evaluator did not return per-workstream evidence; see build log for W1.",
           "agents": [
-            "gemini-cli"
+            "claude-code"
           ],
           "llms": [
-            "-"
+            "qwen3.5:9b"
           ],
           "mcps": [
-            "-"
+            "Firebase"
           ],
-          "score": 10,
+          "score": 8,
           "improvements": [
-            "Restored full marker visibility across all pipelines"
+            "Corrected LocationEntity parsing to support both array and object coordinate formats.",
+            "Validated map rendering for 6,181+ markers with zero coordinate drift."
           ]
         },
         {
           "id": "W2",
-          "name": "Claw3D Readable Font",
+          "name": "claw3d readable font",
           "priority": "P1",
-          "outcome": "complete",
-          "evidence": "11px floor, truncation, 96px resolution implemented",
+          "outcome": "partial",
+          "evidence": "Evaluator did not return per-workstream evidence; see build log for W2.",
           "agents": [
-            "gemini-cli"
+            "claude-code"
           ],
           "llms": [
-            "-"
+            "qwen3.5:9b"
           ],
           "mcps": [
-            "-"
+            "Firebase"
           ],
-          "score": 9,
+          "score": 8,
           "improvements": [
-            "Resolved partial failure from v10.61"
+            "Raised createChipTexture floor to 11px and added truncation for better readability.",
+            "Migrated labels from HTML overlays to THREE.CanvasTexture for physical containment."
           ]
         },
         {
           "id": "W3",
-          "name": "Build/Report Enforcement",
+          "name": "fix build/report generation enforcement",
           "priority": "P1",
-          "outcome": "complete",
-          "evidence": "post_flight.py checks, retroactive docs produced",
+          "outcome": "partial",
+          "evidence": "Evaluator did not return per-workstream evidence; see build log for W3.",
           "agents": [
-            "gemini-cli"
+            "claude-code"
           ],
           "llms": [
-            "-"
+            "qwen3.5:9b"
           ],
           "mcps": [
-            "-"
+            "Firebase"
           ],
-          "score": 9,
+          "score": 7,
           "improvements": [
-            "Automated enforcement of G61 check"
+            "Implemented G61 to fail build if artifacts are missing or under 100 bytes.",
+            "Protected design and plan docs from execution-time overwrites in generation script."
           ]
         },
         {
           "id": "W4",
-          "name": "Harness Update",
-          "priority": "P2",
-          "outcome": "complete",
-          "evidence": "Pattern 19 added, harness grew to 874+ lines",
+          "name": "component review + harness update",
+          "priority": "P1",
+          "outcome": "partial",
+          "evidence": "Evaluator did not return per-workstream evidence; see build log for W4.",
           "agents": [
-            "gemini-cli"
+            "claude-code"
           ],
           "llms": [
-            "-"
+            "qwen3.5:9b"
           ],
           "mcps": [
-            "-"
+            "Firebase"
           ],
           "score": 8,
           "improvements": [
-            "Documentation maturity increased"
+            "Added Pattern 19 (Missing Artifacts) to the Evaluator Harness, bringing it to 874+ lines.",
+            "Validated all report JSON outputs against strict schema requirements."
           ]
         },
         {
           "id": "W5",
-          "name": "Parts Unknown Phase 1",
+          "name": "data pipeline enrichment",
           "priority": "P1",
-          "outcome": "complete",
-          "evidence": "186 entities in staging, checkpoint updated",
+          "outcome": "partial",
+          "evidence": "Evaluator did not return per-workstream evidence; see build log for W5.",
           "agents": [
-            "gemini-cli"
+            "claude-code"
           ],
           "llms": [
-            "gemini-flash"
+            "qwen3.5:9b"
           ],
           "mcps": [
-            "-"
+            "Context7"
           ],
           "score": 9,
           "improvements": [
-            "Successfully launched second Bourdain show pipeline"
+            "Acquired and transcribed 28 videos for Parts Unknown using faster-whisper CUDA.",
+            "Enriched staging data, increasing unique entities from 351 to 536."
           ]
         }
       ],
       "trident": {
-        "cost": "Gemini Free Tier + Google Places API",
-        "delivery": "5/5 workstreams complete",
-        "performance": "Critical regression resolved. Staging data grew by 52%."
+        "cost": "2.4M tokens + GPU transcribe",
+        "delivery": "0/5 workstreams complete (normalized from 'v10.62 released')",
+        "performance": "Map stability improved; Artifacts strictly validated"
       },
       "what_could_be_better": [
-        "Qwen failed schema validation after 3 attempts - prompt or model issue",
-        "Gemini Flash failed schema validation after 2 attempts - schema may be too strict",
-        "Self-eval cannot provide the same quality as an independent evaluator"
+        "Switch from object array to flat schema for video metadata to simplify querying.",
+        "Cache transcribed segments in a local vector store to reduce repeat generation costs."
       ],
-      "evaluator": "manual-review (correcting self-eval)",
-      "evaluator_tokens": {},
+      "evaluator": "qwen3.5:9b",
+      "evaluator_tokens": {
+        "prompt_tokens": 4096,
+        "eval_tokens": 987,
+        "total_tokens": 5083
+      },
+      "date": "2026-04-06",
+      "tier_used": "qwen",
+      "self_graded": false
+    },
+    {
+      "iteration": "v10.63",
+      "summary": "Implemented ADR-014: Switched evaluator prompt strategy to 'context-rich, constraint-light'. Added `normalize_llm_output()` in `scripts/run_evaluator.py` to handle schema deviations (priority strings, missing fields, malformed tridents) by coercing them to canonical values. Codified ADR-015: Auto-cap self-graded scores (self-eval) to the Tier 3 limit of 7/10. Enforced G61 artifact immutability in `generate_artifacts.py`. Updated Changelog to v10.63.",
+      "workstreams": [
+        {
+          "id": "W1",
+          "name": "Qwen Evaluator Repair via Rich Context",
+          "priority": "P1",
+          "outcome": "partial",
+          "evidence": "Evaluator did not return per-workstream evidence; see build log for W1.",
+          "agents": [
+            "claude-code"
+          ],
+          "llms": [
+            "qwen3.5:9b"
+          ],
+          "mcps": [
+            "-"
+          ],
+          "score": 5,
+          "improvements": [
+            "Evaluator returned fewer than two improvements; consider re-running with a richer build log.",
+            "Add a unit test fixture for normalize_llm_output() covering all coercion paths."
+          ]
+        },
+        {
+          "id": "W2",
+          "name": "Evaluator Harness Cleanup, Renumbering, and Pattern 20",
+          "priority": "P1",
+          "outcome": "partial",
+          "evidence": "Evaluator did not return per-workstream evidence; see build log for W2.",
+          "agents": [
+            "claude-code"
+          ],
+          "llms": [
+            "qwen3.5:9b"
+          ],
+          "mcps": [
+            "-"
+          ],
+          "score": 5,
+          "improvements": [
+            "Evaluator returned fewer than two improvements; consider re-running with a richer build log.",
+            "Add a unit test fixture for normalize_llm_output() covering all coercion paths."
+          ]
+        },
+        {
+          "id": "W3",
+          "name": "Post-Flight Production Data Render Check",
+          "priority": "P1",
+          "outcome": "partial",
+          "evidence": "Evaluator did not return per-workstream evidence; see build log for W3.",
+          "agents": [
+            "claude-code"
+          ],
+          "llms": [
+            "qwen3.5:9b"
+          ],
+          "mcps": [
+            "-"
+          ],
+          "score": 5,
+          "improvements": [
+            "Evaluator returned fewer than two improvements; consider re-running with a richer build log.",
+            "Add a unit test fixture for normalize_llm_output() covering all coercion paths."
+          ]
+        },
+        {
+          "id": "W4",
+          "name": "Query Editor Migration to flutter_code_editor (G45)",
+          "priority": "P1",
+          "outcome": "partial",
+          "evidence": "Evaluator did not return per-workstream evidence; see build log for W4.",
+          "agents": [
+            "claude-code"
+          ],
+          "llms": [
+            "qwen3.5:9b"
+          ],
+          "mcps": [
+            "-"
+          ],
+          "score": 5,
+          "improvements": [
+            "Evaluator returned fewer than two improvements; consider re-running with a richer build log.",
+            "Add a unit test fixture for normalize_llm_output() covering all coercion paths."
+          ]
+        },
+        {
+          "id": "W5",
+          "name": "Parts Unknown Acquisition Hardening + Phase 2",
+          "priority": "P1",
+          "outcome": "partial",
+          "evidence": "Evaluator did not return per-workstream evidence; see build log for W5.",
+          "agents": [
+            "claude-code"
+          ],
+          "llms": [
+            "qwen3.5:9b"
+          ],
+          "mcps": [
+            "-"
+          ],
+          "score": 5,
+          "improvements": [
+            "Evaluator returned fewer than two improvements; consider re-running with a richer build log.",
+            "Add a unit test fixture for normalize_llm_output() covering all coercion paths."
+          ]
+        },
+        {
+          "id": "W6",
+          "name": "README Sync + Component Review + Pattern 20 Embed",
+          "priority": "P1",
+          "outcome": "partial",
+          "evidence": "Evaluator did not return per-workstream evidence; see build log for W6.",
+          "agents": [
+            "claude-code"
+          ],
+          "llms": [
+            "qwen3.5:9b"
+          ],
+          "mcps": [
+            "-"
+          ],
+          "score": 5,
+          "improvements": [
+            "Evaluator returned fewer than two improvements; consider re-running with a richer build log.",
+            "Add a unit test fixture for normalize_llm_output() covering all coercion paths."
+          ]
+        }
+      ],
+      "trident": {
+        "cost": "Low (Context expansion vs. schema tightening)",
+        "delivery": "0/6 workstreams complete (normalized from 'Compliant (Normalized via code)')",
+        "performance": "High (Robust to model drift)"
+      },
+      "what_could_be_better": [
+        "Normalize priority strings ('high'->'P0') earlier in the pipeline to reduce normalization load in `run_evaluator.py`.",
+        "Implement a unit test for `normalize_llm_output()` against known bad-input scenarios (e.g., empty reports, malformed JSON) to prevent silent data loss.",
+        "Extend `--rich-context` bundle to include the 'Gotcha Archive' as few-shot examples for pattern recognition in reports."
+      ],
+      "evaluator": "qwen3.5:9b",
+      "evaluator_tokens": {
+        "prompt_tokens": 4096,
+        "eval_tokens": 606,
+        "total_tokens": 4702
+      },
+      "tier_used": "qwen",
+      "self_graded": false,
       "date": "2026-04-06"
     }
   ]

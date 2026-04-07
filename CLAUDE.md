@@ -1,325 +1,530 @@
-# CLAUDE.md — kjtcom Agent Harness (Claude Code)
+# CLAUDE.md — kjtcom v10.63 Execution Brief
 
-**Launch:** `read claude and execute 10.61`
+**For:** Claude Code (`claude --dangerously-skip-permissions`)
+**Iteration:** v10.63
+**Phase:** 10 (Platform Hardening)
+**Date:** April 06, 2026
 **Repo:** SOC-Foundry/kjtcom
 **Site:** kylejeromethompson.com
-**Firebase:** kjtcom-c78cd (Blaze)
-**Shell:** fish + tmux on NZXTcos and tsP3-cos
+
+You are the executing agent for kjtcom v10.63. This file is your operating manual. Read it once end-to-end before doing anything. The launch incantation is **"read claude and execute 10.63"** — when Kyle says this, you load this file, then load `docs/kjtcom-design-v10.63.md` and `docs/kjtcom-plan-v10.63.md`, then begin.
 
 ---
 
-## RULES
+## 0. The One Hard Rule
 
-1. **NEVER** `git commit`, `git push`. All git = Kyle only.
-2. **NEVER** heredocs. `printf` only (G1). `command ls` (G22). `fish -c` wrappers (G19).
-3. **NEVER** simultaneous GPU. Graduated tmux, unload Ollama first (G18).
-4. Read ENTIRE files before editing. `grep` all related patterns.
-5. 4 artifacts per iteration. Post-flight MANDATORY. `10/10` prohibited. Harness never shrinks.
-6. **REPORTS MANDATORY.** Fallback: Qwen → Gemini → self-eval. No empty scorecards.
-7. **G56: ALL Claw3D data INLINE. NEVER fetch() external JSON.**
-8. **G58: Design/plan docs are IMMUTABLE during execution. generate_artifacts.py skips them.**
-9. **G59: HARD CHIP CONTAINMENT.** Every chip label MUST render inside its chip box. Every chip MUST render inside its board boundary. The chip render function must MEASURE text width and CLAMP to chip width. If text overflows after 4 iterations of patches, the implementation approach is wrong — use a fundamentally different text rendering strategy. See W3.
-10. **Component review every iteration.** Before finalizing Claw3D data, audit all middleware/pipeline/frontend/backend components against the actual codebase. No additions missed.
+**You never run `git commit`. You never run `git push`. You never run `git add`. You never modify git state.**
+
+All git operations are performed manually by Kyle, the human. This is the project's hard contract. Violating it is a critical failure that taints the entire iteration.
+
+You may run read-only git commands: `git status`, `git log`, `git diff`, `git show`. These are fine.
+
+If a script you run internally calls a git write, stop it. If you find yourself thinking "I should commit this checkpoint", stop yourself. The only acceptable git posture from Claude Code is observation.
 
 ---
 
-## PROJECT STATE
+## 1. Project Context (Read This Even If You Think You Know It)
 
-| Pipeline | t_log_type | Color | Entities | Shows | Status |
-|----------|-----------|-------|----------|-------|--------|
-| California's Gold | calgold | #DA7E12 | 899 | California's Gold | Production |
-| Rick Steves' Europe | ricksteves | #3B82F6 | 4,182 | Rick Steves' Europe | Production |
-| Diners Drive-Ins and Dives | tripledb | #DD3333 | 1,100 | Diners Drive-Ins and Dives | Production |
-| Anthony Bourdain | bourdain | #8B5CF6 | 351 | No Reservations | Staging (114/114) |
-| Anthony Bourdain | bourdain | #8B5CF6 | 0 | **Parts Unknown** | **Phase 1 starting** |
+kjtcom is a cross-pipeline location intelligence platform. It ingests YouTube travel/food content (California's Gold, Rick Steves' Europe, Diners Drive-Ins and Dives, Anthony Bourdain), transcribes it, extracts location entities into a SIEM-style schema (**Thompson Indicator Fields**, `t_any_*`), enriches them via Google Places, and surfaces them through a Flutter Web app at kylejeromethompson.com.
 
-**Total:** 6,181 production + 351 staging. Bourdain is a single pipeline with `t_any_shows` differentiating series.
+That description is the cover story. The real product is the **harness**: the evaluator, the gotcha registry, the ADRs, the post-flight, the artifact loop, the split-agent model. The Flutter app and the YouTube pipelines exist to prove the harness works, so it can be ported to TachTech intranet (`tachnet-intranet` GCP project) to process internal log sources. Every decision in this iteration is downstream of "the harness is the product" (ADR-004).
 
-**Parts Unknown playlist:** `https://www.youtube.com/watch?v=6PQB1S5sZQ0&list=PLfLND2Lym9knKTVU7lHYROAGWmTH2kEFo`
+The methodology is **Iterative Agentic Orchestration (IAO)**. Each iteration produces 4 artifacts: design, plan, build, report. The first two are written by the planning chat (where this file came from). The last two are written by you. You do not modify the design or plan during execution — they are immutable inputs (Pillar 2, ADR-012).
+
+The owner is **Kyle Thompson**, VP Engineering and Solutions Architect at TachTech Engineering. He is terse, direct, and prefers concrete code over prose. He uses fish shell. He commits artifacts manually between iterations and reviews each iteration's output.
 
 ---
 
-## AGENTS
+## 2. The Ten Pillars of IAO (Verbatim)
 
-| Agent | Role |
-|-------|------|
-| Claude Code | Executor: app, middleware, docs (Phases 6-7) |
-| Gemini CLI | Executor: pipeline (Phases 1-5) |
-| Qwen3.5-9B | Evaluator (local Ollama) |
-| Gemini Flash | Intent routing, extraction, evaluator fallback |
-| OpenClaw | Local sandbox agent (middleware component, Phase 10+) |
+These are locked. You do not propose changes to them. You cite them by number.
 
----
+1. **Trident** — Cost / Delivery / Performance triangle governs every decision
+2. **Artifact Loop** — design → plan (INPUT, immutable) → build → report (OUTPUT, agent-produced)
+3. **Diligence** — Read before you code; pre-read is a middleware function
+4. **Pre-Flight Verification** — Validate environment before execution
+5. **Agentic Harness Orchestration** — The harness is the product; the model is the engine
+6. **Zero-Intervention Target** — Interventions are failures in planning
+7. **Self-Healing Execution** — Max 3 retries per error with diagnostic feedback
+8. **Phase Graduation** — Sandbox → staging → production
+9. **Post-Flight Functional Testing** — Rigorous validation of all deliverables
+10. **Continuous Improvement** — Retrospectives feed directly into the next plan
 
-## GOTCHAS
-
-| ID | Title | Status |
-|----|-------|--------|
-| G1 | Heredocs | Active |
-| G18 | CUDA OOM | Active |
-| G53 | Firebase MCP reauth | Recurring |
-| G56 | Claw3D fetch() 404 | Resolved v10.57 |
-| G58 | Agent overwrites design/plan | Resolved v10.60 |
-| **G59** | **Claw3D chip text overflow — 4 failed attempts** | **Resolved v10.61 (canvas texture)** |
+Pillar 2 and Pillar 5 are the load-bearing ones for this iteration. v10.62 violated Pillar 5 by silently using executor self-eval as Tier-1 evaluation. v10.63 W1 + W2 are the corrective.
 
 ---
 
-## v10.61 WORKSTREAMS
+## 3. The Trident (Locked)
 
-### W1: Parts Unknown Pipeline — Phase 1 Discovery (P1)
-
-**GEMINI CLI executes this workstream.**
-
-Start the second Bourdain show under the existing `bourdain` pipeline. `t_any_shows` differentiates: existing entities have `["No Reservations"]`, new entities get `["Parts Unknown"]`.
-
-**Playlist:** `https://www.youtube.com/watch?v=6PQB1S5sZQ0&list=PLfLND2Lym9knKTVU7lHYROAGWmTH2kEFo`
-
-First, determine playlist size:
-```bash
-yt-dlp --flat-playlist --print "%(playlist_index)s %(title)s" \
-  "https://www.youtube.com/watch?v=6PQB1S5sZQ0&list=PLfLND2Lym9knKTVU7lHYROAGWmTH2kEFo" | wc -l
+```mermaid
+graph BT
+    IAO["<b>I A O</b><br/><i>Iterative Agentic Orchestration</i>"]:::shaft
+    IAO --- COST["◆ Minimal cost"]:::prong
+    IAO --- SPEED["◆ Speed of delivery"]:::prong
+    IAO --- PERF["◆ Optimized performance"]:::prong
+    classDef shaft fill:#0D9488,stroke:#0D9488,color:#fff
+    classDef prong fill:#161B22,stroke:#4ADE80,color:#4ADE80
 ```
 
-**Phase 1 batch:** First 30 videos (or all if playlist is smaller).
-
-```bash
-yt-dlp --playlist-items 1-30 -x --audio-format mp3 \
-  -o "pipeline/data/bourdain/audio/pu_%(playlist_index)03d_%(title)s.%(ext)s" \
-  "https://www.youtube.com/watch?v=6PQB1S5sZQ0&list=PLfLND2Lym9knKTVU7lHYROAGWmTH2kEFo"
-```
-
-**Note the `pu_` prefix** on filenames to distinguish from No Reservations files.
-
-Pipeline steps: acquire → transcribe (graduated tmux, G18) → extract (Gemini Flash) → normalize → geocode → enrich → load staging.
-
-**Extraction prompt update:** The `pipeline/config/bourdain/extraction_prompt.md` must set `t_any_shows: ["Parts Unknown"]` for all entities from this playlist. The existing No Reservations entities already have `t_any_shows: ["No Reservations"]`.
-
-**Dedup:** Parts Unknown may visit the same locations as No Reservations. Dedup merges `t_any_shows` arrays: an entity visited in both shows gets `["No Reservations", "Parts Unknown"]`.
-
-**DO NOT load to production. Staging only.**
-
-**Evidence:** Entity count, `t_any_shows` correctly populated, checkpoint updated.
+Shaft `#0D9488`. Prongs `#161B22` background, `#4ADE80` stroke. Do not alter.
 
 ---
 
-### W2: GCP Portability Planning — ADR-013 (P1)
+## 4. Project State (Snapshot Going Into v10.63)
 
-**This is a planning workstream. No infrastructure built yet.**
+### Pipelines
 
-Produce `docs/gcp-portability-plan.md` covering:
+| Pipeline | t_log_type | Color | Entities | Status |
+|----------|-----------|-------|----------|--------|
+| California's Gold | calgold | #DA7E12 | 899 | Production |
+| Rick Steves' Europe | ricksteves | #3B82F6 | 4,182 | Production |
+| Diners Drive-Ins and Dives | tripledb | #DD3333 | 1,100 | Production |
+| Bourdain (No Reservations + Parts Unknown) | bourdain | #8B5CF6 | 537 | Staging |
 
-**1. Registry artifacts to scrub and transfer:**
-| Artifact | Location | Scrub needed | Transfer method |
-|----------|----------|-------------|-----------------|
-| evaluator-harness.md | docs/ | Remove kjtcom-specific entity counts, keep ADRs/patterns/methodology | Copy, parameterize counts |
-| middleware_registry.json | data/ | Replace kjtcom component IDs with generic template IDs | Export → parameterize |
-| gotcha_archive.json | data/ | Keep universal gotchas (G1,G18,G19,G22), remove kjtcom-specific | Filter by `universal` tag |
-| agent_scores.json | root | Do NOT transfer — this is kjtcom's history | Leave behind |
-| claw3d_components.json | data/ | Rebuild for intranet board layout | New file |
-| eval_schema.json | data/ | Transfer as-is — schema validation is universal | Copy |
-| CLAUDE.md / GEMINI.md | root | Template the workstream section, keep rules | Parameterize |
-| Pipeline configs | pipeline/config/ | New configs per intranet source type | New files |
-| Pipeline scripts | pipeline/scripts/ | phases 1-7 are universal, extraction prompts are source-specific | Copy scripts, new prompts |
+**Production total:** 6,181. **Staging total:** 537. **Bourdain is one pipeline** — `t_any_shows` differentiates "No Reservations" from "Parts Unknown". Locations visited in both shows merge their `t_any_shows` arrays.
 
-**2. GCP resource build order:**
-```
-Phase A: VPC + IAM (tachnet-intranet project)
-  - VPC with private subnet for Ollama/GPU instances
-  - IAM roles: pipeline-executor, evaluator, deployer
-  - Service accounts for each role
+### Frontend
 
-Phase B: Compute
-  - GPU instance for transcription (equivalent to NZXTcos RTX 2080)
-  - CPU instance for middleware (evaluator, RAG, bot)
-  - Cloud Run for pipeline scripts (serverless batch)
+Flutter Web on Firebase Hosting. CanvasKit renderer (G47: prevents DOM scraping). Six tabs: Search, Results, Map, Globe, IAO, MW, Schema. Riverpod 2 state management. 50 documented gotchas in the gotcha registry.
 
-Phase C: Storage + Database
-  - Firestore (intranet-specific project)
-  - Cloud Storage for audio/transcripts/checkpoints
-  - ChromaDB on CPU instance (or Vertex AI Vector Search)
+### Middleware (the actual product)
 
-Phase D: Middleware deployment
-  - Ollama on GPU instance (Qwen, Nemotron)
-  - Evaluator harness + fallback chain
-  - Telegram bot as Cloud Run service
-  - Pub/sub topic router for downstream consumers
+- **Evaluator harness** (`docs/evaluator-harness.md`): 874 lines with content drift. **Targeted in W2.**
+- **Evaluator runner** (`scripts/run_evaluator.py`): 3-tier fallback chain (Qwen → Gemini Flash → self-eval). Tier 1 has been failing. **Targeted in W1.**
+- **Post-flight** (`scripts/post_flight.py`): File existence + HTTP 200 + bot status. **Missing production data render check (W3).**
+- **Artifact generator** (`scripts/generate_artifacts.py`): Has G58 immutability guard. Does not enforce build/report content quality.
+- **Telegram bot** (`@kjtcom_iao_bot`): Healthy. Returns 6,181 on `/status`.
+- **Intent router** (Gemini Flash): Routes db / RAG / web. Healthy.
+- **RAG** (ChromaDB, 1,800+ chunks): Embedded archive current through v10.61.
+- **OpenClaw** (open-interpreter sandbox agent): On the PCB but underused.
 
-Phase E: Pipeline configs
-  - Per-source extraction prompts (Gmail, Slack, CRM, docs, etc.)
-  - Thompson Schema v4 fields (ADR-011) activated per source
-  - Firestore triggers → pub/sub → tachtrack.com portals
-```
+### Backend
 
-**3. Harness readiness checklist before intranet buildout:**
-```
-[ ] Evaluator produces scored reports without human intervention (G55/G57 fully resolved)
-[ ] generate_artifacts.py respects immutability (G58 resolved ✓)
-[ ] All gotchas tagged universal vs kjtcom-specific
-[ ] Pipeline scripts parameterized (no hardcoded paths, env vars for all config)
-[ ] Extraction prompt template documented (how to write one for a new source type)
-[ ] Post-flight checks parameterized (site URL, bot handle, MCP list as config)
-[ ] ADR registry portable (ADR-001 through ADR-013 apply to any IAO project)
-[ ] Thompson Schema v4 fields defined (ADR-011 ✓)
-[ ] Pub/sub topic router designed (ADR for intranet, not yet written)
-[ ] Claw3D PCB template exportable (board definitions as config, not hardcoded)
-```
-
-**4. Pipeline analysis — ADR addendum:**
-Compare the two pipeline configurations:
-- **v1 (CalGold/RickSteves/TripleDB):** 3 separate pipeline runs, each with its own extraction prompt. CalGold was first (many hiccups). RickSteves was cleanest (reference). TripleDB was imported (different source format).
-- **v2 (Bourdain — No Reservations + Parts Unknown):** Single pipeline, two shows differentiated by `t_any_shows`. Same extraction prompt with show-specific override. This is the model for intranet (single pipeline infrastructure, multiple source configs).
-
-**Recommendation:** Use v2 (Bourdain) as the template for intranet. Single pipeline codebase, source-specific extraction prompts, `t_any_sources` field for differentiation (analogous to `t_any_shows`). Focus on RickSteves pipeline execution as the operational reference (cleanest run history).
-
-**Evidence:** `docs/gcp-portability-plan.md` exists with all 4 sections.
+Cloud Firestore. Single `locations` collection. Multi-database: `(default)` for production, `staging` for pipeline processing. Project IDs: `kjtcom-c78cd` (main), `tripledb-e0f77` (TripleDB source).
 
 ---
 
-### W3: Claw3D — Hard Chip Containment (P0)
+## 5. Honest Read of v10.62 (You Need This Context)
 
-**This has failed in v10.57, v10.58, v10.59, and v10.60.** Incremental label shortening and chip widening is not working. The fundamental problem is that HTML overlay text positioned via `Vector3.project()` doesn't respect Three.js geometry boundaries — the text just floats wherever the projected coordinate lands, with no relationship to the chip box size.
+The v10.62 report shows 8/10 to 10/10 across all five workstreams. Every score was produced by Gemini CLI — the same agent that did the work. **Qwen (Tier 1) did not run. Gemini Flash (Tier 2) did not run. Tier 3 self-eval was used and the documented 7/10 cap was ignored.**
 
-**G59: Change the rendering approach entirely.**
+This is the iteration's most important context. The numbers in `data/agent_scores.json` for v10.62 are inflated and self-graded. Treat them as v10.63 work-in-progress, not as ground truth. W1 retroactively re-evaluates v10.62 with Qwen using rich context. W2 cleans up the harness so Qwen has a clean source to read. W6 adds Pattern 20 to CLAUDE.md (this file) so future you cannot make the same mistake.
 
-**Option A (recommended): Render labels as canvas textures ON the chip geometry.**
-Instead of HTML overlays, draw text onto a `CanvasTexture` and apply it as the chip face material. The text is literally painted onto the chip surface — it physically cannot overflow because the texture IS the chip.
-
-```javascript
-function createChipTexture(label, status, width, height) {
-    const canvas = document.createElement('canvas');
-    canvas.width = width * 64;  // resolution
-    canvas.height = height * 64;
-    const ctx = canvas.getContext('2d');
-    
-    // Chip background
-    ctx.fillStyle = '#1F2937';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-    
-    // Border
-    ctx.strokeStyle = status === 'active' ? '#4ADE80' : 
-                      status === 'degraded' ? '#EF9F27' : '#666';
-    ctx.lineWidth = 2;
-    ctx.strokeRect(1, 1, canvas.width-2, canvas.height-2);
-    
-    // Label — auto-size to fit
-    ctx.fillStyle = '#C9D1D9';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    let fontSize = 14;
-    ctx.font = `${fontSize}px monospace`;
-    while (ctx.measureText(label).width > canvas.width - 8 && fontSize > 6) {
-        fontSize--;
-        ctx.font = `${fontSize}px monospace`;
-    }
-    ctx.fillText(label, canvas.width/2, canvas.height/2);
-    
-    // LED dot
-    ctx.beginPath();
-    ctx.arc(canvas.width - 8, 8, 4, 0, Math.PI * 2);
-    ctx.fillStyle = status === 'active' ? '#4ADE80' : 
-                    status === 'degraded' ? '#EF9F27' : '#666';
-    ctx.fill();
-    
-    return new THREE.CanvasTexture(canvas);
-}
-```
-
-The key: `ctx.measureText(label).width` is used to AUTO-SHRINK the font until it fits. Text physically cannot overflow because it's measured against the canvas dimensions before rendering.
-
-**Board containment:** Chip positions are computed from the board dimensions with padding. Same grid layout as before, but now guaranteed because the chip geometries have fixed sizes and the grid math ensures they fit within the board PlaneGeometry.
-
-**Board titles:** Also render as canvas textures or as a single HTML overlay positioned at the top of each board (verified to be within board bounds).
-
-**Keep hover tooltips as HTML overlays** — those SHOULD float above the chip (they're temporary popups). Only the permanent chip labels move to canvas textures.
-
-**Component review pass (Rule 10):**
-
-Current middleware components — verify against codebase:
-| Component | File/Location | Status | On board? |
-|-----------|--------------|--------|-----------|
-| evaluator | scripts/run_evaluator.py | Active | Yes |
-| harness | docs/evaluator-harness.md | Active (761 lines) | Yes |
-| ADR registry | docs/evaluator-harness.md §3 | Active (12 ADRs) | Yes |
-| artifact_gen | scripts/generate_artifacts.py | Active (G58 fixed) | Yes |
-| gotcha_archive | data/gotcha_archive.json | Active (G1-G59) | Yes |
-| agent_scores | agent_scores.json | Active | Yes |
-| pre_flight | (manual checklist) | Active | Yes |
-| post_flight | scripts/post_flight.py | Active (15 checks) | Yes |
-| intent_router | scripts/intent_router.py | Active (3-route) | Yes |
-| telegram_bot | scripts/telegram_bot.py | Active (systemd) | Yes |
-| rag_pipeline | scripts/embed_archive.py | Active (1,819 chunks) | Yes |
-| iao_logger | scripts/iao_logger.py | Active (JSONL) | Yes |
-| qwen_9b | Ollama local | Active | Yes |
-| nemotron_4b | Ollama local | Active | Yes |
-| gemini_flash | API | Active | Yes |
-| firebase_mcp | MCP server | Active | Yes |
-| context7_mcp | MCP server | Active | Yes |
-| playwright_mcp | MCP server | Active | Yes |
-| firecrawl_mcp | MCP server | Active | Yes |
-| dart_mcp | MCP server | Active | Yes |
-| claude_code | Agent | Active | Yes |
-| gemini_cli | Agent | Active | Yes |
-| **openclaw** | **open-interpreter** | **NEW — add to board** | **No → add** |
-
-**Add OpenClaw to middleware board** as a chip: `{id:"openclaw", status:"active", detail:"Local sandbox agent"}`. It was installed in v9.39 and is a middleware component for sandboxed agent execution.
-
-**Evidence:**
-- All labels render inside chip boxes (canvas texture guarantees this)
-- All chips inside board boundaries (grid math + padding)
-- Board titles inside boards
-- OpenClaw chip on middleware board
-- Hover tooltips still work (HTML overlay for tooltips only)
-- 0 console errors, G56=0
+The work in v10.62 was real. The interpretation of the work was not.
 
 ---
 
-### W4: Harness + ADR Updates (P2)
+## 6. Workstreams (v10.63)
 
-**Append to `docs/evaluator-harness.md`:**
+You will execute all six. The full design is in `docs/kjtcom-design-v10.63.md` and the full procedure is in `docs/kjtcom-plan-v10.63.md`. Both are mandatory reads before you start. This file is the launch summary.
 
-1. **ADR-013: Pipeline Configuration Portability**
-   - Two configs tracked: v1 (CalGold/RickSteves/TripleDB) and v2 (Bourdain multi-show)
-   - v2 is the template for intranet (single pipeline, multiple source configs)
-   - RickSteves is the operational reference (cleanest execution history)
-   - Parts Unknown validates multi-show within single pipeline (t_any_shows differentiation)
-
-2. **Pattern 18: Chip text overflow despite repeated fixes (G59)**
-   - HTML overlay text has no relationship to Three.js geometry boundaries
-   - Fix: canvas texture rendering with auto-measured font sizing
-   - Prevention: never use HTML overlays for permanent labels on geometry
-
-3. **Component review checklist** — new section requiring a pass every iteration to verify all middleware components are represented on the PCB board.
-
-**Evidence:** ADR-013, Pattern 18, component review section. `wc -l` > 761.
+| W# | Title | Priority | Sequencing |
+|----|-------|----------|------------|
+| W1 | Qwen Evaluator Repair via Rich Context | P0 | First |
+| W2 | Evaluator Harness Cleanup + Pattern 20 | P0 | Second |
+| W3 | Post-Flight Production Data Render Check | P0 | Third |
+| W4 | Query Editor Migration to flutter_code_editor (G45) | P1 | Fourth |
+| W5 | Parts Unknown Acquisition Hardening + Phase 2 | P1 | Fifth (parallel with W4) |
+| W6 | README Sync + Component Review + Self-Grading Note | P2 | Last |
 
 ---
 
-## EXECUTION ORDER
+## 7. Active Gotchas (Current as of v10.63 Launch)
 
-1. **W3: Claw3D hard containment** (P0, tsP3-cos) — canvas texture approach
-2. **W1: Parts Unknown Phase 1** (P1, Gemini CLI on NZXTcos) — parallel with W3
-3. **W2: GCP portability plan** (P1) — after W1 so pipeline analysis includes Parts Unknown
-4. **W4: Harness updates** (P2) — after W2/W3
-5. Post-flight + living docs + report
+Read these. Each one is a previous failure that cost an iteration. Do not re-incur them.
+
+| ID | Title | Status | Workaround |
+|----|-------|--------|------------|
+| G1 | Heredocs break agents | Active | `printf` only. Never use `<<EOF`. |
+| G18 | CUDA OOM on RTX 2080 SUPER | Active | Graduated tmux batches. Run `ollama stop` before `transcribe.py`. Verify with `nvidia-smi`. |
+| G19 | Gemini runs bash by default | Active (Gemini iters only) | N/A this iteration — you are Claude Code, you use bash directly. |
+| G22 | `ls` color codes pollute output | Active | Use `command ls`, never bare `ls`. |
+| G34 | Firestore array-contains limits | Active | Client-side post-filter. |
+| G45 | Query editor cursor bug (7 failed attempts) | **TARGETED IN W4** | flutter_code_editor migration. |
+| G47 | CanvasKit prevents DOM scraping | Active | Playwright screenshots only. W3 uses hidden DOM data attributes for marker counts. |
+| G53 | Firebase MCP reauth recurring | Active | Wrap in retry script. |
+| G55 | Qwen empty reports | **REGRESSED, TARGETED IN W1** | Rich context per ADR-014. |
+| G56 | Claw3D `fetch()` 404 on Firebase Hosting | Resolved v10.57 | All Claw3D data inline as JS objects. **Never** `fetch()` external JSON in `claw3d.html`. |
+| G57 | Qwen schema validation too strict | Resolved v10.59 | Rich context (now generalized in ADR-014). |
+| G58 | Agent overwrites design/plan docs | Resolved v10.60 | `IMMUTABLE_ARTIFACTS = ["design","plan"]` guard in `generate_artifacts.py`. **You do not edit design or plan docs.** |
+| G59 | Chip text overflow | Resolved v10.61-62 | Canvas textures + 11px font floor. |
+| G60 | Map tab 0 mapped of 6,181 | Resolved v10.62; **DETECTION ADDED IN W3** | LocationEntity dual-format parsing + render check. |
+| G61 | Build/report not generated | Resolved v10.62 | Post-flight existence check (≥ 100 bytes). |
+| **G62** | Self-grading bias accepted as Tier-1 | **NEW v10.63, TARGETED W1+W2** | ADR-015 hard cap + Pattern 20. **See §8 below.** |
+| **G63** | Acquisition pipeline silently drops failures | **NEW v10.63, TARGETED W5** | Structured failure JSONL + retry. |
+| **G64** | Harness content drift (duplicate sections, stale stamps) | **NEW v10.63, TARGETED W2** | Linear renumbering, archive snapshot. |
+
+**Critical Gemini-specific (does not apply to you, but document is shared):** Never `cat ~/.config/fish/config.fish` — Gemini has leaked API keys via this command.
 
 ---
 
-## COMPLETION CHECKLIST
+## 8. Pattern 20 — Self-Grading Bias (Read Twice)
 
+You are about to spend several hours doing the work in W1–W6. At the end of that work, you will be tempted to write a report that scores your own work generously. **Do not.**
+
+The rule, codified as ADR-015 and Pattern 20 in v10.63:
+
+> If the build log and the report are produced by the same agent, all scores in the report are auto-capped at 7/10 by `post_flight.py`. Original scores are preserved in `data/agent_scores.json` under `raw_self_grade`. The cap is data-quality protection. Do not attempt to bypass it.
+
+The correct flow:
+1. You produce `kjtcom-build-v10.63.md` (build log).
+2. You run `scripts/run_evaluator.py --iteration v10.63 --rich-context --verbose`.
+3. The evaluator (Qwen, Tier 1) reads your build log and produces `kjtcom-report-v10.63.md`.
+4. If Tier 1 fails, Tier 2 (Gemini Flash) fires.
+5. **If both fail and Tier 3 self-eval is the only option, you write the report with all scores ≤ 7. No exceptions.** Document the Tier 1 + Tier 2 failure modes in the report's "What Could Be Better" section.
+
+If the evaluator is unavailable, that is itself a finding worth a Pattern 21 in v10.64. Do not paper over it.
+
+---
+
+## 9. Communication Style
+
+Kyle is terse and direct. Match that.
+
+**Banned phrases in build log and report:**
+- "successfully" (implied by "complete")
+- "robust" (vague)
+- "comprehensive" (vague)
+- "clean release" (vague)
+- "Review..." (compute it)
+- "TBD" (find it)
+- "N/A" (explain why)
+- "strategic shift" (describe the change)
+
+**Changelog prefixes:**
+- `NEW:` — new file or feature
+- `UPDATED:` — modified file or feature
+- `FIXED:` — bug fix
+
+Concrete code over prose. Anticipate visual verification (Kyle uses screenshots from Konsole + browser). Bake guardrails into the next iteration when something fails.
+
+---
+
+## 10. Machine and Environment Details
+
+You may run on either machine. Different workstreams have different machine requirements.
+
+| Machine | Path | Best for |
+|---------|------|----------|
+| **NZXTcos** | `~/dev/projects/kjtcom` | RTX 2080 SUPER 8GB VRAM. **Required for W5** (transcription). Fish shell. |
+| **tsP3-cos** | `~/Development/Projects/kjtcom` | ThinkStation P3 Ultra. App development. **Best for W4** (Flutter). Fish shell. |
+
+SSH config on tsP3-cos: `github.com-sockjt` host alias with `id_ed25519_sockjt` key for SOC-Foundry org access.
+
+Service account credentials live in `~/.config/gcloud/` on both machines.
+
+If W5 runs on NZXTcos and W4 runs on tsP3-cos in parallel, you (Claude Code) probably stay on tsP3-cos and Kyle launches the W5 pipeline runner manually on NZXTcos via tmux. Coordinate with Kyle.
+
+---
+
+## 11. Pre-Flight Checklist (Run Before Starting Anything)
+
+```fish
+# 1. Working directory
+cd ~/Development/Projects/kjtcom    # tsP3-cos
+# OR
+cd ~/dev/projects/kjtcom            # NZXTcos
+
+# 2. Confirm immutable inputs exist
+command ls docs/kjtcom-design-v10.63.md docs/kjtcom-plan-v10.63.md CLAUDE.md
+
+# 3. Confirm last iteration's outputs exist
+command ls docs/kjtcom-build-v10.62.md docs/kjtcom-report-v10.62.md
+
+# 4. Git read-only check (DO NOT WRITE)
+git status --short
+git log --oneline -5
+
+# 5. Ollama + Qwen
+ollama list | grep -i qwen
+curl -s http://localhost:11434/api/tags | python3 -m json.tool | head -30
+
+# 6. Python deps
+python3 --version
+python3 -c "import litellm, jsonschema, playwright; print('python deps ok')"
+
+# 7. Flutter (only if W4 runs on this machine)
+flutter --version
+
+# 8. CUDA (only if W5 runs on this machine)
+nvidia-smi --query-gpu=name,memory.free --format=csv
+
+# 9. Site is currently up
+curl -s -o /dev/null -w "site: %{http_code}\n" https://kylejeromethompson.com
+
+# 10. Production entity baseline (will be re-checked by W3)
+python3 scripts/postflight_checks/bot_query.py 2>&1 | tail -5
 ```
-[ ] W1: Parts Unknown Phase 1 entities in staging
-[ ] W1: t_any_shows correctly set to ["Parts Unknown"]
-[ ] W1: Checkpoint updated for Parts Unknown
-[ ] W2: docs/gcp-portability-plan.md exists (4 sections)
-[ ] W2: Pipeline analysis compares v1 vs v2
-[ ] W3: All chip labels render inside chip boxes (canvas texture)
-[ ] W3: All chips inside board boundaries
-[ ] W3: OpenClaw chip on middleware board
-[ ] W3: Component review pass complete (23+ components verified)
-[ ] W3: 0 console errors, G56=0
-[ ] W4: ADR-013 in harness
-[ ] W4: Pattern 18 (G59) in failure catalog
-[ ] W4: Component review checklist section added
-[ ] W4: Harness > 761 lines
-[ ] Report scored, post-flight passes, changelog, 4 artifacts
+
+If anything in the pre-flight fails, **stop and report to Kyle**. Do not proceed with broken pre-flight (Pillar 4).
+
+---
+
+## 12. Diligence Reads (Pillar 3)
+
+Read these before starting the corresponding workstream. Reading is not optional. It is a middleware function.
+
+**Before W1:**
+- `docs/evaluator-harness.md` (full file, even though it's drifted)
+- `scripts/run_evaluator.py` (full file)
+- `scripts/post_flight.py` (full file)
+- `data/agent_scores.json`
+- `eval_schema.json`
+- `docs/kjtcom-report-v10.59.md` (last known good Qwen output — your precedent)
+- `docs/kjtcom-report-v10.60.md`, `v10.61.md`, `v10.62.md` (failure case studies)
+- `docs/kjtcom-build-v10.62.md` (what actually happened in the iteration you're re-grading)
+
+**Before W2:**
+- `docs/evaluator-harness.md` (with section inventory in mind — see plan doc)
+- The "drift catalog" table in `kjtcom-design-v10.63.md` § W2
+
+**Before W3:**
+- `scripts/post_flight.py`
+- Any existing files under `scripts/postflight_checks/`
+- The Flutter app's Map tab implementation (`app/lib/screens/map_screen.dart` or equivalent) to find a stable selector
+
+**Before W4:**
+- `app/lib/widgets/query_editor.dart`
+- `app/lib/screens/app_shell.dart`
+- `app/pubspec.yaml`
+- `flutter_code_editor` README via Context7 MCP
+- `re_editor` README via Context7 MCP
+- The previous 7 G45 attempts (search `docs/archive/` for "G45" or "query editor")
+
+**Before W5:**
+- `pipeline/scripts/acquire_videos.py` (or whichever script handles yt-dlp)
+- `pipeline/data/bourdain/parts_unknown_checkpoint.json`
+- `docs/kjtcom-build-v10.62.md` § W5 (the partial Phase 1 run you're continuing)
+
+**Before W6:**
+- `README.md`
+- `app/web/claw3d.html` (BOARDS arrays only — do not modify)
+
+---
+
+## 13. Execution Rules (Operational)
+
+1. **Use `printf` for multi-line file writes.** Heredocs break agents (G1).
+2. **Use `command ls`** for any directory listing. Bare `ls` produces ANSI codes that pollute output (G22).
+3. **`fish` is the user shell.** You can run commands in bash directly from Claude Code, but if you need to source fish config or run a fish-specific command, wrap it: `fish -c "your command"`.
+4. **Tmux for long-running jobs.** Transcription, large extraction runs, anything > 5 minutes. Detach and check back. Standard pattern:
+   ```fish
+   tmux new -s job_name -d
+   tmux send-keys -t job_name "your command" Enter
+   tmux attach -t job_name    # Ctrl-b d to detach
+   ```
+5. **Self-healing retries: max 3 per error** (Pillar 7). After 3 retries, log the failure and either move on or escalate. Do not loop forever.
+6. **Read before you code** (Pillar 3). Every workstream's diligence reads are listed in §12. Do them.
+7. **Update the build log as you go.** Do not save it for the end. The build log IS the audit trail (ADR-007). If the iteration crashes, the build log is what's left.
+8. **Stop if pre-flight or post-flight fails.** Do not proceed past a red check.
+9. **Never edit `docs/kjtcom-design-v10.63.md` or `docs/kjtcom-plan-v10.63.md`.** They are immutable inputs (Pillar 2, ADR-012, G58).
+10. **Never run a git write command.** See §0.
+
+---
+
+## 14. Build Log Template
+
+You will produce `docs/kjtcom-build-v10.63.md` during execution. Structure it like this:
+
+```markdown
+# kjtcom — Build Log v10.63
+
+**Iteration:** 10.63
+**Agent:** claude-code
+**Date:** April 06, 2026
+**Machine(s):** [tsP3-cos | NZXTcos | both]
+
+---
+
+## Pre-Flight
+
+[Capture the output of every step from §11. Mark each PASS/FAIL.]
+
+---
+
+## Execution Log
+
+### W1: Qwen Evaluator Repair via Rich Context — [complete | partial | blocked]
+
+[What you did, in order. File paths. Line counts. Command outputs.]
+- Action 1...
+- Action 2...
+- **Outcome:** [complete | partial | blocked]
+- **Evidence:** [paths, line counts, command outputs]
+
+### W2: Evaluator Harness Cleanup, Renumbering, and Pattern 20 — [outcome]
+
+[same structure]
+
+### W3: Post-Flight Production Data Render Check — [outcome]
+
+### W4: Query Editor Migration to flutter_code_editor (G45) — [outcome]
+
+### W5: Parts Unknown Acquisition Hardening + Phase 2 — [outcome]
+
+### W6: README Sync + Component Review + Self-Grading Note — [outcome]
+
+---
+
+## Files Changed
+
+[List every file touched, with line count delta.]
+
+---
+
+## Test Results
+
+[Raw output of any test commands run, including the failure-path test for W3.]
+
+---
+
+## Post-Flight Verification
+
+[Output of `python3 scripts/post_flight.py`. Each check on its own line.]
+
+---
+
+## Trident Metrics
+
+- **Cost:** [token count from event log]
+- **Delivery:** [X/6 workstreams complete]
+- **Performance:** [the five DoD checks from plan §10]
+
+---
+
+## What Could Be Better
+
+[At least 3 honest items. Not "more tests". Specific, with actions.]
+
+---
+
+## Next Iteration Candidates
+
+[At least 3 items.]
+
+---
+
+*Build log v10.63 — produced by claude-code, April 06, 2026.*
 ```
+
+---
+
+## 15. Closing Sequence (Run In Order)
+
+After all 6 workstreams pass and post-flight is green:
+
+```fish
+# 1. Confirm build log is on disk and > 100 bytes
+command ls -l docs/kjtcom-build-v10.63.md
+
+# 2. Run the evaluator (this is W1's payoff)
+python3 scripts/run_evaluator.py --iteration v10.63 --rich-context --verbose 2>&1 | tee /tmp/eval-v10.63.log
+
+# 3. Verify the report was produced and the evaluator is NOT self-eval
+command ls -l docs/kjtcom-report-v10.63.md
+head -20 docs/kjtcom-report-v10.63.md
+grep -i "evaluator\|agent" docs/kjtcom-report-v10.63.md | head -5
+
+# 4. If evaluator is self-eval, verify all scores ≤ 7
+grep -E "Score: ([8-9]|10)/10" docs/kjtcom-report-v10.63.md
+# Above should return nothing. If it returns lines, you bypassed the cap. Fix.
+
+# 5. Verify all 4 artifacts present
+command ls docs/kjtcom-design-v10.63.md docs/kjtcom-plan-v10.63.md docs/kjtcom-build-v10.63.md docs/kjtcom-report-v10.63.md
+
+# 6. Final post-flight (must include the new W3 checks)
+python3 scripts/post_flight.py 2>&1 | tee /tmp/postflight-final.log
+
+# 7. Update the changelog (see harness §11 for template)
+# Append v10.63 entries to docs/kjtcom-changelog.md using NEW: / UPDATED: / FIXED: prefixes.
+
+# 8. Git status read-only — DO NOT WRITE
+git status --short
+echo ""
+echo "v10.63 complete. All artifacts on disk. Awaiting human commit."
+```
+
+**STOP.** Do not run `git add`, `git commit`, `git push`. Hand back to Kyle.
+
+---
+
+## 16. Definition of Done (Repeat from Plan §10)
+
+The iteration is complete when ALL of these are true:
+
+1. **W1:** `docs/kjtcom-report-v10.62-qwen.md` exists; produced by `qwen3.5:9b` or `gemini-2.5-flash` (not self-eval).
+2. **W1:** `docs/kjtcom-report-v10.63.md` exists; same condition.
+3. **W2:** `wc -l docs/evaluator-harness.md` ≥ 950; `grep -c "v9.52"` returns 0; ADR-014, ADR-015, Pattern 20 present; archive at `docs/archive/evaluator-harness-v10.62.md`.
+4. **W3:** `production_data_render_check` and `claw3d_label_legibility` registered in `post_flight.py`; both pass against live site; screenshots in `data/postflight-screenshots/v10.63/`.
+5. **W4:** `query_editor.dart` has no `TextField`; `flutter build web --release` exits 0; cursor smoke tests pass; legacy file archived.
+6. **W5:** `parts_unknown_acquisition_failures.jsonl` exists; staging count ≥ 850 OR documented upstream loss explanation.
+7. **W6:** README contains "6,181", "Thompson Indicator Fields", "Phase 10", "v10.63", and the trident Mermaid block; component review documented; CLAUDE.md self-grading caution present.
+8. **Post-flight:** All checks green including the two new ones from W3.
+9. **Artifacts:** `kjtcom-build-v10.63.md` and `kjtcom-report-v10.63.md` both > 100 bytes.
+10. **Hard contract:** Zero git operations performed by Claude Code. `git log --oneline -5` shows no commits authored by `claude` or `claude-code`.
+
+---
+
+## 17. Failure Modes and What to Do
+
+| Failure | What to do |
+|---------|------------|
+| Pre-flight check fails | Stop. Report to Kyle. Do not proceed. |
+| Qwen produces empty output (W1 Tier 1 failure) | Capture raw response, document in build log, fall through to Tier 2. |
+| Gemini Flash also fails (W1 Tier 2 failure) | Use Tier 3 self-eval with hard 7/10 cap. Document both failures as a new gotcha proposal for v10.64. |
+| flutter_code_editor has dep conflict with Riverpod 2 (W4) | Try `re_editor` instead. If both conflict, pin flutter_code_editor to highest compatible version and document. Do NOT upgrade Riverpod — that is its own dedicated future iteration. |
+| Acquisition rate < 75% on Parts Unknown (W5) | Acceptable IF you log per-video failure reasons in the JSONL and document upstream confirmation in the build log. Not acceptable if you handwave it. |
+| Post-flight render check fails after W1-W3 land | Stop. The map is broken in production. Find out why before continuing W4-W6. |
+| You catch yourself wanting to self-grade above 7/10 | Re-read §8. The cap is data-quality protection. The score does not need to be high; it needs to be honest. |
+| You catch yourself about to run `git commit` | Stop. Re-read §0. |
+
+---
+
+## 18. Why This Iteration Exists
+
+v10.59 → v10.62 was a four-iteration internal-repair streak. Each iteration fixed something the previous iteration broke or missed: Qwen empty reports (G55), schema validation (G57), artifact overwrites (G58), missing artifacts (G61), map regression (G60). The harness was defending itself from itself.
+
+That kind of streak is acceptable for a few iterations. It becomes a tail-chase when the repairs themselves don't get evaluated. v10.62 was self-graded; the tail-chase was about to enter its fifth iteration with no external verification.
+
+v10.63 breaks the loop. W1 gets the evaluator running again. W2 cleans up the harness so the evaluator has a clean source to read. W3 closes the post-flight gap that let G60 ship. W4 finally resolves G45 instead of patching around it. W5 hardens an acquisition path that's been swallowing failures. W6 syncs the public face of the project to the actual state.
+
+If v10.63 succeeds, v10.64 can return to feature delivery: production-load Bourdain, kick off intranet schema work, scope MCP servers + HyperAgents. If v10.63 fails on W1, v10.64 is another internal repair iteration and Kyle's patience for that is finite.
+
+The job is to get the evaluator working. Everything else is supporting.
+
+---
+
+## 19. Launch
+
+When Kyle says **"read claude and execute 10.63"**, you:
+
+1. Acknowledge the launch in one line.
+2. Read this file end-to-end (you may have already done step 0 just by being instantiated; do it again if not).
+3. Read `docs/kjtcom-design-v10.63.md` end-to-end.
+4. Read `docs/kjtcom-plan-v10.63.md` end-to-end.
+5. Run the pre-flight checklist from §11. Capture all output.
+6. Begin W1.
+7. Update the build log as you go. Do not batch it.
+8. Move through W2, W3, then W4 and W5 (parallel if practical), then W6.
+9. Run the closing sequence from §15.
+10. Hand back to Kyle. Do not commit.
+
+---
+
+## 20. Acknowledgments and Footer
+
+This file is the launch artifact for v10.63. It pairs with `kjtcom-design-v10.63.md` (the spec) and `kjtcom-plan-v10.63.md` (the procedure). The harness at `docs/evaluator-harness.md` is the evaluator's operating manual; this file is yours.
+
+The harness grows. CLAUDE.md grows. Both are append-only across iterations as new context, gotchas, ADRs, and patterns accumulate. Nothing here is removed; only updated, deprecated, or moved to the archive directory. v10.62 CLAUDE.md was ~450 lines; v10.63 is ~600+; v10.64 will be larger. The growth is the audit trail.
+
+If something in this file conflicts with the design or plan doc, **the design and plan doc win**. They are the immutable inputs. This file is the brief.
+
+If something in this file conflicts with `evaluator-harness.md`, **flag the conflict in the build log** and proceed with this file's instructions. Harness drift is W2's problem.
+
+If you find a new gotcha during execution, **add it to the build log under "New Gotchas Discovered"** with a proposed Gxx number. The next iteration's planning chat will fold it into v10.64's CLAUDE.md and the harness.
+
+Now go.
+
+---
+
+*CLAUDE.md v10.63 — April 06, 2026. Authored by the planning chat. Replaced each iteration. Archived to `docs/archive/CLAUDE-v10.62.md` if not already done.*

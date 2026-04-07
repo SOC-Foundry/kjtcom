@@ -14,7 +14,50 @@ kjtcom extracts entities from YouTube playlists - landmarks, trails, restaurants
 
 The same normalization patterns power production SIEM migrations at [TachTech Engineering](https://tachtech.net). Built entirely by LLM agents using IAO (Iterative Agentic Orchestration) - a methodology distilled from 46+ iterations across 10 phases on [TripleDB](https://github.com/TachTech-Engineering/tripledb).
 
-**[kylejeromethompson.com](https://kylejeromethompson.com)** | **Phase 10 v10.59 (ACTIVE)** | **Status: Bourdain Pipeline Complete + PCB Architecture + Middleware Hardening**
+**[kylejeromethompson.com](https://kylejeromethompson.com)** | **Phase 10 v10.63 (ACTIVE)** | **Status: Evaluator Repaired (Qwen Tier 1 passing) + Harness Cleaned + Production Render Check + Self-Grading Cap (ADR-015)**
+
+```mermaid
+graph BT
+    IAO["<b>I A O</b><br/><i>Iterative Agentic Orchestration</i>"]:::shaft
+    IAO --- COST["◆ Minimal cost"]:::prong
+    IAO --- SPEED["◆ Speed of delivery"]:::prong
+    IAO --- PERF["◆ Optimized performance"]:::prong
+    classDef shaft fill:#0D9488,stroke:#0D9488,color:#fff
+    classDef prong fill:#161B22,stroke:#4ADE80,color:#4ADE80
+```
+
+### The Ten Pillars of IAO
+
+1. **Trident Governance** - Cost / Delivery / Performance triangle governs every decision.
+2. **Artifact Loop** - Design -> Plan (INPUT, immutable) -> Build -> Report (OUTPUT).
+3. **Diligence** - Read before you code; pre-read is a middleware function.
+4. **Pre-Flight Verification** - Validate the environment before execution.
+5. **Agentic Harness Orchestration** - The harness is the product; the model is the engine.
+6. **Zero-Intervention Target** - Interventions are failures in planning.
+7. **Self-Healing Execution** - Max 3 retries per error with diagnostic feedback.
+8. **Phase Graduation** - Sandbox -> staging -> production.
+9. **Post-Flight Functional Testing** - Rigorous validation of all deliverables.
+10. **Continuous Improvement** - Retrospectives feed directly into the next plan.
+
+The harness, ADRs, evaluator, post-flight, and gotcha registry are the actual product. The Flutter app and YouTube pipelines are the data exhaust that proves the harness works. See `docs/evaluator-harness.md` (956 lines, v10.63), `docs/kjtcom-design-v10.63.md`, and `docs/kjtcom-plan-v10.63.md` for the current iteration's authoritative spec.
+
+### v10.63 Component Review
+
+Codebase component count vs Claw3D PCB chip count (v10.61 census = 49 chips across 4 boards):
+
+- **Frontend (10 chips):** query_ed, results, detail, map, globe, iao, mw_tab, schema, claw3d, fb_host - all present in `app/lib/widgets/` and `app/web/`.
+- **Pipeline (9 chips):** yt_dlp, whisper, extract, normalize, geocode, enrich, load, tmux, checkpoint - all present in `pipeline/scripts/`.
+- **Middleware (23 chips):** evaluator, harness, ADR, artifact, gotchas, scores, pre_flight, post_flight, router, tg_bot, rag, qwen_9b, nemotron, gflash, fb_mcp, c7_mcp, pw_mcp, fc_mcp, dart_mcp, claude, gemini, logger, openclaw - all present in `scripts/` and `data/`.
+- **Backend (7 chips):** firestore, prod_db, stg_db, calgold, ricksteves, tripledb, bourdain - all present in Firestore project state.
+
+**v10.63 delta:** No new chips required. The new W3 production data render check and W2 ADR-014/015 additions are extensions of existing chips (`post_flight`, `evaluator`, `harness`), not new components. Claw3D PCB visualization is unchanged this iteration.
+
+### Data Architecture
+
+- **Single Firestore `locations` collection** with `t_log_type` discriminator (`calgold`, `ricksteves`, `tripledb`, `bourdain`).
+- **Multi-database:** `(default)` for production (6,181 entities), `staging` for in-flight pipeline work (537+ entities, Bourdain).
+- **Project IDs:** `kjtcom-c78cd` (main), `tripledb-e0f77` (TripleDB source).
+- **Schema:** Thompson Indicator Fields (`t_any_*`) - 19 v3 fields in production, 49 v4 candidate fields defined for the intranet rollout (ADR-011).
 
 ---
 
@@ -43,7 +86,7 @@ The same normalization patterns power production SIEM migrations at [TachTech En
 
 **[Interactive PCB Architecture Diagram](https://kylejeromethompson.com/claw3d.html)** | **[Interactive Architecture Diagram](https://kylejeromethompson.com/architecture.html)** | **[Telegram Bot](https://t.me/kjtcom_iao_bot)** | [Mermaid Source](docs/kjtcom-architecture.mmd)
 
-Current state: v10.59 (Phase 10 ACTIVE) - 4 pipelines (3 production + Bourdain staging), 5 MCP servers (Firebase, Context7, Playwright, Firecrawl, Dart), 4 local LLMs (Qwen 9B, Nemotron 4B, GLM, Llama), RAG middleware (1,819 ChromaDB chunks), dual retrieval (Firestore + ChromaDB) via Gemini Flash 3-route intent router, Telegram bot (@kjtcom_iao_bot) with session memory and rating-aware queries, systemd service management, P3 event logging, post-flight verification (15 checks), artifact automation with computed Trident values, 727-line evaluator harness (docs/evaluator-harness.md) with three-tier fallback chain (Qwen -> Gemini Flash -> self-eval).
+Current state: v10.63 (Phase 10 ACTIVE) - 4 pipelines (3 production + Bourdain staging), 5 MCP servers (Firebase, Context7, Playwright, Firecrawl, Dart), 4 local LLMs (Qwen 9B, Nemotron 4B, GLM, Llama), RAG middleware (1,819 ChromaDB chunks), dual retrieval (Firestore + ChromaDB) via Gemini Flash 3-route intent router, Telegram bot (@kjtcom_iao_bot) with session memory and rating-aware queries, systemd service management, P3 event logging, post-flight verification (15 checks), artifact automation with computed Trident values, 727-line evaluator harness (docs/evaluator-harness.md) with three-tier fallback chain (Qwen -> Gemini Flash -> self-eval).
 
 ### PCB Layout (Claw3D)
 

@@ -278,6 +278,23 @@ def run_all(iteration=None):
     for f in artifact_failures:
         print(f"  {f}")
 
+    # v10.63 W3: production data render check + claw3d screenshot capture
+    print("\nProduction Data Render Check (W3, G60 detection):")
+    try:
+        from postflight_checks.production_data_render import run as render_check
+        results["production_data_render_check"] = render_check()
+    except Exception as e:
+        print(f"  FAIL: production_data_render_check (import/runtime error: {e})")
+        results["production_data_render_check"] = False
+
+    print("\nClaw3D Label Legibility Capture (W3):")
+    try:
+        from postflight_checks.claw3d_label_legibility import run as claw3d_check
+        results["claw3d_label_legibility"] = claw3d_check()
+    except Exception as e:
+        print(f"  FAIL: claw3d_label_legibility (import/runtime error: {e})")
+        results["claw3d_label_legibility"] = False
+
     # Log results
     for check, passed in results.items():
         if passed is None:

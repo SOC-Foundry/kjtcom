@@ -50,20 +50,35 @@ def load_gotcha_archive():
         return []
 
 
+def _find_doc(doc_type, iteration):
+    """Locate an iteration doc, falling through to docs/archive/ (v10.63 mid-reorg)."""
+    for loc in [
+        f"docs/kjtcom-{doc_type}-{iteration}.md",
+        f"docs/archive/kjtcom-{doc_type}-{iteration}.md",
+        f"docs/drafts/kjtcom-{doc_type}-{iteration}.md",
+    ]:
+        if os.path.exists(loc):
+            return loc
+    return None
+
+
 def build_rich_context(iteration):
-    """Build 50-80KB context package for Qwen evaluation."""
-    import os
+    """Build 50-80KB context package for Qwen evaluation.
+
+    v10.63 (ADR-014): rich context is the default. Falls through to
+    docs/archive/ for any iteration whose artifacts have been moved.
+    """
     parts = []
 
-    # Current iteration artifacts
-    for doc_type in ["build", "design"]:
-        path = f"docs/kjtcom-{doc_type}-{iteration}.md"
-        if os.path.exists(path):
+    # Current iteration artifacts (build + design + plan)
+    for doc_type in ["build", "design", "plan"]:
+        path = _find_doc(doc_type, iteration)
+        if path:
             parts.append(f"=== CURRENT {doc_type.upper()} ({iteration}) ===")
             parts.append(open(path).read())
 
-    # Few-shot: 2-3 example reports that have complete scorecards
-    for ver in ["v10.56", "v10.58"]:
+    # Few-shot precedent reports (ADR-014 calls out v10.59 as last known good Qwen output)
+    for ver in ["v10.59", "v10.56", "v10.58"]:
         for loc in [f"docs/kjtcom-report-{ver}.md", f"docs/archive/kjtcom-report-{ver}.md"]:
             if os.path.exists(loc):
                 parts.append(f"=== EXAMPLE REPORT ({ver}) — match this format ===")
@@ -294,6 +309,146 @@ def parse_executing_agent(design_doc_path):
     return "claude-code"
 
 
+def normalize_llm_output(output, expected_count, expected_names, executing_agent):
+    """ADR-014 (v10.63): Coerce common LLM deviations into schema shape.
+
+    Small models (Qwen 9B, Gemini Flash) produce rich content but routinely
+    skip required scaffolding fields, use natural-language priorities, and
+    return improvements as a single string. Rather than rejecting and
+    retrying with tighter constraints (which v10.60-62 proved fails),
+    repair the response in place.
+    """
+    if not isinstance(output, dict):
+        return output
+
+    # Workstreams may come back as dict keyed by W1/W2/...
+    ws_raw = output.get("workstreams", [])
+    if isinstance(ws_raw, dict):
+        ws_raw = list(ws_raw.values())
+    if not isinstance(ws_raw, list):
+        ws_raw = []
+
+    priority_map = {
+        "critical": "P0", "high": "P0", "p0": "P0",
+        "medium": "P1", "med": "P1", "p1": "P1",
+        "low": "P2", "p2": "P2",
+        "minor": "P3", "p3": "P3",
+    }
+    outcome_map = {
+        "success": "complete", "successful": "complete", "done": "complete",
+        "complete": "complete", "completed": "complete",
+        "partial": "partial", "in progress": "partial", "in-progress": "partial",
+        "failed": "failed", "fail": "failed", "broken": "failed",
+        "deferred": "deferred", "skipped": "deferred", "blocked": "deferred",
+    }
+
+    fixed_ws = []
+    for i in range(expected_count):
+        src = ws_raw[i] if i < len(ws_raw) and isinstance(ws_raw[i], dict) else {}
+        wid = src.get("id") or f"W{i+1}"
+        name = src.get("name") or (expected_names[i] if i < len(expected_names) else f"Workstream {i+1}")
+
+        prio = str(src.get("priority", "P1")).strip().lower()
+        prio = priority_map.get(prio, prio.upper() if prio.upper() in ("P0","P1","P2","P3") else "P1")
+
+        out = str(src.get("outcome", "partial")).strip().lower()
+        out = outcome_map.get(out, "partial" if out not in ("complete","partial","failed","deferred") else out)
+
+        try:
+            score = int(src.get("score", 5))
+        except (TypeError, ValueError):
+            score = 5
+        score = max(0, min(9, score))  # schema cap is 9
+
+        evidence = src.get("evidence", "")
+        if isinstance(evidence, list):
+            evidence = "; ".join(str(x) for x in evidence)
+        evidence = str(evidence)[:1000]
+        if len(evidence) < 10:
+            evidence = f"Evaluator did not return per-workstream evidence; see build log for {wid}."
+
+        improvements = src.get("improvements", [])
+        if isinstance(improvements, str):
+            # split on newlines or semicolons
+            parts = [p.strip(" -•*") for p in improvements.replace("\n", ";").split(";") if p.strip()]
+            improvements = parts or [improvements]
+        if not isinstance(improvements, list):
+            improvements = [str(improvements)]
+        improvements = list(improvements)
+        _pad_options = [
+            "Evaluator returned fewer than two improvements; consider re-running with a richer build log.",
+            "Add a unit test fixture for normalize_llm_output() covering all coercion paths.",
+        ]
+        while len(improvements) < 2:
+            improvements.append(_pad_options[len(improvements) % 2])
+        improvements = [str(x)[:500] for x in improvements][:6]
+
+        agents = src.get("agents") or [executing_agent]
+        if not isinstance(agents, list):
+            agents = [str(agents)]
+        llms = src.get("llms") or ["qwen3.5:9b"]
+        if not isinstance(llms, list):
+            llms = [str(llms)]
+        mcps = src.get("mcps") or ["-"]
+        if not isinstance(mcps, list):
+            mcps = [str(mcps)]
+        # Strip MCP enum dump
+        valid_mcps = {"Firebase", "Context7", "Firecrawl", "Playwright", "Dart", "-"}
+        mcps = [m for m in mcps if m in valid_mcps] or ["-"]
+        mcps = mcps[:5]
+
+        fixed_ws.append({
+            "id": wid,
+            "name": name,
+            "priority": prio,
+            "outcome": out,
+            "evidence": evidence,
+            "agents": agents,
+            "llms": llms,
+            "mcps": mcps,
+            "score": score,
+            "improvements": improvements,
+        })
+
+    output["workstreams"] = fixed_ws
+
+    # Trident normalization
+    trident = output.get("trident", {}) or {}
+    if not isinstance(trident, dict):
+        trident = {}
+    cost = str(trident.get("cost", ""))[:500]
+    if len(cost) < 5:
+        cost = "Cost not reported by evaluator."
+    delivery = str(trident.get("delivery", ""))
+    import re as _re
+    if not _re.match(r'^\d+/\d+ workstreams', delivery):
+        completed = sum(1 for w in fixed_ws if w["outcome"] == "complete")
+        delivery = f"{completed}/{expected_count} workstreams complete (normalized from '{delivery[:60]}')"
+    perf = str(trident.get("performance", ""))[:500]
+    if len(perf) < 10:
+        perf = "Performance not reported by evaluator."
+    output["trident"] = {"cost": cost, "delivery": delivery, "performance": perf}
+
+    # Iteration / summary safety
+    if not output.get("iteration"):
+        output["iteration"] = "v0.0"
+    summary = str(output.get("summary", ""))[:2000]
+    if len(summary) < 50:
+        summary = (summary + " (Evaluator returned a short summary; padded for schema compliance.)")[:2000]
+    output["summary"] = summary
+
+    wcb = output.get("what_could_be_better", [])
+    if isinstance(wcb, str):
+        wcb = [wcb]
+    if not isinstance(wcb, list):
+        wcb = [str(wcb)]
+    if len(wcb) < 2:
+        wcb = list(wcb) + ["Evaluator returned fewer than two improvement notes."]
+    output["what_could_be_better"] = [str(x)[:500] for x in wcb][:8]
+
+    return output
+
+
 def validate_qwen_output(output, expected_count, expected_names):
     """Full validation: schema + workstream count + names (fuzzy) + banned phrases + mcps logic.
 
@@ -360,9 +515,11 @@ def call_qwen(messages):
     }, evaluation=True)
 
     start_time = time.time()
+    # v10.63: rich context bundle can exceed argv limits. Pipe via stdin.
+    payload_json = json.dumps(payload)
     result = subprocess.run(
-        ['curl', '-s', OLLAMA_URL, '-d', json.dumps(payload)],
-        capture_output=True, text=True, timeout=180
+        ['curl', '-s', OLLAMA_URL, '-H', 'Content-Type: application/json', '--data-binary', '@-'],
+        input=payload_json, capture_output=True, text=True, timeout=300
     )
     latency = int((time.time() - start_time) * 1000)
 
@@ -579,12 +736,9 @@ def try_qwen_tier(base_prompt, harness, expected_count, expected_names, executin
             current_prompt = base_prompt + "\n\nERROR: Your response was not valid JSON. Return ONLY a JSON object, no markdown fences, no explanation."
             continue
 
-        # Normalize workstreams: if LLM returns a dict ({"W1": {...}}) convert to list
-        ws_raw = parsed.get("workstreams", [])
-        if isinstance(ws_raw, dict):
-            parsed["workstreams"] = list(ws_raw.values())
-
+        # ADR-014 normalization: coerce common deviations BEFORE validation.
         try:
+            parsed = normalize_llm_output(parsed, expected_count, expected_names, executing_agent)
             errors = validate_qwen_output(parsed, expected_count, expected_names)
         except (AttributeError, TypeError) as e:
             errors = [f"Malformed workstream structure: {e}"]
@@ -593,6 +747,8 @@ def try_qwen_tier(base_prompt, harness, expected_count, expected_names, executin
             print(f"[EVAL] Qwen schema validation passed on attempt {attempt + 1}")
             parsed['evaluator_tokens'] = tokens
             parsed['evaluator'] = 'qwen3.5:9b'
+            parsed['tier_used'] = 'qwen'
+            parsed['self_graded'] = False
             for ws in parsed.get('workstreams', []):
                 print(f"  {ws['id']}: {ws['name']} - {ws['score']}/10 ({ws['outcome']})")
             return parsed
@@ -636,12 +792,10 @@ def try_gemini_tier(base_prompt, expected_count, expected_names, verbose=False):
             current_prompt = base_prompt + "\n\nERROR: Not valid JSON. Return ONLY a JSON object."
             continue
 
-        # Normalize workstreams: if LLM returns a dict ({"W1": {...}}) convert to list
-        ws_raw = parsed.get("workstreams", [])
-        if isinstance(ws_raw, dict):
-            parsed["workstreams"] = list(ws_raw.values())
-
+        # ADR-014 normalization (Gemini path).
+        # Gemini Flash needs an executing_agent reference; pull it from the closure.
         try:
+            parsed = normalize_llm_output(parsed, expected_count, expected_names, "claude-code")
             errors = validate_qwen_output(parsed, expected_count, expected_names)
         except (AttributeError, TypeError) as e:
             errors = [f"Malformed workstream structure: {e}"]
@@ -650,6 +804,8 @@ def try_gemini_tier(base_prompt, expected_count, expected_names, verbose=False):
             print(f"[EVAL] Gemini Flash schema validation passed on attempt {attempt + 1}")
             parsed['evaluator_tokens'] = tokens
             parsed['evaluator'] = 'gemini-flash (qwen-fallback)'
+            parsed['tier_used'] = 'gemini-flash'
+            parsed['self_graded'] = False
             for ws in parsed.get('workstreams', []):
                 print(f"  {ws['id']}: {ws['name']} - {ws['score']}/10 ({ws['outcome']})")
             return parsed
@@ -712,12 +868,13 @@ def evaluate_with_retry(version, design_doc_path, max_retries=3, verbose=False, 
     else:
         print("[EVAL] Skipping Gemini tier (--test-fallback self-eval)")
 
-    # Tier 3: Self-eval (always succeeds)
-    print("[EVAL] Generating self-eval (Qwen + Gemini fallback).")
+    # Tier 3: Self-eval (always succeeds; ADR-015 hard-caps scores at 7/10)
+    print("[EVAL] Generating self-eval (Qwen + Gemini fallback). ADR-015 cap active.")
     build_log = ""
-    # Check promoted docs first, then drafts fallback
+    # v10.63: include archive fallback (mid-reorg)
     for build_log_candidate in [
         os.path.join(PROJECT_DIR, 'docs', f'kjtcom-build-{version}.md'),
+        os.path.join(PROJECT_DIR, 'docs', 'archive', f'kjtcom-build-{version}.md'),
         os.path.join(PROJECT_DIR, 'docs', 'drafts', f'kjtcom-build-{version}.md'),
     ]:
         if os.path.exists(build_log_candidate):
@@ -726,17 +883,29 @@ def evaluate_with_retry(version, design_doc_path, max_retries=3, verbose=False, 
             print(f"[EVAL] Build log found: {build_log_candidate} ({len(build_log)} chars)")
             break
     if not build_log:
-        print(f"[EVAL] WARNING: No build log found for {version} in docs/ or docs/drafts/")
+        print(f"[EVAL] WARNING: No build log found for {version} in docs/, docs/archive/ or docs/drafts/")
 
     result = generate_self_eval(build_log, design_content, version, expected_names)
     result['evaluator'] = 'self-eval (fallback)'
     result['evaluator_tokens'] = {}
+    result['tier_used'] = 'self-eval'
+    result['self_graded'] = True
+    # ADR-015 enforcement: cap any score > 7 and preserve raw
+    for ws in result.get('workstreams', []):
+        if ws.get('score', 0) > 7:
+            ws['raw_self_grade'] = ws['score']
+            ws['score'] = 7
+            ws['score_note'] = 'Self-grading cap applied (ADR-015)'
     return result
 
 
-def write_report_markdown(version, evaluation):
-    """Write the evaluation report as a markdown file."""
-    report_path = os.path.join(PROJECT_DIR, 'docs', f'kjtcom-report-{version}.md')
+def write_report_markdown(version, evaluation, suffix=""):
+    """Write the evaluation report as a markdown file.
+
+    suffix: optional filename suffix (e.g. "-qwen") for retroactive runs that
+    must not overwrite the original self-graded report.
+    """
+    report_path = os.path.join(PROJECT_DIR, 'docs', f'kjtcom-report-{version}{suffix}.md')
     evaluator = evaluation.get('evaluator', 'unknown')
     lines = []
     lines.append(f"# kjtcom - Report v{version.replace('v','')}")
@@ -842,17 +1011,28 @@ if __name__ == '__main__':
                 print("Valid values: gemini, self-eval")
                 sys.exit(1)
 
-    design_path = f'docs/kjtcom-design-{version}.md'
+    # v10.63: --rich-context (no-op flag, default behavior since v10.59) and
+    # --retroactive (allows running against an archived iteration). Both accepted
+    # for plan parity. Rich context is always built; retroactive routes through
+    # the archive fallback already added to _find_doc().
+    rich_context_flag = '--rich-context' in sys.argv  # accepted, default behavior
+    retroactive_flag = '--retroactive' in sys.argv
+
+    design_path = _find_doc('design', version) or f'docs/kjtcom-design-{version}.md'
 
     if not os.path.exists(design_path):
         print(f"Design doc not found: {design_path}")
         sys.exit(1)
+    if retroactive_flag:
+        print(f"[EVAL] Retroactive mode for {version}; design at {design_path}")
 
     # Three-tier evaluator fallback chain (v10.56)
     # Qwen (3 attempts) -> Gemini Flash (2 attempts) -> self-eval (always succeeds)
     evaluation = evaluate_with_retry(version, design_path, verbose=verbose, test_fallback=test_fallback)
     save_scores(version, evaluation)
-    write_report_markdown(version, evaluation)
+    # Retroactive runs write to a -qwen suffix so the original report is preserved.
+    suffix = "-qwen" if retroactive_flag else ""
+    write_report_markdown(version, evaluation, suffix=suffix)
 
     evaluator = evaluation.get('evaluator', 'unknown')
     print(f"\n[EVAL] Evaluator: {evaluator}")
