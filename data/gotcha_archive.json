@@ -1,12 +1,46 @@
 {
-  "resolved_gotchas": [
+  "schema_version": 2,
+  "last_updated": "2026-04-06",
+  "registry": [
+    {
+      "id": "G1",
+      "title": "Heredocs break agents",
+      "status": "Active",
+      "action": "`printf` only. Never `<<EOF`.",
+      "source": "GEMINI.md"
+    },
     {
       "id": "G2",
       "description": "CUDA LD_LIBRARY_PATH not set in subprocess environment",
       "resolution": "Source ~/.config/fish/config.fish before transcription; bake CUDA paths into config.fish",
       "iteration_resolved": "v3.10",
       "root_cause": "environment",
-      "prevention": "install.fish Step 8 sets CUDA paths automatically"
+      "prevention": "install.fish Step 8 sets CUDA paths automatically",
+      "status": "Resolved",
+      "source": "gotcha_archive.json",
+      "title": "CUDA LD_LIBRARY_PATH not set in subprocess environment",
+      "action": "Source ~/.config/fish/config.fish before transcription; bake CUDA paths into config.fish"
+    },
+    {
+      "id": "G18",
+      "title": "CUDA OOM on RTX 2080 SUPER",
+      "status": "Active",
+      "action": "`ollama stop` BEFORE `transcribe.py`. Verify with `nvidia-smi`. Graduated tmux batches.",
+      "source": "GEMINI.md"
+    },
+    {
+      "id": "G19",
+      "title": "Gemini runs bash by default",
+      "status": "**ACTIVE \u2014 applies to you**",
+      "action": "Wrap fish-specific commands: `fish -c \"your command\"`. Bash works for general commands.",
+      "source": "GEMINI.md"
+    },
+    {
+      "id": "G22",
+      "title": "`ls` color codes pollute output",
+      "status": "Active",
+      "action": "Use `command ls`, never bare `ls`.",
+      "source": "GEMINI.md"
     },
     {
       "id": "G23",
@@ -14,7 +48,11 @@
       "resolution": "Configured in config.fish alongside G2 fix",
       "iteration_resolved": "v3.10",
       "root_cause": "environment",
-      "prevention": "install.fish ensures CUDA paths are persistent"
+      "prevention": "install.fish ensures CUDA paths are persistent",
+      "status": "Resolved",
+      "source": "gotcha_archive.json",
+      "title": "LD_LIBRARY_PATH CUDA environment variable missing in fish",
+      "action": "Configured in config.fish alongside G2 fix"
     },
     {
       "id": "G31",
@@ -22,7 +60,18 @@
       "resolution": "Inspect actual Firestore data before any schema migration; verify field consistency across all documents",
       "iteration_resolved": "v7.21",
       "root_cause": "firestore",
-      "prevention": "Always read sample docs before schema changes; validate with dry-run"
+      "prevention": "Always read sample docs before schema changes; validate with dry-run",
+      "status": "Resolved",
+      "source": "gotcha_archive.json",
+      "title": "TripleDB schema drift during migration",
+      "action": "Inspect actual Firestore data before any schema migration; verify field consistency across all documents"
+    },
+    {
+      "id": "G34",
+      "title": "Firestore array-contains limits",
+      "status": "Active",
+      "action": "Client-side post-filter.",
+      "source": "GEMINI.md"
     },
     {
       "id": "G36",
@@ -30,7 +79,11 @@
       "resolution": "Lowercase ALL string values in ALL t_any_* arrays via fix_all_lowercase.py (1,286 entities updated)",
       "iteration_resolved": "v9.32",
       "root_cause": "firestore",
-      "prevention": "All pipeline ingestion normalizes to lowercase before Firestore write"
+      "prevention": "All pipeline ingestion normalizes to lowercase before Firestore write",
+      "status": "Resolved",
+      "source": "gotcha_archive.json",
+      "title": "Firestore arrayContains queries are case-sensitive",
+      "action": "Lowercase ALL string values in ALL t_any_* arrays via fix_all_lowercase.py (1,286 entities updated)"
     },
     {
       "id": "G37",
@@ -38,7 +91,11 @@
       "resolution": "fix_tripledb_shows_case.py lowercased all 1,100 t_any_shows values",
       "iteration_resolved": "v9.32",
       "root_cause": "pipeline",
-      "prevention": "Pipeline normalization step lowercases all array string values"
+      "prevention": "Pipeline normalization step lowercases all array string values",
+      "status": "Resolved",
+      "source": "gotcha_archive.json",
+      "title": "t_any_shows field contained mixed-case values in TripleDB",
+      "action": "fix_tripledb_shows_case.py lowercased all 1,100 t_any_shows values"
     },
     {
       "id": "G39",
@@ -46,7 +103,11 @@
       "resolution": "Ensure DetailPanel NotifierProvider is always in widget tree at all viewport sizes",
       "iteration_resolved": "v8.24",
       "root_cause": "flutter",
-      "prevention": "Providers must be positioned above all breakpoint-sensitive widgets"
+      "prevention": "Providers must be positioned above all breakpoint-sensitive widgets",
+      "status": "Resolved",
+      "source": "gotcha_archive.json",
+      "title": "Detail panel provider not accessible at all viewport sizes",
+      "action": "Ensure DetailPanel NotifierProvider is always in widget tree at all viewport sizes"
     },
     {
       "id": "G41",
@@ -54,7 +115,11 @@
       "resolution": "Added deduplication logic and guard flags to prevent handler re-execution",
       "iteration_resolved": "v8.25",
       "root_cause": "flutter",
-      "prevention": "All event handlers use guard flags or dedup checks"
+      "prevention": "All event handlers use guard flags or dedup checks",
+      "status": "Resolved",
+      "source": "gotcha_archive.json",
+      "title": "Widget rebuild triggers event handlers multiple times",
+      "action": "Added deduplication logic and guard flags to prevent handler re-execution"
     },
     {
       "id": "G42",
@@ -62,7 +127,18 @@
       "resolution": "Removed query rotation feature entirely from query_editor.dart",
       "iteration_resolved": "v8.26",
       "root_cause": "flutter",
-      "prevention": "Feature removal was the fix; do not re-add auto-rotation"
+      "prevention": "Feature removal was the fix; do not re-add auto-rotation",
+      "status": "Resolved",
+      "source": "gotcha_archive.json",
+      "title": "Rotating queries feature overwrites user input",
+      "action": "Removed query rotation feature entirely from query_editor.dart"
+    },
+    {
+      "id": "G45",
+      "title": "Query editor cursor bug (8th attempt)",
+      "status": "**TARGETED W3**",
+      "action": "flutter_code_editor migration. Fall back to `re_editor` if dep conflict.",
+      "source": "GEMINI.md"
     },
     {
       "id": "G46",
@@ -70,7 +146,18 @@
       "resolution": "Verified no .limit() calls; CA has exactly 1,000 entities - not a cap",
       "iteration_resolved": "v9.30",
       "root_cause": "firestore",
-      "prevention": "Updated feedback message to remove misleading 'first 1,000 results' text"
+      "prevention": "Updated feedback message to remove misleading 'first 1,000 results' text",
+      "status": "Resolved",
+      "source": "gotcha_archive.json",
+      "title": "Query appeared to cap results at 1,000 entities",
+      "action": "Verified no .limit() calls; CA has exactly 1,000 entities - not a cap"
+    },
+    {
+      "id": "G47",
+      "title": "CanvasKit prevents DOM scraping",
+      "status": "Active",
+      "action": "W4 uses pHash baseline diff (no DOM scrape needed).",
+      "source": "GEMINI.md"
     },
     {
       "id": "G49",
@@ -78,7 +165,11 @@
       "resolution": "Data fix via fix_tripledb_shows_case.py (same as G37)",
       "iteration_resolved": "v9.32",
       "root_cause": "pipeline",
-      "prevention": "Pipeline normalization ensures lowercase on ingestion"
+      "prevention": "Pipeline normalization ensures lowercase on ingestion",
+      "status": "Resolved",
+      "source": "gotcha_archive.json",
+      "title": "TripleDB results displaying show names in title case",
+      "action": "Data fix via fix_tripledb_shows_case.py (same as G37)"
     },
     {
       "id": "G50",
@@ -86,7 +177,11 @@
       "resolution": "Redeployed with correct quoted-first regex order; added 3 regression tests",
       "iteration_resolved": "v9.33",
       "root_cause": "dependency",
-      "prevention": "Regression tests for quoted value parsing; verify deploy matches repo code"
+      "prevention": "Regression tests for quoted value parsing; verify deploy matches repo code",
+      "status": "Resolved",
+      "source": "gotcha_archive.json",
+      "title": "Parser regex order regression - unquoted matched before quoted values",
+      "action": "Redeployed with correct quoted-first regex order; added 3 regression tests"
     },
     {
       "id": "G51",
@@ -94,7 +189,11 @@
       "resolution": "Add think:false to Ollama API payload via ollama_config.py",
       "iteration_resolved": "v9.39",
       "root_cause": "llm_config",
-      "prevention": "All Ollama calls go through ollama_config.py merge_defaults() which sets think:false"
+      "prevention": "All Ollama calls go through ollama_config.py merge_defaults() which sets think:false",
+      "status": "Resolved",
+      "source": "gotcha_archive.json",
+      "title": "Qwen3.5-9B returns empty responses - tokens consumed by internal thinking",
+      "action": "Add think:false to Ollama API payload via ollama_config.py"
     },
     {
       "id": "G52",
@@ -102,7 +201,18 @@
       "resolution": "Transient npx startup delay; resolved by v9.37 with confirmed operational test",
       "iteration_resolved": "v9.37",
       "root_cause": "mcp",
-      "prevention": "Verify MCP servers load on session start; retry if transient failure"
+      "prevention": "Verify MCP servers load on session start; retry if transient failure",
+      "status": "Resolved",
+      "source": "gotcha_archive.json",
+      "title": "Firecrawl MCP server not loading despite API key being set",
+      "action": "Transient npx startup delay; resolved by v9.37 with confirmed operational test"
+    },
+    {
+      "id": "G53",
+      "title": "Firebase MCP reauth recurring",
+      "status": "Active",
+      "action": "Wrap in retry script.",
+      "source": "GEMINI.md"
     },
     {
       "id": "G54",
@@ -110,39 +220,263 @@
       "resolution": "Patched 7 open-interpreter files with try/except ImportError guards around pkg_resources",
       "iteration_resolved": "v9.39",
       "root_cause": "dependency",
-      "prevention": "Pin open-interpreter; monitor for upstream fix; install.fish includes patches"
+      "prevention": "Pin open-interpreter; monitor for upstream fix; install.fish includes patches",
+      "status": "Resolved",
+      "source": "gotcha_archive.json",
+      "title": "open-interpreter 0.4.3 incompatible with Python 3.14 (pkg_resources removed)",
+      "action": "Patched 7 open-interpreter files with try/except ImportError guards around pkg_resources"
     },
     {
       "id": "G55",
-      "description": "query_rag.py CLI --json flag parsed as positional argument",
-      "resolution": "Bypassed CLI; use direct import of query_rag functions in telegram_bot.py",
-      "iteration_resolved": "v9.40",
-      "root_cause": "pipeline",
-      "prevention": "Prefer direct Python imports over subprocess CLI calls for internal tools"
+      "title": "Qwen empty reports",
+      "status": "**REGRESSED, TARGETED IN W1**",
+      "action": "Rich context per ADR-014.",
+      "source": "CLAUDE.md"
     },
     {
       "id": "G56",
-      "description": "Firestore composite index required for rating sort + filter combo",
-      "resolution": "Python-side sort in firestore_query.py - fetch all matching docs, sort by nested field in Python, apply limit. Avoids composite index dependency entirely.",
-      "iteration_resolved": "v9.44",
-      "root_cause": "firestore",
-      "prevention": "Always use Python-side sort for nested fields to avoid composite index requirements"
+      "title": "Claw3D `fetch()` 404",
+      "status": "Resolved v10.57",
+      "action": "Inline JS data only. **Never** `fetch()` external JSON in `claw3d.html`.",
+      "source": "GEMINI.md"
     },
     {
       "id": "G57",
-      "description": "Gemini Flash model string instability across litellm versions",
-      "resolution": "Centralized model string as GEMINI_MODEL constant in scripts/utils/ollama_config.py. All litellm callers import from there. v9.44 confirmed gemini/gemini-2.5-flash works with litellm 1.83.3.",
-      "iteration_resolved": "v9.44",
-      "root_cause": "llm_config",
-      "prevention": "Never hardcode Gemini model string in individual scripts. Always use GEMINI_MODEL from ollama_config.py."
+      "title": "Qwen schema validation too strict",
+      "status": "Resolved v10.59",
+      "action": "Rich context",
+      "source": "GEMINI.md"
     },
     {
       "id": "G58",
-      "description": "Flutter transitive dependency lock - 10 packages outdated but Resolvable=Current",
-      "resolution": "Investigated via flutter pub outdated, flutter pub deps, dart MCP pub.dev search. All 10 are transitive (flutter_map->proj4dart->mgrs_dart, Flutter SDK->meta/vector_math/test/analyzer). flutter_map 8.2.2 is latest. No action possible until upstream releases.",
-      "iteration_resolved": "v9.45",
-      "root_cause": "dependency",
-      "prevention": "Before planning dep upgrades, run flutter pub outdated and check Resolvable column. If Resolvable=Current, the dep is locked by parent constraints and cannot be upgraded directly."
+      "title": "Agent overwrites design/plan docs",
+      "status": "Resolved v10.60",
+      "action": "`IMMUTABLE_ARTIFACTS` guard. **You do not edit design or plan docs.**",
+      "source": "GEMINI.md"
+    },
+    {
+      "id": "G59",
+      "title": "Chip text overflow",
+      "status": "\"Resolved v10.61-62\" but **CONNECTOR labels still overflow \u2014 see G69**",
+      "action": "W14 fixes",
+      "source": "GEMINI.md"
+    },
+    {
+      "id": "G60",
+      "title": "Map tab 0 mapped of 6,181",
+      "status": "Resolved v10.62",
+      "action": "Dual-format parsing",
+      "source": "GEMINI.md"
+    },
+    {
+      "id": "G61",
+      "title": "Build/report not generated",
+      "status": "Resolved v10.62",
+      "action": "Post-flight existence check",
+      "source": "GEMINI.md"
+    },
+    {
+      "id": "G62",
+      "title": "Self-grading bias accepted as Tier-1",
+      "status": "**NEW v10.63, TARGETED W1+W2**",
+      "action": "ADR-015 hard cap + Pattern 20. **See \u00a78 below.**",
+      "source": "CLAUDE.md"
+    },
+    {
+      "id": "G63",
+      "title": "Acquisition pipeline silently drops failures",
+      "status": "**TARGETED W1**",
+      "action": "Structured failure JSONL + retry",
+      "source": "GEMINI.md"
+    },
+    {
+      "id": "G64",
+      "title": "Harness content drift (duplicate sections, stale stamps)",
+      "status": "**NEW v10.63, TARGETED W2**",
+      "action": "Linear renumbering, archive snapshot.",
+      "source": "CLAUDE.md"
+    },
+    {
+      "id": "G65",
+      "title": "Rich-context payload exceeds curl argv limit",
+      "status": "Resolved v10.63 closing",
+      "action": "`--data-binary @-`",
+      "source": "GEMINI.md"
+    },
+    {
+      "id": "G66",
+      "title": "**Stale claw3d data files (`claw3d_components.json`, `claw3d_iterations.json`)**",
+      "status": "**NEW v10.64, TARGETED W10**",
+      "action": "Revive or archive",
+      "source": "GEMINI.md"
+    },
+    {
+      "id": "G67",
+      "title": "**Two parallel gotcha numbering schemes**",
+      "status": "**NEW v10.64, TARGETED W8**",
+      "action": "Consolidate",
+      "source": "GEMINI.md"
+    },
+    {
+      "id": "G68",
+      "title": "**`iao_event_log.jsonl` tags v10.63 events as `v9.39`**",
+      "status": "**NEW v10.64, TARGETED W9**",
+      "action": "Fix logger + retroactively correct",
+      "source": "GEMINI.md"
+    },
+    {
+      "id": "G69",
+      "title": "**Claw3D connector labels overflow into each other**",
+      "status": "**NEW v10.64, TARGETED W14**",
+      "action": "Apply Pattern 18 canvas texture to connector labels",
+      "source": "GEMINI.md"
+    },
+    {
+      "id": "G70",
+      "title": "**Post-flight MCP checks are version pings, not functional**",
+      "status": "**NEW v10.64, TARGETED W12**",
+      "action": "Functional probes per MCP",
+      "source": "GEMINI.md"
+    },
+    {
+      "id": "G71",
+      "title": "**Agent asks for permission instead of proceeding**",
+      "status": "**NEW v10.64, TARGETED \u00a71 of this file + W11**",
+      "action": "Pre-flight notes-and-proceeds",
+      "source": "GEMINI.md"
+    },
+    {
+      "id": "G72",
+      "title": "Heredocs break agents",
+      "status": "v9.43",
+      "action": "Active",
+      "source": "evaluator-harness.md"
+    },
+    {
+      "id": "G73",
+      "title": "CUDA OOM on RTX 2080 SUPER",
+      "status": "v10.55",
+      "action": "Active",
+      "source": "evaluator-harness.md"
+    },
+    {
+      "id": "G74",
+      "title": "Gemini runs bash by default",
+      "status": "v10.61",
+      "action": "Active",
+      "source": "evaluator-harness.md"
+    },
+    {
+      "id": "G75",
+      "title": "`ls` color codes pollute output",
+      "status": "v10.56",
+      "action": "Active",
+      "source": "evaluator-harness.md"
+    },
+    {
+      "id": "G76",
+      "title": "Firestore array-contains limits",
+      "status": "v10.58",
+      "action": "Active",
+      "source": "evaluator-harness.md"
+    },
+    {
+      "id": "G77",
+      "title": "Query editor cursor bug",
+      "status": "v10.55",
+      "action": "Targeted v10.63 W4",
+      "source": "evaluator-harness.md"
+    },
+    {
+      "id": "G78",
+      "title": "CanvasKit prevents DOM scraping",
+      "status": "v10.57",
+      "action": "Active",
+      "source": "evaluator-harness.md"
+    },
+    {
+      "id": "G79",
+      "title": "Firebase MCP reauth recurring",
+      "status": "v10.59",
+      "action": "Active",
+      "source": "evaluator-harness.md"
+    },
+    {
+      "id": "G80",
+      "title": "Qwen empty reports",
+      "status": "v10.54",
+      "action": "Regressed v10.60-62, targeted v10.63 W1",
+      "source": "evaluator-harness.md"
+    },
+    {
+      "id": "G81",
+      "title": "Claw3D `fetch()` 404 on Hosting",
+      "status": "v10.57",
+      "action": "Resolved",
+      "source": "evaluator-harness.md"
+    },
+    {
+      "id": "G82",
+      "title": "Qwen schema validation too strict",
+      "status": "v10.59",
+      "action": "Resolved",
+      "source": "evaluator-harness.md"
+    },
+    {
+      "id": "G83",
+      "title": "Agent overwrites design/plan",
+      "status": "v10.59",
+      "action": "Resolved",
+      "source": "evaluator-harness.md"
+    },
+    {
+      "id": "G84",
+      "title": "Chip text overflow",
+      "status": "v10.57",
+      "action": "Resolved",
+      "source": "evaluator-harness.md"
+    },
+    {
+      "id": "G85",
+      "title": "Map tab 0 mapped of 6,181",
+      "status": "v10.61",
+      "action": "Resolved; detection added v10.63 W3",
+      "source": "evaluator-harness.md"
+    },
+    {
+      "id": "G86",
+      "title": "Build/report not generated",
+      "status": "v10.61",
+      "action": "Resolved",
+      "source": "evaluator-harness.md"
+    },
+    {
+      "id": "G87",
+      "title": "Self-grading bias accepted as Tier-1",
+      "status": "v10.63 (retro from v10.62)",
+      "action": "Targeted v10.63 W1+W2",
+      "source": "evaluator-harness.md"
+    },
+    {
+      "id": "G88",
+      "title": "Acquisition pipeline silently drops failures",
+      "status": "v10.63 (retro from v10.62)",
+      "action": "Targeted v10.63 W5",
+      "source": "evaluator-harness.md"
+    },
+    {
+      "id": "G89",
+      "title": "Harness content drift",
+      "status": "v10.63 (retro from v10.62)",
+      "action": "Targeted v10.63 W2",
+      "source": "evaluator-harness.md"
+    },
+    {
+      "id": "G90",
+      "title": "Rich-context payload exceeds curl argv limit",
+      "status": "Resolved v10.63 closing",
+      "action": "`--data-binary @-`",
+      "source": "GEMINI.md"
     }
   ]
 }

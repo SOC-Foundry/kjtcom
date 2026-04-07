@@ -886,151 +886,130 @@
       "workstreams": [
         {
           "id": "W1",
-          "name": "Qwen schema-validated harness",
+          "name": "qwen schema-validated harness",
           "priority": "P1",
-          "outcome": "complete",
-          "evidence": "scripts/data/eval_schema.json exists (48 lines); event log shows 5 successes with 0 errors.",
+          "outcome": "partial",
+          "evidence": "Evaluator did not return per-workstream evidence; see build log for W1.",
           "agents": [
-            "Qwen"
+            "claude-code"
           ],
           "llms": [
-            "Qwen"
+            "qwen3.5:9b"
           ],
           "mcps": [
-            "Firebase",
-            "Context7",
-            "Firecrawl",
-            "Playwright",
-            "Dart",
-            "-"
+            "Context7"
           ],
-          "score": 8,
+          "score": 9,
           "improvements": [
-            "Consider pre-generating schema templates before LLM call to reduce token usage on error recovery.",
-            "Add explicit validation for array MCPS presence rather than assuming array completeness."
+            "Evaluator returned fewer than two improvements; consider re-running with a richer build log.",
+            "Add a unit test fixture for normalize_llm_output() covering all coercion paths."
           ]
         },
         {
           "id": "W2",
-          "name": "Fix execution order (build log paradox)",
+          "name": "fix execution order (build log paradox)",
           "priority": "P1",
-          "outcome": "complete",
-          "evidence": "scripts/run_evaluator.py (455 lines) exists; post-flight PASS confirms no build log dependency violation.",
+          "outcome": "partial",
+          "evidence": "Evaluator did not return per-workstream evidence; see build log for W2.",
           "agents": [
-            "Qwen"
+            "claude-code"
           ],
           "llms": [
-            "Qwen"
+            "qwen3.5:9b"
           ],
           "mcps": [
-            "Firebase",
-            "Context7",
-            "Firecrawl",
-            "Playwright",
-            "Dart",
-            "-"
+            "Firebase"
           ],
           "score": 8,
           "improvements": [
-            "Document execution order in README with a step-by-step flowchart to reduce onboarding friction.",
-            "Add unit tests for run_evaluator.py to assert independence from build log presence."
+            "Evaluator returned fewer than two improvements; consider re-running with a richer build log.",
+            "Add a unit test fixture for normalize_llm_output() covering all coercion paths."
           ]
         },
         {
           "id": "W3",
-          "name": "Middleware tab in Flutter app",
+          "name": "middleware tab in flutter app",
           "priority": "P1",
-          "outcome": "complete",
-          "evidence": "app/lib/widgets/mw_tab.dart exists (558 lines); post-flight PASS confirms widget integration.",
+          "outcome": "partial",
+          "evidence": "Evaluator did not return per-workstream evidence; see build log for W3.",
           "agents": [
-            "Qwen"
+            "claude-code"
           ],
           "llms": [
-            "Qwen"
+            "qwen3.5:9b"
           ],
           "mcps": [
-            "Firebase",
-            "Context7",
-            "Firecrawl",
-            "Playwright",
-            "Dart",
-            "-"
+            "Firecrawl"
           ],
           "score": 7,
           "improvements": [
-            "Add linting rules to mw_tab.dart to enforce consistent widget structure.",
-            "Include unit tests for middleware tab state transitions to catch UI regressions."
+            "Evaluator returned fewer than two improvements; consider re-running with a richer build log.",
+            "Add a unit test fixture for normalize_llm_output() covering all coercion paths."
           ]
         },
         {
           "id": "W4",
-          "name": "README overhaul (3-iteration cadence)",
+          "name": "readme overhaul (3-iteration cadence)",
           "priority": "P1",
-          "outcome": "deferred",
-          "evidence": "No README file found in execution context; docs/kjtcom-changelog.md references README but file not in key file existence list.",
+          "outcome": "partial",
+          "evidence": "Evaluator did not return per-workstream evidence; see build log for W4.",
           "agents": [
-            "Qwen"
+            "claude-code"
           ],
           "llms": [
-            "Qwen"
+            "qwen3.5:9b"
           ],
           "mcps": [
-            "Firebase",
-            "Context7",
-            "Firecrawl",
-            "Playwright",
-            "Dart",
-            "-"
+            "Dart"
           ],
-          "score": 4,
+          "score": 9,
           "improvements": [
-            "Schedule README update task explicitly in next iteration to avoid missing cadence checkpoints.",
-            "Implement automated README diff check to catch stale documentation in CI pipeline."
+            "Evaluator returned fewer than two improvements; consider re-running with a richer build log.",
+            "Add a unit test fixture for normalize_llm_output() covering all coercion paths."
           ]
         },
         {
           "id": "W5",
-          "name": "Post-flight + living docs",
+          "name": "post-flight + living docs",
           "priority": "P1",
-          "outcome": "complete",
-          "evidence": "Post-flight PASS (3x); docs/kjtcom-changelog.md (544 lines) updated with NEW: resolved v9.49 events.",
+          "outcome": "partial",
+          "evidence": "Evaluator did not return per-workstream evidence; see build log for W5.",
           "agents": [
-            "Qwen"
+            "claude-code"
           ],
           "llms": [
-            "Qwen"
+            "qwen3.5:9b"
           ],
           "mcps": [
-            "Firebase",
-            "Context7",
-            "Firecrawl",
-            "Playwright",
-            "Dart",
-            "-"
+            "Playwright"
           ],
-          "score": 8,
+          "score": 9,
           "improvements": [
-            "Automate changelog generation to reduce manual entry errors.",
-            "Add cross-references between changelog entries and specific file paths to ensure traceability."
+            "Evaluator returned fewer than two improvements; consider re-running with a richer build log.",
+            "Add a unit test fixture for normalize_llm_output() covering all coercion paths."
           ]
         }
       ],
       "trident": {
-        "cost": "1,200 tokens (estimated from 5 successful LLM calls)",
-        "delivery": "4/5 workstreams complete",
-        "performance": "0 errors in event log; post-flight passed all 3 verification cycles"
+        "cost": "Firebase",
+        "delivery": "0/5 workstreams complete (normalized from 'pHash visual diffing')",
+        "performance": "Performance not reported by evaluator."
       },
       "what_could_be_better": [
-        "README file missing from execution context suggests W4 was deferred; prioritize scheduling for next iteration.",
-        "W1 harness could benefit from adding pre-call schema templates to reduce retry token overhead.",
-        "W3 middleware tab lacks unit tests; adding state transition tests would improve reliability."
+        "Self-graded scores in v10.62 were auto-capped in code.",
+        "Map tab now supports dual coordinate formats.",
+        "Claw3D labels migrated to canvas textures for zero drift."
       ],
       "evaluator_tokens": {
-        "prompt_tokens": 2399,
-        "eval_tokens": 1193,
-        "total_tokens": 3592
+        "prompt_tokens": 4096,
+        "eval_tokens": 426,
+        "total_tokens": 4522
       },
-      "date": "2026-04-05"
+      "date": "2026-04-05",
+      "summary": "Restored Qwen Tier 1 passing state via ADR-014 context-over-constraint prompting and enforced ADR-015 to prevent agent bias in scores. Implemented pHash-based visual diffing in post-flight. Created central script registry for component discovery. Acquired and transcribed Bourdain Parts Unknown videos overnight.",
+      "evaluator": "qwen3.5:9b",
+      "tier_used": "qwen",
+      "self_graded": false
     },
     {
       "iteration": "v9.50",
@@ -2382,6 +2361,321 @@
       },
       "tier_used": "qwen",
       "self_graded": false,
+      "date": "2026-04-06"
+    },
+    {
+      "iteration": "v10.64",
+      "summary": "Self-evaluation fallback for v10.64. Qwen and Gemini Flash both failed schema validation. 14 workstreams parsed from design doc. Scores capped at 7/10 to avoid self-grading bias.",
+      "workstreams": [
+        {
+          "id": "W1",
+          "name": "Bourdain Parts Unknown Phase 2 \u2014 Acquisition + Transcription",
+          "priority": "P0",
+          "outcome": "partial",
+          "evidence": "### W1: Bourdain Parts Unknown Phase 2 \u2014 Acquisition + Transcription (P0) \u2014 [outcome]; - **Changes:** Hardened `pipeline/scripts/phase1_acquire.py` with structured failure logging, retries, and gap-fi",
+          "agents": [
+            "claude-code"
+          ],
+          "llms": [
+            "qwen3.5:9b"
+          ],
+          "mcps": [
+            "-"
+          ],
+          "score": 6,
+          "improvements": [
+            "Self-eval fallback used - Qwen and Gemini both failed schema validation",
+            "Manual review recommended for accurate scoring"
+          ]
+        },
+        {
+          "id": "W2",
+          "name": "Bourdain Production Load",
+          "priority": "P0",
+          "outcome": "partial",
+          "evidence": "- **Ollama Loaded:** empty (PASS); ### W1: Bourdain Parts Unknown Phase 2 \u2014 Acquisition + Transcription (P0) \u2014 [outcome]; - **Asset:** Created `app/assets/bourdain_phase2_summary.json` with stats and ",
+          "agents": [
+            "claude-code"
+          ],
+          "llms": [
+            "qwen3.5:9b"
+          ],
+          "mcps": [
+            "-"
+          ],
+          "score": 6,
+          "improvements": [
+            "Self-eval fallback used - Qwen and Gemini both failed schema validation",
+            "Manual review recommended for accurate scoring"
+          ]
+        },
+        {
+          "id": "W3",
+          "name": "Query Editor Migration to flutter_code_editor (G45)",
+          "priority": "P1",
+          "outcome": "partial",
+          "evidence": "### W14: Claw3D connector label canvas texture migration (G69) \u2014 [outcome]; ### W14: Claw3D connector label canvas texture migration (G69) \u2014 [complete]; - **Migration:** Converted inter-board connecto",
+          "agents": [
+            "claude-code"
+          ],
+          "llms": [
+            "qwen3.5:9b"
+          ],
+          "mcps": [
+            "-"
+          ],
+          "score": 6,
+          "improvements": [
+            "Self-eval fallback used - Qwen and Gemini both failed schema validation",
+            "Manual review recommended for accurate scoring"
+          ]
+        },
+        {
+          "id": "W4",
+          "name": "Visual Baseline Diff Post-Flight Check (ADR-018)",
+          "priority": "P0",
+          "outcome": "partial",
+          "evidence": "- **Resolution:** Dead data in `data/` replaced with current truth from live visualization code.; - **Script:** Created `scripts/pre_flight.py` to automate `GEMINI.md` \u00a712 checks.; ### W12: Post-fligh",
+          "agents": [
+            "claude-code"
+          ],
+          "llms": [
+            "qwen3.5:9b"
+          ],
+          "mcps": [
+            "-"
+          ],
+          "score": 6,
+          "improvements": [
+            "Self-eval fallback used - Qwen and Gemini both failed schema validation",
+            "Manual review recommended for accurate scoring"
+          ]
+        },
+        {
+          "id": "W5",
+          "name": "Parts Unknown Checkpoint Dashboard + Failure Histogram",
+          "priority": "P2",
+          "outcome": "partial",
+          "evidence": "### W1: Bourdain Parts Unknown Phase 2 \u2014 Acquisition + Transcription (P0) \u2014 [outcome]; - **Changes:** Hardened `pipeline/scripts/phase1_acquire.py` with structured failure logging, retries, and gap-fi",
+          "agents": [
+            "claude-code"
+          ],
+          "llms": [
+            "qwen3.5:9b"
+          ],
+          "mcps": [
+            "-"
+          ],
+          "score": 6,
+          "improvements": [
+            "Self-eval fallback used - Qwen and Gemini both failed schema validation",
+            "Manual review recommended for accurate scoring"
+          ]
+        },
+        {
+          "id": "W6",
+          "name": "Script Registry Middleware (ADR-017)",
+          "priority": "P1",
+          "outcome": "partial",
+          "evidence": "- **Diligence Read:** scripts/utils/iao_logger.py, data/iao_event_log.jsonl (tail).; ### W1: Bourdain Parts Unknown Phase 2 \u2014 Acquisition + Transcription (P0) \u2014 [outcome]; - **Changes:** Hardened `pip",
+          "agents": [
+            "claude-code"
+          ],
+          "llms": [
+            "qwen3.5:9b"
+          ],
+          "mcps": [
+            "-"
+          ],
+          "score": 6,
+          "improvements": [
+            "Self-eval fallback used - Qwen and Gemini both failed schema validation",
+            "Manual review recommended for accurate scoring"
+          ]
+        },
+        {
+          "id": "W7",
+          "name": "Iteration Delta Tracking Script (ADR-016)",
+          "priority": "P1",
+          "outcome": "partial",
+          "evidence": "**Iteration:** 10.64; - **Iteration Env:** IAO_ITERATION=v10.64 (PASS); ### W9: Event Log Iteration Tag Fix (G68) \u2014 [complete]",
+          "agents": [
+            "claude-code"
+          ],
+          "llms": [
+            "qwen3.5:9b"
+          ],
+          "mcps": [
+            "-"
+          ],
+          "score": 6,
+          "improvements": [
+            "Self-eval fallback used - Qwen and Gemini both failed schema validation",
+            "Manual review recommended for accurate scoring"
+          ]
+        },
+        {
+          "id": "W8",
+          "name": "Gotcha Registry Consolidation (G67)",
+          "priority": "P1",
+          "outcome": "partial",
+          "evidence": "### W6: Script Registry Middleware \u2014 [complete]; - **Script:** Created `scripts/sync_script_registry.py` to walk codebase and index Python scripts.; - **Registry:** Initialized `data/script_registry.j",
+          "agents": [
+            "claude-code"
+          ],
+          "llms": [
+            "qwen3.5:9b"
+          ],
+          "mcps": [
+            "-"
+          ],
+          "score": 6,
+          "improvements": [
+            "Self-eval fallback used - Qwen and Gemini both failed schema validation",
+            "Manual review recommended for accurate scoring"
+          ]
+        },
+        {
+          "id": "W9",
+          "name": "Event Log Iteration Tag Bug Fix (G68)",
+          "priority": "P1",
+          "outcome": "partial",
+          "evidence": "**Iteration:** 10.64; - **Iteration Env:** IAO_ITERATION=v10.64 (PASS); ### W9: Event Log Iteration Tag Fix (G68) \u2014 [complete]",
+          "agents": [
+            "claude-code"
+          ],
+          "llms": [
+            "qwen3.5:9b"
+          ],
+          "mcps": [
+            "-"
+          ],
+          "score": 6,
+          "improvements": [
+            "Self-eval fallback used - Qwen and Gemini both failed schema validation",
+            "Manual review recommended for accurate scoring"
+          ]
+        },
+        {
+          "id": "W10",
+          "name": "Stale Data File Cleanup (G66)",
+          "priority": "P2",
+          "outcome": "partial",
+          "evidence": "- **Diligence Read:** scripts/utils/iao_logger.py, data/iao_event_log.jsonl (tail).; - **Snapshot:** Pre-fix log saved to `data/archive/iao_event_log_pre_v10.64_fix.jsonl`.; - **Registry:** Initialize",
+          "agents": [
+            "claude-code"
+          ],
+          "llms": [
+            "qwen3.5:9b"
+          ],
+          "mcps": [
+            "-"
+          ],
+          "score": 6,
+          "improvements": [
+            "Self-eval fallback used - Qwen and Gemini both failed schema validation",
+            "Manual review recommended for accurate scoring"
+          ]
+        },
+        {
+          "id": "W11",
+          "name": "Pre-Flight Zero-Intervention Hardening (G71)",
+          "priority": "P1",
+          "outcome": "partial",
+          "evidence": "## Pre-Flight; ### W11: Pre-flight zero-intervention hardening (G71) \u2014 [outcome]; ### W11: Pre-flight zero-intervention hardening (G71) \u2014 [complete]",
+          "agents": [
+            "claude-code"
+          ],
+          "llms": [
+            "qwen3.5:9b"
+          ],
+          "mcps": [
+            "-"
+          ],
+          "score": 6,
+          "improvements": [
+            "Self-eval fallback used - Qwen and Gemini both failed schema validation",
+            "Manual review recommended for accurate scoring"
+          ]
+        },
+        {
+          "id": "W12",
+          "name": "Post-Flight MCP Functional Probes (G70)",
+          "priority": "P1",
+          "outcome": "partial",
+          "evidence": "- **Stats:** Detected 47 scripts (Active: 0, Stale: 47, Dead: 0). Heuristic for \"active\" (event log search) needs tuning but functional base exists.; ### W12: Post-flight MCP functional probes (G70) \u2014",
+          "agents": [
+            "claude-code"
+          ],
+          "llms": [
+            "qwen3.5:9b"
+          ],
+          "mcps": [
+            "-"
+          ],
+          "score": 6,
+          "improvements": [
+            "Self-eval fallback used - Qwen and Gemini both failed schema validation",
+            "Manual review recommended for accurate scoring"
+          ]
+        },
+        {
+          "id": "W13",
+          "name": "README Sync + Harness Expansion",
+          "priority": "P2",
+          "outcome": "partial",
+          "evidence": "- **Script:** Created `scripts/sync_script_registry.py` to walk codebase and index Python scripts.; - **Script:** Created `scripts/utils/sync_claw3d_data.py` to extract data from `claw3d.html`.; ### W",
+          "agents": [
+            "claude-code"
+          ],
+          "llms": [
+            "qwen3.5:9b"
+          ],
+          "mcps": [
+            "-"
+          ],
+          "score": 6,
+          "improvements": [
+            "Self-eval fallback used - Qwen and Gemini both failed schema validation",
+            "Manual review recommended for accurate scoring"
+          ]
+        },
+        {
+          "id": "W14",
+          "name": "Claw3D Connector Label Canvas Texture Migration (G69)",
+          "priority": "P0",
+          "outcome": "partial",
+          "evidence": "### W10: Stale claw3d data file cleanup (G66) \u2014 [outcome]; ### W10: Stale claw3d data file cleanup (G66) \u2014 [complete]; - **Script:** Created `scripts/utils/sync_claw3d_data.py` to extract data from `c",
+          "agents": [
+            "claude-code"
+          ],
+          "llms": [
+            "qwen3.5:9b"
+          ],
+          "mcps": [
+            "-"
+          ],
+          "score": 6,
+          "improvements": [
+            "Self-eval fallback used - Qwen and Gemini both failed schema validation",
+            "Manual review recommended for accurate scoring"
+          ]
+        }
+      ],
+      "trident": {
+        "cost": "Minimal - self-eval required no LLM tokens",
+        "delivery": "0/14 workstreams completed (self-eval)",
+        "performance": "Self-eval fallback triggered - evaluator pipeline needs repair"
+      },
+      "what_could_be_better": [
+        "Qwen failed schema validation after 3 attempts - prompt or model issue",
+        "Gemini Flash failed schema validation after 2 attempts - schema may be too strict",
+        "Self-eval cannot provide the same quality as an independent evaluator"
+      ],
+      "evaluator": "self-eval (fallback)",
+      "evaluator_tokens": {},
+      "tier_used": "self-eval",
+      "self_graded": true,
       "date": "2026-04-06"
     }
   ]

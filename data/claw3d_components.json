@@ -2,55 +2,329 @@
   "boards": [
     {
       "id": "frontend",
-      "label": "Frontend board",
-      "color": "#0D9488",
+      "label": "Frontend",
+      "color": "0x0D9488",
       "components": [
-        {"id": "query_editor", "label": "query_editor", "status": "active", "detail": "NoSQL parser, syntax highlighting"},
-        {"id": "results_table", "label": "results_table", "status": "active", "detail": "Paginated grid, 20/50/100"},
-        {"id": "detail_panel", "label": "detail_panel", "status": "active", "detail": "Entity inspector, t_any_* cards"},
-        {"id": "map_tab", "label": "map_tab", "status": "active", "detail": "OpenStreetMap, colored markers"},
-        {"id": "globe_tab", "label": "globe_tab", "status": "active", "detail": "Continent cards, country grid"},
-        {"id": "iao_tab", "label": "iao_tab", "status": "active", "detail": "Trident SVG, 10 pillars"},
-        {"id": "mw_tab", "label": "mw_tab", "status": "active", "detail": "33 middleware components"},
-        {"id": "schema_tab", "label": "schema_tab", "status": "active", "detail": "22 Thompson Indicator Fields"}
+        {
+          "id": "query_ed",
+          "label": "query_ed",
+          "status": "active",
+          "detail": "NoSQL parser (query_editor)"
+        },
+        {
+          "id": "results",
+          "label": "results",
+          "status": "active",
+          "detail": "Paginated grid (results_table)"
+        },
+        {
+          "id": "detail",
+          "label": "detail",
+          "status": "active",
+          "detail": "Entity inspector (detail_panel)"
+        },
+        {
+          "id": "map",
+          "label": "map",
+          "status": "active",
+          "detail": "OpenStreetMap markers (map_tab)"
+        },
+        {
+          "id": "globe",
+          "label": "globe",
+          "status": "active",
+          "detail": "Continent cards (globe_tab)"
+        },
+        {
+          "id": "iao",
+          "label": "iao",
+          "status": "active",
+          "detail": "Trident + 10 pillars (iao_tab)"
+        },
+        {
+          "id": "mw_tab",
+          "label": "mw_tab",
+          "status": "active",
+          "detail": "33 components"
+        },
+        {
+          "id": "schema",
+          "label": "schema",
+          "status": "active",
+          "detail": "22 t_any_* fields (schema_tab)"
+        },
+        {
+          "id": "claw3d",
+          "label": "claw3d",
+          "status": "active",
+          "detail": "PCB architecture viz"
+        },
+        {
+          "id": "fb_host",
+          "label": "fb_host",
+          "status": "active",
+          "detail": "CDN + SSL (firebase_hosting)"
+        }
+      ]
+    },
+    {
+      "id": "pipeline",
+      "label": "Pipeline",
+      "color": "0xDA7E12",
+      "components": [
+        {
+          "id": "yt_dlp",
+          "label": "yt_dlp",
+          "status": "active",
+          "detail": "YouTube audio download"
+        },
+        {
+          "id": "whisper",
+          "label": "whisper",
+          "status": "active",
+          "detail": "CUDA transcription (faster_whisper)"
+        },
+        {
+          "id": "extract",
+          "label": "extract",
+          "status": "active",
+          "detail": "Entity extraction API (gemini_extract)"
+        },
+        {
+          "id": "normalize",
+          "label": "normalize",
+          "status": "active",
+          "detail": "Schema v3 t_any_*"
+        },
+        {
+          "id": "geocode",
+          "label": "geocode",
+          "status": "active",
+          "detail": "Nominatim 1 req/sec"
+        },
+        {
+          "id": "enrich",
+          "label": "enrich",
+          "status": "active",
+          "detail": "Google Places API"
+        },
+        {
+          "id": "load",
+          "label": "load",
+          "status": "active",
+          "detail": "Firebase Admin SDK"
+        },
+        {
+          "id": "tmux",
+          "label": "tmux",
+          "status": "active",
+          "detail": "Graduated GPU batches (tmux_runner)"
+        },
+        {
+          "id": "checkpoint",
+          "label": "checkpoint",
+          "status": "active",
+          "detail": "JSON state persistence"
+        }
       ]
     },
     {
       "id": "middleware",
-      "label": "Middleware board",
-      "color": "#8B5CF6",
+      "label": "Middleware",
+      "color": "0x8B5CF6",
       "components": [
-        {"id": "intent_router", "label": "intent_router", "status": "active", "detail": "3-route Gemini Flash"},
-        {"id": "rag_pipeline", "label": "rag_pipeline", "status": "active", "detail": "1,819 ChromaDB chunks"},
-        {"id": "evaluator", "label": "evaluator", "status": "degraded", "detail": "Qwen 528-line harness, G55"},
-        {"id": "telegram_bot", "label": "telegram_bot", "status": "active", "detail": "systemd, session memory"},
-        {"id": "artifact_gen", "label": "artifact_gen", "status": "active", "detail": "4-doc artifact loop"},
-        {"id": "post_flight", "label": "post_flight", "status": "active", "detail": "14 validation checks"},
-        {"id": "gotcha_archive", "label": "gotcha_archive", "status": "active", "detail": "18+ resolved, G1-G55"},
-        {"id": "agent_scores", "label": "agent_scores", "status": "degraded", "detail": "5-dim scoring, append-only"}
+        {
+          "id": "evaluator",
+          "label": "evaluator",
+          "status": "active",
+          "detail": "Qwen fallback chain, G55 resolved"
+        },
+        {
+          "id": "harness",
+          "label": "harness",
+          "status": "active",
+          "detail": "761+ line operating manual"
+        },
+        {
+          "id": "ADR",
+          "label": "ADR",
+          "status": "active",
+          "detail": "13 architecture decisions"
+        },
+        {
+          "id": "artifact",
+          "label": "artifact",
+          "status": "active",
+          "detail": "4-doc loop (artifact_gen)"
+        },
+        {
+          "id": "gotchas",
+          "label": "gotchas",
+          "status": "active",
+          "detail": "G1-G59, 20+ resolved (gotcha_archive)"
+        },
+        {
+          "id": "scores",
+          "label": "scores",
+          "status": "active",
+          "detail": "5-dim scoring, append-only (agent_scores)"
+        },
+        {
+          "id": "pre_flight",
+          "label": "pre_flight",
+          "status": "active",
+          "detail": "Environment validation"
+        },
+        {
+          "id": "post_flight",
+          "label": "post_flight",
+          "status": "active",
+          "detail": "15+ checks"
+        },
+        {
+          "id": "router",
+          "label": "router",
+          "status": "active",
+          "detail": "3-route Gemini Flash (intent_router)"
+        },
+        {
+          "id": "tg_bot",
+          "label": "tg_bot",
+          "status": "active",
+          "detail": "systemd, session memory (telegram_bot)"
+        },
+        {
+          "id": "rag",
+          "label": "rag",
+          "status": "active",
+          "detail": "1,819 ChromaDB chunks (rag_pipeline)"
+        },
+        {
+          "id": "qwen_9b",
+          "label": "qwen_9b",
+          "status": "active",
+          "detail": "Evaluator LLM, 256K ctx"
+        },
+        {
+          "id": "nemotron",
+          "label": "nemotron",
+          "status": "active",
+          "detail": "Code review, 4K ctx (nemotron_4b)"
+        },
+        {
+          "id": "gflash",
+          "label": "gflash",
+          "status": "active",
+          "detail": "Intent routing + extraction (gemini_flash)"
+        },
+        {
+          "id": "fb_mcp",
+          "label": "fb_mcp",
+          "status": "active",
+          "detail": "G53 recurring reauth (firebase_mcp)"
+        },
+        {
+          "id": "c7_mcp",
+          "label": "c7_mcp",
+          "status": "active",
+          "detail": "API docs lookup (context7_mcp)"
+        },
+        {
+          "id": "pw_mcp",
+          "label": "pw_mcp",
+          "status": "active",
+          "detail": "Browser automation (playwright_mcp)"
+        },
+        {
+          "id": "fc_mcp",
+          "label": "fc_mcp",
+          "status": "active",
+          "detail": "Web scraping (firecrawl_mcp)"
+        },
+        {
+          "id": "dart_mcp",
+          "label": "dart_mcp",
+          "status": "active",
+          "detail": "Flutter/Dart analysis"
+        },
+        {
+          "id": "claude",
+          "label": "claude",
+          "status": "active",
+          "detail": "Primary executor, Phases 6-7 (claude_code)"
+        },
+        {
+          "id": "gemini",
+          "label": "gemini",
+          "status": "active",
+          "detail": "Primary executor, Phases 1-5 (gemini_cli)"
+        },
+        {
+          "id": "logger",
+          "label": "logger",
+          "status": "active",
+          "detail": "JSONL event log, P3 diligence (iao_logger)"
+        },
+        {
+          "id": "openclaw",
+          "label": "openclaw",
+          "status": "active",
+          "detail": "Local sandbox agent (open-interpreter)"
+        }
       ]
     },
     {
       "id": "backend",
-      "label": "Backend board",
-      "color": "#3B82F6",
+      "label": "Backend",
+      "color": "0x3B82F6",
       "components": [
-        {"id": "calgold", "label": "calgold", "status": "active", "detail": "899 entities", "color": "#DA7E12"},
-        {"id": "ricksteves", "label": "ricksteves", "status": "active", "detail": "4,182 entities", "color": "#3B82F6"},
-        {"id": "tripledb", "label": "tripledb", "status": "active", "detail": "1,100 entities", "color": "#DD3333"},
-        {"id": "bourdain", "label": "bourdain", "status": "degraded", "detail": "96 staging entities", "color": "#8B5CF6"},
-        {"id": "qwen_9b", "label": "qwen_9b", "status": "degraded", "detail": "Evaluator LLM, 256K ctx"},
-        {"id": "nemotron_4b", "label": "nemotron_4b", "status": "active", "detail": "Code review, 4K ctx"},
-        {"id": "chromadb", "label": "chromadb", "status": "active", "detail": "Vector store, nomic-embed"},
-        {"id": "firebase_mcp", "label": "firebase_mcp", "status": "active", "detail": "G53 recurring reauth"}
+        {
+          "id": "firestore",
+          "label": "firestore",
+          "status": "active",
+          "detail": "Single locations collection"
+        },
+        {
+          "id": "prod_db",
+          "label": "prod_db",
+          "status": "active",
+          "detail": "6,181 entities (production_db)"
+        },
+        {
+          "id": "stg_db",
+          "label": "stg_db",
+          "status": "active",
+          "detail": "351 Bourdain entities (staging_db)"
+        },
+        {
+          "id": "calgold",
+          "label": "calgold",
+          "status": "active",
+          "detail": "899 entities",
+          "color": "0xDA7E12"
+        },
+        {
+          "id": "ricksteves",
+          "label": "ricksteves",
+          "status": "active",
+          "detail": "4,182 entities",
+          "color": "0x3B82F6"
+        },
+        {
+          "id": "tripledb",
+          "label": "tripledb",
+          "status": "active",
+          "detail": "1,100 entities",
+          "color": "0xDD3333"
+        },
+        {
+          "id": "bourdain",
+          "label": "bourdain",
+          "status": "active",
+          "detail": "351 staging, Phase 4 Complete",
+          "color": "0x8B5CF6"
+        }
       ]
     }
-  ],
-  "connectors": [
-    {"from": "frontend", "to": "middleware", "label": "Riverpod state", "color": "#0D9488"},
-    {"from": "frontend", "to": "middleware", "label": "Firestore stream", "color": "#0D9488"},
-    {"from": "middleware", "to": "backend", "label": "Ollama API", "color": "#8B5CF6"},
-    {"from": "middleware", "to": "backend", "label": "Firebase Admin SDK", "color": "#3B82F6"},
-    {"from": "middleware", "to": "backend", "label": "ChromaDB embed", "color": "#8B5CF6"}
   ]
 }

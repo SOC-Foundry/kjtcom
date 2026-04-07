@@ -59,7 +59,7 @@
         <button id="backBtn" onclick="zoomOut()">All boards</button>
         <select id="iterSelect" onchange="selectIteration(this.value)"></select>
     </div>
-    <div id="title">kjtcom PCB Architecture v10.62</div>
+    <div id="title">kjtcom PCB Architecture v10.64</div>
     <div id="legend">
         <div class="legend-row"><span class="legend-dot" style="background:#4ADE80"></span> Active</div>
         <div class="legend-row"><span class="legend-dot" style="background:#EF9F27"></span> Degraded</div>
@@ -159,6 +159,8 @@
         ];
 
         var ITERATIONS = {
+            "v10.64": ["ALL"],
+            "v10.63": ["ALL"],
             "v10.62": ["ALL"],
             "v10.61": ["ALL"],
             "v10.60": ["ALL"],
@@ -482,14 +484,28 @@
                 scene.add(line);
                 dashedLines.push(line);
 
-                // Connector label at midpoint (HTML overlay - these float between boards)
+                // Connector label at midpoint (G69: Canvas texture migration)
                 var labelX = (fromX + toX) / 2 + 0.2;
                 var labelY = midY;
-                var connLabel = createLabel(conn.label, false);
-                connLabel._worldPos = new THREE.Vector3(labelX, labelY, 0.1);
-                connLabel.style.color = conn.color;
-                connLabel.style.fontSize = '9px';
-                labelElements.push(connLabel);
+                
+                // Create a small plane for the connector label
+                var cw = 2.0, ch = 0.4;
+                var canvas = document.createElement('canvas');
+                canvas.width = cw * 128; canvas.height = ch * 128;
+                var ctx = canvas.getContext('2d');
+                ctx.fillStyle = 'rgba(13, 17, 23, 0.8)';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                ctx.fillStyle = conn.color;
+                ctx.font = 'bold 32px monospace';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(conn.label, canvas.width/2, canvas.height/2);
+                
+                var tex = new THREE.CanvasTexture(canvas);
+                var labelMat = new THREE.MeshBasicMaterial({ map: tex, transparent: true });
+                var labelPlane = new THREE.Mesh(new THREE.PlaneGeometry(cw, ch), labelMat);
+                labelPlane.position.set(labelX, labelY, 0.05);
+                scene.add(labelPlane);
             });
         }
 
@@ -720,7 +736,7 @@
 
         buildScene();
         populateIterations();
-        selectIteration('v10.62');
+        selectIteration('v10.64');
         animate();
 
     })();

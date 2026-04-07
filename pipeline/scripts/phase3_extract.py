@@ -20,6 +20,7 @@ def main():
     parser.add_argument("--pipeline", required=True, help="Pipeline ID")
     parser.add_argument("--limit", type=int, default=0, help="Max files to extract (0=all)")
     parser.add_argument("--timeout", type=int, default=300, help="API timeout in seconds")
+    parser.add_argument("--override-show", help="Force this show name for all extracted entities")
     args = parser.parse_args()
 
     from google import genai
@@ -76,13 +77,14 @@ def main():
                 text = text.split("\n", 1)[1].rsplit("```", 1)[0].strip()
             entities = json.loads(text)
 
-            # G62: Force show name for pu_ prefixed files
-            if video_id.startswith("pu_"):
+            # Apply show name override or heuristics
+            show_name = args.override_show
+            if not show_name and video_id.startswith("pu_"):
                 show_name = "Parts Unknown"
-                # Check for "A Cooks Tour" in filename to be more precise
                 if "A Cooks Tour" in video_id or "A Cook's Tour" in video_id:
                     show_name = "A Cook's Tour"
-                
+            
+            if show_name:
                 for ent in entities:
                     ent["shows"] = [show_name]
 

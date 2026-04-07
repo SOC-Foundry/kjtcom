@@ -1,5 +1,24 @@
 # kjtcom - Unified Changelog
 
+## v10.64 - 2026-04-06
+
+- NEW: Visual Baseline Verification - Implemented pHash-based visual diffing in post-flight (ADR-018).
+- NEW: Script Registry Middleware - Created central `data/script_registry.json` for component discovery (ADR-017).
+- NEW: Iteration Delta Tracking - Automated growth measurement across iteration boundaries (ADR-016).
+- NEW: Bourdain Parts Unknown Phase 2 - Acquisition and transcription hardening; overnight tmux dispatch.
+- UPDATED: Claw3D Connector Labels - Migrated from HTML overlays to 3D canvas textures for zero-drift legibility (G69).
+- FIXED: Event Log Iteration Tagging - Resolved G68 bug and retroactively corrected v10.63 events.
+- FIXED: Gotcha Registry Consolidation - Merged parallel numbering schemes into unified v2 registry (G67).
+- Interventions: 0
+
+## v10.63 - 2026-04-06
+
+- NEW: Evaluator Repair - Restored Qwen Tier 1 passing state via ADR-014 context-over-constraint prompting.
+- NEW: Self-Grading Auto-Cap - Enforced ADR-015 to prevent agent bias in scores.
+- NEW: G60 detection - Added production data render checks to post-flight.
+- UPDATED: Evaluator Harness - Cleaned up stale gotchas, renumbered to 956 lines.
+- Interventions: 0
+
 ## v10.62 - 2026-04-06
 
 - FIXED: Map Tab Regression - Corrected `LocationEntity` coordinate parsing to support both `[lat, lng]` and `[{'lat': X, 'lon': Y}]` formats. Map now shows 6,181+ markers.

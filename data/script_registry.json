@@ -1,0 +1,877 @@
+{
+  "schema_version": 1,
+  "last_synced": "2026-04-06T23:25:58.196177Z",
+  "scripts": [
+    {
+      "path": "pipeline/scripts/backfill_country_codes.py",
+      "purpose": "Backfill t_any_country_codes with ISO 3166-1 alpha-2 codes.",
+      "function_names": [
+        "resolve_code",
+        "main"
+      ],
+      "created_iteration": "unknown",
+      "last_modified_date": "2026-04-03",
+      "last_used_date": "never",
+      "owner_workstream": "unassigned",
+      "lines": 159,
+      "status": "stale"
+    },
+    {
+      "path": "pipeline/scripts/backfill_schema_v3.py",
+      "purpose": "Backfill pre-v3 entities to schema v3.",
+      "function_names": [
+        "derive_continents",
+        "backfill_calgold",
+        "backfill_ricksteves",
+        "main"
+      ],
+      "created_iteration": "unknown",
+      "last_modified_date": "2026-04-03",
+      "last_used_date": "never",
+      "owner_workstream": "unassigned",
+      "lines": 180,
+      "status": "stale"
+    },
+    {
+      "path": "pipeline/scripts/backfill_tripledb_enrichment.py",
+      "purpose": "Backfill TripleDB entities with Google Places enrichment.",
+      "function_names": [
+        "search_place",
+        "reverse_geocode",
+        "build_query",
+        "main"
+      ],
+      "created_iteration": "unknown",
+      "last_modified_date": "2026-04-03",
+      "last_used_date": "never",
+      "owner_workstream": "unassigned",
+      "lines": 244,
+      "status": "stale"
+    },
+    {
+      "path": "pipeline/scripts/fix_all_lowercase.py",
+      "purpose": "Comprehensive lowercase fix for ALL t_any_* string values.",
+      "function_names": [
+        "main"
+      ],
+      "created_iteration": "unknown",
+      "last_modified_date": "2026-04-04",
+      "last_used_date": "never",
+      "owner_workstream": "unassigned",
+      "lines": 108,
+      "status": "stale"
+    },
+    {
+      "path": "pipeline/scripts/fix_calgold_shows_case.py",
+      "purpose": "Fix CalGold t_any_shows casing.",
+      "function_names": [
+        "main"
+      ],
+      "created_iteration": "unknown",
+      "last_modified_date": "2026-04-03",
+      "last_used_date": "never",
+      "owner_workstream": "unassigned",
+      "lines": 84,
+      "status": "stale"
+    },
+    {
+      "path": "pipeline/scripts/fix_tripledb_shows_case.py",
+      "purpose": "Fix TripleDB t_any_shows casing.",
+      "function_names": [
+        "main"
+      ],
+      "created_iteration": "unknown",
+      "last_modified_date": "2026-04-04",
+      "last_used_date": "never",
+      "owner_workstream": "unassigned",
+      "lines": 84,
+      "status": "stale"
+    },
+    {
+      "path": "pipeline/scripts/generate_value_index.py",
+      "purpose": "Generate value_index.json for query autocomplete.",
+      "function_names": [
+        "main"
+      ],
+      "created_iteration": "unknown",
+      "last_modified_date": "2026-04-04",
+      "last_used_date": "never",
+      "owner_workstream": "unassigned",
+      "lines": 65,
+      "status": "stale"
+    },
+    {
+      "path": "pipeline/scripts/migrate_staging_to_production.py",
+      "purpose": "Copy CalGold + RickSteves entities from kjtcom staging to production.",
+      "function_names": [
+        "main"
+      ],
+      "created_iteration": "unknown",
+      "last_modified_date": "2026-04-03",
+      "last_used_date": "never",
+      "owner_workstream": "unassigned",
+      "lines": 82,
+      "status": "stale"
+    },
+    {
+      "path": "pipeline/scripts/migrate_tripledb.py",
+      "purpose": "Migrate TripleDB restaurants to kjtcom production Firestore.",
+      "function_names": [
+        "compute_geohashes",
+        "generate_row_id",
+        "split_cuisines",
+        "transform_document",
+        "print_document",
+        "main"
+      ],
+      "created_iteration": "unknown",
+      "last_modified_date": "2026-04-03",
+      "last_used_date": "never",
+      "owner_workstream": "unassigned",
+      "lines": 387,
+      "status": "stale"
+    },
+    {
+      "path": "pipeline/scripts/phase1_acquire.py",
+      "purpose": "Phase 1: Acquire audio from YouTube playlist via yt-dlp.",
+      "function_names": [
+        "log_failure",
+        "search_gap_fill",
+        "download_video",
+        "main"
+      ],
+      "created_iteration": "unknown",
+      "last_modified_date": "2026-04-06",
+      "last_used_date": "never",
+      "owner_workstream": "unassigned",
+      "lines": 150,
+      "status": "stale"
+    },
+    {
+      "path": "pipeline/scripts/phase2_transcribe.py",
+      "purpose": "Phase 2: Transcribe audio to timestamped JSON via faster-whisper (CUDA).",
+      "function_names": [
+        "main",
+        "_timeout_handler"
+      ],
+      "created_iteration": "unknown",
+      "last_modified_date": "2026-03-30",
+      "last_used_date": "never",
+      "owner_workstream": "unassigned",
+      "lines": 99,
+      "status": "stale"
+    },
+    {
+      "path": "pipeline/scripts/phase3_extract.py",
+      "purpose": "Phase 3: Extract structured entities via Gemini Flash API.",
+      "function_names": [
+        "main"
+      ],
+      "created_iteration": "unknown",
+      "last_modified_date": "2026-04-06",
+      "last_used_date": "never",
+      "owner_workstream": "unassigned",
+      "lines": 107,
+      "status": "stale"
+    },
+    {
+      "path": "pipeline/scripts/phase4_normalize.py",
+      "purpose": "Phase 4: Normalize extracted entities with Thompson Schema.",
+      "function_names": [
+        "main"
+      ],
+      "created_iteration": "unknown",
+      "last_modified_date": "2026-03-29",
+      "last_used_date": "never",
+      "owner_workstream": "unassigned",
+      "lines": 112,
+      "status": "stale"
+    },
+    {
+      "path": "pipeline/scripts/phase5_geocode.py",
+      "purpose": "Phase 5: Geocode entities via Nominatim (OSM).",
+      "function_names": [
+        "geocode",
+        "main",
+        "get_str"
+      ],
+      "created_iteration": "unknown",
+      "last_modified_date": "2026-03-30",
+      "last_used_date": "never",
+      "owner_workstream": "unassigned",
+      "lines": 147,
+      "status": "stale"
+    },
+    {
+      "path": "pipeline/scripts/phase6_enrich.py",
+      "purpose": "Phase 6: Enrich entities via Google Places API (New).",
+      "function_names": [
+        "search_place",
+        "main"
+      ],
+      "created_iteration": "unknown",
+      "last_modified_date": "2026-03-29",
+      "last_used_date": "never",
+      "owner_workstream": "unassigned",
+      "lines": 151,
+      "status": "stale"
+    },
+    {
+      "path": "pipeline/scripts/phase7_load.py",
+      "purpose": "Phase 7: Load enriched JSONL into Cloud Firestore.",
+      "function_names": [
+        "main"
+      ],
+      "created_iteration": "unknown",
+      "last_modified_date": "2026-03-29",
+      "last_used_date": "never",
+      "owner_workstream": "unassigned",
+      "lines": 140,
+      "status": "stale"
+    },
+    {
+      "path": "pipeline/scripts/query_assessment.py",
+      "purpose": "NoSQL Query Assessment - Tests all 6 categories against production Firestore.",
+      "function_names": [
+        "count_by_type"
+      ],
+      "created_iteration": "unknown",
+      "last_modified_date": "2026-04-03",
+      "last_used_date": "never",
+      "owner_workstream": "unassigned",
+      "lines": 218,
+      "status": "stale"
+    },
+    {
+      "path": "pipeline/scripts/query_assessment_2.py",
+      "purpose": "Query assessment part 2 - example queries and case issues.",
+      "function_names": [],
+      "created_iteration": "unknown",
+      "last_modified_date": "2026-04-03",
+      "last_used_date": "never",
+      "owner_workstream": "unassigned",
+      "lines": 81,
+      "status": "stale"
+    },
+    {
+      "path": "pipeline/scripts/run_phase2_overnight.py",
+      "purpose": "Overnight wrapper for Parts Unknown Phase 2.",
+      "function_names": [],
+      "created_iteration": "unknown",
+      "last_modified_date": "2026-04-06",
+      "last_used_date": "never",
+      "owner_workstream": "unassigned",
+      "lines": 48,
+      "status": "stale"
+    },
+    {
+      "path": "pipeline/scripts/utils/checkpoint.py",
+      "purpose": "Checkpoint/resume support for pipeline stages.",
+      "function_names": [
+        "__init__",
+        "_load",
+        "save",
+        "is_done",
+        "mark_done",
+        "count"
+      ],
+      "created_iteration": "unknown",
+      "last_modified_date": "2026-03-29",
+      "last_used_date": "never",
+      "owner_workstream": "unassigned",
+      "lines": 41,
+      "status": "stale"
+    },
+    {
+      "path": "pipeline/scripts/utils/geohash.py",
+      "purpose": "Geohash encoding utility for proximity queries.",
+      "function_names": [],
+      "created_iteration": "unknown",
+      "last_modified_date": "2026-03-29",
+      "last_used_date": "never",
+      "owner_workstream": "unassigned",
+      "lines": 5,
+      "status": "stale"
+    },
+    {
+      "path": "pipeline/scripts/utils/thompson_schema.py",
+      "purpose": "Thompson Schema normalization utility.",
+      "function_names": [
+        "tokenize_for_search",
+        "generate_row_id",
+        "lowercase_array",
+        "compute_geohashes",
+        "flatten_nested_lists",
+        "make_firestore_safe",
+        "normalize_entity"
+      ],
+      "created_iteration": "unknown",
+      "last_modified_date": "2026-04-06",
+      "last_used_date": "never",
+      "owner_workstream": "unassigned",
+      "lines": 190,
+      "status": "stale"
+    },
+    {
+      "path": "scripts/analyze_events.py",
+      "purpose": "Analyze IAO event log and produce summary statistics.",
+      "function_names": [
+        "load_events",
+        "analyze",
+        "print_summary",
+        "main"
+      ],
+      "created_iteration": "unknown",
+      "last_modified_date": "2026-04-05",
+      "last_used_date": "never",
+      "owner_workstream": "unassigned",
+      "lines": 149,
+      "status": "stale"
+    },
+    {
+      "path": "scripts/bless_baseline.py",
+      "purpose": "Bless a visual baseline for post-flight verification (ADR-018).",
+      "function_names": [
+        "bless",
+        "main"
+      ],
+      "created_iteration": "unknown",
+      "last_modified_date": "2026-04-06",
+      "last_used_date": "never",
+      "owner_workstream": "unassigned",
+      "lines": 55,
+      "status": "stale"
+    },
+    {
+      "path": "scripts/brave_search.py",
+      "purpose": "Brave Search API wrapper - returns top 5 web results. P3 logged.",
+      "function_names": [
+        "search",
+        "main"
+      ],
+      "created_iteration": "unknown",
+      "last_modified_date": "2026-04-05",
+      "last_used_date": "never",
+      "owner_workstream": "unassigned",
+      "lines": 70,
+      "status": "stale"
+    },
+    {
+      "path": "scripts/build_architecture_html.py",
+      "purpose": "Build architecture.html from architecture.mmd using Mermaid JS CDN.",
+      "function_names": [
+        "build"
+      ],
+      "created_iteration": "unknown",
+      "last_modified_date": "2026-04-05",
+      "last_used_date": "never",
+      "owner_workstream": "unassigned",
+      "lines": 114,
+      "status": "stale"
+    },
+    {
+      "path": "scripts/build_registry.py",
+      "purpose": "Build iteration_registry.json by feeding docs/archive/ to Qwen3.5-9B.",
+      "function_names": [
+        "find_iterations",
+        "read_iteration_files",
+        "query_qwen",
+        "build_gotcha_registry",
+        "main"
+      ],
+      "created_iteration": "unknown",
+      "last_modified_date": "2026-04-04",
+      "last_used_date": "never",
+      "owner_workstream": "unassigned",
+      "lines": 174,
+      "status": "stale"
+    },
+    {
+      "path": "scripts/build_registry_v2.py",
+      "purpose": "Rebuild iteration_registry.json using RAG (ChromaDB) + Qwen3.5-9B scoring. P3 logged.",
+      "function_names": [
+        "get_embedding",
+        "query_chromadb",
+        "score_with_qwen",
+        "main"
+      ],
+      "created_iteration": "unknown",
+      "last_modified_date": "2026-04-05",
+      "last_used_date": "never",
+      "owner_workstream": "unassigned",
+      "lines": 270,
+      "status": "stale"
+    },
+    {
+      "path": "scripts/cleanup_docs.py",
+      "purpose": "Clean up docs/ directory per v9.48 file management rules.",
+      "function_names": [
+        "cleanup"
+      ],
+      "created_iteration": "unknown",
+      "last_modified_date": "2026-04-05",
+      "last_used_date": "never",
+      "owner_workstream": "unassigned",
+      "lines": 36,
+      "status": "stale"
+    },
+    {
+      "path": "scripts/embed_archive.py",
+      "purpose": "Embed docs/archive/ files into ChromaDB using nomic-embed-text via Ollama. P3 logged.",
+      "function_names": [
+        "chunk_text",
+        "extract_metadata",
+        "get_embeddings",
+        "main"
+      ],
+      "created_iteration": "unknown",
+      "last_modified_date": "2026-04-05",
+      "last_used_date": "never",
+      "owner_workstream": "unassigned",
+      "lines": 134,
+      "status": "stale"
+    },
+    {
+      "path": "scripts/enrich_counties.py",
+      "purpose": "Enrich TripleDB entities with t_any_counties via reverse geocoding.",
+      "function_names": [
+        "_get_db",
+        "fetch_tripledb_entities",
+        "reverse_geocode_nominatim",
+        "extract_county_from_address",
+        "enrich_entities",
+        "write_to_firestore",
+        "main"
+      ],
+      "created_iteration": "unknown",
+      "last_modified_date": "2026-04-05",
+      "last_used_date": "never",
+      "owner_workstream": "unassigned",
+      "lines": 240,
+      "status": "stale"
+    },
+    {
+      "path": "scripts/firestore_query.py",
+      "purpose": "Firestore query execution for dual retrieval path. P3 logged.",
+      "function_names": [
+        "_get_db",
+        "execute_query",
+        "format_entity_count",
+        "format_entity_list",
+        "format_entity_detail",
+        "_get_name",
+        "_get_first",
+        "_get_nested"
+      ],
+      "created_iteration": "unknown",
+      "last_modified_date": "2026-04-05",
+      "last_used_date": "never",
+      "owner_workstream": "unassigned",
+      "lines": 208,
+      "status": "stale"
+    },
+    {
+      "path": "scripts/generate_artifacts.py",
+      "purpose": "Post-iteration artifact generator. Drafts build log + report from structured inputs.",
+      "function_names": [
+        "load_harness",
+        "get_iteration",
+        "get_iteration_number",
+        "load_template",
+        "get_git_diff_stat",
+        "get_event_log_summary",
+        "get_agent_scores",
+        "format_workstream_rows",
+        "render_build_markdown",
+        "generate_narrative",
+        "generate_build_log",
+        "compute_trident_values",
+        "render_report_markdown",
+        "generate_report",
+        "update_unified_changelog",
+        "cross_check_workstreams",
+        "_guess_expected_files",
+        "promote_drafts",
+        "validate_only",
+        "main"
+      ],
+      "created_iteration": "unknown",
+      "last_modified_date": "2026-04-06",
+      "last_used_date": "never",
+      "owner_workstream": "unassigned",
+      "lines": 677,
+      "status": "stale"
+    },
+    {
+      "path": "scripts/generate_leaderboard.py",
+      "purpose": "Generate cumulative agent leaderboard from agent_scores.json.",
+      "function_names": [
+        "generate"
+      ],
+      "created_iteration": "unknown",
+      "last_modified_date": "2026-04-05",
+      "last_used_date": "never",
+      "owner_workstream": "unassigned",
+      "lines": 70,
+      "status": "stale"
+    },
+    {
+      "path": "scripts/intent_router.py",
+      "purpose": "Gemini Flash intent router for dual retrieval path. P3 logged.",
+      "function_names": [
+        "_load_schema",
+        "build_routing_prompt",
+        "route_question"
+      ],
+      "created_iteration": "unknown",
+      "last_modified_date": "2026-04-05",
+      "last_used_date": "never",
+      "owner_workstream": "unassigned",
+      "lines": 144,
+      "status": "stale"
+    },
+    {
+      "path": "scripts/iteration_deltas.py",
+      "purpose": "Iteration Delta Tracking (ADR-016).",
+      "function_names": [
+        "get_metrics",
+        "take_snapshot",
+        "generate_table",
+        "main"
+      ],
+      "created_iteration": "unknown",
+      "last_modified_date": "2026-04-06",
+      "last_used_date": "never",
+      "owner_workstream": "unassigned",
+      "lines": 110,
+      "status": "stale"
+    },
+    {
+      "path": "scripts/panther_scrape.py",
+      "purpose": "Panther SIEM UI scrape via Playwright CDP.",
+      "function_names": [],
+      "created_iteration": "unknown",
+      "last_modified_date": "2026-04-04",
+      "last_used_date": "never",
+      "owner_workstream": "unassigned",
+      "lines": 159,
+      "status": "stale"
+    },
+    {
+      "path": "scripts/post_flight.py",
+      "purpose": "Post-flight verification for kjtcom iterations.",
+      "function_names": [
+        "verify_site",
+        "verify_bot_status",
+        "verify_bot_query",
+        "verify_mcps",
+        "verify_claw3d_no_external_json",
+        "verify_static_assets",
+        "check_artifacts",
+        "run_all"
+      ],
+      "created_iteration": "unknown",
+      "last_modified_date": "2026-04-06",
+      "last_used_date": "never",
+      "owner_workstream": "unassigned",
+      "lines": 319,
+      "status": "stale"
+    },
+    {
+      "path": "scripts/postflight_checks/claw3d_label_legibility.py",
+      "purpose": "W3 post-flight check (v10.63): claw3d label legibility screenshot capture.",
+      "function_names": [
+        "run"
+      ],
+      "created_iteration": "unknown",
+      "last_modified_date": "2026-04-06",
+      "last_used_date": "never",
+      "owner_workstream": "unassigned",
+      "lines": 63,
+      "status": "stale"
+    },
+    {
+      "path": "scripts/postflight_checks/production_data_render.py",
+      "purpose": "W3 post-flight check (v10.63): production data render via Playwright.",
+      "function_names": [
+        "run"
+      ],
+      "created_iteration": "unknown",
+      "last_modified_date": "2026-04-06",
+      "last_used_date": "never",
+      "owner_workstream": "unassigned",
+      "lines": 106,
+      "status": "stale"
+    },
+    {
+      "path": "scripts/postflight_checks/visual_baseline_diff.py",
+      "purpose": "Visual baseline diff check (ADR-018).",
+      "function_names": [
+        "run_check",
+        "main"
+      ],
+      "created_iteration": "unknown",
+      "last_modified_date": "2026-04-06",
+      "last_used_date": "never",
+      "owner_workstream": "unassigned",
+      "lines": 64,
+      "status": "stale"
+    },
+    {
+      "path": "scripts/pre_flight.py",
+      "purpose": "Pre-flight environment verification (ADR-011 / G71).",
+      "function_names": [
+        "check",
+        "check_gpu",
+        "check_site",
+        "main"
+      ],
+      "created_iteration": "unknown",
+      "last_modified_date": "2026-04-06",
+      "last_used_date": "never",
+      "owner_workstream": "unassigned",
+      "lines": 90,
+      "status": "stale"
+    },
+    {
+      "path": "scripts/query_rag.py",
+      "purpose": "Semantic search over kjtcom archive via ChromaDB + nomic-embed-text. P3 logged.",
+      "function_names": [
+        "get_embedding",
+        "query",
+        "main"
+      ],
+      "created_iteration": "unknown",
+      "last_modified_date": "2026-04-05",
+      "last_used_date": "never",
+      "owner_workstream": "unassigned",
+      "lines": 102,
+      "status": "stale"
+    },
+    {
+      "path": "scripts/run_archive_analysis.py",
+      "purpose": "Analyze pipeline archive reports to produce Bourdain scaling plan.",
+      "function_names": [
+        "collect_pipeline_reports",
+        "build_analysis_prompt",
+        "call_qwen_analysis",
+        "main"
+      ],
+      "created_iteration": "unknown",
+      "last_modified_date": "2026-04-06",
+      "last_used_date": "never",
+      "owner_workstream": "unassigned",
+      "lines": 170,
+      "status": "stale"
+    },
+    {
+      "path": "scripts/run_evaluator.py",
+      "purpose": "Run Qwen3.5-9B evaluator with schema-validated output.",
+      "function_names": [
+        "load_harness",
+        "load_eval_schema",
+        "load_gotcha_archive",
+        "_find_doc",
+        "build_rich_context",
+        "build_execution_context",
+        "parse_workstream_count",
+        "validate_schema",
+        "parse_executing_agent",
+        "normalize_llm_output",
+        "validate_qwen_output",
+        "call_qwen",
+        "repair_json",
+        "parse_json_from_response",
+        "call_gemini_flash",
+        "generate_self_eval",
+        "build_evaluator_prompt",
+        "try_qwen_tier",
+        "try_gemini_tier",
+        "evaluate_with_retry"
+      ],
+      "created_iteration": "unknown",
+      "last_modified_date": "2026-04-06",
+      "last_used_date": "never",
+      "owner_workstream": "unassigned",
+      "lines": 1041,
+      "status": "stale"
+    },
+    {
+      "path": "scripts/sync_script_registry.py",
+      "purpose": "Sync data/script_registry.json (ADR-017).",
+      "function_names": [
+        "docstring_purpose",
+        "function_names",
+        "last_used",
+        "status_for",
+        "main"
+      ],
+      "created_iteration": "unknown",
+      "last_modified_date": "2026-04-06",
+      "last_used_date": "never",
+      "owner_workstream": "unassigned",
+      "lines": 143,
+      "status": "stale"
+    },
+    {
+      "path": "scripts/telegram_bot.py",
+      "purpose": "kjtcom IAO Telegram Bot - routes commands to kjtcom agents and middleware. P3 logged.",
+      "function_names": [
+        "resolve_context",
+        "check_auth",
+        "main"
+      ],
+      "created_iteration": "unknown",
+      "last_modified_date": "2026-04-05",
+      "last_used_date": "never",
+      "owner_workstream": "unassigned",
+      "lines": 619,
+      "status": "stale"
+    },
+    {
+      "path": "scripts/test_eval_schema.py",
+      "purpose": "Schema validation test cases for eval_schema.json (v9.51).",
+      "function_names": [
+        "make_valid_payload",
+        "validate",
+        "test_valid_payload",
+        "test_valid_5_workstreams",
+        "test_score_10_rejected",
+        "test_score_negative_rejected",
+        "test_invalid_mcp_rejected",
+        "test_empty_evidence_rejected",
+        "test_invalid_outcome_rejected",
+        "test_missing_improvements_rejected",
+        "test_missing_what_could_be_better",
+        "test_summary_too_short",
+        "test_bad_delivery_format",
+        "main"
+      ],
+      "created_iteration": "unknown",
+      "last_modified_date": "2026-04-05",
+      "last_used_date": "never",
+      "owner_workstream": "unassigned",
+      "lines": 184,
+      "status": "stale"
+    },
+    {
+      "path": "scripts/utils/consolidate_gotchas.py",
+      "purpose": "(no docstring)",
+      "function_names": [
+        "extract_from_markdown",
+        "main"
+      ],
+      "created_iteration": "unknown",
+      "last_modified_date": "2026-04-06",
+      "last_used_date": "never",
+      "owner_workstream": "unassigned",
+      "lines": 56,
+      "status": "stale"
+    },
+    {
+      "path": "scripts/utils/consolidate_gotchas_v2.py",
+      "purpose": "(no docstring)",
+      "function_names": [
+        "extract_gotchas",
+        "main",
+        "sort_key"
+      ],
+      "created_iteration": "unknown",
+      "last_modified_date": "2026-04-06",
+      "last_used_date": "never",
+      "owner_workstream": "unassigned",
+      "lines": 86,
+      "status": "stale"
+    },
+    {
+      "path": "scripts/utils/count_staging.py",
+      "purpose": "(no docstring)",
+      "function_names": [],
+      "created_iteration": "unknown",
+      "last_modified_date": "2026-04-06",
+      "last_used_date": "never",
+      "owner_workstream": "unassigned",
+      "lines": 14,
+      "status": "stale"
+    },
+    {
+      "path": "scripts/utils/generate_bourdain_summary.py",
+      "purpose": "(no docstring)",
+      "function_names": [
+        "main"
+      ],
+      "created_iteration": "unknown",
+      "last_modified_date": "2026-04-06",
+      "last_used_date": "never",
+      "owner_workstream": "unassigned",
+      "lines": 43,
+      "status": "stale"
+    },
+    {
+      "path": "scripts/utils/iao_logger.py",
+      "purpose": "Structured event logger for IAO P3 Diligence.",
+      "function_names": [
+        "log_event"
+      ],
+      "created_iteration": "unknown",
+      "last_modified_date": "2026-04-06",
+      "last_used_date": "never",
+      "owner_workstream": "unassigned",
+      "lines": 60,
+      "status": "stale"
+    },
+    {
+      "path": "scripts/utils/ollama_config.py",
+      "purpose": "Ollama default configuration for all kjtcom scripts.",
+      "function_names": [
+        "_merge",
+        "merge_defaults",
+        "merge_batch_defaults"
+      ],
+      "created_iteration": "unknown",
+      "last_modified_date": "2026-04-05",
+      "last_used_date": "never",
+      "owner_workstream": "unassigned",
+      "lines": 59,
+      "status": "stale"
+    },
+    {
+      "path": "scripts/utils/ollama_logged.py",
+      "purpose": "Auto-logging wrapper around Ollama API calls.",
+      "function_names": [
+        "chat_logged",
+        "embed_logged"
+      ],
+      "created_iteration": "unknown",
+      "last_modified_date": "2026-04-05",
+      "last_used_date": "never",
+      "owner_workstream": "unassigned",
+      "lines": 115,
+      "status": "stale"
+    },
+    {
+      "path": "scripts/utils/retry_bless_root.py",
+      "purpose": "(no docstring)",
+      "function_names": [],
+      "created_iteration": "unknown",
+      "last_modified_date": "2026-04-06",
+      "last_used_date": "never",
+      "owner_workstream": "unassigned",
+      "lines": 15,
+      "status": "stale"
+    },
+    {
+      "path": "scripts/utils/sync_claw3d_data.py",
+      "purpose": "(no docstring)",
+      "function_names": [
+        "main"
+      ],
+      "created_iteration": "unknown",
+      "last_modified_date": "2026-04-06",
+      "last_used_date": "never",
+      "owner_workstream": "unassigned",
+      "lines": 48,
+      "status": "stale"
+    }
+  ]
+}

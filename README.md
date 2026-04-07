@@ -14,7 +14,7 @@ kjtcom extracts entities from YouTube playlists - landmarks, trails, restaurants
 
 The same normalization patterns power production SIEM migrations at [TachTech Engineering](https://tachtech.net). Built entirely by LLM agents using IAO (Iterative Agentic Orchestration) - a methodology distilled from 46+ iterations across 10 phases on [TripleDB](https://github.com/TachTech-Engineering/tripledb).
 
-**[kylejeromethompson.com](https://kylejeromethompson.com)** | **Phase 10 v10.63 (ACTIVE)** | **Status: Evaluator Repaired (Qwen Tier 1 passing) + Harness Cleaned + Production Render Check + Self-Grading Cap (ADR-015)**
+**[kylejeromethompson.com](https://kylejeromethompson.com)** | **Phase 10 v10.64 (ACTIVE)** | **Status: Platform Hardening + Bourdain Phase 2 + Visual Verification (ADR-018) + Script Registry (ADR-017)**
 
 ```mermaid
 graph BT
@@ -41,16 +41,16 @@ graph BT
 
 The harness, ADRs, evaluator, post-flight, and gotcha registry are the actual product. The Flutter app and YouTube pipelines are the data exhaust that proves the harness works. See `docs/evaluator-harness.md` (956 lines, v10.63), `docs/kjtcom-design-v10.63.md`, and `docs/kjtcom-plan-v10.63.md` for the current iteration's authoritative spec.
 
-### v10.63 Component Review
+### v10.64 Component Review
 
 Codebase component count vs Claw3D PCB chip count (v10.61 census = 49 chips across 4 boards):
 
-- **Frontend (10 chips):** query_ed, results, detail, map, globe, iao, mw_tab, schema, claw3d, fb_host - all present in `app/lib/widgets/` and `app/web/`.
-- **Pipeline (9 chips):** yt_dlp, whisper, extract, normalize, geocode, enrich, load, tmux, checkpoint - all present in `pipeline/scripts/`.
-- **Middleware (23 chips):** evaluator, harness, ADR, artifact, gotchas, scores, pre_flight, post_flight, router, tg_bot, rag, qwen_9b, nemotron, gflash, fb_mcp, c7_mcp, pw_mcp, fc_mcp, dart_mcp, claude, gemini, logger, openclaw - all present in `scripts/` and `data/`.
-- **Backend (7 chips):** firestore, prod_db, stg_db, calgold, ricksteves, tripledb, bourdain - all present in Firestore project state.
+- **Frontend (10 chips):** query_ed, results, detail, map, globe, iao, mw_tab, schema, claw3d, fb_host - all present. Query editor migrated to `flutter_code_editor` (G45).
+- **Pipeline (9 chips):** yt_dlp, whisper, extract, normalize, geocode, enrich, load, tmux, checkpoint - all present. Hardened acquisition with failure logging and gap-fill.
+- **Middleware (23 chips):** evaluator, harness, ADR, artifact, gotchas, scores, pre_flight, post_flight, router, tg_bot, rag, qwen_9b, nemotron, gflash, fb_mcp, c7_mcp, pw_mcp, fc_mcp, dart_mcp, claude, gemini, logger, openclaw - all present. Added `sync_script_registry` (ADR-017) and `iteration_deltas` (ADR-016).
+- **Backend (7 chips):** firestore, prod_db, stg_db, calgold, ricksteves, tripledb, bourdain - all present. Bourdain Phase 2 in progress.
 
-**v10.63 delta:** No new chips required. The new W3 production data render check and W2 ADR-014/015 additions are extensions of existing chips (`post_flight`, `evaluator`, `harness`), not new components. Claw3D PCB visualization is unchanged this iteration.
+**v10.64 delta:** No new chips required. The new ADRs (016-018) and patterns (21-25) are extensions of existing middleware chips. Claw3D label migration (G69) is a visual-layer optimization.
 
 ### Data Architecture
 
@@ -576,6 +576,47 @@ Phase 10 focuses on Bourdain pipeline expansion (114 videos from No Reservations
 ---
 
 ## Changelog
+
+**v10.64 (Phase 10 - Visual Verification + Script Registry + Bourdain Phase 2)**
+- NEW: Visual Baseline Verification - Implemented pHash-based visual diffing in post-flight (ADR-018).
+- NEW: Script Registry Middleware - Created central `data/script_registry.json` for component discovery (ADR-017).
+- NEW: Iteration Delta Tracking - Automated growth measurement across iteration boundaries (ADR-016).
+- NEW: Bourdain Parts Unknown Phase 2 - Acquisition and transcription hardening; overnight tmux dispatch.
+- UPDATED: Claw3D Connector Labels - Migrated from HTML overlays to 3D canvas textures for zero-drift legibility (G69).
+- FIXED: Event Log Iteration Tagging - Resolved G68 bug and retroactively corrected v10.63 events.
+- FIXED: Gotcha Registry Consolidation - Merged parallel numbering schemes into unified v2 registry (G67).
+- Multi-agent: Gemini CLI (executor) + Qwen3.5-9B (evaluator)
+- Kyle interventions: 0
+
+**v10.63 (Phase 10 - Evaluator Repair + Self-Grading Cap + Harness Cleanup)**
+- NEW: Evaluator Repair - Restored Qwen Tier 1 passing state via ADR-014 context-over-constraint prompting.
+- NEW: Self-Grading Auto-Cap - Enforced ADR-015 to prevent agent bias in scores.
+- NEW: G60 detection - Added production data render checks to post-flight.
+- UPDATED: Evaluator Harness - Cleaned up stale gotchas, renumbered to 956 lines.
+- Multi-agent: Claude Code (executor) + Qwen3.5-9B (evaluator)
+- Kyle interventions: 0
+
+**v10.62 (Phase 10 - Map Tab Fix + Bourdain Phase 1)**
+- FIXED: Map Tab Regression - Corrected `LocationEntity` coordinate parsing for dual formats.
+- UPDATED: Claw3D font readability - Raised `createChipTexture` floor to 11px and bumped resolution.
+- NEW: Parts Unknown Pipeline Phase 1 - 28 videos acquired and processed to staging.
+- NEW: G61 Artifact Enforcement - Post-flight now asserts artifact existence and size.
+- Multi-agent: Gemini CLI (executor) + Qwen3.5-9B (evaluator)
+- Kyle interventions: 0
+
+**v10.61 (Phase 10 - GCP Portability + Canvas Texture Migration)**
+- NEW: GCP Portability Plan - Authored `docs/gcp-portability-plan.md` for infrastructure abstraction.
+- UPDATED: Claw3D Canvas Texture Migration - Labels moved to chip faces, resolving containment issues.
+- UPDATED: Evaluator Harness - Added ADR-013 and Pattern 18.
+- Multi-agent: Gemini CLI (executor) + Qwen3.5-9B (evaluator)
+- Kyle interventions: 0
+
+**v10.60 (Phase 10 - G58 Immutability + Chip Containment)**
+- FIXED: G58 Immutability - Protected design/plan docs from execution-time overwrites.
+- FIXED: v10.59 Report Correction - Retroactively corrected scores and registry.
+- UPDATED: Claw3D Chip Containment - Implemented dynamic grid layout and bounds checking.
+- Multi-agent: Claude Code (executor) + Qwen3.5-9B (evaluator)
+- Kyle interventions: 0
 
 **v10.59 (Phase 10 - Bourdain Pipeline Complete + PCB Architecture + Middleware Hardening)**
 - NEW: Bourdain Pipeline Complete - Videos 91-114 acquired, transcribed, extracted, normalized, geocoded, enriched, and loaded to staging. 351 unique entities in staging (was 275). Phase 4 complete.

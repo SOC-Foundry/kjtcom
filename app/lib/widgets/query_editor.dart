@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_code_editor/flutter_code_editor.dart' hide Tokens;
 import '../models/query_clause.dart';
 import '../theme/tokens.dart';
+import '../theme/tql_language.dart';
 import '../providers/query_provider.dart';
 import '../providers/selection_provider.dart';
 import 'query_autocomplete.dart';
 
 /// Component-patterns.md Section 2 - Query Editor.
 /// Dark input area with line-numbered, syntax-highlighted query text.
+/// Migrated to flutter_code_editor (v10.64, G45) to resolve cursor drift.
 class QueryEditor extends ConsumerStatefulWidget {
   const QueryEditor({super.key});
 
@@ -17,7 +20,7 @@ class QueryEditor extends ConsumerStatefulWidget {
 }
 
 class _QueryEditorState extends ConsumerState<QueryEditor> {
-  late TextEditingController _controller;
+  late CodeController _codeController;
   int _selectedIndex = 0;
   List<String> _suggestions = [];
   AutocompleteContext? _acContext;
@@ -26,19 +29,24 @@ class _QueryEditorState extends ConsumerState<QueryEditor> {
   @override
   void initState() {
     super.initState();
-    _controller = ref.read(queryTextControllerProvider);
-    _controller.addListener(_onTextChanged);
+    final initialText = ref.read(queryProvider);
+    _codeController = CodeController(
+      text: initialText,
+      language: tql,
+    );
+    _codeController.addListener(_onTextChanged);
   }
 
   @override
   void dispose() {
-    _controller.removeListener(_onTextChanged);
+    _codeController.removeListener(_onTextChanged);
+    _codeController.dispose();
     super.dispose();
   }
 
   void _onTextChanged() {
-    final text = _controller.text;
-    final cursorPos = _controller.selection.baseOffset;
+    final text = _codeController.text;
+    final cursorPos = _codeController.selection.baseOffset;
     final ctx = AutocompleteContext.detect(text, cursorPos);
     
     List<String> suggestions = [];
@@ -69,7 +77,6 @@ class _QueryEditorState extends ConsumerState<QueryEditor> {
         _selectedIndex = 0;
       });
     } else {
-      // Still update context even if suggestions are same (cursor moved)
       _acContext = ctx;
     }
   }
@@ -77,33 +84,24 @@ class _QueryEditorState extends ConsumerState<QueryEditor> {
   void _acceptSuggestion(int index) {
     if (_acContext == null || index >= _suggestions.length) return;
     final suggestion = _suggestions[index];
-    final text = _controller.text;
+    final text = _codeController.text;
     final ctx = _acContext!;
 
-    String newText;
-    int newCursorPos;
-
+    String insertion;
     if (ctx.mode == AutocompleteMode.field) {
-      final suffix = ' contains ';
-      newText = text.substring(0, ctx.replaceStart) +
-          suggestion +
-          suffix +
-          text.substring(ctx.replaceEnd);
-      newCursorPos = ctx.replaceStart + suggestion.length + suffix.length;
+      insertion = suggestion + ' contains ';
     } else {
-      newText = text.substring(0, ctx.replaceStart) +
-          suggestion +
-          text.substring(ctx.replaceEnd);
-      newCursorPos = ctx.replaceStart + suggestion.length;
+      insertion = suggestion;
     }
 
-    // Use addPostFrameCallback for cursor placement (W1)
-    _controller.text = newText;
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _controller.selection = TextSelection.collapsed(offset: newCursorPos);
-    });
+    // Replace the prefix with the suggestion
+    final newText = text.replaceRange(ctx.replaceStart, ctx.replaceEnd, insertion);
+    _codeController.text = newText;
     
-    ref.read(queryProvider.notifier).setText(newText);
+    final newCursorPos = ctx.replaceStart + insertion.length;
+    _codeController.selection = TextSelection.collapsed(offset: newCursorPos);
+    
+    ref.read(queryProvider.notifier).setText(_codeController.text);
     setState(() {
       _suggestions = [];
       _showAutocomplete = false;
@@ -115,17 +113,18 @@ class _QueryEditorState extends ConsumerState<QueryEditor> {
       _suggestions = [];
       _showAutocomplete = false;
     });
-    ref.read(queryProvider.notifier).setText(_controller.text);
-  }
-
-  void _onUserEdit(String text) {
-    _showAutocomplete = true;
-    // _onTextChanged is already called by the listener
+    ref.read(queryProvider.notifier).setText(_codeController.text);
   }
 
   KeyEventResult _handleKeyEvent(FocusNode node, KeyEvent event) {
     if (event is! KeyDownEvent && event is! KeyRepeatEvent) return KeyEventResult.ignored;
     
+    // Handle Enter key for search if no suggestions
+    if (_suggestions.isEmpty && event.logicalKey == LogicalKeyboardKey.enter) {
+      _onSearch();
+      return KeyEventResult.handled;
+    }
+
     if (_suggestions.isNotEmpty) {
       if (event.logicalKey == LogicalKeyboardKey.tab || event.logicalKey == LogicalKeyboardKey.enter) {
         _acceptSuggestion(_selectedIndex);
@@ -156,24 +155,24 @@ class _QueryEditorState extends ConsumerState<QueryEditor> {
 
   @override
   Widget build(BuildContext context) {
-    // Re-trigger suggestions when value index finishes loading (W3 fix)
-    ref.listen(valueIndexProvider, (prev, next) {
-      if (prev?.value == null && next.value != null) {
-        _onTextChanged();
-      }
-    });
-
-    // Sync controller when query changes externally (+filter/-exclude)
+    // Sync controller when query changes externally
     ref.listen(queryProvider, (_, next) {
       if (ref.read(programmaticUpdateProvider)) return;
-      if (_controller.text != next) {
-        _controller.text = next;
-        _controller.selection = TextSelection.collapsed(offset: next.length);
+      if (_codeController.text != next) {
+        _codeController.text = next;
+        _codeController.selection = TextSelection.collapsed(offset: next.length);
         setState(() {});
       }
     });
 
-    final lines = _controller.text.split('\n');
+    final tqlTheme = {
+      'root': const TextStyle(color: Tokens.textPrimary, backgroundColor: Colors.transparent),
+      'keyword': const TextStyle(color: Tokens.syntaxKeyword),
+      'operator': const TextStyle(color: Tokens.syntaxOperator),
+      'type': const TextStyle(color: Tokens.syntaxField),
+      'string': const TextStyle(color: Tokens.syntaxValue),
+      'number': const TextStyle(color: Tokens.syntaxValue),
+    };
 
     return Container(
       decoration: BoxDecoration(
@@ -199,38 +198,30 @@ class _QueryEditorState extends ConsumerState<QueryEditor> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Expanded(
-                  child: Stack(
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          for (int i = 0; i < lines.length; i++)
-                            _buildQueryLine(i + 1, lines[i]),
-                        ],
+                  child: CodeTheme(
+                    data: CodeThemeData(styles: tqlTheme),
+                    child: CodeField(
+                      controller: _codeController,
+                      textStyle: const TextStyle(
+                        fontFamily: Tokens.fontMono,
+                        fontSize: Tokens.sizeLg,
+                        height: 1.75,
                       ),
-                      Positioned.fill(
-                        child: TextField(
-                          controller: _controller,
-                          onChanged: _onUserEdit,
-                          onSubmitted: (_) => _onSearch(),
-                          maxLines: null,
-                          style: const TextStyle(
-                            fontFamily: Tokens.fontMono,
-                            fontSize: Tokens.sizeLg,
-                            color: Colors.transparent,
-                            height: 1.75,
-                          ),
-                          decoration: const InputDecoration(
-                            border: InputBorder.none,
-                            contentPadding: EdgeInsets.only(
-                              left: Tokens.lineNumberWidth + Tokens.space2,
-                            ),
-                            isDense: true,
-                          ),
-                          cursorColor: Tokens.syntaxCursor,
+                      gutterStyle: const GutterStyle(
+                        showLineNumbers: true,
+                        width: Tokens.lineNumberWidth,
+                        textStyle: TextStyle(
+                          fontFamily: Tokens.fontMono,
+                          fontSize: Tokens.sizeMd,
+                          color: Tokens.textMuted,
                         ),
+                        margin: Tokens.space2,
                       ),
-                    ],
+                      decoration: const BoxDecoration(
+                        color: Colors.transparent,
+                      ),
+                      onChanged: (text) => _showAutocomplete = true,
+                    ),
                   ),
                 ),
                 const SizedBox(width: Tokens.space2),
@@ -353,12 +344,11 @@ class _QueryEditorState extends ConsumerState<QueryEditor> {
   }
 
   Widget _buildFeedback() {
-    final text = _controller.text;
+    final text = _codeController.text;
     final clauses = QueryClause.parseAll(text);
     final hasContent = text.split('\n').any(
         (l) => l.trim().isNotEmpty && l.trim() != 'locations');
 
-    // Parse error: non-empty input but no clauses parsed
     if (hasContent && clauses.isEmpty) {
       return _feedbackRow(
         'Could not parse query. Expected: field_name operator value '
@@ -367,7 +357,6 @@ class _QueryEditorState extends ConsumerState<QueryEditor> {
       );
     }
 
-    // Invalid field name
     final invalidFields = clauses.where((c) => !c.isValidField).toList();
     if (invalidFields.isNotEmpty) {
       final names = invalidFields.map((c) => c.field).join(', ');
@@ -377,7 +366,6 @@ class _QueryEditorState extends ConsumerState<QueryEditor> {
       );
     }
 
-    // Multi-array-contains note (D5)
     final arrayOps = clauses.where(
         (c) => c.operator == 'contains' || c.operator == 'contains-any');
     if (arrayOps.length > 1) {
@@ -406,7 +394,7 @@ class _QueryEditorState extends ConsumerState<QueryEditor> {
   }
 
   Widget _buildHelpText() {
-    if (_controller.text.trim().isNotEmpty) return const SizedBox.shrink();
+    if (_codeController.text.trim().isNotEmpty) return const SizedBox.shrink();
     return Padding(
       padding: const EdgeInsets.only(top: Tokens.space2),
       child: Text(
@@ -423,7 +411,7 @@ class _QueryEditorState extends ConsumerState<QueryEditor> {
   }
 
   void _onClear() {
-    _controller.clear();
+    _codeController.clear();
     ref.read(queryProvider.notifier).setText('');
     ref.read(selectedEntityProvider.notifier).select(null);
     setState(() {});
@@ -438,7 +426,7 @@ class _QueryEditorState extends ConsumerState<QueryEditor> {
         const Spacer(),
         _chip('locations'),
         const SizedBox(width: Tokens.space2),
-        if (_controller.text.isNotEmpty)
+        if (_codeController.text.isNotEmpty)
           Padding(
             padding: const EdgeInsets.only(right: Tokens.space2),
             child: MouseRegion(
@@ -493,81 +481,6 @@ class _QueryEditorState extends ConsumerState<QueryEditor> {
           fontSize: Tokens.sizeSm,
           color: active ? Tokens.accentBlue : Tokens.textSecondary,
         ),
-      ),
-    );
-  }
-
-  Widget _buildQueryLine(int lineNumber, String content) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.baseline,
-      textBaseline: TextBaseline.alphabetic,
-      children: [
-        SizedBox(
-          width: Tokens.lineNumberWidth,
-          child: Text(
-            '$lineNumber',
-            textAlign: TextAlign.right,
-            style: const TextStyle(
-              fontFamily: Tokens.fontMono,
-              fontSize: Tokens.sizeMd,
-              color: Tokens.textMuted,
-              height: 1.75,
-            ),
-          ),
-        ),
-        const SizedBox(width: Tokens.space2),
-        Expanded(
-          child: _syntaxHighlight(content),
-        ),
-      ],
-    );
-  }
-
-  /// Syntax highlighting per component-patterns.md Section 2.
-  Widget _syntaxHighlight(String line) {
-    final spans = <TextSpan>[];
-    final trimmed = line.trim();
-
-    if (trimmed == 'locations') {
-      spans.add(const TextSpan(
-        text: 'locations',
-        style: TextStyle(color: Tokens.accentGreen),
-      ));
-    } else if (trimmed.isEmpty) {
-      spans.add(const TextSpan(text: ' '));
-    } else {
-      final regex = RegExp(
-        r'''(\|)|(\bwhere\b|\band\b|\bor\b)|(t_\w[\w.]*)|(\bcontains-any\b|\bcontains\b|==|!=)|("[^"]*")|(\[.*?\])|(\S+)''',
-        caseSensitive: false,
-      );
-      for (final match in regex.allMatches(trimmed)) {
-        final text = match.group(0)!;
-        Color color;
-        if (match.group(1) != null) {
-          color = Tokens.syntaxOperator;
-        } else if (match.group(2) != null) {
-          color = Tokens.syntaxKeyword;
-        } else if (match.group(3) != null) {
-          color = Tokens.syntaxField;
-        } else if (match.group(4) != null) {
-          color = Tokens.syntaxOperator;
-        } else if (match.group(5) != null) {
-          color = Tokens.syntaxValue;
-        } else if (match.group(6) != null) {
-          color = Tokens.syntaxValue;
-        } else {
-          color = Tokens.textPrimary;
-        }
-        spans.add(TextSpan(text: '$text ', style: TextStyle(color: color)));
-      }
-    }
-
-    return Text.rich(
-      TextSpan(children: spans),
-      style: const TextStyle(
-        fontFamily: Tokens.fontMono,
-        fontSize: Tokens.sizeLg,
-        height: 1.75,
       ),
     );
   }

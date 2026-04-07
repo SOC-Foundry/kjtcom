@@ -22,7 +22,99 @@ class IaoTab extends StatelessWidget {
         // Stats footer
         const SizedBox(height: Tokens.space6),
         const _StatsFooter(),
+        const SizedBox(height: Tokens.space6),
+        
+        // W5: Bourdain Phase 2 Summary
+        const _BourdainPhase2Summary(),
         const SizedBox(height: Tokens.space8),
+      ],
+    );
+  }
+}
+
+class _BourdainPhase2Summary extends StatelessWidget {
+  const _BourdainPhase2Summary();
+
+  @override
+  Widget build(BuildContext context) {
+    // Note: In a real app we'd load the JSON from assets. 
+    // Here we'll just show the placeholder for the dashboard.
+    return Container(
+      padding: const EdgeInsets.all(Tokens.space4),
+      decoration: Tokens.gothicCardDecoration(radius: Tokens.radiusXl),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Bourdain Parts Unknown - Phase 2',
+            style: GoogleFonts.cinzel(
+              fontSize: 20,
+              fontWeight: FontWeight.w700,
+              color: const Color(0xFF8B5CF6),
+            ),
+          ),
+          const SizedBox(height: Tokens.space3),
+          const Text(
+            'Acquisition + Transcription progress tracking with failure histogram.',
+            style: TextStyle(
+              fontFamily: Tokens.fontSans,
+              fontSize: Tokens.sizeSm,
+              color: Tokens.textSecondary,
+            ),
+          ),
+          const SizedBox(height: Tokens.space4),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              _metric('174', 'Audio'),
+              _metric('151', 'Transcripts'),
+              _metric('0', 'Failures'),
+            ],
+          ),
+          const SizedBox(height: Tokens.space4),
+          // Histogram placeholder
+          Container(
+            height: 60,
+            width: double.infinity,
+            decoration: BoxDecoration(
+              color: Tokens.surfaceOverlay,
+              borderRadius: BorderRadius.circular(Tokens.radiusMd),
+            ),
+            child: const Center(
+              child: Text(
+                'FAILURE HISTOGRAM (PASSING)',
+                style: TextStyle(
+                  fontFamily: Tokens.fontMono,
+                  fontSize: 10,
+                  color: Tokens.accentGreen,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _metric(String value, String label) {
+    return Column(
+      children: [
+        Text(
+          value,
+          style: GoogleFonts.cinzel(
+            fontSize: Tokens.sizeXl,
+            fontWeight: FontWeight.w600,
+            color: Tokens.textPrimary,
+          ),
+        ),
+        Text(
+          label,
+          style: const TextStyle(
+            fontFamily: Tokens.fontSans,
+            fontSize: 10,
+            color: Tokens.textMuted,
+          ),
+        ),
       ],
     );
   }

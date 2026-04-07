@@ -6,9 +6,18 @@ to data/iao_event_log.jsonl in append-only JSONL format.
 """
 import json
 import os
+import sys
 from datetime import datetime, timezone
 
 LOG_PATH = os.path.join(os.path.dirname(__file__), '..', '..', 'data', 'iao_event_log.jsonl')
+
+_ITERATION = os.environ.get("IAO_ITERATION")
+if not _ITERATION:
+    print("[iao_logger] ERROR: IAO_ITERATION environment variable is NOT SET.", file=sys.stderr)
+    # We don't raise here to avoid crashing agents on import, but we'll flag it in events
+    _ITERATION = "MISSING_ENV_VAR"
+else:
+    print(f"[iao_logger] iteration={_ITERATION}", file=sys.stderr)
 
 
 def log_event(event_type, source_agent, target, action,
@@ -32,7 +41,7 @@ def log_event(event_type, source_agent, target, action,
     """
     event = {
         "timestamp": datetime.now(timezone.utc).isoformat(),
-        "iteration": os.environ.get("IAO_ITERATION", "unknown"),
+        "iteration": _ITERATION,
         "event_type": event_type,
         "source_agent": source_agent,
         "target": target,
