@@ -59,7 +59,7 @@
         <button id="backBtn" onclick="zoomOut()">All boards</button>
         <select id="iterSelect" onchange="selectIteration(this.value)"></select>
     </div>
-    <div id="title">kjtcom PCB Architecture v10.64</div>
+    <div id="title">kjtcom PCB Architecture v10.66</div>
     <div id="legend">
         <div class="legend-row"><span class="legend-dot" style="background:#4ADE80"></span> Active</div>
         <div class="legend-row"><span class="legend-dot" style="background:#EF9F27"></span> Degraded</div>
@@ -159,6 +159,8 @@
         ];
 
         var ITERATIONS = {
+            "v10.66": ["ALL"],
+            "v10.65": ["ALL"],
             "v10.64": ["ALL"],
             "v10.63": ["ALL"],
             "v10.62": ["ALL"],
@@ -736,7 +738,7 @@
 
         buildScene();
         populateIterations();
-        selectIteration('v10.64');
+        selectIteration('v10.66');
         animate();
 
     })();

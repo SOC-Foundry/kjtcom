@@ -1,15 +1,38 @@
-# 🚀 EVENING DEPLOY REQUIRED
+# EVENING DEPLOY REQUIRED (v10.66)
 
-The v10.65 iteration is complete and has passed the Build Gatekeeper (ADR-020).
-Auto-deploy was skipped because `~/.config/firebase-ci-token.txt` is missing.
+v10.66 is complete. Auto-deploy was skipped because Firebase CI token is missing
+at `~/.config/firebase-ci-token.txt`.
 
-## Action Items
-1. Run `cd app && flutter build web --release` (already verified by gatekeeper).
-2. Run `firebase deploy --only hosting`.
-3. Verify deploy via `python3 scripts/postflight_checks/deployed_iteration_matches.py v10.65`.
+## Action
+
+```fish
+cd ~/dev/projects/kjtcom/app
+flutter build web --release
+firebase deploy --only hosting
+cd ..
+set -x IAO_ITERATION v10.66
+python3 scripts/postflight_checks/deployed_flutter_matches.py
+python3 scripts/postflight_checks/deployed_claw3d_matches.py
+```
+
+Both `deployed_*` checks should flip to PASS after deploy.
 
 ## Iteration Status
-- **Build Gatekeeper:** PASS
-- **Entity Count:** 6,785 (+604 Bourdain)
-- **Harness Line Count:** 1,126
-- **Gotcha Count:** 60
+
+- All 11 workstreams complete
+- 5 artifacts on disk (design, plan, build, report, context)
+- Context bundle: 374,779 bytes (>300KB target, §1-§11 populated)
+- Harness: 1,111 lines, ADRs 023-025, Patterns 28-30 added
+- claw3d.html in repo: v10.66 (G101 fixed)
+- claw3d.html on live site: v10.64 (deferred until manual deploy above)
+- Flutter app on live site: v10.65 (deferred until manual deploy above)
+- Zero git writes by agent (Pillar 0)
+- Zero interventions
+
+## Optional: enable v10.67 auto-deploy
+
+```fish
+firebase login:ci
+# save the printed token to ~/.config/firebase-ci-token.txt
+chmod 600 ~/.config/firebase-ci-token.txt
+```

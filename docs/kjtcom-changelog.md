@@ -59,3 +59,17 @@
 - NEW: Rich context for evaluator - Build logs and ADRs injected into Qwen prompts (G57).
 - UPDATED: README massive overhaul - 759 lines, 11 ADRs.
 - Interventions: 0
+
+## v10.66 - 2026-04-08
+
+- NEW: Phase A Harness Externalization - `kjtcom/iao-middleware/` ships universal components with install.fish (ADR-023).
+- NEW: Path-Agnostic Component Resolution - `iao_paths.find_project_root()` single source of truth (ADR-024).
+- NEW: Dual Deploy-Gap Detection - three post-flight checks for claw3d and Flutter independently (ADR-025).
+- NEW: `iao` CLI with project, init, status subcommands (eval/registry deferred to v10.67).
+- NEW: COMPATIBILITY.md data-driven checker read by install.fish.
+- FIXED: G97 Synthesis ratio substring overcounting (exact-match semantics).
+- FIXED: G98 Tier 2 Gemini Flash workstream hallucination (design-doc anchor).
+- FIXED: G101 claw3d.html version stamp stale at v10.64 -> v10.66.
+- FIXED: G99 Context bundle cosmetic bugs (ADR dedup, delta state, pipeline count).
+- UPDATED: Context bundle expanded to spec §1-§11 (439KB retroactive vs 157KB v10.65).
+- Interventions: 0

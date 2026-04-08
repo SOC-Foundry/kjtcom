@@ -359,14 +359,30 @@ def run_all(iteration=None):
         print(f"  FAIL: visual_baseline_diff (error: {e})")
         results["visual_baseline_diff"] = False
 
-    # 5. Deployed Iteration Match
-    print("\nDeployment Verification:")
+    # 5. Deploy Gap Checks (v10.66 W10, ADR-025)
+    print("\nDeploy Gap Checks:")
     try:
-        from postflight_checks.deployed_iteration_matches import run_check as run_deploy_check
-        results["deployed_iteration_matches"] = run_deploy_check(iteration)
+        from postflight_checks.claw3d_version_matches import check as claw3d_repo_check
+        ok, _ = claw3d_repo_check()
+        results["claw3d_version_matches"] = ok
     except Exception as e:
-        print(f"  FAIL: deployed_iteration_matches (error: {e})")
-        results["deployed_iteration_matches"] = False
+        print(f"  FAIL: claw3d_version_matches (error: {e})")
+        results["claw3d_version_matches"] = False
+    try:
+        from postflight_checks.deployed_claw3d_matches import run_check as run_claw3d_dep
+        results["deployed_claw3d_matches"] = run_claw3d_dep(iteration)
+    except Exception as e:
+        print(f"  FAIL: deployed_claw3d_matches (error: {e})")
+        results["deployed_claw3d_matches"] = False
+    try:
+        from postflight_checks.deployed_flutter_matches import check as flutter_dep_check
+        ok, _ = flutter_dep_check()
+        results["deployed_flutter_matches"] = ok
+    except Exception as e:
+        print(f"  FAIL: deployed_flutter_matches (error: {e})")
+        results["deployed_flutter_matches"] = False
+    if results.get("deployed_flutter_matches") != results.get("deployed_claw3d_matches"):
+        print("  WARNING: deployment state mismatch between Flutter and claw3d")
 
     # Log results
     for check, passed in results.items():

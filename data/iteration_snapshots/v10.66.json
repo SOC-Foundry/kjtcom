@@ -1,0 +1,11 @@
+{
+  "iteration": "v10.66",
+  "timestamp": "2026-04-08T14:09:01.720628Z",
+  "metrics": {
+    "total_production_entities": 6785,
+    "total_staging_entities": 0,
+    "harness_line_count": 1111,
+    "gotcha_count": 60,
+    "script_registry_size": 67
+  }
+}

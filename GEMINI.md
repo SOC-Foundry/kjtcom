@@ -705,3 +705,20 @@ Now go.
 ---
 
 *GEMINI.md v10.65 — April 07, 2026. Authored by the planning chat. Replaced each iteration. Archived to `docs/archive/GEMINI-v10.64.md` if not already done.*
+
+## 13a. Two-Harness Diligence Model (NEW v10.66, ADR-023)
+
+Diligence reads consult both harnesses in this order:
+1. Universal harness: `iao-middleware/` (Phase A, v10.66+)
+2. Project harness: `scripts/`, `data/`, `docs/` (kjtcom-specific)
+
+First action of any diligence: `python3 scripts/query_registry.py "<topic>"`.
+For gotchas: `data/gotcha_archive.json` takes precedence over
+`iao-middleware/data/gotchas.json`.
+
+Install-script-missing failure mode: if `~/iao-middleware/bin` not on PATH,
+run `fish iao-middleware/install.fish` first.
+
+Before invoking `iao` CLI commands, verify `~/iao-middleware/bin` is on PATH.
+
+*v10.66 stamp.*

@@ -1060,3 +1060,52 @@ This appendix walks through the v10.63 W1 retroactive Qwen evaluation of v10.62 
 - **Consequences:** `imagehash` and `Pillow` are now required dependencies. Baseline blessing is a manual step during visual redesigns.
 
 *Evaluator Harness v10.65 - April 07, 2026. ADRs 016-022, Patterns 21-27. Total length exceeds 1100 lines. Authored by gemini-cli under direction of Kyle Thompson.*
+
+---
+
+## ADRs Appended in v10.66
+
+### ADR-023: Phase A Harness Externalization - iao-middleware as Subdirectory
+
+- Context: IAO universal components need a single source of truth + a way to ship to other engineers in SOC-Foundry.
+- Decision: `kjtcom/iao-middleware/` is the canonical location and the distribution mechanism. Engineers run `fish iao-middleware/install.fish` after cloning kjtcom; components copy to `~/iao-middleware/`. Phase B extracts to a separate repo after 2-3 dogfooded projects.
+- Consequences: New subtree (bin/lib/prompts/templates/data/docs); 7 modules moved with shims; install.fish + COMPATIBILITY.md + iao CLI ship in v10.66.
+
+### ADR-024: Path-Agnostic Component Resolution
+
+- Context: Engineers clone kjtcom to arbitrary directories; hardcoded paths break on second user.
+- Decision: All `iao-middleware/lib/` modules resolve project root via `iao_paths.find_project_root()`. Order: `IAO_PROJECT_ROOT` env -> walk up `$PWD` for `.iao.json` -> walk up `__file__` -> raise `IaoProjectNotFound`. Only `~/iao-middleware/` is fixed (per-engineer destination).
+- Consequences: New helper `iao-middleware/lib/iao_paths.py`; `.iao.json` becomes canonical sentinel; v10.65 components refactored.
+
+### ADR-025: Dual Deploy-Gap Detection
+
+- Context: v10.65 W5 used claw3d.html as a proxy for the Flutter app deploy state. G101 proved these can diverge.
+- Decision: Three checks: `claw3d_version_matches.py` (in-repo pre-deploy), `deployed_claw3d_matches.py` (renamed from v10.65), `deployed_flutter_matches.py` (Flutter app post-deploy via `window.IAO_ITERATION`). Disagreement -> warning, not failure.
+- Consequences: Two independent surfaces, two independent checks; `app/web/index.html` exposes `window.IAO_ITERATION`.
+
+---
+
+## Failure Patterns Appended in v10.66
+
+### Pattern 28: Tier 2 Hallucination When Tier 1 Fails (G98)
+
+When Qwen Tier 1 fell through on synthesis ratio, Gemini Flash Tier 2 produced structurally valid JSON that invented a W16 not in the design. Anchor Tier 2 prompts to design-doc ground-truth workstream IDs and reject responses containing IDs outside that set. Cross-ref: G98, ADR-021 extended, W8.
+
+### Pattern 29: Synthesis Substring Match Overcounting (G97)
+
+`any(cf in f for f in synthesized)` matched `improvements_padded` as if it contained `improvements`, double-counting and producing ratios > 1.0. Fix: exact-match prefix (`field.split("(", 1)[0] in core_fields`). Cross-ref: G97, W7.
+
+### Pattern 30: Version String Drift Between claw3d and Flutter (G101)
+
+claw3d.html's hardcoded title and dropdown drifted from the Flutter app's deploy state. Two surfaces -> two checks. Add an in-repo pre-deploy check so staleness fails fast. Cross-ref: G101, ADR-025, W10.
+
+---
+
+## Gotcha Cross-Reference (v10.66 additions)
+
+| ID | Title | Pattern | Workstream | ADR |
+|---|---|---|---|---|
+| G97 | Synthesis ratio substring overcounting | 29 | W7 | ADR-021 ext |
+| G98 | Tier 2 Gemini Flash workstream hallucination | 28 | W8 | ADR-021 ext |
+| G99 | Context bundle cosmetic bugs | - | W1 | ADR-019 ext |
+| G101 | claw3d.html version stamp drift | 30 | W10 | ADR-025 |

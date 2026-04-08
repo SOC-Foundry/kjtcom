@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "last_synced": "2026-04-08T02:30:51.723794Z",
+  "last_synced": "2026-04-08T07:08:58.961993Z",
   "scripts": [
     {
       "path": "pipeline/scripts/backfill_country_codes.py",
@@ -350,10 +350,10 @@
       ],
       "created_iteration": "unknown",
       "last_modified_date": "2026-03-29",
-      "last_used_date": "2026-04-06T03:37:54.311315+00:00",
+      "last_used_date": "never",
       "owner_workstream": "unassigned",
       "lines": 112,
-      "status": "active",
+      "status": "stale",
       "linked_gotchas": [],
       "pipeline": "common",
       "inputs": [],
@@ -722,16 +722,32 @@
     },
     {
       "path": "scripts/build_context_bundle.py",
-      "purpose": "Context Bundle Generator (ADR-019).",
+      "purpose": "Context Bundle Generator (ADR-019, expanded to spec \u00a71-\u00a711 in v10.66 W1).",
       "function_names": [
+        "_resolve_project_root",
         "_find_doc",
+        "_read",
+        "_embed",
+        "_section_immutable_inputs",
+        "_section_execution_audit",
+        "_section_launch_artifacts",
+        "_section_harness_state",
+        "_dedup_adrs",
+        "_section_platform_state",
+        "_section_delta_state",
+        "_section_pipeline_state",
+        "_tail",
+        "_section_environment_state",
+        "_section_artifacts_inventory",
+        "_section_diagnostic_captures",
+        "_section_install_fish",
         "build_bundle"
       ],
       "created_iteration": "unknown",
-      "last_modified_date": "2026-04-07",
+      "last_modified_date": "2026-04-08",
       "last_used_date": "never",
       "owner_workstream": "unassigned",
-      "lines": 148,
+      "lines": 365,
       "status": "stale",
       "linked_gotchas": [],
       "pipeline": "none",
@@ -740,10 +756,15 @@
       "dependencies": [
         "argparse",
         "datetime",
+        "hashlib",
+        "iao_paths",
         "json",
         "os",
+        "pathlib",
+        "platform",
         "re",
         "scripts.firestore_query",
+        "subprocess",
         "sys"
       ]
     },
@@ -1108,7 +1129,7 @@
       "last_modified_date": "2026-04-08",
       "last_used_date": "never",
       "owner_workstream": "unassigned",
-      "lines": 400,
+      "lines": 416,
       "status": "stale",
       "linked_gotchas": [],
       "pipeline": "tripledb",
@@ -1118,7 +1139,10 @@
         "firestore_query",
         "json",
         "os",
+        "postflight_checks.claw3d_version_matches",
         "postflight_checks.dart_analyze_changed",
+        "postflight_checks.deployed_claw3d_matches",
+        "postflight_checks.deployed_flutter_matches",
         "postflight_checks.deployed_iteration_matches",
         "postflight_checks.firebase_oauth_probe",
         "postflight_checks.flutter_build_passes",
@@ -1155,6 +1179,30 @@
       ]
     },
     {
+      "path": "scripts/postflight_checks/claw3d_version_matches.py",
+      "purpose": "claw3d_version_matches.py - in-repo pre-deploy check for claw3d.html version stamp (v10.66 W10, G101).",
+      "function_names": [
+        "check"
+      ],
+      "created_iteration": "unknown",
+      "last_modified_date": "2026-04-08",
+      "last_used_date": "never",
+      "owner_workstream": "unassigned",
+      "lines": 31,
+      "status": "stale",
+      "linked_gotchas": [],
+      "pipeline": "none",
+      "inputs": [],
+      "outputs": [],
+      "dependencies": [
+        "iao_paths",
+        "os",
+        "pathlib",
+        "re",
+        "sys"
+      ]
+    },
+    {
       "path": "scripts/postflight_checks/dart_analyze_changed.py",
       "purpose": "Dart analyze check for changed files. (ADR-020)",
       "function_names": [
@@ -1181,16 +1229,16 @@
       ]
     },
     {
-      "path": "scripts/postflight_checks/deployed_iteration_matches.py",
-      "purpose": "Post-flight check: Verify live site matches current iteration.",
+      "path": "scripts/postflight_checks/deployed_claw3d_matches.py",
+      "purpose": "Post-flight check: verify deployed claw3d.html version matches IAO_ITERATION.",
       "function_names": [
         "run_check"
       ],
       "created_iteration": "unknown",
-      "last_modified_date": "2026-04-07",
+      "last_modified_date": "2026-04-08",
       "last_used_date": "never",
       "owner_workstream": "unassigned",
-      "lines": 37,
+      "lines": 34,
       "status": "stale",
       "linked_gotchas": [],
       "pipeline": "none",
@@ -1202,6 +1250,29 @@
         "re",
         "requests",
         "sys"
+      ]
+    },
+    {
+      "path": "scripts/postflight_checks/deployed_flutter_matches.py",
+      "purpose": "deployed_flutter_matches.py - verify Flutter app deploy matches IAO_ITERATION (v10.66 W10).",
+      "function_names": [
+        "check"
+      ],
+      "created_iteration": "unknown",
+      "last_modified_date": "2026-04-08",
+      "last_used_date": "never",
+      "owner_workstream": "unassigned",
+      "lines": 28,
+      "status": "stale",
+      "linked_gotchas": [],
+      "pipeline": "none",
+      "inputs": [],
+      "outputs": [],
+      "dependencies": [
+        "os",
+        "re",
+        "sys",
+        "urllib.request"
       ]
     },
     {
@@ -1364,16 +1435,13 @@
     },
     {
       "path": "scripts/query_registry.py",
-      "purpose": "Query the kjtcom script registry (ADR-022).",
-      "function_names": [
-        "load_registry",
-        "main"
-      ],
+      "purpose": "Shim: moved to iao-middleware/lib/query_registry.py in v10.66 W3.",
+      "function_names": [],
       "created_iteration": "unknown",
-      "last_modified_date": "2026-04-07",
+      "last_modified_date": "2026-04-08",
       "last_used_date": "never",
       "owner_workstream": "unassigned",
-      "lines": 79,
+      "lines": 10,
       "status": "stale",
       "linked_gotchas": [],
       "pipeline": "none",
@@ -1385,6 +1453,8 @@
         "argparse",
         "json",
         "os",
+        "pathlib",
+        "query_registry",
         "sys"
       ]
     },
@@ -1421,6 +1491,7 @@
       "path": "scripts/run_evaluator.py",
       "purpose": "Run Qwen3.5-9B evaluator with schema-validated output.",
       "function_names": [
+        "extract_workstream_ids_from_design",
         "load_harness",
         "load_eval_schema",
         "load_gotcha_archive",
@@ -1439,14 +1510,13 @@
         "generate_self_eval",
         "build_evaluator_prompt",
         "try_qwen_tier",
-        "try_gemini_tier",
-        "evaluate_with_retry"
+        "try_gemini_tier"
       ],
       "created_iteration": "unknown",
-      "last_modified_date": "2026-04-07",
+      "last_modified_date": "2026-04-08",
       "last_used_date": "never",
       "owner_workstream": "unassigned",
-      "lines": 1015,
+      "lines": 1065,
       "status": "stale",
       "linked_gotchas": [],
       "pipeline": "none",

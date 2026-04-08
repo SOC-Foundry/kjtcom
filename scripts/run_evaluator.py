@@ -27,6 +27,21 @@ PROJECT_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..')
 HARNESS_PATH = os.path.join(PROJECT_DIR, 'docs', 'evaluator-harness.md')
 SCHEMA_PATH = os.path.join(PROJECT_DIR, 'data', 'eval_schema.json')
 
+class EvaluatorHallucinatedWorkstream(Exception):
+    """G98 (v10.66 W8): Tier 2 returned workstream IDs not in the design doc ground truth."""
+    def __init__(self, hallucinated):
+        self.hallucinated = hallucinated
+        super().__init__(f"Tier 2 invented workstreams not in design: {hallucinated}")
+
+
+def extract_workstream_ids_from_design(design_path):
+    """G98 (v10.66 W8): parse design doc for ### W<N> headers; return sorted IDs."""
+    import re as _re
+    text = open(design_path).read() if not hasattr(design_path, "read_text") else design_path.read_text()
+    matches = _re.findall(r'^###\s+W(\d+)[\s\u2014\-:]', text, _re.MULTILINE)
+    return [f"W{n}" for n in sorted(set(matches), key=int)]
+
+
 class EvaluatorSynthesisExceeded(Exception):
     """Raised when the normalizer synthesizes > 50% of a workstream's required fields."""
     def __init__(self, workstream_id, ratio, fields):
@@ -431,7 +446,11 @@ def normalize_llm_output(output, expected_count, expected_names, executing_agent
         # ADR-021: Compute ratio based on 6 core Thompson Indicator Fields for workstreams
         # (priority, outcome, score, evidence, improvements, agents)
         core_fields = ["priority", "outcome", "score", "evidence", "improvements", "agents"]
-        core_synthesized = [f for f in ws_synthesized if any(cf in f for cf in core_fields)]
+        # G97 fix (v10.66 W7): exact-match (strip "(coerced:...)" suffix), not substring.
+        # Prior bug: "improvements_padded" matched "improvements" via substring -> ratio > 1.0.
+        def _is_core(field, _cf=core_fields):
+            return field.split("(", 1)[0] in _cf
+        core_synthesized = [f for f in ws_synthesized if _is_core(f)]
         ratio = len(core_synthesized) / 6
         ratios[wid] = ratio
         
@@ -797,9 +816,23 @@ def try_qwen_tier(base_prompt, harness, expected_count, expected_names, executin
     return None
 
 
-def try_gemini_tier(base_prompt, expected_count, expected_names, version, threshold=0.5, verbose=False):
-    """Tier 2: Gemini Flash via litellm (2 attempts)."""
-    current_prompt = base_prompt
+def try_gemini_tier(base_prompt, expected_count, expected_names, version, threshold=0.5, verbose=False, ground_truth_ids=None):
+    """Tier 2: Gemini Flash via litellm (2 attempts).
+
+    G98 (v10.66 W8): if ground_truth_ids is provided, prepend a design-doc anchor
+    to the prompt and reject responses containing IDs not in the ground truth.
+    """
+    if ground_truth_ids:
+        anchor = (
+            "GROUND TRUTH WORKSTREAM IDS: " + str(ground_truth_ids) + "\n\n"
+            "You MUST score exactly these workstreams. Do not invent workstreams "
+            "not in this list. Do not add any W<N> beyond this list. If the build "
+            "log does not contain a section for one of these IDs, mark its outcome "
+            "as 'missing'.\n\n"
+        )
+        current_prompt = anchor + base_prompt
+    else:
+        current_prompt = base_prompt
 
     for attempt in range(2):
         print(f"\n[EVAL] Gemini Flash attempt {attempt + 1}/2 (Qwen fallback)...")
@@ -825,6 +858,14 @@ def try_gemini_tier(base_prompt, expected_count, expected_names, version, thresh
             return None
         except (AttributeError, TypeError) as e:
             errors = [f"Malformed workstream structure: {e}"]
+
+        # G98 (v10.66 W8): hallucination guard
+        if ground_truth_ids and not errors:
+            returned_ids = {ws.get("id") for ws in parsed.get("workstreams", []) if isinstance(ws, dict)}
+            hallucinated = returned_ids - set(ground_truth_ids)
+            if hallucinated:
+                print(f"[EVAL] G98: Tier 2 hallucinated workstreams: {hallucinated}")
+                raise EvaluatorHallucinatedWorkstream(hallucinated)
 
         if not errors:
             print(f"[EVAL] Gemini Flash validation passed on attempt {attempt + 1}")
@@ -862,11 +903,20 @@ def evaluate_with_retry(version, design_doc_path, threshold=0.5, verbose=False, 
         if result: return result
         print("[EVAL] Qwen tier exhausted or threshold exceeded. Falling through to Gemini Flash.")
 
-    # Tier 2: Gemini Flash
+    # Tier 2: Gemini Flash (G98: design-doc anchor)
     if test_fallback != 'self-eval':
-        result = try_gemini_tier(base_prompt, expected_count, expected_names, version, threshold, verbose)
-        if result: return result
-        print("[EVAL] Gemini tier exhausted or threshold exceeded. Falling through to self-eval.")
+        try:
+            ground_truth_ids = extract_workstream_ids_from_design(design_doc_path)
+        except Exception as _e:
+            ground_truth_ids = None
+            print(f"[EVAL] G98: ground truth extraction failed: {_e}")
+        try:
+            result = try_gemini_tier(base_prompt, expected_count, expected_names, version, threshold, verbose, ground_truth_ids=ground_truth_ids)
+            if result: return result
+        except EvaluatorHallucinatedWorkstream as e:
+            print(f"[EVAL] {e}; falling through to self-eval.")
+            result = None
+        print("[EVAL] Gemini tier exhausted, hallucinated, or threshold exceeded. Falling through to self-eval.")
 
     # Tier 3: Self-eval
     build_log = ""
