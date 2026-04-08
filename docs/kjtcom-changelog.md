@@ -1,8 +1,18 @@
 # kjtcom - Unified Changelog
 
-## v10.64 - 2026-04-06
+## v10.65 - 2026-04-07
 
-- NEW: Visual Baseline Verification - Implemented pHash-based visual diffing in post-flight (ADR-018).
+- NEW: Build-as-Gatekeeper - Mandatory `flutter build` in post-flight to prevent deploy breaks (ADR-020).
+- NEW: Evaluator Synthesis Audit - Normalizer tracks coercion and forces Tier fall-through if ratio > 0.5 (ADR-021).
+- NEW: Context Bundle Generator - Consolidated Operational State as the 5th artifact (ADR-019).
+- NEW: Registry-First Diligence - `scripts/query_registry.py` for component discovery (ADR-022).
+- NEW: Deployed Version Verification - Post-flight check `deployed_iteration_matches` closes 4-iteration silent deploy regression.
+- UPDATED: Bourdain Production Migration - 604 entities moved from staging to production.
+- UPDATED: Script Registry - Upgraded to v2 schema with inputs/outputs/pipeline metadata (60 entries).
+- Multi-agent: Gemini CLI (executor) + Gemini 2.5 Flash (evaluator fallback)
+- Interventions: 0
+
+## v10.64 - 2026-04-06
 - NEW: Script Registry Middleware - Created central `data/script_registry.json` for component discovery (ADR-017).
 - NEW: Iteration Delta Tracking - Automated growth measurement across iteration boundaries (ADR-016).
 - NEW: Bourdain Parts Unknown Phase 2 - Acquisition and transcription hardening; overnight tmux dispatch.

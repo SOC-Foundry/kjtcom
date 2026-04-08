@@ -270,17 +270,33 @@ def compute_trident_values(iteration, scores_entry):
     else:
         cost_result = f"{llm_calls} LLM calls logged (token counts pending)"
 
-    # Delivery: count complete/total from workstream scorecard
-    if scores_entry and 'workstreams' in scores_entry:
-        ws_list = scores_entry['workstreams']
-        total_ws = len(ws_list)
-        complete_ws = sum(1 for ws in ws_list if ws.get('outcome') == 'complete')
-        partial_ws = sum(1 for ws in ws_list if ws.get('outcome') == 'partial')
-        delivery_result = f"{complete_ws}/{total_ws} workstreams complete"
-        if partial_ws:
-            delivery_result += f", {partial_ws} partial"
-    else:
-        delivery_result = "Workstream evaluation pending"
+    # Delivery: read from build log's literal Trident Metrics section (ADR-021)
+    delivery_result = None
+    build_log_path = os.path.join(DOCS_DIR, f'kjtcom-build-{iteration}.md')
+    if os.path.exists(build_log_path):
+        try:
+            with open(build_log_path) as f:
+                content = f.read()
+                import re as _re
+                # Match "Delivery: X/Y workstreams complete" (case insensitive)
+                m = _re.search(r"Delivery:\s*(\d+/\d+\s+workstreams[^\n]*)", content, _re.IGNORECASE)
+                if m:
+                    delivery_result = m.group(1).strip()
+        except Exception:
+            pass
+
+    if not delivery_result:
+        # Fallback: count complete/total from workstream scorecard
+        if scores_entry and 'workstreams' in scores_entry:
+            ws_list = scores_entry['workstreams']
+            total_ws = len(ws_list)
+            complete_ws = sum(1 for ws in ws_list if ws.get('outcome') == 'complete')
+            partial_ws = sum(1 for ws in ws_list if ws.get('outcome') == 'partial')
+            delivery_result = f"{complete_ws}/{total_ws} workstreams complete"
+            if partial_ws:
+                delivery_result += f", {partial_ws} partial"
+        else:
+            delivery_result = "Workstream evaluation pending"
 
     # Performance: derive from workstream evidence
     perf_notes = []

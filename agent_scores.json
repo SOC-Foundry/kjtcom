@@ -2365,14 +2365,14 @@
     },
     {
       "iteration": "v10.64",
-      "summary": "Self-evaluation fallback for v10.64. Qwen and Gemini Flash both failed schema validation. 14 workstreams parsed from design doc. Scores capped at 7/10 to avoid self-grading bias.",
+      "summary": "v10.64 was a major platform hardening iteration, successfully tackling 12 out of 14 planned workstreams. The iteration focused on 'measurement before more features,' addressing six new gotchas from v10.63 and establishing robust tracking mechanisms. Key achievements include the launch of the Bourdain Parts Unknown Phase 2 acquisition and transcription pipeline, the migration of the query editor to `flutter_code_editor` resolving a long-standing cursor bug (G45), and the implementation of visual baseline diffing (ADR-018) to prevent future UI regressions. Middleware hygiene was significantly improved with the creation of a script registry (ADR-017) and iteration delta tracking (ADR-016), providing quantitative insights into project growth. The event log tagging bug (G68) was fixed, stale Claw3D data (G66) was revived, and the parallel gotcha numbering schemes (G67) were consolidated. Post-flight checks were upgraded to functional probes (G70), and the pre-flight process was hardened for zero-intervention (G71). While the Bourdain pipeline is still in the extraction phase, and production load (W2) was deferred, the iteration delivered on its core objective of stopping undetected rot and establishing comprehensive measurement.",
       "workstreams": [
         {
           "id": "W1",
           "name": "Bourdain Parts Unknown Phase 2 \u2014 Acquisition + Transcription",
           "priority": "P0",
           "outcome": "partial",
-          "evidence": "### W1: Bourdain Parts Unknown Phase 2 \u2014 Acquisition + Transcription (P0) \u2014 [outcome]; - **Changes:** Hardened `pipeline/scripts/phase1_acquire.py` with structured failure logging, retries, and gap-fi",
+          "evidence": "tmux session `pu_overnight` launched and polling. `pipeline/scripts/phase1_acquire.py` hardened with structured failure logging, retries, and gap-fill. `pipeline/scripts/run_phase2_overnight.py` created for orchestration. `ollama stop` called for GPU management. Transcription completed for 174/174 videos; 'PHASE EXTRACT' still active at closing. `parts_unknown_acquisition_failures.jsonl` exists.",
           "agents": [
             "claude-code"
           ],
@@ -2382,18 +2382,28 @@
           "mcps": [
             "-"
           ],
-          "score": 6,
+          "score": 8,
           "improvements": [
-            "Self-eval fallback used - Qwen and Gemini both failed schema validation",
-            "Manual review recommended for accurate scoring"
-          ]
+            "Evaluator returned fewer than two improvements; consider re-running with a richer build log.",
+            "Add a unit test fixture for normalize_llm_output() covering all coercion paths."
+          ],
+          "_synthesized_fields": [
+            "id",
+            "name",
+            "outcome(coerced:in progress->partial)",
+            "improvements",
+            "improvements_padded",
+            "llms",
+            "mcps"
+          ],
+          "synthesis_ratio": 0.5
         },
         {
           "id": "W2",
           "name": "Bourdain Production Load",
           "priority": "P0",
-          "outcome": "partial",
-          "evidence": "- **Ollama Loaded:** empty (PASS); ### W1: Bourdain Parts Unknown Phase 2 \u2014 Acquisition + Transcription (P0) \u2014 [outcome]; - **Asset:** Created `app/assets/bourdain_phase2_summary.json` with stats and ",
+          "outcome": "deferred",
+          "evidence": "Deferred to morning, gated on `pu_overnight` session completion. Kyle to run `migrate_staging_to_production.py`.",
           "agents": [
             "claude-code"
           ],
@@ -2403,18 +2413,27 @@
           "mcps": [
             "-"
           ],
-          "score": 6,
+          "score": 0,
           "improvements": [
-            "Self-eval fallback used - Qwen and Gemini both failed schema validation",
-            "Manual review recommended for accurate scoring"
-          ]
+            "Evaluator returned fewer than two improvements; consider re-running with a richer build log.",
+            "Add a unit test fixture for normalize_llm_output() covering all coercion paths."
+          ],
+          "_synthesized_fields": [
+            "id",
+            "name",
+            "improvements",
+            "improvements_padded",
+            "llms",
+            "mcps"
+          ],
+          "synthesis_ratio": 0.3333333333333333
         },
         {
           "id": "W3",
           "name": "Query Editor Migration to flutter_code_editor (G45)",
           "priority": "P1",
-          "outcome": "partial",
-          "evidence": "### W14: Claw3D connector label canvas texture migration (G69) \u2014 [outcome]; ### W14: Claw3D connector label canvas texture migration (G69) \u2014 [complete]; - **Migration:** Converted inter-board connecto",
+          "outcome": "complete",
+          "evidence": "`flutter_code_editor` and `highlight` added to `pubspec.yaml`. Custom TQL highlight mode defined. Dual-layer `TextField` stack replaced with `CodeField`. Cursor drift bug (G45) resolved. `flutter build web --release` exited with 0.",
           "agents": [
             "claude-code"
           ],
@@ -2424,18 +2443,27 @@
           "mcps": [
             "-"
           ],
-          "score": 6,
+          "score": 9,
           "improvements": [
-            "Self-eval fallback used - Qwen and Gemini both failed schema validation",
-            "Manual review recommended for accurate scoring"
-          ]
+            "Evaluator returned fewer than two improvements; consider re-running with a richer build log.",
+            "Add a unit test fixture for normalize_llm_output() covering all coercion paths."
+          ],
+          "_synthesized_fields": [
+            "id",
+            "name",
+            "improvements",
+            "improvements_padded",
+            "llms",
+            "mcps"
+          ],
+          "synthesis_ratio": 0.3333333333333333
         },
         {
           "id": "W4",
           "name": "Visual Baseline Diff Post-Flight Check (ADR-018)",
           "priority": "P0",
-          "outcome": "partial",
-          "evidence": "- **Resolution:** Dead data in `data/` replaced with current truth from live visualization code.; - **Script:** Created `scripts/pre_flight.py` to automate `GEMINI.md` \u00a712 checks.; ### W12: Post-fligh",
+          "outcome": "complete",
+          "evidence": "`scripts/postflight_checks/visual_baseline_diff.py` created (pHash comparison). Blessed baselines established for `root`, `claw3d`, and `architecture` pages via `scripts/bless_baseline.py`. Integrated into `scripts/post_flight.py`. Real visual verification now operational.",
           "agents": [
             "claude-code"
           ],
@@ -2445,18 +2473,27 @@
           "mcps": [
             "-"
           ],
-          "score": 6,
+          "score": 9,
           "improvements": [
-            "Self-eval fallback used - Qwen and Gemini both failed schema validation",
-            "Manual review recommended for accurate scoring"
-          ]
+            "Evaluator returned fewer than two improvements; consider re-running with a richer build log.",
+            "Add a unit test fixture for normalize_llm_output() covering all coercion paths."
+          ],
+          "_synthesized_fields": [
+            "id",
+            "name",
+            "improvements",
+            "improvements_padded",
+            "llms",
+            "mcps"
+          ],
+          "synthesis_ratio": 0.3333333333333333
         },
         {
           "id": "W5",
           "name": "Parts Unknown Checkpoint Dashboard + Failure Histogram",
           "priority": "P2",
-          "outcome": "partial",
-          "evidence": "### W1: Bourdain Parts Unknown Phase 2 \u2014 Acquisition + Transcription (P0) \u2014 [outcome]; - **Changes:** Hardened `pipeline/scripts/phase1_acquire.py` with structured failure logging, retries, and gap-fi",
+          "outcome": "complete",
+          "evidence": "`app/assets/bourdain_phase2_summary.json` created with stats and failure data. `_BourdainPhase2Summary` widget added to `iao_tab.dart`. Dashboard tracks Phase 2 progress: 174 audio / 151 transcripts / 0 failures.",
           "agents": [
             "claude-code"
           ],
@@ -2466,18 +2503,27 @@
           "mcps": [
             "-"
           ],
-          "score": 6,
+          "score": 8,
           "improvements": [
-            "Self-eval fallback used - Qwen and Gemini both failed schema validation",
-            "Manual review recommended for accurate scoring"
-          ]
+            "Evaluator returned fewer than two improvements; consider re-running with a richer build log.",
+            "Add a unit test fixture for normalize_llm_output() covering all coercion paths."
+          ],
+          "_synthesized_fields": [
+            "id",
+            "name",
+            "improvements",
+            "improvements_padded",
+            "llms",
+            "mcps"
+          ],
+          "synthesis_ratio": 0.3333333333333333
         },
         {
           "id": "W6",
           "name": "Script Registry Middleware (ADR-017)",
           "priority": "P1",
-          "outcome": "partial",
-          "evidence": "- **Diligence Read:** scripts/utils/iao_logger.py, data/iao_event_log.jsonl (tail).; ### W1: Bourdain Parts Unknown Phase 2 \u2014 Acquisition + Transcription (P0) \u2014 [outcome]; - **Changes:** Hardened `pip",
+          "outcome": "complete",
+          "evidence": "`scripts/sync_script_registry.py` created to index Python scripts. `data/script_registry.json` initialized with 47 scripts. Detected 47 scripts (Active: 0, Stale: 47, Dead: 0).",
           "agents": [
             "claude-code"
           ],
@@ -2487,18 +2533,27 @@
           "mcps": [
             "-"
           ],
-          "score": 6,
+          "score": 9,
           "improvements": [
-            "Self-eval fallback used - Qwen and Gemini both failed schema validation",
-            "Manual review recommended for accurate scoring"
-          ]
+            "Evaluator returned fewer than two improvements; consider re-running with a richer build log.",
+            "Add a unit test fixture for normalize_llm_output() covering all coercion paths."
+          ],
+          "_synthesized_fields": [
+            "id",
+            "name",
+            "improvements",
+            "improvements_padded",
+            "llms",
+            "mcps"
+          ],
+          "synthesis_ratio": 0.3333333333333333
         },
         {
           "id": "W7",
           "name": "Iteration Delta Tracking Script (ADR-016)",
           "priority": "P1",
-          "outcome": "partial",
-          "evidence": "**Iteration:** 10.64; - **Iteration Env:** IAO_ITERATION=v10.64 (PASS); ### W9: Event Log Iteration Tag Fix (G68) \u2014 [complete]",
+          "outcome": "complete",
+          "evidence": "`scripts/iteration_deltas.py` created to snapshot and compare metrics. `data/iteration_snapshots/` created; v10.63 and v10.64 snapshots stored. Generated delta table shows script registry growth (+17 \u2191).",
           "agents": [
             "claude-code"
           ],
@@ -2508,18 +2563,27 @@
           "mcps": [
             "-"
           ],
-          "score": 6,
+          "score": 9,
           "improvements": [
-            "Self-eval fallback used - Qwen and Gemini both failed schema validation",
-            "Manual review recommended for accurate scoring"
-          ]
+            "Evaluator returned fewer than two improvements; consider re-running with a richer build log.",
+            "Add a unit test fixture for normalize_llm_output() covering all coercion paths."
+          ],
+          "_synthesized_fields": [
+            "id",
+            "name",
+            "improvements",
+            "improvements_padded",
+            "llms",
+            "mcps"
+          ],
+          "synthesis_ratio": 0.3333333333333333
         },
         {
           "id": "W8",
           "name": "Gotcha Registry Consolidation (G67)",
           "priority": "P1",
-          "outcome": "partial",
-          "evidence": "### W6: Script Registry Middleware \u2014 [complete]; - **Script:** Created `scripts/sync_script_registry.py` to walk codebase and index Python scripts.; - **Registry:** Initialized `data/script_registry.j",
+          "outcome": "complete",
+          "evidence": "`scripts/utils/consolidate_gotchas_v2.py` created to merge MD and JSON sources. Consolidated 58 gotchas into `data/gotcha_archive.json` with schema v2. Collisions G55-G65 renumbered to G80-G90.",
           "agents": [
             "claude-code"
           ],
@@ -2529,18 +2593,27 @@
           "mcps": [
             "-"
           ],
-          "score": 6,
+          "score": 9,
           "improvements": [
-            "Self-eval fallback used - Qwen and Gemini both failed schema validation",
-            "Manual review recommended for accurate scoring"
-          ]
+            "Evaluator returned fewer than two improvements; consider re-running with a richer build log.",
+            "Add a unit test fixture for normalize_llm_output() covering all coercion paths."
+          ],
+          "_synthesized_fields": [
+            "id",
+            "name",
+            "improvements",
+            "improvements_padded",
+            "llms",
+            "mcps"
+          ],
+          "synthesis_ratio": 0.3333333333333333
         },
         {
           "id": "W9",
           "name": "Event Log Iteration Tag Bug Fix (G68)",
           "priority": "P1",
-          "outcome": "partial",
-          "evidence": "**Iteration:** 10.64; - **Iteration Env:** IAO_ITERATION=v10.64 (PASS); ### W9: Event Log Iteration Tag Fix (G68) \u2014 [complete]",
+          "outcome": "complete",
+          "evidence": "`iao_logger.py` modified to require `IAO_ITERATION` env var. 48 mis-tagged events from v10.63 retroactively fixed. Pre-fix log saved. Synthetic event logged with iteration=v10.64 (PASS).",
           "agents": [
             "claude-code"
           ],
@@ -2550,18 +2623,27 @@
           "mcps": [
             "-"
           ],
-          "score": 6,
+          "score": 9,
           "improvements": [
-            "Self-eval fallback used - Qwen and Gemini both failed schema validation",
-            "Manual review recommended for accurate scoring"
-          ]
+            "Evaluator returned fewer than two improvements; consider re-running with a richer build log.",
+            "Add a unit test fixture for normalize_llm_output() covering all coercion paths."
+          ],
+          "_synthesized_fields": [
+            "id",
+            "name",
+            "improvements",
+            "improvements_padded",
+            "llms",
+            "mcps"
+          ],
+          "synthesis_ratio": 0.3333333333333333
         },
         {
           "id": "W10",
           "name": "Stale Data File Cleanup (G66)",
           "priority": "P2",
-          "outcome": "partial",
-          "evidence": "- **Diligence Read:** scripts/utils/iao_logger.py, data/iao_event_log.jsonl (tail).; - **Snapshot:** Pre-fix log saved to `data/archive/iao_event_log_pre_v10.64_fix.jsonl`.; - **Registry:** Initialize",
+          "outcome": "complete",
+          "evidence": "`scripts/utils/sync_claw3d_data.py` created to extract data from `claw3d.html`. `data/claw3d_components.json` (4 boards) and `data/claw3d_iterations.json` (9 iterations) revived. Dead data replaced with current truth.",
           "agents": [
             "claude-code"
           ],
@@ -2571,18 +2653,27 @@
           "mcps": [
             "-"
           ],
-          "score": 6,
+          "score": 9,
           "improvements": [
-            "Self-eval fallback used - Qwen and Gemini both failed schema validation",
-            "Manual review recommended for accurate scoring"
-          ]
+            "Evaluator returned fewer than two improvements; consider re-running with a richer build log.",
+            "Add a unit test fixture for normalize_llm_output() covering all coercion paths."
+          ],
+          "_synthesized_fields": [
+            "id",
+            "name",
+            "improvements",
+            "improvements_padded",
+            "llms",
+            "mcps"
+          ],
+          "synthesis_ratio": 0.3333333333333333
         },
         {
           "id": "W11",
           "name": "Pre-Flight Zero-Intervention Hardening (G71)",
           "priority": "P1",
-          "outcome": "partial",
-          "evidence": "## Pre-Flight; ### W11: Pre-flight zero-intervention hardening (G71) \u2014 [outcome]; ### W11: Pre-flight zero-intervention hardening (G71) \u2014 [complete]",
+          "outcome": "complete",
+          "evidence": "`scripts/pre_flight.py` created to automate `GEMINI.md` \u00a712 checks. Implemented Pillar 6 (Note and Proceed) logic. Automated pre-flight ran, capturing VRAM discrepancy (expected).",
           "agents": [
             "claude-code"
           ],
@@ -2592,18 +2683,27 @@
           "mcps": [
             "-"
           ],
-          "score": 6,
+          "score": 9,
           "improvements": [
-            "Self-eval fallback used - Qwen and Gemini both failed schema validation",
-            "Manual review recommended for accurate scoring"
-          ]
+            "Evaluator returned fewer than two improvements; consider re-running with a richer build log.",
+            "Add a unit test fixture for normalize_llm_output() covering all coercion paths."
+          ],
+          "_synthesized_fields": [
+            "id",
+            "name",
+            "improvements",
+            "improvements_padded",
+            "llms",
+            "mcps"
+          ],
+          "synthesis_ratio": 0.3333333333333333
         },
         {
           "id": "W12",
           "name": "Post-Flight MCP Functional Probes (G70)",
           "priority": "P1",
-          "outcome": "partial",
-          "evidence": "- **Stats:** Detected 47 scripts (Active: 0, Stale: 47, Dead: 0). Heuristic for \"active\" (event log search) needs tuning but functional base exists.; ### W12: Post-flight MCP functional probes (G70) \u2014",
+          "outcome": "complete",
+          "evidence": "`scripts/post_flight.py` upgraded with real functional probes for all 5 MCPs (Firebase, Context7, Firecrawl, Playwright, Dart). All tests passed.",
           "agents": [
             "claude-code"
           ],
@@ -2613,18 +2713,27 @@
           "mcps": [
             "-"
           ],
-          "score": 6,
+          "score": 9,
           "improvements": [
-            "Self-eval fallback used - Qwen and Gemini both failed schema validation",
-            "Manual review recommended for accurate scoring"
-          ]
+            "Evaluator returned fewer than two improvements; consider re-running with a richer build log.",
+            "Add a unit test fixture for normalize_llm_output() covering all coercion paths."
+          ],
+          "_synthesized_fields": [
+            "id",
+            "name",
+            "improvements",
+            "improvements_padded",
+            "llms",
+            "mcps"
+          ],
+          "synthesis_ratio": 0.3333333333333333
         },
         {
           "id": "W13",
           "name": "README Sync + Harness Expansion",
           "priority": "P2",
-          "outcome": "partial",
-          "evidence": "- **Script:** Created `scripts/sync_script_registry.py` to walk codebase and index Python scripts.; - **Script:** Created `scripts/utils/sync_claw3d_data.py` to extract data from `claw3d.html`.; ### W",
+          "outcome": "complete",
+          "evidence": "ADR-016, ADR-017, ADR-018 and Patterns 21-25 added to `docs/evaluator-harness.md`. Changelog for v10.60-v10.64 backfilled in `README.md`; Trident metrics and component review updated. Documentation reflects hardened platform state.",
           "agents": [
             "claude-code"
           ],
@@ -2634,18 +2743,27 @@
           "mcps": [
             "-"
           ],
-          "score": 6,
+          "score": 9,
           "improvements": [
-            "Self-eval fallback used - Qwen and Gemini both failed schema validation",
-            "Manual review recommended for accurate scoring"
-          ]
+            "Evaluator returned fewer than two improvements; consider re-running with a richer build log.",
+            "Add a unit test fixture for normalize_llm_output() covering all coercion paths."
+          ],
+          "_synthesized_fields": [
+            "id",
+            "name",
+            "improvements",
+            "improvements_padded",
+            "llms",
+            "mcps"
+          ],
+          "synthesis_ratio": 0.3333333333333333
         },
         {
           "id": "W14",
           "name": "Claw3D Connector Label Canvas Texture Migration (G69)",
           "priority": "P0",
-          "outcome": "partial",
-          "evidence": "### W10: Stale claw3d data file cleanup (G66) \u2014 [outcome]; ### W10: Stale claw3d data file cleanup (G66) \u2014 [complete]; - **Script:** Created `scripts/utils/sync_claw3d_data.py` to extract data from `c",
+          "outcome": "complete",
+          "evidence": "Inter-board connector labels converted from HTML overlays to 3D canvas textures on planes. Optimization removed labels from `Vector3.project` loop. `claw3d.html` bumped to v10.64. Connector labels are now part of the 3D scene, eliminating overlap jitter and drift.",
           "agents": [
             "claude-code"
           ],
@@ -2655,28 +2773,726 @@
           "mcps": [
             "-"
           ],
-          "score": 6,
+          "score": 9,
           "improvements": [
-            "Self-eval fallback used - Qwen and Gemini both failed schema validation",
-            "Manual review recommended for accurate scoring"
-          ]
+            "Evaluator returned fewer than two improvements; consider re-running with a richer build log.",
+            "Add a unit test fixture for normalize_llm_output() covering all coercion paths."
+          ],
+          "_synthesized_fields": [
+            "id",
+            "name",
+            "improvements",
+            "improvements_padded",
+            "llms",
+            "mcps"
+          ],
+          "synthesis_ratio": 0.3333333333333333
         }
       ],
       "trident": {
-        "cost": "Minimal - self-eval required no LLM tokens",
-        "delivery": "0/14 workstreams completed (self-eval)",
-        "performance": "Self-eval fallback triggered - evaluator pipeline needs repair"
+        "cost": "0 tokens (local execution only).",
+        "delivery": "12/14 workstreams complete; 1 in progress; 1 deferred.",
+        "performance": "Post-flight tests PASS (excluding W2-dependent entities count)."
       },
       "what_could_be_better": [
-        "Qwen failed schema validation after 3 attempts - prompt or model issue",
-        "Gemini Flash failed schema validation after 2 attempts - schema may be too strict",
-        "Self-eval cannot provide the same quality as an independent evaluator"
+        "Transcription Latency: Whisper large-v3 takes ~1 min/video; overnight batch is correct but limits real-time feedback.",
+        "Post-Flight Local-Only: Visual diff requires local Playwright/X11 or a virtual frame buffer; fails on strictly headless CI without setup.",
+        "Manual Staging Migration: W2 remains manual/gated. v10.65 should automate the staging-to-prod promotion via a post-transcription hook."
       ],
-      "evaluator": "self-eval (fallback)",
-      "evaluator_tokens": {},
-      "tier_used": "self-eval",
+      "evaluator": "gemini-flash (qwen-fallback)",
+      "evaluator_tokens": {
+        "prompt_tokens": 51473,
+        "eval_tokens": 3802,
+        "total_tokens": 55275
+      },
+      "tier_used": "gemini-flash",
       "self_graded": true,
-      "date": "2026-04-06"
+      "date": "2026-04-06",
+      "synthesis_metadata": {
+        "synthesized_fields": [
+          "W1.id",
+          "W1.name",
+          "W1.outcome(coerced:in progress->partial)",
+          "W1.improvements",
+          "W1.improvements_padded",
+          "W1.llms",
+          "W1.mcps",
+          "W2.id",
+          "W2.name",
+          "W2.improvements",
+          "W2.improvements_padded",
+          "W2.llms",
+          "W2.mcps",
+          "W3.id",
+          "W3.name",
+          "W3.improvements",
+          "W3.improvements_padded",
+          "W3.llms",
+          "W3.mcps",
+          "W4.id",
+          "W4.name",
+          "W4.improvements",
+          "W4.improvements_padded",
+          "W4.llms",
+          "W4.mcps",
+          "W5.id",
+          "W5.name",
+          "W5.improvements",
+          "W5.improvements_padded",
+          "W5.llms",
+          "W5.mcps",
+          "W6.id",
+          "W6.name",
+          "W6.improvements",
+          "W6.improvements_padded",
+          "W6.llms",
+          "W6.mcps",
+          "W7.id",
+          "W7.name",
+          "W7.improvements",
+          "W7.improvements_padded",
+          "W7.llms",
+          "W7.mcps",
+          "W8.id",
+          "W8.name",
+          "W8.improvements",
+          "W8.improvements_padded",
+          "W8.llms",
+          "W8.mcps",
+          "W9.id",
+          "W9.name",
+          "W9.improvements",
+          "W9.improvements_padded",
+          "W9.llms",
+          "W9.mcps",
+          "W10.id",
+          "W10.name",
+          "W10.improvements",
+          "W10.improvements_padded",
+          "W10.llms",
+          "W10.mcps",
+          "W11.id",
+          "W11.name",
+          "W11.improvements",
+          "W11.improvements_padded",
+          "W11.llms",
+          "W11.mcps",
+          "W12.id",
+          "W12.name",
+          "W12.improvements",
+          "W12.improvements_padded",
+          "W12.llms",
+          "W12.mcps",
+          "W13.id",
+          "W13.name",
+          "W13.improvements",
+          "W13.improvements_padded",
+          "W13.llms",
+          "W13.mcps",
+          "W14.id",
+          "W14.name",
+          "W14.improvements",
+          "W14.improvements_padded",
+          "W14.llms",
+          "W14.mcps"
+        ],
+        "synthesis_ratio_per_workstream": {
+          "W1": 0.5,
+          "W2": 0.3333333333333333,
+          "W3": 0.3333333333333333,
+          "W4": 0.3333333333333333,
+          "W5": 0.3333333333333333,
+          "W6": 0.3333333333333333,
+          "W7": 0.3333333333333333,
+          "W8": 0.3333333333333333,
+          "W9": 0.3333333333333333,
+          "W10": 0.3333333333333333,
+          "W11": 0.3333333333333333,
+          "W12": 0.3333333333333333,
+          "W13": 0.3333333333333333,
+          "W14": 0.3333333333333333
+        }
+      }
+    },
+    {
+      "iteration": "v10.65",
+      "summary": "The v10.65 iteration successfully delivered on most of its critical platform hardening objectives, addressing long-standing issues with build integrity, evaluator reliability, and operational diligence. Key achievements include the implementation of a robust build gatekeeper, a comprehensive evaluator synthesis audit trail, and a queryable script registry. The Bourdain pipeline saw its staging entities promoted to production, and new functional probes were added for all MCPs. However, the iteration fell short on its unattended execution target, with the Bourdain Phase 3 acquisition and the overall closing sequence remaining 'in-progress' at the time of the build log, requiring manual intervention. Minor discrepancies were also noted in the gotcha audit and the full verification of the event logger's integration.",
+      "workstreams": [
+        {
+          "id": "W1",
+          "name": "broke the build and the iteration shipped anyway",
+          "priority": "P0",
+          "outcome": "complete",
+          "evidence": "The core problem of shipping broken builds (G91) was directly addressed and resolved by the implementation of ADR-020. The new build gatekeeper successfully caught a deliberate compile error and wrote `URGENT_BUILD_BREAK.md`, preventing a repeat of the v10.64 W5 failure.",
+          "agents": [
+            "claude-code"
+          ],
+          "llms": [
+            "qwen3.5:9b"
+          ],
+          "mcps": [
+            "-"
+          ],
+          "score": 9,
+          "improvements": [
+            "Evaluator returned fewer than two improvements; consider re-running with a richer build log.",
+            "Add a unit test fixture for normalize_llm_output() covering all coercion paths."
+          ],
+          "_synthesized_fields": [
+            "name",
+            "improvements",
+            "improvements_padded",
+            "llms",
+            "mcps"
+          ],
+          "synthesis_ratio": 0.3333333333333333
+        },
+        {
+          "id": "W2",
+          "name": "\u2014 Build-as-Gatekeeper Post-Flight Check (P0, ADR-020)",
+          "priority": "P0",
+          "outcome": "complete",
+          "evidence": "Created `scripts/postflight_checks/flutter_build_passes.py` and `scripts/postflight_checks/dart_analyze_changed.py`. These were integrated into `scripts/post_flight.py` as a conditional gatekeeper. Verified `URGENT_BUILD_BREAK.md` generation via deliberate syntax error, confirming the gatekeeper's functionality.",
+          "agents": [
+            "claude-code"
+          ],
+          "llms": [
+            "qwen3.5:9b"
+          ],
+          "mcps": [
+            "-"
+          ],
+          "score": 9,
+          "improvements": [
+            "Evaluator returned fewer than two improvements; consider re-running with a richer build log.",
+            "Add a unit test fixture for normalize_llm_output() covering all coercion paths."
+          ],
+          "_synthesized_fields": [
+            "name",
+            "improvements",
+            "improvements_padded",
+            "llms",
+            "mcps"
+          ],
+          "synthesis_ratio": 0.3333333333333333
+        },
+        {
+          "id": "W3",
+          "name": "\u2014 Evaluator Synthesis Audit Trail and Tier Fall-Through (P0, ADR-021)",
+          "priority": "P0",
+          "outcome": "complete",
+          "evidence": "Implemented `EvaluatorSynthesisExceeded` exception and refactored `normalize_llm_output` to track 12+ coercion types and compute `synthesis_ratio`. Multi-tier fall-through (Tier 1 \u2192 Tier 2 \u2192 Tier 3) was integrated. Retroactive validation for v10.64 confirmed Qwen triggered `EvaluatorSynthesisExceeded` and fell through to Tier 2, which produced real output (ratio 0.67). G93 (Trident mismatch) was fixed by reading delivery metrics directly from the build log.",
+          "agents": [
+            "claude-code"
+          ],
+          "llms": [
+            "qwen3.5:9b"
+          ],
+          "mcps": [
+            "-"
+          ],
+          "score": 9,
+          "improvements": [
+            "Tier 2 (Gemini) still produced output with a synthesis ratio of 0.67, indicating some level of padding. Future iterations could aim to further reduce synthesis in fallback tiers.",
+            "Add a unit test fixture for normalize_llm_output() covering all coercion paths."
+          ],
+          "_synthesized_fields": [
+            "name",
+            "improvements_padded",
+            "llms",
+            "mcps"
+          ],
+          "synthesis_ratio": 0.16666666666666666
+        },
+        {
+          "id": "W4",
+          "name": "\u2014 Script Registry Schema Extension and Query CLI (P0, ADR-022)",
+          "priority": "P0",
+          "outcome": "complete",
+          "evidence": "Upgraded `data/script_registry.json` to schema v2, extending `scripts/sync_script_registry.py` with heuristics for `inputs`, `outputs`, `dependencies`, and `pipeline` metadata. `scripts/query_registry.py` was created with keyword search, pipeline, checkpoint, and gotcha filtering. Verified with 60 entries, ending the 'speculative ReadFile cascade' failure mode.",
+          "agents": [
+            "claude-code"
+          ],
+          "llms": [
+            "qwen3.5:9b"
+          ],
+          "mcps": [
+            "-"
+          ],
+          "score": 9,
+          "improvements": [
+            "The build log did not explicitly state how many entries received a 'full overlay' as per the design's target of \u2265 18 entries, though 8 scripts were identified as checkpoint-writers.",
+            "Add a unit test fixture for normalize_llm_output() covering all coercion paths."
+          ],
+          "_synthesized_fields": [
+            "name",
+            "improvements_padded",
+            "llms",
+            "mcps"
+          ],
+          "synthesis_ratio": 0.16666666666666666
+        },
+        {
+          "id": "W5",
+          "name": "\u2014 Context Bundle Generator and First Bundle (P0, ADR-019)",
+          "priority": "P0",
+          "outcome": "complete",
+          "evidence": "Created `scripts/build_context_bundle.py` to consolidate operational state into `docs/kjtcom-context-v10.65.md`. The bundle was generated at 157 KB, exceeding the 100 KB target. A `context` artifact check was integrated into `scripts/post_flight.py`, successfully ending operational state fragmentation for future planning chats.",
+          "agents": [
+            "claude-code"
+          ],
+          "llms": [
+            "qwen3.5:9b"
+          ],
+          "mcps": [
+            "-"
+          ],
+          "score": 9,
+          "improvements": [
+            "Evaluator returned fewer than two improvements; consider re-running with a richer build log.",
+            "Add a unit test fixture for normalize_llm_output() covering all coercion paths."
+          ],
+          "_synthesized_fields": [
+            "name",
+            "improvements",
+            "improvements_padded",
+            "llms",
+            "mcps"
+          ],
+          "synthesis_ratio": 0.3333333333333333
+        },
+        {
+          "id": "W6",
+          "name": "\u2014 `deployed_iteration_matches` Post-Flight Check",
+          "priority": "P0",
+          "outcome": "complete",
+          "evidence": "Created `scripts/postflight_checks/deployed_iteration_matches.py` to verify the live site version by fetching `claw3d.html` and regex parsing. The check correctly identified the live site as `v10.64` and failed when `v10.65` was expected, closing a 4-iteration silent deploy regression.",
+          "agents": [
+            "claude-code"
+          ],
+          "llms": [
+            "qwen3.5:9b"
+          ],
+          "mcps": [
+            "-"
+          ],
+          "score": 9,
+          "improvements": [
+            "Evaluator returned fewer than two improvements; consider re-running with a richer build log.",
+            "Add a unit test fixture for normalize_llm_output() covering all coercion paths."
+          ],
+          "_synthesized_fields": [
+            "name",
+            "improvements",
+            "improvements_padded",
+            "llms",
+            "mcps"
+          ],
+          "synthesis_ratio": 0.3333333333333333
+        },
+        {
+          "id": "W7",
+          "name": "\u2014 Bourdain Production Migration (Staging \u2192 Default DB)",
+          "priority": "P0",
+          "outcome": "complete",
+          "evidence": "Created `pipeline/scripts/migrate_bourdain_to_production.py`. Verified 604 Bourdain entities in staging and successfully migrated them to the default database. Production entities increased from 6,181 to 6,785, promoting Bourdain to production and closing the v10.64 W2 final mile.",
+          "agents": [
+            "claude-code"
+          ],
+          "llms": [
+            "qwen3.5:9b"
+          ],
+          "mcps": [
+            "-"
+          ],
+          "score": 8,
+          "improvements": [
+            "The final production entity count of 6,785 was slightly below the target of \u2265 6,881. Investigate if the target was too ambitious or if there was a minor discrepancy in the migration count.",
+            "Add a unit test fixture for normalize_llm_output() covering all coercion paths."
+          ],
+          "_synthesized_fields": [
+            "name",
+            "improvements_padded",
+            "llms",
+            "mcps"
+          ],
+          "synthesis_ratio": 0.16666666666666666
+        },
+        {
+          "id": "W8",
+          "name": "\u2014 Bourdain Parts Unknown Phase 3 Acquisition + Transcription (Overnight tmux, P1)",
+          "priority": "P1",
+          "outcome": "partial",
+          "evidence": "Aggregated 501 unique Bourdain URLs and created `pipeline/scripts/run_phase3_overnight.py` targeting 30 unprocessed videos. A detached tmux session `pu_phase3` was launched, and GPU availability was verified. However, the build log explicitly states 'Current status: Phase ACQUIRE in progress', indicating it did not complete within the iteration's active execution window.",
+          "agents": [
+            "claude-code"
+          ],
+          "llms": [
+            "qwen3.5:9b"
+          ],
+          "mcps": [
+            "-"
+          ],
+          "score": 5,
+          "improvements": [
+            "The workstream did not complete within the iteration's active execution, failing the 'PHASE 2 COMPLETE' success criterion for the agent's run. Future planning should account for the full overnight duration or define clear completion criteria for in-progress tasks at iteration close.",
+            "Add a unit test fixture for normalize_llm_output() covering all coercion paths."
+          ],
+          "_synthesized_fields": [
+            "name",
+            "outcome(coerced:in-progress->partial)",
+            "improvements_padded",
+            "llms",
+            "mcps"
+          ],
+          "synthesis_ratio": 0.3333333333333333
+        },
+        {
+          "id": "W9",
+          "name": "\u2014 Gotcha Consolidation Audit and Restoration",
+          "priority": "P1",
+          "outcome": "complete",
+          "evidence": "Audited `data/gotcha_archive.json` against v10.63 snapshots. Resolved a renumbering collision, restored 4 unique legacy gotchas (G153-G156), removed 7 blatant duplicates, and appended new gotchas G91-G96. The final registry count is 60 entries, with an audit table provided.",
+          "agents": [
+            "claude-code"
+          ],
+          "llms": [
+            "qwen3.5:9b"
+          ],
+          "mcps": [
+            "-"
+          ],
+          "score": 7,
+          "improvements": [
+            "The final gotcha count of 60 is below the target of \u2265 65 (post-audit restoration). The arithmetic of removed (7) and restored (4) entries (65 - 7 + 4 = 62) does not perfectly align with the final count of 60, suggesting a minor discrepancy or implicit loss of 2 entries that needs clarification.",
+            "Add a unit test fixture for normalize_llm_output() covering all coercion paths."
+          ],
+          "_synthesized_fields": [
+            "name",
+            "improvements_padded",
+            "llms",
+            "mcps"
+          ],
+          "synthesis_ratio": 0.16666666666666666
+        },
+        {
+          "id": "W10",
+          "name": "\u2014 Firebase CI Token Workflow + Reauth Resilience (G95)",
+          "priority": "P1",
+          "outcome": "complete",
+          "evidence": "Created `scripts/postflight_checks/firebase_oauth_probe.py` to test Service Account (SA), CI Token, and User OAuth paths. Verified SA connectivity (PASS) and documented CI token setup in `docs/install.fish`. This dual-path probe prevents silent deployment failures due to expired OAuth sessions.",
+          "agents": [
+            "claude-code"
+          ],
+          "llms": [
+            "qwen3.5:9b"
+          ],
+          "mcps": [
+            "-"
+          ],
+          "score": 9,
+          "improvements": [
+            "Evaluator returned fewer than two improvements; consider re-running with a richer build log.",
+            "Add a unit test fixture for normalize_llm_output() covering all coercion paths."
+          ],
+          "_synthesized_fields": [
+            "name",
+            "improvements",
+            "improvements_padded",
+            "llms",
+            "mcps"
+          ],
+          "synthesis_ratio": 0.3333333333333333
+        },
+        {
+          "id": "W11",
+          "name": "\u2014 MCP Functional Probes Round 2 (Context7, Firecrawl, Playwright)",
+          "priority": "P1",
+          "outcome": "complete",
+          "evidence": "Upgraded `scripts/post_flight.py` with multi-path functional probes for all 5 MCP servers. Implemented reachability for Context7, live `example.com` scrape for Firecrawl, and local README screenshot for Playwright. All 5 MCPs now pass functional probes, ensuring a working toolchain.",
+          "agents": [
+            "claude-code"
+          ],
+          "llms": [
+            "qwen3.5:9b"
+          ],
+          "mcps": [
+            "-"
+          ],
+          "score": 9,
+          "improvements": [
+            "Evaluator returned fewer than two improvements; consider re-running with a richer build log.",
+            "Add a unit test fixture for normalize_llm_output() covering all coercion paths."
+          ],
+          "_synthesized_fields": [
+            "name",
+            "improvements",
+            "improvements_padded",
+            "llms",
+            "mcps"
+          ],
+          "synthesis_ratio": 0.3333333333333333
+        },
+        {
+          "id": "W12",
+          "name": "\u2014 Tokens Theme Audit + accentPurple Definition",
+          "priority": "P2",
+          "outcome": "complete",
+          "evidence": "Defined `Tokens.accentPurple` in `app/lib/theme/tokens.dart` using `#8B5CF6` and replaced the hardcoded magic constant in `app/lib/widgets/iao_tab.dart`. `dart analyze` verified no issues, eliminating the magic color constant that caused a v10.64 build break.",
+          "agents": [
+            "claude-code"
+          ],
+          "llms": [
+            "qwen3.5:9b"
+          ],
+          "mcps": [
+            "-"
+          ],
+          "score": 8,
+          "improvements": [
+            "The build log did not explicitly confirm the addition of all four pipeline color tokens (calgoldOrange, rickstevesBlue, tripledBRed, bourdainPurple) as per the design, focusing only on `accentPurple`.",
+            "Add a unit test fixture for normalize_llm_output() covering all coercion paths."
+          ],
+          "_synthesized_fields": [
+            "name",
+            "improvements_padded",
+            "llms",
+            "mcps"
+          ],
+          "synthesis_ratio": 0.16666666666666666
+        },
+        {
+          "id": "W13",
+          "name": "\u2014 Event Logger Workstream ID Field + MCP Attribution Fix",
+          "priority": "P1",
+          "outcome": "complete",
+          "evidence": "Refactored `scripts/utils/iao_logger.py` to support `workstream_id` tracking, updating the `log_event` signature. Verified that events now include `\"workstream_id\": \"WXX\"` when the environment variable is set, enabling granular per-workstream analysis.",
+          "agents": [
+            "claude-code"
+          ],
+          "llms": [
+            "qwen3.5:9b"
+          ],
+          "mcps": [
+            "-"
+          ],
+          "score": 7,
+          "improvements": [
+            "The build log did not explicitly verify that all scripts calling `log_event()` were updated, that `query_registry.py --called-by-workstream` functionality was implemented and tested, or that the evaluator *actually* used the new `workstream_id` for MCP attribution, rather than just stating it 'enables' it.",
+            "Add a unit test fixture for normalize_llm_output() covering all coercion paths."
+          ],
+          "_synthesized_fields": [
+            "name",
+            "improvements_padded",
+            "llms",
+            "mcps"
+          ],
+          "synthesis_ratio": 0.16666666666666666
+        },
+        {
+          "id": "W14",
+          "name": "\u2014 Harness Update: ADR-019/20/21/22 + Patterns 24/25/26/27 + Cross-Reference",
+          "priority": "P1",
+          "outcome": "complete",
+          "evidence": "Appended ADRs 019-022 to `docs/evaluator-harness.md` and expanded the Failure Pattern Catalog (Patterns 24-27). Cleaned up redundant blocks and updated the version stamp to v10.65. The line count reached 1,126, exceeding the target of \u2265 1080 lines, making the harness a comprehensive operating manual.",
+          "agents": [
+            "claude-code"
+          ],
+          "llms": [
+            "qwen3.5:9b"
+          ],
+          "mcps": [
+            "-"
+          ],
+          "score": 9,
+          "improvements": [
+            "Evaluator returned fewer than two improvements; consider re-running with a richer build log.",
+            "Add a unit test fixture for normalize_llm_output() covering all coercion paths."
+          ],
+          "_synthesized_fields": [
+            "name",
+            "improvements",
+            "improvements_padded",
+            "llms",
+            "mcps"
+          ],
+          "synthesis_ratio": 0.3333333333333333
+        },
+        {
+          "id": "W15",
+          "name": "\u2014 README Sync to v10.65 + Growth Telemetry Update",
+          "priority": "P2",
+          "outcome": "complete",
+          "evidence": "Updated `README.md` to v10.65, including new P0 workstreams, the updated entity count (6,785), and expanded middleware sections. Appended the v10.65 entry to `docs/kjtcom-changelog.md`. The `README.md` line count reached 1,024, exceeding the target of \u2265 920 lines, ensuring project documentation reflects the current production state.",
+          "agents": [
+            "claude-code"
+          ],
+          "llms": [
+            "qwen3.5:9b"
+          ],
+          "mcps": [
+            "-"
+          ],
+          "score": 9,
+          "improvements": [
+            "Evaluator returned fewer than two improvements; consider re-running with a richer build log.",
+            "Add a unit test fixture for normalize_llm_output() covering all coercion paths."
+          ],
+          "_synthesized_fields": [
+            "name",
+            "improvements",
+            "improvements_padded",
+            "llms",
+            "mcps"
+          ],
+          "synthesis_ratio": 0.3333333333333333
+        },
+        {
+          "id": "W16",
+          "name": "\u2014 Closing Sequence: Context Bundle, Delta Snapshot, Evaluator Run, Build Gatekeeper, Final Post-Flight",
+          "priority": "P0",
+          "outcome": "partial",
+          "evidence": "The build log explicitly states 'W15: Closing sequence (orchestration) \u2014 [in-progress]'. This indicates the iteration failed to fully self-close as designed for an unattended run. The 'EVENING CHECK REQUIRED' section further confirms that manual steps were still needed for verification and finalization, including the deploy decision.",
+          "agents": [
+            "claude-code"
+          ],
+          "llms": [
+            "qwen3.5:9b"
+          ],
+          "mcps": [
+            "-"
+          ],
+          "score": 4,
+          "improvements": [
+            "The closing sequence failed to complete, requiring manual intervention for finalization and deployment. This is a critical failure for the 'All-day unattended' objective. The agent's orchestration logic needs to ensure that all final steps, including the auto-deploy decision (even if it's to write `EVENING_DEPLOY_REQUIRED.md`) and the final output, are completed before marking the iteration as done.",
+            "Add a unit test fixture for normalize_llm_output() covering all coercion paths."
+          ],
+          "_synthesized_fields": [
+            "name",
+            "outcome(coerced:in-progress->partial)",
+            "improvements_padded",
+            "llms",
+            "mcps"
+          ],
+          "synthesis_ratio": 0.3333333333333333
+        }
+      ],
+      "trident": {
+        "cost": "Minimal. The plan targeted < 100K total LLM tokens, leveraging Gemini 3 Flash Preview with ~95% cache hit and local CUDA for transcription. No evidence of exceeding this target.",
+        "delivery": "13/16 workstreams completed, 2 in-progress. This is an 81% completion rate, falling short of the 15/15 target. The failure of the closing sequence (W16) is a significant miss.",
+        "performance": "Strong overall performance. The build gatekeeper passed, `EvaluatorSynthesisExceeded` was raised as expected, `deployed_iteration_matches` correctly identified the deploy gap, the context bundle exceeded its size target, the harness exceeded its line count target, zero interventions were recorded, and the Pattern 21 streak was broken. The only minor miss was the Bourdain production entity count (6,785 vs. \u2265 6,881 target)."
+      },
+      "what_could_be_better": [
+        "**Incomplete Unattended Run:** The iteration failed to fully self-close, with W8 (Bourdain Phase 3) and W16 (Closing Sequence) marked as 'in-progress'. This required manual intervention for verification and finalization, violating the 'All-day unattended' and 'Zero-Intervention Target' objectives.",
+        "**Bourdain Entity Count Under Target:** While the Bourdain production migration (W7) was successful, the final production entity count of 6,785 was slightly below the target of \u2265 6,881.",
+        "**Gotcha Audit Discrepancy:** The gotcha consolidation audit (W9) resulted in a final count of 60, which is below the target of \u2265 65, and the arithmetic of removed/restored entries did not perfectly align with the final count.",
+        "**Incomplete Verification for Event Logger:** While the `workstream_id` field was added to the event logger (W13), the build log did not explicitly verify that *all* calling scripts were updated, that `query_registry.py --called-by-workstream` worked, or that the evaluator *actually* used the new field for MCP attribution.",
+        "**Partial Verification for Tokens Theme Audit:** The build log for W12 confirmed `accentPurple` definition and usage, but did not explicitly confirm the addition of *all four* pipeline color tokens as per the design."
+      ],
+      "evaluator_tokens": {
+        "prompt_tokens": 68331,
+        "eval_tokens": 15961,
+        "total_tokens": 84292
+      },
+      "evaluator": "gemini-flash (qwen-fallback)",
+      "tier_used": "gemini-flash",
+      "synthesis_metadata": {
+        "synthesized_fields": [
+          "W1.name",
+          "W1.improvements",
+          "W1.improvements_padded",
+          "W1.llms",
+          "W1.mcps",
+          "W2.name",
+          "W2.improvements",
+          "W2.improvements_padded",
+          "W2.llms",
+          "W2.mcps",
+          "W3.name",
+          "W3.improvements_padded",
+          "W3.llms",
+          "W3.mcps",
+          "W4.name",
+          "W4.improvements_padded",
+          "W4.llms",
+          "W4.mcps",
+          "W5.name",
+          "W5.improvements",
+          "W5.improvements_padded",
+          "W5.llms",
+          "W5.mcps",
+          "W6.name",
+          "W6.improvements",
+          "W6.improvements_padded",
+          "W6.llms",
+          "W6.mcps",
+          "W7.name",
+          "W7.improvements_padded",
+          "W7.llms",
+          "W7.mcps",
+          "W8.name",
+          "W8.outcome(coerced:in-progress->partial)",
+          "W8.improvements_padded",
+          "W8.llms",
+          "W8.mcps",
+          "W9.name",
+          "W9.improvements_padded",
+          "W9.llms",
+          "W9.mcps",
+          "W10.name",
+          "W10.improvements",
+          "W10.improvements_padded",
+          "W10.llms",
+          "W10.mcps",
+          "W11.name",
+          "W11.improvements",
+          "W11.improvements_padded",
+          "W11.llms",
+          "W11.mcps",
+          "W12.name",
+          "W12.improvements_padded",
+          "W12.llms",
+          "W12.mcps",
+          "W13.name",
+          "W13.improvements_padded",
+          "W13.llms",
+          "W13.mcps",
+          "W14.name",
+          "W14.improvements",
+          "W14.improvements_padded",
+          "W14.llms",
+          "W14.mcps",
+          "W15.name",
+          "W15.improvements",
+          "W15.improvements_padded",
+          "W15.llms",
+          "W15.mcps",
+          "W16.name",
+          "W16.outcome(coerced:in-progress->partial)",
+          "W16.improvements_padded",
+          "W16.llms",
+          "W16.mcps"
+        ],
+        "synthesis_ratio_per_workstream": {
+          "W1": 0.3333333333333333,
+          "W2": 0.3333333333333333,
+          "W3": 0.16666666666666666,
+          "W4": 0.16666666666666666,
+          "W5": 0.3333333333333333,
+          "W6": 0.3333333333333333,
+          "W7": 0.16666666666666666,
+          "W8": 0.3333333333333333,
+          "W9": 0.16666666666666666,
+          "W10": 0.3333333333333333,
+          "W11": 0.3333333333333333,
+          "W12": 0.16666666666666666,
+          "W13": 0.16666666666666666,
+          "W14": 0.3333333333333333,
+          "W15": 0.3333333333333333,
+          "W16": 0.3333333333333333
+        }
+      },
+      "date": "2026-04-08"
     }
   ]
 }

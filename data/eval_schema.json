@@ -34,6 +34,17 @@
             "type": "array",
             "items": {"type": "string"},
             "minItems": 2
+          },
+          "_synthesized_fields": {
+            "type": "array",
+            "items": {"type": "string"},
+            "description": "ADR-021: Audit trail of fields synthesized by the normalizer."
+          },
+          "synthesis_ratio": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1,
+            "description": "ADR-021: Ratio of required fields that were synthesized."
           }
         }
       }

@@ -27,6 +27,7 @@ abstract final class Tokens {
   static const Color accentBlue = Color(0xFF58A6FF);
   static const Color accentOrange = Color(0xFFFFA657);
   static const Color accentRed = Color(0xFFFF7B72);
+  static const Color accentPurple = Color(0xFF8B5CF6);
 
   // -- color.syntax --
   static const Color syntaxField = Color(0xFF79C0FF);

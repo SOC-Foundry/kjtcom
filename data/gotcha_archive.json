@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "last_updated": "2026-04-06",
+  "last_updated": "2026-04-07",
   "registry": [
     {
       "id": "G1",
@@ -135,9 +135,9 @@
     },
     {
       "id": "G45",
-      "title": "Query editor cursor bug (8th attempt)",
-      "status": "**TARGETED W3**",
-      "action": "flutter_code_editor migration. Fall back to `re_editor` if dep conflict.",
+      "title": "Query editor cursor bug",
+      "status": "Resolved v10.64",
+      "action": "flutter_code_editor migration shipped.",
       "source": "GEMINI.md"
     },
     {
@@ -227,72 +227,23 @@
       "action": "Patched 7 open-interpreter files with try/except ImportError guards around pkg_resources"
     },
     {
-      "id": "G55",
-      "title": "Qwen empty reports",
-      "status": "**REGRESSED, TARGETED IN W1**",
-      "action": "Rich context per ADR-014.",
-      "source": "CLAUDE.md"
-    },
-    {
-      "id": "G56",
-      "title": "Claw3D `fetch()` 404",
-      "status": "Resolved v10.57",
-      "action": "Inline JS data only. **Never** `fetch()` external JSON in `claw3d.html`.",
-      "source": "GEMINI.md"
-    },
-    {
-      "id": "G57",
-      "title": "Qwen schema validation too strict",
-      "status": "Resolved v10.59",
-      "action": "Rich context",
-      "source": "GEMINI.md"
-    },
-    {
-      "id": "G58",
-      "title": "Agent overwrites design/plan docs",
-      "status": "Resolved v10.60",
-      "action": "`IMMUTABLE_ARTIFACTS` guard. **You do not edit design or plan docs.**",
-      "source": "GEMINI.md"
-    },
-    {
-      "id": "G59",
-      "title": "Chip text overflow",
-      "status": "\"Resolved v10.61-62\" but **CONNECTOR labels still overflow \u2014 see G69**",
-      "action": "W14 fixes",
-      "source": "GEMINI.md"
-    },
-    {
-      "id": "G60",
-      "title": "Map tab 0 mapped of 6,181",
-      "status": "Resolved v10.62",
-      "action": "Dual-format parsing",
-      "source": "GEMINI.md"
-    },
-    {
-      "id": "G61",
-      "title": "Build/report not generated",
-      "status": "Resolved v10.62",
-      "action": "Post-flight existence check",
-      "source": "GEMINI.md"
-    },
-    {
       "id": "G62",
       "title": "Self-grading bias accepted as Tier-1",
-      "status": "**NEW v10.63, TARGETED W1+W2**",
-      "action": "ADR-015 hard cap + Pattern 20. **See \u00a78 below.**",
+      "status": "Resolved v10.63",
+      "action": "ADR-015 hard cap + Pattern 20.",
       "source": "CLAUDE.md"
     },
     {
       "id": "G63",
       "title": "Acquisition pipeline silently drops failures",
-      "status": "**TARGETED W1**",
+      "status": "Resolved v10.64",
       "action": "Structured failure JSONL + retry",
       "source": "GEMINI.md"
     },
     {
       "id": "G64",
       "title": "Harness content drift (duplicate sections, stale stamps)",
-      "status": "**NEW v10.63, TARGETED W2**",
+      "status": "Resolved v10.63",
       "action": "Linear renumbering, archive snapshot.",
       "source": "CLAUDE.md"
     },
@@ -305,177 +256,255 @@
     },
     {
       "id": "G66",
-      "title": "**Stale claw3d data files (`claw3d_components.json`, `claw3d_iterations.json`)**",
-      "status": "**NEW v10.64, TARGETED W10**",
-      "action": "Revive or archive",
+      "title": "Stale claw3d data files",
+      "status": "Resolved v10.64",
+      "action": "Revive via sync_claw3d_data.py",
       "source": "GEMINI.md"
     },
     {
       "id": "G67",
-      "title": "**Two parallel gotcha numbering schemes**",
-      "status": "**NEW v10.64, TARGETED W8**",
-      "action": "Consolidate",
+      "title": "Two parallel gotcha numbering schemes",
+      "status": "Resolved v10.64",
+      "action": "Consolidate into G80-G90 range.",
       "source": "GEMINI.md"
     },
     {
       "id": "G68",
-      "title": "**`iao_event_log.jsonl` tags v10.63 events as `v9.39`**",
-      "status": "**NEW v10.64, TARGETED W9**",
+      "title": "`iao_event_log.jsonl` tags v10.63 events as `v9.39`",
+      "status": "Resolved v10.64",
       "action": "Fix logger + retroactively correct",
       "source": "GEMINI.md"
     },
     {
       "id": "G69",
-      "title": "**Claw3D connector labels overflow into each other**",
-      "status": "**NEW v10.64, TARGETED W14**",
+      "title": "Claw3D connector labels overflow",
+      "status": "Resolved v10.64",
       "action": "Apply Pattern 18 canvas texture to connector labels",
       "source": "GEMINI.md"
     },
     {
       "id": "G70",
-      "title": "**Post-flight MCP checks are version pings, not functional**",
-      "status": "**NEW v10.64, TARGETED W12**",
+      "title": "Post-flight MCP checks version-only",
+      "status": "Resolved v10.64",
       "action": "Functional probes per MCP",
       "source": "GEMINI.md"
     },
     {
       "id": "G71",
-      "title": "**Agent asks for permission instead of proceeding**",
-      "status": "**NEW v10.64, TARGETED \u00a71 of this file + W11**",
+      "title": "Agent asks for permission",
+      "status": "Resolved v10.64",
       "action": "Pre-flight notes-and-proceeds",
       "source": "GEMINI.md"
     },
     {
-      "id": "G72",
-      "title": "Heredocs break agents",
-      "status": "v9.43",
-      "action": "Active",
-      "source": "evaluator-harness.md"
-    },
-    {
-      "id": "G73",
-      "title": "CUDA OOM on RTX 2080 SUPER",
-      "status": "v10.55",
-      "action": "Active",
-      "source": "evaluator-harness.md"
-    },
-    {
-      "id": "G74",
-      "title": "Gemini runs bash by default",
-      "status": "v10.61",
-      "action": "Active",
-      "source": "evaluator-harness.md"
-    },
-    {
-      "id": "G75",
-      "title": "`ls` color codes pollute output",
-      "status": "v10.56",
-      "action": "Active",
-      "source": "evaluator-harness.md"
-    },
-    {
-      "id": "G76",
-      "title": "Firestore array-contains limits",
-      "status": "v10.58",
-      "action": "Active",
-      "source": "evaluator-harness.md"
-    },
-    {
-      "id": "G77",
-      "title": "Query editor cursor bug",
-      "status": "v10.55",
-      "action": "Targeted v10.63 W4",
-      "source": "evaluator-harness.md"
-    },
-    {
-      "id": "G78",
-      "title": "CanvasKit prevents DOM scraping",
-      "status": "v10.57",
-      "action": "Active",
-      "source": "evaluator-harness.md"
-    },
-    {
-      "id": "G79",
-      "title": "Firebase MCP reauth recurring",
-      "status": "v10.59",
-      "action": "Active",
-      "source": "evaluator-harness.md"
-    },
-    {
       "id": "G80",
       "title": "Qwen empty reports",
-      "status": "v10.54",
-      "action": "Regressed v10.60-62, targeted v10.63 W1",
-      "source": "evaluator-harness.md"
+      "status": "REGRESSED v10.62-64; TARGETED W2",
+      "action": "Synthesis audit trail + forced fall-through (ADR-021).",
+      "source": "GEMINI.md"
     },
     {
       "id": "G81",
-      "title": "Claw3D `fetch()` 404 on Hosting",
-      "status": "v10.57",
-      "action": "Resolved",
-      "source": "evaluator-harness.md"
+      "title": "Claw3D `fetch()` 404",
+      "status": "Resolved v10.57",
+      "action": "Inline JS data only.",
+      "source": "GEMINI.md"
     },
     {
       "id": "G82",
       "title": "Qwen schema validation too strict",
-      "status": "v10.59",
-      "action": "Resolved",
-      "source": "evaluator-harness.md"
+      "status": "Resolved v10.59",
+      "action": "Rich context",
+      "source": "GEMINI.md"
     },
     {
       "id": "G83",
       "title": "Agent overwrites design/plan",
-      "status": "v10.59",
-      "action": "Resolved",
-      "source": "evaluator-harness.md"
+      "status": "Resolved v10.60",
+      "action": "Immutability guard.",
+      "source": "GEMINI.md"
     },
     {
       "id": "G84",
       "title": "Chip text overflow",
-      "status": "v10.57",
-      "action": "Resolved",
-      "source": "evaluator-harness.md"
+      "status": "Resolved v10.61-62",
+      "action": "Canvas textures + 11px floor",
+      "source": "GEMINI.md"
     },
     {
       "id": "G85",
-      "title": "Map tab 0 mapped of 6,181",
-      "status": "v10.61",
-      "action": "Resolved; detection added v10.63 W3",
-      "source": "evaluator-harness.md"
+      "title": "Map 0 of 6181",
+      "status": "Resolved v10.62",
+      "action": "Dual-format parsing",
+      "source": "GEMINI.md"
     },
     {
       "id": "G86",
       "title": "Build/report not generated",
-      "status": "v10.61",
-      "action": "Resolved",
-      "source": "evaluator-harness.md"
+      "status": "Resolved v10.62",
+      "action": "Existence check",
+      "source": "GEMINI.md"
     },
     {
       "id": "G87",
-      "title": "Self-grading bias accepted as Tier-1",
-      "status": "v10.63 (retro from v10.62)",
-      "action": "Targeted v10.63 W1+W2",
-      "source": "evaluator-harness.md"
+      "title": "Self-grading bias",
+      "status": "Resolved v10.63",
+      "action": "Auto-cap (ADR-015)",
+      "source": "GEMINI.md"
     },
     {
       "id": "G88",
-      "title": "Acquisition pipeline silently drops failures",
-      "status": "v10.63 (retro from v10.62)",
-      "action": "Targeted v10.63 W5",
-      "source": "evaluator-harness.md"
+      "title": "Acquisition silent failures",
+      "status": "Resolved v10.64",
+      "action": "Structured failure JSONL",
+      "source": "GEMINI.md"
     },
     {
       "id": "G89",
       "title": "Harness content drift",
-      "status": "v10.63 (retro from v10.62)",
-      "action": "Targeted v10.63 W2",
-      "source": "evaluator-harness.md"
+      "status": "Resolved v10.63",
+      "action": "Linear renumbering",
+      "source": "GEMINI.md"
     },
     {
       "id": "G90",
-      "title": "Rich-context payload exceeds curl argv limit",
-      "status": "Resolved v10.63 closing",
+      "title": "Curl argv too long",
+      "status": "Resolved v10.63",
       "action": "`--data-binary @-`",
+      "source": "GEMINI.md"
+    },
+    {
+      "id": "G91",
+      "title": "Build-side-effect from late workstreams",
+      "status": "NEW v10.65, TARGETED W1",
+      "action": "Build gatekeeper as post-flight",
+      "source": "GEMINI.md"
+    },
+    {
+      "id": "G92",
+      "title": "Tier 2 evaluator also produces synthesis padding",
+      "status": "NEW v10.65, TARGETED W2",
+      "action": "Forced fall-through with audit trail",
+      "source": "GEMINI.md"
+    },
+    {
+      "id": "G93",
+      "title": "Closing report Trident mismatch with build log",
+      "status": "NEW v10.65, TARGETED W2",
+      "action": "Report reads delivery from build log directly",
+      "source": "GEMINI.md"
+    },
+    {
+      "id": "G94",
+      "title": "Gotcha consolidation lost or unaudited entries",
+      "status": "NEW v10.65, TARGETED W8",
+      "action": "Pre/post merge audit table",
+      "source": "GEMINI.md"
+    },
+    {
+      "id": "G95",
+      "title": "Firebase OAuth path different from SA path",
+      "status": "NEW v10.65, TARGETED W9",
+      "action": "Dual-path probe + CI token",
+      "source": "GEMINI.md"
+    },
+    {
+      "id": "G96",
+      "title": "Magic color constants outside Tokens",
+      "status": "NEW v10.65, TARGETED W11",
+      "action": "Tokens.accentPurple definition",
+      "source": "GEMINI.md"
+    },
+    {
+      "id": "G97",
+      "title": "query_rag.py CLI --json flag parsed as positional argument",
+      "description": "query_rag.py CLI --json flag was being incorrectly parsed as a positional argument, causing failures in automated scripts.",
+      "resolution": "Bypassed CLI; use direct import of query_rag functions in telegram_bot.py",
+      "iteration_resolved": "v9.40",
+      "root_cause": "pipeline",
+      "status": "Resolved",
+      "source": "app/assets/gotcha_archive.json (restored)"
+    },
+    {
+      "id": "G98",
+      "title": "Firestore composite index required for rating sort + filter combo",
+      "description": "Combining filters with sorting in Firestore often requires composite indexes, which are slow to build and limited in count.",
+      "resolution": "Python-side sort in firestore_query.py - fetch all matching docs, sort by nested field in Python, apply limit. Avoids composite index dependency entirely.",
+      "iteration_resolved": "v9.44",
+      "root_cause": "firestore",
+      "status": "Resolved",
+      "source": "app/assets/gotcha_archive.json (restored)"
+    },
+    {
+      "id": "G99",
+      "title": "Gemini Flash model string instability across litellm versions",
+      "description": "Model identifiers for Gemini Flash were inconsistent across different versions of the litellm library.",
+      "resolution": "Centralized model string as GEMINI_MODEL constant in scripts/utils/ollama_config.py. All litellm callers import from there.",
+      "iteration_resolved": "v9.44",
+      "root_cause": "llm_config",
+      "status": "Resolved",
+      "source": "app/assets/gotcha_archive.json (restored)"
+    },
+    {
+      "id": "G100",
+      "title": "Flutter transitive dependency lock",
+      "description": "Some Flutter packages were locked to older versions due to transitive dependency constraints that were not immediately obvious.",
+      "resolution": "Investigated via flutter pub outdated; confirmed these were locked by parent constraints. No action possible until upstream releases.",
+      "iteration_resolved": "v9.45",
+      "root_cause": "dependency",
+      "status": "Resolved",
+      "source": "app/assets/gotcha_archive.json (restored)"
+    },
+    {
+      "id": "G153",
+      "description": "Flutter transitive dependency lock - 10 packages outdated but Resolvable=Current",
+      "resolution": "Investigated via flutter pub outdated, flutter pub deps, dart MCP pub.dev search. All 10 are transitive (flutter_map->proj4dart->mgrs_dart, Flutter SDK->meta/vector_math/test/analyzer). flutter_map 8.2.2 is latest. No action possible until upstream releases.",
+      "iteration_resolved": "v9.45",
+      "root_cause": "dependency",
+      "prevention": "Before planning dep upgrades, run flutter pub outdated and check Resolvable column. If Resolvable=Current, the dep is locked by parent constraints and cannot be upgraded directly.",
+      "source": "restored_from_asset_v10.63",
+      "status": "Resolved"
+    },
+    {
+      "id": "G91",
+      "title": "Build-side-effect from late workstreams",
+      "status": "Resolved v10.65",
+      "action": "Build gatekeeper as post-flight",
+      "source": "GEMINI.md"
+    },
+    {
+      "id": "G92",
+      "title": "Tier 2 evaluator also produces synthesis padding",
+      "status": "Resolved v10.65",
+      "action": "Forced fall-through with audit trail",
+      "source": "GEMINI.md"
+    },
+    {
+      "id": "G93",
+      "title": "Closing report Trident mismatch with build log",
+      "status": "Resolved v10.65",
+      "action": "Report reads delivery from build log directly",
+      "source": "GEMINI.md"
+    },
+    {
+      "id": "G94",
+      "title": "Gotcha consolidation lost or unaudited entries",
+      "status": "Resolved v10.65",
+      "action": "Pre/post merge audit table",
+      "source": "GEMINI.md"
+    },
+    {
+      "id": "G95",
+      "title": "Firebase OAuth path different from SA path",
+      "status": "Active",
+      "action": "Dual-path probe + CI token",
+      "source": "GEMINI.md"
+    },
+    {
+      "id": "G96",
+      "title": "Magic color constants outside Tokens",
+      "status": "Active",
+      "action": "Tokens.accentPurple definition",
       "source": "GEMINI.md"
     }
   ]

@@ -10,11 +10,11 @@
 
 ---
 
-kjtcom extracts entities from YouTube playlists - landmarks, trails, restaurants, destinations - and normalizes them into Thompson Indicator Fields (`t_any_*` universal indicator fields) modeled after [Panther SIEM's](https://docs.panther.com/search/panther-fields) `p_any_*` fields and [Elastic Common Schema](https://www.elastic.co/guide/en/ecs/current/index.html). Four live pipelines serve 6,181 production entities plus a fourth pipeline (Bourdain) complete in staging, through a unified Flutter Web frontend with a functional NoSQL query system, case-insensitive search, `contains` and `contains-any` operators, result counts, entity detail panel, and cross-dataset query at [kylejeromethompson.com](https://kylejeromethompson.com).
+kjtcom extracts entities from YouTube playlists - landmarks, trails, restaurants, destinations - and normalizes them into Thompson Indicator Fields (`t_any_*` universal indicator fields) modeled after [Panther SIEM's](https://docs.panther.com/search/panther-fields) `p_any_*` fields and [Elastic Common Schema](https://www.elastic.co/guide/en/ecs/current/index.html). Four live pipelines serve 6,785 production entities through a unified Flutter Web frontend with a functional NoSQL query system, case-insensitive search, `contains` and `contains-any` operators, result counts, entity detail panel, and cross-dataset query at [kylejeromethompson.com](https://kylejeromethompson.com).
 
-The same normalization patterns power production SIEM migrations at [TachTech Engineering](https://tachtech.net). Built entirely by LLM agents using IAO (Iterative Agentic Orchestration) - a methodology distilled from 46+ iterations across 10 phases on [TripleDB](https://github.com/TachTech-Engineering/tripledb).
+The same normalization patterns power production SIEM migrations at [TachTech Engineering](https://tachtech.net). Built entirely by LLM agents using IAO (Iterative Agentic Orchestration) - a methodology distilled from 47+ iterations across 10 phases on [TripleDB](https://github.com/TachTech-Engineering/tripledb).
 
-**[kylejeromethompson.com](https://kylejeromethompson.com)** | **Phase 10 v10.64 (ACTIVE)** | **Status: Platform Hardening + Bourdain Phase 2 + Visual Verification (ADR-018) + Script Registry (ADR-017)**
+**[kylejeromethompson.com](https://kylejeromethompson.com)** | **Phase 10 v10.65 (ACTIVE)** | **Status: Platform Hardening + Build Gatekeeper + Synthesis Audit + Context Bundle (ADR-019)**
 
 ```mermaid
 graph BT
@@ -29,41 +29,41 @@ graph BT
 ### The Ten Pillars of IAO
 
 1. **Trident Governance** - Cost / Delivery / Performance triangle governs every decision.
-2. **Artifact Loop** - Design -> Plan (INPUT, immutable) -> Build -> Report (OUTPUT).
-3. **Diligence** - Read before you code; pre-read is a middleware function.
+2. **Artifact Loop** - Design -> Plan -> Build -> Report + **Context Bundle** (ADR-019).
+3. **Diligence** - Read before you code; pre-read is a middleware function. **Registry-First** (ADR-022).
 4. **Pre-Flight Verification** - Validate the environment before execution.
 5. **Agentic Harness Orchestration** - The harness is the product; the model is the engine.
-6. **Zero-Intervention Target** - Interventions are failures in planning.
+6. **Zero-Intervention Target** - Interventions are failures in planning. The agent does not ask permission.
 7. **Self-Healing Execution** - Max 3 retries per error with diagnostic feedback.
 8. **Phase Graduation** - Sandbox -> staging -> production.
-9. **Post-Flight Functional Testing** - Rigorous validation of all deliverables.
+9. **Post-Flight Functional Testing** - Rigorous validation of all deliverables. **Build-as-Gatekeeper** (ADR-020).
 10. **Continuous Improvement** - Retrospectives feed directly into the next plan.
 
-The harness, ADRs, evaluator, post-flight, and gotcha registry are the actual product. The Flutter app and YouTube pipelines are the data exhaust that proves the harness works. See `docs/evaluator-harness.md` (956 lines, v10.63), `docs/kjtcom-design-v10.63.md`, and `docs/kjtcom-plan-v10.63.md` for the current iteration's authoritative spec.
+The harness, ADRs, evaluator, post-flight, and gotcha registry are the actual product. The Flutter app and YouTube pipelines are the data exhaust that proves the harness works. See `docs/evaluator-harness.md` (1,126 lines, v10.65), `docs/kjtcom-design-v10.65.md`, and `docs/kjtcom-plan-v10.65.md` for the current iteration's authoritative spec.
 
-### v10.64 Component Review
+### v10.65 Component Review
 
 Codebase component count vs Claw3D PCB chip count (v10.61 census = 49 chips across 4 boards):
 
-- **Frontend (10 chips):** query_ed, results, detail, map, globe, iao, mw_tab, schema, claw3d, fb_host - all present. Query editor migrated to `flutter_code_editor` (G45).
-- **Pipeline (9 chips):** yt_dlp, whisper, extract, normalize, geocode, enrich, load, tmux, checkpoint - all present. Hardened acquisition with failure logging and gap-fill.
-- **Middleware (23 chips):** evaluator, harness, ADR, artifact, gotchas, scores, pre_flight, post_flight, router, tg_bot, rag, qwen_9b, nemotron, gflash, fb_mcp, c7_mcp, pw_mcp, fc_mcp, dart_mcp, claude, gemini, logger, openclaw - all present. Added `sync_script_registry` (ADR-017) and `iteration_deltas` (ADR-016).
-- **Backend (7 chips):** firestore, prod_db, stg_db, calgold, ricksteves, tripledb, bourdain - all present. Bourdain Phase 2 in progress.
+- **Frontend (10 chips):** query_ed, results, detail, map, globe, iao, mw_tab, schema, claw3d, fb_host - all present. Integrated build-as-gatekeeper (ADR-020).
+- **Pipeline (9 chips):** yt_dlp, whisper, extract, normalize, geocode, enrich, load, tmux, checkpoint - all present. Bourdain promoted to production (604 entities).
+- **Middleware (23 chips):** evaluator, harness, ADR, artifact, gotchas, scores, pre_flight, post_flight, router, tg_bot, rag, qwen_9b, nemotron, gflash, fb_mcp, c7_mcp, pw_mcp, fc_mcp, dart_mcp, claude, gemini, logger, openclaw - all present. Added `build_context_bundle` (ADR-019) and `query_registry` (ADR-022).
+- **Backend (7 chips):** firestore, prod_db, stg_db, calgold, ricksteves, tripledb, bourdain - all present. Bourdain migrated to `(default)`.
 
-**v10.64 delta:** No new chips required. The new ADRs (016-018) and patterns (21-25) are extensions of existing middleware chips. Claw3D label migration (G69) is a visual-layer optimization.
+**v10.65 delta:** No new chips required. Hardening of existing middleware. Evaluator gains synthesis audit trail (ADR-021) and multi-tier fall-through.
 
 ### Data Architecture
 
 - **Single Firestore `locations` collection** with `t_log_type` discriminator (`calgold`, `ricksteves`, `tripledb`, `bourdain`).
-- **Multi-database:** `(default)` for production (6,181 entities), `staging` for in-flight pipeline work (537+ entities, Bourdain).
+- **Multi-database:** `(default)` for production (6,785 entities), `staging` for in-flight pipeline work.
 - **Project IDs:** `kjtcom-c78cd` (main), `tripledb-e0f77` (TripleDB source).
-- **Schema:** Thompson Indicator Fields (`t_any_*`) - 19 v3 fields in production, 49 v4 candidate fields defined for the intranet rollout (ADR-011).
+- **Schema:** Thompson Indicator Fields (`t_any_*`) - 22 v3 fields in production, 49 v4 candidate fields defined for the intranet rollout (ADR-011).
 
 ---
 
 ## Live App
 
-**[kylejeromethompson.com](https://kylejeromethompson.com)** - Search 6,181 geocoded entities across 3 pipelines:
+**[kylejeromethompson.com](https://kylejeromethompson.com)** - Search 6,785 geocoded entities across 4 pipelines:
 
 - **NoSQL query editor** with syntax highlighting, case-insensitive search, `contains` and `contains-any` operators
 - **Paginated results** - 20/50/100 per page with page navigation (default 20)
@@ -86,7 +86,7 @@ Codebase component count vs Claw3D PCB chip count (v10.61 census = 49 chips acro
 
 **[Interactive PCB Architecture Diagram](https://kylejeromethompson.com/claw3d.html)** | **[Interactive Architecture Diagram](https://kylejeromethompson.com/architecture.html)** | **[Telegram Bot](https://t.me/kjtcom_iao_bot)** | [Mermaid Source](docs/kjtcom-architecture.mmd)
 
-Current state: v10.63 (Phase 10 ACTIVE) - 4 pipelines (3 production + Bourdain staging), 5 MCP servers (Firebase, Context7, Playwright, Firecrawl, Dart), 4 local LLMs (Qwen 9B, Nemotron 4B, GLM, Llama), RAG middleware (1,819 ChromaDB chunks), dual retrieval (Firestore + ChromaDB) via Gemini Flash 3-route intent router, Telegram bot (@kjtcom_iao_bot) with session memory and rating-aware queries, systemd service management, P3 event logging, post-flight verification (15 checks), artifact automation with computed Trident values, 727-line evaluator harness (docs/evaluator-harness.md) with three-tier fallback chain (Qwen -> Gemini Flash -> self-eval).
+Current state: v10.65 (Phase 10 ACTIVE) - 4 pipelines (all production), 5 MCP servers (Firebase, Context7, Playwright, Firecrawl, Dart), 4 local LLMs (Qwen 9B, Nemotron 4B, GLM, Llama), RAG middleware (1,819 ChromaDB chunks), dual retrieval (Firestore + ChromaDB) via Gemini Flash 3-route intent router, Telegram bot (@kjtcom_iao_bot) with session memory and rating-aware queries, systemd service management, P3 event logging, post-flight verification (21 checks), artifact automation with computed Trident values, 1,126-line evaluator harness (docs/evaluator-harness.md) with three-tier fallback chain (Qwen -> Gemini Flash -> self-eval).
 
 ### PCB Layout (Claw3D)
 
@@ -232,7 +232,7 @@ As the platform matures toward intranet intelligence, the Thompson Schema is exp
 | `calgold` | California's Gold (Huell Howser) | #DA7E12 | landmark | 390 | 899 | Phase 7 Production DONE |
 | `ricksteves` | Rick Steves' Europe | #3B82F6 | destination | 1,865 | 4,182 | Phase 7 Production DONE |
 | `tripledb` | Diners, Drive-Ins and Dives | #DD3333 | restaurant | 805 | 1,100 | Phase 7 Production DONE |
-| `bourdain` | Anthony Bourdain: No Reservations | #8B5CF6 | destination | 114 | 351 (staging) | Phase 4 Complete |
+| `bourdain` | Anthony Bourdain: Mixed | #8B5CF6 | destination | 174 | 604 | Phase 7 Production DONE |
 
 Each pipeline requires only 4 config files - no code changes to shared scripts:
 
@@ -299,7 +299,7 @@ locations
 
 ## IAO Methodology
 
-kjtcom is built using the Iterative Agentic Orchestration (IAO) methodology - a structured approach to running AI coding agents (Claude Code, Gemini CLI) against multi-phase data pipelines with zero-to-minimal human intervention. Distilled from 46+ iterations on [TripleDB](https://github.com/TachTech-Engineering/tripledb).
+kjtcom is built using the Iterative Agentic Orchestration (IAO) methodology - a structured approach to running AI coding agents (Claude Code, Gemini CLI) against multi-phase data pipelines with zero-to-minimal human intervention. Distilled from 47+ iterations on [TripleDB](https://github.com/TachTech-Engineering/tripledb).
 
 IAO maps directly to the "harness engineering" pattern formalized by LangChain, Anthropic, and the broader agent ecosystem in 2026. The core principle: the model contains the intelligence; the harness makes it useful.
 
@@ -309,14 +309,14 @@ IAO maps directly to the "harness engineering" pattern formalized by LangChain, 
 |-----------|---------|----------------|
 | Agent Instructions | System prompt per agent | CLAUDE.md, GEMINI.md |
 | Pipeline Scripts | Tool definitions | phase1_acquire.py through phase7_load.py |
-| Gotcha Registry | Executable middleware (failure prevention) | G1-G57 documented patterns |
+| Gotcha Registry | Executable middleware (failure prevention) | G1-G96 audited registry |
 | Checkpoint Files | State persistence across agent handoffs | .checkpoint_enrich.json, handoff JSON |
-| 4-Artifact Output | Trace analysis and improvement loop | build log, report, changelog, README |
+| 5-Artifact Output | Trace analysis and improvement loop | build, report, changelog, README, **context bundle** |
 | Split-Agent Model | Cross-provider subagent delegation | Gemini CLI (phases 1-5) + Claude Code (phases 6-7) |
 
 ### Split-Agent Execution
 
-kjtcom uses a two-agent model validated across 5+ iterations with decreasing interventions:
+kjtcom uses a two-agent model validated across 6+ iterations with decreasing interventions:
 
 - **Gemini CLI** (`gemini --yolo`): Phases 1-5 (acquire, transcribe, extract, normalize, geocode). Free-tier execution for mechanical pipeline work.
 - **Claude Code** (`claude --dangerously-skip-permissions`): Phases 6-7 (enrich, load to Firestore) + post-flight validation and artifact production.
@@ -327,13 +327,13 @@ kjtcom uses a two-agent model validated across 5+ iterations with decreasing int
 
 | Iteration | Executor | Interventions | Notes |
 |-----------|----------|---------------|-------|
+| v10.64 | claude-code | 0 | W1 Bourdain Phase 2 overnight dispatch |
 | v10.59 | Gemini CLI | 0 | Bourdain Phase 4 (Final) complete |
 | v10.58 | Claude Code | 0 | Bourdain Phase 3 complete |
 | v10.57 | Claude Code | 0 | G56 Resolution + PCB Viz |
 | v10.56 | Claude Code | 0 | Evaluator Fallback chain |
-| v5.14 | tmux | 1 | CUDA OOM |
 
-Zero Gemini interventions across 4 consecutive iterations. Same model, better harness.
+Zero interventions across 5 consecutive iterations. Same model, better harness.
 
 ---
 
@@ -366,7 +366,7 @@ Phase 6 marked the transition from a CLI-only project to a production web applic
 The focus shifted from data volume to query performance and UX polish. We implemented client-side post-filtering to bypass Firestore's single `array-contains` limitation (G34). The middleware layer was formalized, including the RAG pipeline (ChromaDB), the Telegram bot interface, and the first version of the Qwen-based evaluator.
 
 ### Phase 10: Platform Hardening
-The current phase focuses on making the system portable and robust. We introduced the PCB architecture visualization (Claw3D) to replace the abstract solar system model. ADR-010 and ADR-011 established the technical path for taking the Thompson Schema beyond YouTube data and into enterprise intranet environments. The Bourdain pipeline serves as the final stress test for the Phase 10 harness.
+The current phase focuses on making the system portable and robust. We introduced the PCB architecture visualization (Claw3D) to replace the abstract solar system model. ADR-010 and ADR-011 established the technical path for taking the Thompson Schema beyond YouTube data and into enterprise intranet environments. v10.65 hardened the evaluator with synthesis audits (ADR-021) and implemented a mandatory build-as-gatekeeper post-flight (ADR-020).
 
 ---
 
@@ -377,17 +377,18 @@ The current phase focuses on making the system portable and robust. We introduce
 - **Performance:** Optimized performance derived from discovery and proof-of-value testing. Avoid premature abstraction.
 - **Delivery:** Speed of delivery is prioritized via a P0/P1/P2/P3 prioritization framework. Shipping P0 is the definition of success.
 
-**Pillar 2 - Artifact Loop.** Every iteration produces four mandatory artifacts:
+**Pillar 2 - Artifact Loop.** Every iteration produces five mandatory artifacts:
 - **Design Doc:** The living architecture and single source of truth for the iteration's goals.
 - **Plan:** Granular, step-by-step execution path with pre-answered decision points.
 - **Build Log:** The full session transcript, providing a complete audit trail of agent actions.
 - **Report:** Quantitative metrics, workstream scores, and "What Could Be Better" recommendations.
+- **Context Bundle:** Consolidated operational state for the next iteration's planning chat.
 
 **Pillar 3 - Diligence (P3).** Verify all assumptions before acting.
 - Log all agent communications to `data/iao_event_log.jsonl`.
+- **Registry-First:** Use `scripts/query_registry.py` for component discovery.
 - Read entire files before editing to maintain contextual integrity.
 - `grep` for all related patterns to ensure surgical changes don't cause side effects.
-- Diligence is investing time in planning to save hours of misdirected execution.
 
 **Pillar 4 - Pre-Flight Verification.**
 - Validate environment readiness: previous docs archived, design/plan in place, API keys set.
@@ -415,6 +416,7 @@ The current phase focuses on making the system portable and robust. We introduce
 - Each phase progressively hardens the harness until the agent building it is no longer required for its execution.
 
 **Pillar 9 - Post-Flight Functional Testing.**
+- **Build Gatekeeper:** `flutter build web` must pass to conclude iteration (ADR-020).
 - Tier 1: App bootstraps, console is clean, all artifacts produced.
 - Tier 2: Iteration-specific playbook validation (testing the specific features built).
 - Tier 3: Hardening audit (Lighthouse, security headers, browser compatibility).
@@ -441,7 +443,7 @@ The current phase focuses on making the system portable and robust. We introduce
 | 7 | Firestore Load | DONE | v7.21 |
 | 8 | Enrichment Hardening | DONE | v8.22-v8.26 |
 | 9 | App Optimization | DONE | v9.27-v9.53 |
-| 10 | Bourdain Pipeline + Platform Hardening | ACTIVE | v10.54-v10.59 |
+| 10 | Bourdain Pipeline + Platform Hardening | ACTIVE | v10.54-v10.65 |
 
 ---
 
@@ -467,7 +469,7 @@ The current phase focuses on making the system portable and robust. We introduce
 | Web Search | Brave Search API | Real-time Context | Provides the system with the ability to search the live web for information outside its static knowledge base or vector memory. |
 | Local LLMs | Ollama | Evaluation & Triage | Orchestrates local models including Qwen 9B for evaluation, Nemotron 4B for code review, and GLM for vision-related tasks. |
 | Evaluation | Qwen 3.5 9B | Self-Correction | The primary skeptic in the three-tier evaluator chain. Scores every iteration based on evidence gathered during the build process. |
-| Event Logging | `iao_logger.py` | P3 Audit Trail | A mandatory logging middleware that captures every agent action, LLM input/output, and tool call into a structured JSONL stream. |
+| Event Logging | `iao_logger.py` | P3 Audit Trail | A mandatory logging middleware that captures every agent action, LLM input/output, and tool call into a structured JSONL stream. Now supports `workstream_id` (ADR-022). |
 | Artifact Automation | `generate_artifacts.py` | Doc Generation | Automates the production of build logs, evaluation reports, and changelogs. Ensures project documentation is always in sync with actual execution. |
 | 3D Visualization | Three.js (Claw3D) | Architecture Viz | An interactive 3D circuit board visualization that displays the live status and connections of every system component. |
 
@@ -522,7 +524,7 @@ OS:   CachyOS (Arch-based) / fish shell
 
 ## Telegram Bot
 
-**[@kjtcom_iao_bot](https://t.me/kjtcom_iao_bot)** - Query 6,181 entities via Telegram:
+**[@kjtcom_iao_bot](https://t.me/kjtcom_iao_bot)** - Query 6,785 entities via Telegram:
 
 - `/ask [question]` - natural language queries routed to Firestore, ChromaDB, or web
 - `/status` - system health check
@@ -545,18 +547,19 @@ The middleware layer is the portable IAO infrastructure that stamps onto new pro
 | ADR-002 | Multi-Database Setup | ACTIVE | Implementation of production (`(default)`) and `staging` databases in Firestore. Ensures pipeline runs do not corrupt production data until validated. Enabled by Firebase multi-database support in late 2024. |
 | ADR-003 | Split-Agent Model | ACTIVE | Handoff protocol between Gemini CLI (Phases 1-5, mechanical/high-volume) and Claude Code (Phases 6-7, reasoning/artifact production). Uses JSON checkpoints for state persistence and context compression. |
 | ADR-004 | P3 Diligence Logging | ACTIVE | Mandatory structured event logging for all agent actions. Every LLM call, tool call, and system command is recorded to `iao_event_log.jsonl`. Enables post-iteration analysis and computed metrics. |
-| ADR-005 | Post-Flight Verification | ACTIVE | 15+ automated checks executed by `scripts/post_flight.py`. Validates site availability, entity counts, schema integrity, and static asset existence before marking an iteration complete. |
-| ADR-006 | RAG Pipeline | ACTIVE | 1,819 ChromaDB chunks generated from project documentation, changelogs, and ADRs. Enables project-aware synthesis for the Telegram bot and developer assistance. |
-| ADR-007 | Three-Tier Evaluator | ACTIVE | Fallback chain (Qwen -> Gemini Flash -> Self-eval). Protects against local inference failure or schema non-compliance. Ensures every iteration receives a score and report. |
-| ADR-008 | G56 Preventive Check | ACTIVE | Elimination of external JSON fetches in web static assets. All data must be inlined as JavaScript objects in `claw3d.html` to prevent 404 errors on production hosting. |
-| ADR-009 | PCB Visualization | ACTIVE | Migration from solar system metaphor to PCB architecture for system visualization. Better aligns with the "hardware/harness" engineering philosophy of IAO. |
-| ADR-010 | GCP Portability | ACTIVE | Pipeline/middleware portable to GCP tachnet-intranet. Two pipeline configs tracked per-source. Pub/sub topic router for downstream consumers. Enables "private Cloud" deployment. |
-| ADR-011 | Thompson Schema v4 | DRAFT | 30 candidate fields for intranet source normalization. Extends the schema beyond location data to include documents, spreadsheets, meetings, email, Slack, CRM, and contractor portal records. |
+| ADR-005 | Post-Flight Verification | ACTIVE | 21+ automated checks executed by `scripts/post_flight.py`. Validates site availability, entity counts, schema integrity, build success, and static asset existence. |
+| ADR-016 | Iteration Delta Tracking | ACTIVE | Automated growth measurement across iteration boundaries. Generates Markdown comparison tables for entity counts, harness lines, and script counts. |
+| ADR-017 | Script Registry Middleware | ACTIVE | Centralized discovery for 60+ scripts via `data/script_registry.json`. Includes purpose, heuristics for inputs/outputs, and pipeline metadata. |
+| ADR-018 | Visual Baseline Verification | ACTIVE | pHash-based visual diffing in post-flight to detect UI regressions in CanvasKit/Three.js layers where traditional DOM scraping fails. |
+| ADR-019 | Context Bundle Generator | ACTIVE | Consolidated operational state into a single fifth artifact (`kjtcom-context-{iteration}.md`) for planning chat efficiency. |
+| ADR-020 | Build-as-Gatekeeper | ACTIVE | Mandatory Flutter build and Dart analysis in post-flight. Failure blocks iteration completion, ensuring zero deploy-time regressions. |
+| ADR-021 | Evaluator Synthesis Audit | ACTIVE | Normalizer tracks synthesized fields and forces fall-through if ratio > 0.5. Ensures evaluator reliability. |
+| ADR-022 | Registry-First Diligence | ACTIVE | Policy requiring `scripts/query_registry.py` as the first action for any component discovery task. |
 
 ### Evaluator Fallback Chain
 
 1.  **Tier 1: Qwen3.5-9B (Local)** - Primary skeptic, schema-validated output (3 attempts).
-2.  **Tier 2: Gemini 2.5 Flash (API)** - Fallback when local inference fails schema (2 attempts).
+2.  **Tier 2: Gemini 2.5 Flash (API)** - Fallback when local inference fails schema or synthesis check (2 attempts).
 3.  **Tier 3: Self-Evaluation (Local)** - Deterministic fallback capped at 7/10 to avoid bias.
 
 ### MCP Roster
@@ -571,11 +574,21 @@ The middleware layer is the portable IAO infrastructure that stamps onto new pro
 
 ## Phase 10 Roadmap
 
-Phase 10 focuses on Bourdain pipeline expansion (114 videos from No Reservations/Parts Unknown) and platform hardening. Bourdain Phase 4 (Final Batch) completed in v10.59, processing all 114 videos and staging 351 unique entities. The evaluator pipeline was hardened with rich context expansion (G57) and fuzzy name matching. Claw3D architecture visualization was updated with wider chips and shortened labels for better legibility. ADR-010 and ADR-011 established the path for GCP portability and intranet schema extensions.
+Phase 10 focuses on Bourdain pipeline expansion (501 URLs identified) and platform hardening. Bourdain Phase 2 promoted to production in v10.65 (604 entities live). The system was hardened with a mandatory build gatekeeper (ADR-020) and a queryable script registry (ADR-022). Operational state is now consolidated via the Context Bundle (ADR-019) to optimize the planning artifact loop.
 
 ---
 
 ## Changelog
+
+**v10.65 (Phase 10 - Platform Hardening + Build Gatekeeper + Synthesis Audit)**
+- NEW: Build-as-Gatekeeper - Mandatory `flutter build` in post-flight to prevent deploy breaks (ADR-020).
+- NEW: Evaluator Synthesis Audit - Normalizer tracks coercion and forces Tier fall-through if ratio > 0.5 (ADR-021).
+- NEW: Context Bundle Generator - Consolidated Operational State as the 5th artifact (ADR-019).
+- NEW: Registry-First Diligence - `scripts/query_registry.py` for component discovery (ADR-022).
+- UPDATED: Bourdain Production Migration - 604 entities moved from staging to production.
+- UPDATED: Script Registry - Upgraded to v2 schema with inputs/outputs/pipeline metadata (60 entries).
+- Multi-agent: Gemini CLI (executor) + Gemini 2.5 Flash (evaluator fallback)
+- Kyle interventions: 0
 
 **v10.64 (Phase 10 - Visual Verification + Script Registry + Bourdain Phase 2)**
 - NEW: Visual Baseline Verification - Implemented pHash-based visual diffing in post-flight (ADR-018).
@@ -587,210 +600,6 @@ Phase 10 focuses on Bourdain pipeline expansion (114 videos from No Reservations
 - FIXED: Gotcha Registry Consolidation - Merged parallel numbering schemes into unified v2 registry (G67).
 - Multi-agent: Gemini CLI (executor) + Qwen3.5-9B (evaluator)
 - Kyle interventions: 0
-
-**v10.63 (Phase 10 - Evaluator Repair + Self-Grading Cap + Harness Cleanup)**
-- NEW: Evaluator Repair - Restored Qwen Tier 1 passing state via ADR-014 context-over-constraint prompting.
-- NEW: Self-Grading Auto-Cap - Enforced ADR-015 to prevent agent bias in scores.
-- NEW: G60 detection - Added production data render checks to post-flight.
-- UPDATED: Evaluator Harness - Cleaned up stale gotchas, renumbered to 956 lines.
-- Multi-agent: Claude Code (executor) + Qwen3.5-9B (evaluator)
-- Kyle interventions: 0
-
-**v10.62 (Phase 10 - Map Tab Fix + Bourdain Phase 1)**
-- FIXED: Map Tab Regression - Corrected `LocationEntity` coordinate parsing for dual formats.
-- UPDATED: Claw3D font readability - Raised `createChipTexture` floor to 11px and bumped resolution.
-- NEW: Parts Unknown Pipeline Phase 1 - 28 videos acquired and processed to staging.
-- NEW: G61 Artifact Enforcement - Post-flight now asserts artifact existence and size.
-- Multi-agent: Gemini CLI (executor) + Qwen3.5-9B (evaluator)
-- Kyle interventions: 0
-
-**v10.61 (Phase 10 - GCP Portability + Canvas Texture Migration)**
-- NEW: GCP Portability Plan - Authored `docs/gcp-portability-plan.md` for infrastructure abstraction.
-- UPDATED: Claw3D Canvas Texture Migration - Labels moved to chip faces, resolving containment issues.
-- UPDATED: Evaluator Harness - Added ADR-013 and Pattern 18.
-- Multi-agent: Gemini CLI (executor) + Qwen3.5-9B (evaluator)
-- Kyle interventions: 0
-
-**v10.60 (Phase 10 - G58 Immutability + Chip Containment)**
-- FIXED: G58 Immutability - Protected design/plan docs from execution-time overwrites.
-- FIXED: v10.59 Report Correction - Retroactively corrected scores and registry.
-- UPDATED: Claw3D Chip Containment - Implemented dynamic grid layout and bounds checking.
-- Multi-agent: Claude Code (executor) + Qwen3.5-9B (evaluator)
-- Kyle interventions: 0
-
-**v10.59 (Phase 10 - Bourdain Pipeline Complete + PCB Architecture + Middleware Hardening)**
-- NEW: Bourdain Pipeline Complete - Videos 91-114 acquired, transcribed, extracted, normalized, geocoded, enriched, and loaded to staging. 351 unique entities in staging (was 275). Phase 4 complete.
-- NEW: `build_rich_context()` in `scripts/run_evaluator.py` - Expanded context (50-80KB) for Qwen evaluation including build logs, design docs, example reports, ADRs, and middleware registry (G57).
-- UPDATED: `app/web/claw3d.html` - Widened chips (1.2), shortened labels, and updated detail fields for better legibility. Version bumped to v10.59.
-- UPDATED: `scripts/run_evaluator.py` - Improved fuzzy name matching (em-dash/hyphen normalization) in workstream validation.
-- UPDATED: `pipeline/scripts/utils/thompson_schema.py` - Added `make_firestore_safe()` with recursive list flattening to prevent nested array errors (400 InvalidArgument).
-- UPDATED: `README.md` - Massive overhaul: 4 pipelines, PCB architecture section, expanded middleware section, 11 ADRs, full changelog v10.54-v10.59.
-- Multi-agent: Gemini CLI (v10.59 executor) + Qwen3.5-9B (evaluator) + Gemini Flash (extraction)
-- Kyle interventions: 0
-
-**v10.58 (Phase 10 - Bourdain Phase 3 + Visual Polish + ADR-011)**
-- NEW: Bourdain Pipeline Phase 3 - 30 videos acquired (61-90), 88 new entities, total 275 staging.
-- UPDATED: `app/web/claw3d.html` - Board positions adjusted for visible gaps; animated trace connectors added with labels.
-- NEW: `iao_logger` chip on middleware board in Claw3D.
-- NEW: ADR-011 (Thompson Schema v4 - Intranet Extensions) - 30 candidate fields for 7 source types.
-- FIXED: `scripts/run_evaluator.py` - Added `repair_json()` and `write_report_markdown()`.
-- Multi-agent: Claude Code (primary) + Qwen3.5-9B + Gemini Flash
-- Kyle interventions: 0
-
-**v10.57 (Phase 10 - G56 Resolution + PCB Viz + ADR-010)**
-- FIXED: G56 - Claw3D external JSON fetch 404. Complete rewrite with all data inline.
-- NEW: 4-board PCB layout in `app/web/claw3d.html` - 47 chips, animated connectors, hover tooltips.
-- NEW: ADR-010 (GCP Portability) - Pipeline/middleware portable to GCP tachnet-intranet.
-- NEW: Pattern 16 (G56 failure pattern) documented.
-- Multi-agent: Claude Code (primary) + Qwen3.5-9B + Gemini Flash
-- Kyle interventions: 0
-
-**v10.56 (Phase 10 - Evaluator Fallback Chain + PCB Architecture + Bourdain Phase 2)**
-- NEW: Three-tier evaluator fallback chain (Qwen -> Gemini Flash -> self-eval).
-- NEW: `app/web/claw3d.html` - Complete PCB architecture rewrite replacing solar system.
-- NEW: `docs/bourdain-scaling-plan.md` - Gemini Flash archive analysis for Bourdain Phase 2-5.
-- Multi-agent: Claude Code (primary) + Qwen3.5-9B + Gemini Flash
-- Kyle interventions: 0
-
-**v10.55 (Phase 10 - Bourdain Phase 1 + Claw3D Fix + Retrospective Rebuild)**
-- NEW: Bourdain Phase 1 complete: 96 unique entities staged.
-- UPDATED: Phase 9 retrospective rebuilt to 604 lines.
-- Multi-agent: Claude Code + Gemini CLI + Qwen3.5-9B
-- Kyle interventions: 0
-
-**v10.54 (Phase 10 - Bourdain Pipeline Kickoff)**
-- NEW: `pipeline/config/bourdain/` - pipeline.json, schema.json, extraction_prompt.md
-- UPDATED: Agent scores cleanup and iteration registry.
-- Multi-agent: Claude Code + Qwen3.5-9B
-- Kyle interventions: 0
-
-**v9.53 (Phase 9 - Claw3D Orbital Mechanics Fix)**
-- FIXED: Claw3D orbital mechanics fix - orbitSpeed reduced, LineBasicMaterial for connectors.
-- Multi-agent: Claude Code + Qwen3.5-9B + Gemini Flash
-
-**v9.52 (Phase 9 - Evaluator Harness Rebuild + Claw3D Solar System)**
-- NEW: Evaluator harness rebuild (400+ lines).
-- NEW: Claw3D solar system redesign with Three.js.
-
-**v9.51 (Phase 9 - Search Button Layout + Qwen Score Scale)**
-- NEW: Fix Search button layout + add 3D button.
-- FIXED: Fix Qwen score scale (8/9 -> 8/10).
-
-**v9.50 (Phase 9 - Qwen Harness Bug Fixes + README Overhaul)**
-- FIXED: Qwen harness bug fixes.
-- UPDATED: README tech stack table.
-
-**v9.49 (Phase 9 - Schema-Validated Qwen Harness + MW Tab)**
-- NEW: strict JSON schema for Qwen evaluation output.
-- NEW: Middleware tab in Flutter app.
-
-**v9.48 (Phase 9 - Workstream Validation + Structural Enforcement)**
-- UPDATED: structural enforcement validates workstream count and names.
-
-**v9.47 (Phase 9 - Gemini-Led Iteration + Pipeline Review)**
-- First Gemini CLI-led iteration.
-- NEW: pipeline audit docs.
-
-**v9.46 (Phase 9 - Qwen Evaluator Harness + README Overhaul)**
-- NEW: permanent Qwen personality file docs/evaluator-harness.md.
-
-**v9.45 (Phase 9 - Phase 10 Readiness Audit)**
-- Phase 10 readiness audit: 17/18 items ready.
-
-**v9.44 (Phase 9 - Gemini Auth Fix + Rating Sort)**
-- FIXED: Gemini Flash auth.
-- FIXED: Firestore rating sort.
-
-**v9.43 (Phase 9 - Bot Session Memory + Rating Queries)**
-- Bot session memory and rating-aware queries.
-- Interactive architecture HTML deployed.
-
-**v9.42 (Phase 9 - County Enrichment + systemd Bot)**
-- NEW: scripts/enrich_counties.py via Nominatim.
-- NEW: Telegram bot systemd service.
-
-**v9.41 (Phase 9 - Firestore Dual Retrieval + Artifact Automation)**
-- NEW: Dual retrieval path for /ask (Firestore or ChromaDB).
-- NEW: Artifact automation scaffold.
-
-**v9.40 (Phase 9 - Telegram Bot Fixes + Dependency Freshness)**
-- FIXED: /ask RAG context injection.
-- flutter pub upgrade.
-
-**v9.39 (Phase 9 - OpenClaw/Gemini + P3 Diligence Event Logging)**
-- OpenClaw configured with Gemini Flash engine.
-- P3 Diligence event logging (iao_logger.py).
-
-**v9.38 (Phase 9 - Middleware Development: RAG + Telegram + Claw3D)**
-- RAG pipeline operational: ChromaDB.
-- Telegram bot with 7 commands.
-
-**v9.37 (Phase 9 - Dart 3.9 Upgrade + Dart MCP)**
-- Major dependency upgrade.
-- Dart MCP server added.
-
-**v9.36 (Phase 9 - Panther SIEM Scrape + Agent Evaluator Middleware)**
-- Panther SIEM reference capture.
-- scripts/run_evaluator.py created.
-
-**v9.35 (Phase 9 - Multi-Agent Orchestration Restoration)**
-- Restoration of IAO Pillar 2.
-- 3 local LLMs via Ollama.
-
-**v9.34 (Phase 9 - Gemini: Quote Cursor + Inline Autocomplete)**
-- Quote cursor fix (G45).
-- Inline Panther-style autocomplete.
-
-**v9.33 (Phase 9 - Parser Regression + Quotes + Operators)**
-- Parser regression fix.
-- Quotes restored in schema builder.
-
-**v9.32 (Phase 9 - Shows Fix + Operators + Detail Sort)**
-- Lowercase ALL t_any_* data.
-- != operator added.
-
-**v9.31 (Phase 9 - Persistent Bug Fix + Playwright Verification)**
-- 1000-result limit confirmed resolved.
-- Clear button added to query editor.
-
-**v9.30 (Phase 9 - App Optimization: Autocomplete + Quote Fix)**
-- Query field + value autocomplete.
-- Shared TextEditingController provider.
-
-**v9.29 (Phase 9 - App Optimization: UX Polish)**
-- Removed Firestore .limit(1000).
-- Shortened trident labels.
-
-**v9.28 (Phase 9 - App Optimization: Gotcha Tab + Schema Builder)**
-- New Gotcha tab with 25 failure patterns.
-- New Schema tab with 22 Thompson Indicator Fields.
-
-**v9.27 (Phase 9 - App Optimization: Visual Refresh + Tab Wiring)**
-- Gothic/cyberpunk visual refresh.
-- Map and Globe tabs functional.
-
-**v8.26 (Phase 8 - Gotcha Registry + Query UX Fix)**
-- Removed rotating example queries.
-- Phase 8 COMPLETE.
-
-**v8.25 (Phase 8 - Filter Fix + README Overhaul)**
-- Fixed +filter/-exclude duplicate bug.
-- Comprehensive README overhaul.
-
-**v8.24 (Phase 8 - UI Fixes + Country Codes)**
-- Backfilled t_any_country_codes on 6,161 entities.
-
-**v8.23 (Phase 8 - NoSQL Query Remediation)**
-- Case sensitivity fix.
-- `contains-any` operator implemented.
-
-**v8.22 (Phase 8 - Enrichment Hardening + Query Assessment)**
-- Backfilled 323 non-v3 entities to schema v3.
-- Enriched 391/405 TripleDB entities.
-
-**v7.21 (Phase 7 - Firestore Load + TripleDB Migration)**
-- 3 pipelines live in production: 6,181 entities.
-- TripleDB migration complete.
 
 Full changelog: [docs/kjtcom-changelog.md](docs/kjtcom-changelog.md)
 

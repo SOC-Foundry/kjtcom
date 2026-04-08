@@ -50,7 +50,7 @@ class _BourdainPhase2Summary extends StatelessWidget {
             style: GoogleFonts.cinzel(
               fontSize: 20,
               fontWeight: FontWeight.w700,
-              color: const Color(0xFF8B5CF6),
+              color: Tokens.accentPurple,
             ),
           ),
           const SizedBox(height: Tokens.space3),

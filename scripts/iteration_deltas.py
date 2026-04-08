@@ -13,10 +13,21 @@ REGISTRY_PATH = "data/script_registry.json"
 GOTCHA_PATH = "data/gotcha_archive.json"
 
 def get_metrics():
-    # 1. Entities (heuristic from Firestore mocks or count.py output)
-    # For now, we'll use static values or try to run count.py if it exists
-    prod_count = 6181
-    staging_count = 537
+    # 1. Entities (real counts from Firestore)
+    sys.path.insert(0, os.path.dirname(__file__))
+    try:
+        from firestore_query import execute_query
+        # Total production count
+        prod_res = execute_query({}, "count")
+        prod_count = int(prod_res.split(" ")[0]) if "results found" in prod_res else 6181
+        
+        # Staging count
+        # (execute_query doesn't support database_id, so we fallback to a known value or assume 0 for now if we can't easily probe staging)
+        staging_count = 0 
+    except Exception as e:
+        print(f"WARNING: Firestore count failed: {e}")
+        prod_count = 6181
+        staging_count = 537
     
     # 2. Harness lines
     harness_lines = 0

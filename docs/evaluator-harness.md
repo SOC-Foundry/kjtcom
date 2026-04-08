@@ -173,6 +173,55 @@ The following decisions are foundational to the project. Use them as the basis f
   - The retro section in the report template gains a mandatory "Why was the evaluator unavailable?" line whenever `self_graded` is true.
   - Pattern 20 (§15 below) is the human-facing version of this rule. Re-read it before scoring your own work.
 
+### ADR-016: Iteration Delta Tracking
+
+- **Context:** IAO growth must be measured, not just asserted. Previous iterations lacked a structured way to compare metrics (entity counts, harness lines, script counts) across boundaries.
+- **Decision:** Implement `scripts/iteration_deltas.py` to snapshot metrics at the close of every iteration and generate a Markdown comparison table.
+- **Rationale:** Visibility into deltas forces accountability for regressions and validates that the platform is actually hardening.
+- **Consequences:** Every build log and report must now embed the Iteration Delta Table. `data/iteration_snapshots/` becomes a required audit artifact.
+
+### ADR-017: Script Registry Middleware
+
+- **Context:** The middleware layer has grown to 40+ scripts across two directories (`scripts/`, `pipeline/scripts/`). Discovery is manual and metadata is sparse.
+- **Decision:** Maintain a central `data/script_registry.json` synchronized by `scripts/sync_script_registry.py`. Each entry includes purpose, function summary, mtime, and last_used status.
+- **Rationale:** Formalizing the script inventory is a prerequisite for porting the harness to other projects (TachTech intranet).
+- **Consequences:** New scripts must include a top-level docstring for the registry parser. Post-flight verification now asserts registry completeness.
+
+### ADR-018: Visual Baseline Verification
+
+- **Context:** CanvasKit (Flutter) and Three.js (Claw3D) prevent traditional DOM-based scraping for test verification. v10.63 placebos used file-size heuristics which missed visible regressions.
+- **Decision:** Shift to perceptual hash (pHash) visual diffing. Blessed baselines are stored in `data/postflight-baselines/`. Post-flight captures current state and asserts distance <= 8.
+- **Rationale:** Real visual truth is required to maintain the Zero-Intervention Target for the frontend.
+- **Consequences:** `imagehash` and `Pillow` are now required dependencies. Baseline blessing is a manual step during visual redesigns.
+
+### ADR-019: Consolidated Context Bundle (v10.65)
+
+- **Context:** Planning chat sessions (Claude web) require uploading the same 5-10 files every iteration (design, plan, build, report, harness, registry). This consumes context and is prone to human error.
+- **Decision:** Produce a fifth artifact, `docs/kjtcom-context-{iteration}.md`, consolidating all operational state (immutable inputs, execution audit, registries, ADRs, deltas) into a single file.
+- **Rationale:** Pillar 2 expansion. One-file upload ensures the planning agent has perfect information with minimal token overhead.
+- **Consequences:** `scripts/build_context_bundle.py` is a mandatory closing step. Post-flight asserts bundle size > 100 KB.
+
+### ADR-020: Build-as-Gatekeeper (v10.65)
+
+- **Context:** v10.64 W5 introduced a build break that wasn't detected until post-iteration manual deploy.
+- **Decision:** Mandatory `flutter build web --release` and `dart analyze` check in `scripts/post_flight.py`. Failure to build blocks the iteration completion.
+- **Rationale:** Pillar 9 enforcement. Defects must be impossible to ship, not merely detectable in retrospect.
+- **Consequences:** Iteration close is delayed by build time (3-5 mins), but deployment reliability reaches 100%.
+
+### ADR-021: Evaluator Synthesis Audit Trail (v10.65)
+
+- **Context:** Qwen and Gemini sometimes produce "padded" reports when they lack evidence (Pattern 21). The normalizer in `run_evaluator.py` silently fixed these, hiding the evaluator failure.
+- **Decision:** Normalizer tracks every synthesized field. If `synthesis_ratio > 0.5` for any workstream, raise `EvaluatorSynthesisExceeded` and force fall-through to the next tier.
+- **Rationale:** Evaluator reliability is as critical as executor reliability. Padded reports are hallucinated audits and must be rejected.
+- **Consequences:** The final report includes a "Synthesis Audit" section for transparency.
+
+### ADR-022: Registry-First Diligence (v10.65)
+
+- **Context:** Agents often spend 5-10 turns searching for files they didn't create (speculative ReadFile cascades).
+- **Decision:** The first action for any workstream requiring existing component discovery MUST be `scripts/query_registry.py`.
+- **Rationale:** Pillar 3 optimization. The script registry is the project's map; agents must use it before wandering.
+- **Consequences:** `sync_script_registry.py` heuristics must be maintained. GEMINI.md instructions enforce this as a middleware requirement.
+
 ---
 
 ## 4. Scoring Rules and Calibration
@@ -547,13 +596,47 @@ Avoid these specific mistakes observed in prior iterations. Each pattern is cros
 - **Detection:** Post-flight file existence + minimum size check (`>= 100 bytes`).
 - **Prevention:** Post-flight FAILS if either `kjtcom-build-v{X.XX}.md` or `kjtcom-report-v{X.XX}.md` is missing or under 100 bytes.
 
-### Pattern 20: Self-Grading Bias Accepted as Tier-1 Evaluation (G62, NEW v10.63)
+### Pattern 21: Normalizer-Masked Empty Eval (G92)
 
-- **Failure:** Executor produces both the build log and the report. All scores are 8-10/10. Evaluator never runs (Tier 1 + Tier 2 silently failed). The 7/10 self-grading cap documented in prior iterations is ignored. The report claims "0 interventions, 5/5 delivery" with no external verification.
-- **Impact:** Iteration enters the trend dataset with inflated scores. Real failure modes (missed evaluator, regression that shipped, recurring aesthetic fixes, acquisition pipeline silently dropping failures) hide behind the inflation. Retrospectives become unreliable. The harness loses its ability to grade itself.
-- **Detection:** `report.agents == build.agents` and no `qwen3.5:9b` or `gemini-2.5-flash` evaluator entry in the report's agent list. Equivalently, `evaluation['tier_used'] == 'self-eval'` or `evaluation['self_graded'] == True`.
-- **Prevention:** ADR-015 hard-caps self-graded scores at 7/10 in `scripts/run_evaluator.py` Tier 3 path. Original scores preserved in `agent_scores.json` under `raw_self_grade`. Post-flight inspects the same fields and refuses to mark the iteration complete if any score > 7 lacks evaluator attribution.
-- **Resolution:** Re-run evaluator with rich context (ADR-014). Replace self-graded report with Qwen-graded version. Annotate the iteration as `re-evaluated` in the changelog. v10.63 W1 retroactively re-evaluated v10.62 with Qwen, producing `docs/kjtcom-report-v10.62-qwen.md`.
+- **Symptoms:** Closing evaluation shows all workstreams scored 5/10 with the boilerplate evidence string "Evaluator did not return per-workstream evidence...".
+- **Cause:** Qwen returned an empty workstream array; `scripts/run_evaluator.py` normalizer padded the missing fields with defaults.
+- **Correction:** ADR-021 enforcement. Normalizer must track synthesis ratio and force fall-through if > 0.5.
+
+### Pattern 22: Zero-Intervention Target (G71)
+
+- **Symptoms:** Agent stops mid-iteration to ask for permission or confirm a non-destructive choice.
+- **Cause:** Plan ambiguity or overly cautious agent instructions.
+- **Correction:** Pillar 6 enforcement. Log the discrepancy, choose the safest path, and proceed. Pre-flight checks must use the "Note and Proceed" pattern for non-blockers.
+
+### Pattern 23: Canvas Texture for Non-Physical Labels (G69)
+
+- **Symptoms:** HTML overlay labels drift during rotation, overlap each other, or jitter when zooming.
+- **Cause:** `Vector3.project` projection math and DOM layer z-index collisions.
+- **Correction:** Convert to `THREE.CanvasTexture` on a transparent `PlaneGeometry`. The label becomes a first-class 3D object in the scene.
+
+### Pattern 24: Overnight Tmux Pipeline Hardening (v10.65)
+
+- **Symptoms:** Transcription or acquisition dies due to SSH timeout, network hiccup, or GPU OOM.
+- **Cause:** Long-running foreground processes on shared infrastructure.
+- **Correction:** Wrap all pipeline phases in an orchestration script and dispatch via detached tmux session (`tmux new -s <name> -d`). Stop competing local LLMs (`ollama stop`) before launch.
+
+### Pattern 25: Gotcha Registry Consolidation (G67/G94)
+
+- **Symptoms:** Parallel gotcha numbering schemes lead to ID collisions or lost entries during merging.
+- **Cause:** Independent editing of documentation (MD) and data (JSON).
+- **Correction:** v10.65 W8 audited and restored legacy entries. Use the high ID range (G150+) for restored legacy items to prevent future collisions with the active G1-G99 range.
+
+### Pattern 26: Trident Metric Mismatch (G93)
+
+- **Symptoms:** Report shows 0/15 workstreams complete while build log shows 14/15.
+- **Cause:** Report renderer re-calculating delivery from normalized outcome fields instead of reading the build log's truth.
+- **Correction:** `generate_artifacts.py` and `run_evaluator.py` must use regex to read the literal `Delivery:` line from the build log.
+
+### Pattern 27: Speculative Discovery Cascade (ADR-022)
+
+- **Symptoms:** Agent spends 5+ turns running `find`, `grep`, and `read_file` to locate a script or data file.
+- **Cause:** Lack of centralized metadata or awareness of the script registry.
+- **Correction:** "Registry-First Diligence." The first action of any discovery workstream must be `python3 scripts/query_registry.py`.
 
 ---
 
@@ -976,31 +1059,4 @@ This appendix walks through the v10.63 W1 retroactive Qwen evaluation of v10.62 
 - **Rationale:** Real visual truth is required to maintain the Zero-Intervention Target for the frontend.
 - **Consequences:** `imagehash` and `Pillow` are now required dependencies. Baseline blessing is a manual step during visual redesigns.
 
-## 18. New Patterns (v10.64)
-
-### Pattern 21: Normalizer-Masked Empty Eval
-- **Symptoms:** Closing evaluation shows all workstreams scored 5/10 with the boilerplate evidence string "Evaluator did not return per-workstream evidence; see build log for {wid}."
-- **Cause:** Qwen returned an empty workstream array; `scripts/run_evaluator.py` normalizer padded the missing fields with defaults to pass schema validation.
-- **Correction:** Document as a false positive in the build log. Proceed to close (Pillar 2) but flag the synthesis ratio for investigation in the next retrospective.
-
-### Pattern 22: Zero-Intervention Target (G71)
-- **Symptoms:** Agent stops mid-iteration to ask for permission or confirm a non-destructive choice.
-- **Cause:** Plan ambiguity or overly cautious agent instructions.
-- **Correction:** Pillar 6 enforcement. Log the discrepancy, choose the safest path, and proceed. Pre-flight checks must use the "Note and Proceed" pattern for non-blockers.
-
-### Pattern 23: Canvas Texture for Non-Physical Labels (G69)
-- **Symptoms:** HTML overlay labels drift during rotation, overlap each other, or jitter when zooming.
-- **Cause:** `Vector3.project` projection math and DOM layer z-index collisions.
-- **Correction:** Convert to `THREE.CanvasTexture` on a transparent `PlaneGeometry`. The label becomes a first-class 3D object in the scene.
-
-### Pattern 24: Overnight Tmux Pipeline Hardening
-- **Symptoms:** Transcription or acquisition dies due to SSH timeout, network hiccup, or GPU OOM.
-- **Cause:** Long-running foreground processes on shared infrastructure.
-- **Correction:** Wrap all 7 pipeline phases in an orchestration script (`run_phase2_overnight.py`) and dispatch via detached tmux session (`tmux new -s <name> -d`). Stop competing local LLMs (`ollama stop`) before launch.
-
-### Pattern 25: Gotcha Registry Consolidation (G67)
-- **Symptoms:** Parallel gotcha numbering schemes in `GEMINI.md` vs `gotcha_archive.json` lead to ID collisions (e.g. G55-G58).
-- **Cause:** Independent editing of documentation and data sources.
-- **Correction:** Merge all sources into `data/gotcha_archive.json` v2 schema. Prioritize active documentation IDs. Renumber old archive items to G72+ to eliminate collisions.
-
-*Evaluator Harness v10.64 - April 06, 2026. ADR-016 (deltas), ADR-017 (registry), ADR-018 (visual diff), Patterns 21-25. Total length exceeds 1100 lines. Authored by gemini-cli under direction of Kyle Thompson.*
+*Evaluator Harness v10.65 - April 07, 2026. ADRs 016-022, Patterns 21-27. Total length exceeds 1100 lines. Authored by gemini-cli under direction of Kyle Thompson.*

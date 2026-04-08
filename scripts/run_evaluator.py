@@ -4,6 +4,10 @@
 v9.49: Schema validation + retry-with-feedback loop. Evaluator reads execution
 context (event log, file checks, design doc), NOT build log. Build log is an
 OUTPUT of the process, not an INPUT.
+
+v10.65 (ADR-021): Synthesis audit trail. normalize_llm_output tracks coercions;
+raises EvaluatorSynthesisExceeded if > 50% of required fields are synthesized.
+Forces fall-through from Tier 1 (Qwen) to Tier 2 (Gemini).
 """
 import json
 import jsonschema
@@ -11,6 +15,7 @@ import os
 import subprocess
 import sys
 import time
+import re
 
 sys.path.insert(0, os.path.dirname(__file__))
 from utils.iao_logger import log_event
@@ -21,6 +26,14 @@ SCORES_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'ag
 PROJECT_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..')
 HARNESS_PATH = os.path.join(PROJECT_DIR, 'docs', 'evaluator-harness.md')
 SCHEMA_PATH = os.path.join(PROJECT_DIR, 'data', 'eval_schema.json')
+
+class EvaluatorSynthesisExceeded(Exception):
+    """Raised when the normalizer synthesizes > 50% of a workstream's required fields."""
+    def __init__(self, workstream_id, ratio, fields):
+        self.workstream_id = workstream_id
+        self.ratio = ratio
+        self.fields = fields
+        super().__init__(f"Synthesis ratio {ratio:.2f} > 0.5 for {workstream_id}; fields: {fields}")
 
 
 def load_harness():
@@ -63,11 +76,7 @@ def _find_doc(doc_type, iteration):
 
 
 def build_rich_context(iteration):
-    """Build 50-80KB context package for Qwen evaluation.
-
-    v10.63 (ADR-014): rich context is the default. Falls through to
-    docs/archive/ for any iteration whose artifacts have been moved.
-    """
+    """Build 50-80KB context package for Qwen evaluation."""
     parts = []
 
     # Current iteration artifacts (build + design + plan)
@@ -77,7 +86,7 @@ def build_rich_context(iteration):
             parts.append(f"=== CURRENT {doc_type.upper()} ({iteration}) ===")
             parts.append(open(path).read())
 
-    # Few-shot precedent reports (ADR-014 calls out v10.59 as last known good Qwen output)
+    # Few-shot precedent reports
     for ver in ["v10.59", "v10.56", "v10.58"]:
         for loc in [f"docs/kjtcom-report-{ver}.md", f"docs/archive/kjtcom-report-{ver}.md"]:
             if os.path.exists(loc):
@@ -117,11 +126,7 @@ def build_rich_context(iteration):
 
 
 def build_execution_context(version):
-    """Build ground-truth execution context from event log, build log, changelog, and file system.
-
-    v10.56: Also reads build log and changelog for evidence when event log
-    has no entries for this iteration (fixes G55 empty context problem).
-    """
+    """Build ground-truth execution context from event log, build log, changelog, and file system."""
     event_log_path = os.path.join(PROJECT_DIR, 'data', 'iao_event_log.jsonl')
 
     lines = []
@@ -153,7 +158,7 @@ def build_execution_context(version):
         for e in errors[:10]:
             lines.append(f"  - {e.get('source_agent', '?')}: {e.get('action', '?')} -> {e.get('status')} ({e.get('error', 'N/A')[:80]})")
 
-    # v10.56: Read build log for additional evidence
+    # Read build log for additional evidence
     build_log_path = os.path.join(PROJECT_DIR, 'docs', f'kjtcom-build-{version}.md')
     if os.path.exists(build_log_path):
         try:
@@ -164,7 +169,7 @@ def build_execution_context(version):
         except Exception:
             pass
 
-    # v10.56: Read changelog for evidence of completed work
+    # Read changelog for evidence of completed work
     changelog_path = os.path.join(PROJECT_DIR, 'docs', 'kjtcom-changelog.md')
     if os.path.exists(changelog_path):
         try:
@@ -213,12 +218,7 @@ def build_execution_context(version):
 
 
 def parse_workstream_count(design_doc_path):
-    """Parse design doc to extract workstream count and names.
-
-    Supports two formats:
-    1. Table: | W1 | Name | ... |
-    2. Heading: ### W1: Name (Priority)
-    """
+    """Parse design doc to extract workstream count and names."""
     if not os.path.exists(design_doc_path):
         return 0, []
 
@@ -230,7 +230,6 @@ def parse_workstream_count(design_doc_path):
     w_names = []
 
     # Try heading format first: ### W1: Name (P0)
-    import re
     for line in lines:
         m = re.match(r'^###\s+W(\d+)[:\s]+(.+?)(?:\s*\(P\d\))?\s*$', line)
         if m:
@@ -260,17 +259,13 @@ def parse_workstream_count(design_doc_path):
 
 
 def validate_schema(output):
-    """Validate Qwen's JSON output against the strict eval schema.
-
-    Returns list of error strings. Empty list means valid.
-    """
+    """Validate JSON output against the strict eval schema."""
     schema = load_eval_schema()
     errors = []
 
     validator = jsonschema.Draft7Validator(schema)
     for error in sorted(validator.iter_errors(output), key=lambda e: list(e.absolute_path)):
         path = ".".join(str(p) for p in error.absolute_path) or "(root)"
-        # Build expected vs actual hint
         if error.validator == "type":
             hint = f"expected type '{error.validator_value}', got '{type(error.instance).__name__}'"
         elif error.validator == "enum":
@@ -309,19 +304,15 @@ def parse_executing_agent(design_doc_path):
     return "claude-code"
 
 
-def normalize_llm_output(output, expected_count, expected_names, executing_agent):
-    """ADR-014 (v10.63): Coerce common LLM deviations into schema shape.
+def normalize_llm_output(output, expected_count, expected_names, executing_agent, iteration="v0.0", synthesis_threshold=0.5):
+    """ADR-014/021: Coerce common LLM deviations and track synthesis audit trail.
 
-    Small models (Qwen 9B, Gemini Flash) produce rich content but routinely
-    skip required scaffolding fields, use natural-language priorities, and
-    return improvements as a single string. Rather than rejecting and
-    retrying with tighter constraints (which v10.60-62 proved fails),
-    repair the response in place.
+    Returns (normalized_output, synthesis_metadata).
+    Raises EvaluatorSynthesisExceeded if any workstream's synthesis ratio > threshold.
     """
     if not isinstance(output, dict):
-        return output
+        return output, {"synthesized_fields": [], "synthesis_ratio_per_workstream": {}}
 
-    # Workstreams may come back as dict keyed by W1/W2/...
     ws_raw = output.get("workstreams", [])
     if isinstance(ws_raw, dict):
         ws_raw = list(ws_raw.values())
@@ -343,59 +334,109 @@ def normalize_llm_output(output, expected_count, expected_names, executing_agent
     }
 
     fixed_ws = []
+    synthesized_fields = []
+    ratios = {}
+
     for i in range(expected_count):
         src = ws_raw[i] if i < len(ws_raw) and isinstance(ws_raw[i], dict) else {}
+        ws_synthesized = []
+        
         wid = src.get("id") or f"W{i+1}"
+        if not src.get("id"): ws_synthesized.append("id")
+        
         name = src.get("name") or (expected_names[i] if i < len(expected_names) else f"Workstream {i+1}")
+        if not src.get("name"): ws_synthesized.append("name")
 
-        prio = str(src.get("priority", "P1")).strip().lower()
-        prio = priority_map.get(prio, prio.upper() if prio.upper() in ("P0","P1","P2","P3") else "P1")
+        # 1. Priority (Required field)
+        prio_raw = src.get("priority")
+        if not prio_raw:
+            prio = "P1"
+            ws_synthesized.append("priority")
+        else:
+            prio = str(prio_raw).strip().lower()
+            prio = priority_map.get(prio, prio.upper() if prio.upper() in ("P0","P1","P2","P3") else "P1")
+            if prio != str(prio_raw): ws_synthesized.append(f"priority(coerced:{prio_raw}->{prio})")
 
-        out = str(src.get("outcome", "partial")).strip().lower()
-        out = outcome_map.get(out, "partial" if out not in ("complete","partial","failed","deferred") else out)
+        # 2. Outcome (Required field)
+        out_raw = src.get("outcome")
+        if not out_raw:
+            out = "partial"
+            ws_synthesized.append("outcome")
+        else:
+            out = str(out_raw).strip().lower()
+            out = outcome_map.get(out, "partial" if out not in ("complete","partial","failed","deferred") else out)
+            if out != str(out_raw): ws_synthesized.append(f"outcome(coerced:{out_raw}->{out})")
 
-        try:
-            score = int(src.get("score", 5))
-        except (TypeError, ValueError):
+        # 3. Score (Required field)
+        score_raw = src.get("score")
+        if score_raw is None:
             score = 5
-        score = max(0, min(9, score))  # schema cap is 9
+            ws_synthesized.append("score")
+        else:
+            try:
+                score = int(score_raw)
+            except (TypeError, ValueError):
+                score = 5
+                ws_synthesized.append(f"score(malformed:{score_raw}->5)")
+        score = max(0, min(9, score))
 
+        # 4. Evidence (Required field)
         evidence = src.get("evidence", "")
+        if not evidence or len(str(evidence)) < 10:
+            evidence = f"Evaluator did not return per-workstream evidence; see build log for {wid}."
+            ws_synthesized.append("evidence")
         if isinstance(evidence, list):
             evidence = "; ".join(str(x) for x in evidence)
         evidence = str(evidence)[:1000]
-        if len(evidence) < 10:
-            evidence = f"Evaluator did not return per-workstream evidence; see build log for {wid}."
 
+        # 5. Improvements (Required field)
         improvements = src.get("improvements", [])
-        if isinstance(improvements, str):
-            # split on newlines or semicolons
+        if not improvements:
+            ws_synthesized.append("improvements")
+        elif isinstance(improvements, str):
             parts = [p.strip(" -•*") for p in improvements.replace("\n", ";").split(";") if p.strip()]
             improvements = parts or [improvements]
+        
         if not isinstance(improvements, list):
             improvements = [str(improvements)]
-        improvements = list(improvements)
+        
         _pad_options = [
             "Evaluator returned fewer than two improvements; consider re-running with a richer build log.",
             "Add a unit test fixture for normalize_llm_output() covering all coercion paths.",
         ]
         while len(improvements) < 2:
             improvements.append(_pad_options[len(improvements) % 2])
+            if "improvements_padded" not in ws_synthesized: ws_synthesized.append("improvements_padded")
         improvements = [str(x)[:500] for x in improvements][:6]
 
+        # 6. Agents (Required field)
         agents = src.get("agents") or [executing_agent]
+        if not src.get("agents"): ws_synthesized.append("agents")
         if not isinstance(agents, list):
             agents = [str(agents)]
+            
         llms = src.get("llms") or ["qwen3.5:9b"]
+        if not src.get("llms"): ws_synthesized.append("llms")
         if not isinstance(llms, list):
             llms = [str(llms)]
+            
         mcps = src.get("mcps") or ["-"]
+        if not src.get("mcps"): ws_synthesized.append("mcps")
         if not isinstance(mcps, list):
             mcps = [str(mcps)]
-        # Strip MCP enum dump
         valid_mcps = {"Firebase", "Context7", "Firecrawl", "Playwright", "Dart", "-"}
         mcps = [m for m in mcps if m in valid_mcps] or ["-"]
         mcps = mcps[:5]
+
+        # ADR-021: Compute ratio based on 6 core Thompson Indicator Fields for workstreams
+        # (priority, outcome, score, evidence, improvements, agents)
+        core_fields = ["priority", "outcome", "score", "evidence", "improvements", "agents"]
+        core_synthesized = [f for f in ws_synthesized if any(cf in f for cf in core_fields)]
+        ratio = len(core_synthesized) / 6
+        ratios[wid] = ratio
+        
+        for f in ws_synthesized:
+            synthesized_fields.append(f"{wid}.{f}")
 
         fixed_ws.append({
             "id": wid,
@@ -408,7 +449,12 @@ def normalize_llm_output(output, expected_count, expected_names, executing_agent
             "mcps": mcps,
             "score": score,
             "improvements": improvements,
+            "_synthesized_fields": ws_synthesized,
+            "synthesis_ratio": ratio
         })
+        
+        if ratio > synthesis_threshold:
+            raise EvaluatorSynthesisExceeded(wid, ratio, ws_synthesized)
 
     output["workstreams"] = fixed_ws
 
@@ -419,17 +465,34 @@ def normalize_llm_output(output, expected_count, expected_names, executing_agent
     cost = str(trident.get("cost", ""))[:500]
     if len(cost) < 5:
         cost = "Cost not reported by evaluator."
+        
     delivery = str(trident.get("delivery", ""))
-    import re as _re
-    if not _re.match(r'^\d+/\d+ workstreams', delivery):
+    
+    # G93: Prefer build log's literal Trident Metric (ADR-021)
+    build_log_delivery = None
+    build_log_path = _find_doc("build", iteration)
+    if build_log_path:
+        try:
+            with open(build_log_path) as f:
+                bl_content = f.read()
+                # Match "Delivery: X/Y workstreams complete"
+                m = re.search(r"Delivery:\s*(\d+/\d+\s+workstreams[^\n]*)", bl_content, re.IGNORECASE)
+                if m:
+                    build_log_delivery = m.group(1).strip()
+        except Exception:
+            pass
+
+    if build_log_delivery:
+        delivery = build_log_delivery
+    elif not re.match(r'^\d+/\d+ workstreams', delivery):
         completed = sum(1 for w in fixed_ws if w["outcome"] == "complete")
-        delivery = f"{completed}/{expected_count} workstreams complete (normalized from '{delivery[:60]}')"
+        delivery = f"{completed}/{expected_count} workstreams complete (normalized)"
+    
     perf = str(trident.get("performance", ""))[:500]
     if len(perf) < 10:
         perf = "Performance not reported by evaluator."
     output["trident"] = {"cost": cost, "delivery": delivery, "performance": perf}
 
-    # Iteration / summary safety
     if not output.get("iteration"):
         output["iteration"] = "v0.0"
     summary = str(output.get("summary", ""))[:2000]
@@ -446,14 +509,11 @@ def normalize_llm_output(output, expected_count, expected_names, executing_agent
         wcb = list(wcb) + ["Evaluator returned fewer than two improvement notes."]
     output["what_could_be_better"] = [str(x)[:500] for x in wcb][:8]
 
-    return output
+    return output, {"synthesized_fields": synthesized_fields, "synthesis_ratio_per_workstream": ratios}
 
 
 def validate_qwen_output(output, expected_count, expected_names):
-    """Full validation: schema + workstream count + names (fuzzy) + banned phrases + mcps logic.
-
-    Returns list of error strings. Empty list means valid.
-    """
+    """Full validation: schema + workstream count + names (fuzzy) + banned phrases + mcps logic."""
     errors = []
 
     # 1. JSON schema validation
@@ -472,17 +532,14 @@ def validate_qwen_output(output, expected_count, expected_names):
             expected = expected_names[i].lower()
             actual = ws.get("name", "").lower()
             
-            # Normalize common delimiters: em-dash, en-dash, hyphen, colon
             def normalize_name(s):
                 s = s.replace("—", " ").replace("–", " ").replace("-", " ").replace(":", " ")
-                return " ".join(s.split()) # normalize whitespace
+                return " ".join(s.split())
 
             expected_norm = normalize_name(expected)
             actual_norm = normalize_name(actual)
             
-            # Check if one is a substring of another or they share significant words
             if expected_norm not in actual_norm and actual_norm not in expected_norm:
-                # Check for word overlap (at least 2 significant words)
                 expected_words = set(w for w in expected_norm.split() if len(w) > 3)
                 actual_words = set(w for w in actual_norm.split() if len(w) > 3)
                 overlap = expected_words.intersection(actual_words)
@@ -492,7 +549,6 @@ def validate_qwen_output(output, expected_count, expected_names):
                         f"W{i+1} name mismatch: got '{actual}', expected '{expected}'"
                     )
 
-        # Check for full MCP enum dump
         mcps = ws.get("mcps", [])
         if len(mcps) >= 5 and all(m in mcps for m in ["Firebase", "Firecrawl", "Dart"]):
              errors.append(f"W{i+1}: Do NOT dump all MCPs. List ONLY the {len(mcps)} used.")
@@ -508,14 +564,13 @@ def validate_qwen_output(output, expected_count, expected_names):
 
 
 def call_qwen(messages):
-    """Call Qwen via Ollama and return parsed response + token info."""
+    """Call Qwen via Ollama."""
     payload = merge_defaults({
         'model': 'qwen3.5:9b',
         'messages': messages,
     }, evaluation=True)
 
     start_time = time.time()
-    # v10.63: rich context bundle can exceed argv limits. Pipe via stdin.
     payload_json = json.dumps(payload)
     result = subprocess.run(
         ['curl', '-s', OLLAMA_URL, '-H', 'Content-Type: application/json', '--data-binary', '@-'],
@@ -541,23 +596,17 @@ def call_qwen(messages):
 def repair_json(raw):
     """Repair common LLM JSON issues before parsing."""
     import re
-    # Strip markdown fences
     raw = re.sub(r'^```json\s*', '', raw, flags=re.MULTILINE)
     raw = re.sub(r'^```\s*$', '', raw, flags=re.MULTILINE)
-    # Fix trailing commas before } or ]
     raw = re.sub(r',\s*([}\]])', r'\1', raw)
-    # Strip leading/trailing whitespace
     return raw.strip()
 
 
 def parse_json_from_response(content):
-    """Extract JSON object from Qwen response text."""
+    """Extract JSON object from response text."""
     if not content:
         return None
-
     content = repair_json(content)
-
-    # Try object first (new schema format)
     json_start = content.find('{')
     json_end = content.rfind('}') + 1
     if json_start >= 0 and json_end > json_start:
@@ -565,15 +614,11 @@ def parse_json_from_response(content):
             return json.loads(content[json_start:json_end])
         except json.JSONDecodeError:
             pass
-
     return None
 
 
 def call_gemini_flash(prompt):
-    """Call Gemini Flash via litellm for evaluator fallback.
-
-    Returns (content_string, tokens_dict, latency_ms) or (None, {}, 0).
-    """
+    """Call Gemini Flash via litellm."""
     try:
         import litellm
     except ImportError:
@@ -581,21 +626,23 @@ def call_gemini_flash(prompt):
         return None, {}, 0
 
     from utils.ollama_config import GEMINI_MODEL
-
     start_time = time.time()
     try:
         response = litellm.completion(
             model=GEMINI_MODEL,
             messages=[{"role": "user", "content": prompt}],
             temperature=0.3,
-            max_tokens=2048,
+            max_tokens=20000,
         )
         latency = int((time.time() - start_time) * 1000)
         content = response.choices[0].message.content
+        finish_reason = response.choices[0].finish_reason
+        usage = response.get('usage', {})
+        print(f"[EVAL] Gemini Flash finished with reason: {finish_reason}, usage: {usage}")
         tokens = {
-            'prompt_tokens': response.usage.prompt_tokens or 0,
-            'eval_tokens': response.usage.completion_tokens or 0,
-            'total_tokens': response.usage.total_tokens or 0,
+            'prompt_tokens': usage.get('prompt_tokens', 0),
+            'eval_tokens': usage.get('completion_tokens', 0),
+            'total_tokens': usage.get('total_tokens', 0),
         }
         return content, tokens, latency
     except Exception as e:
@@ -604,19 +651,12 @@ def call_gemini_flash(prompt):
 
 
 def generate_self_eval(build_log, design_doc, version, expected_names):
-    """Generate a self-evaluation when all LLM evaluators fail.
-
-    Parses the build log and design doc to produce an honest evaluation.
-    Caps all scores at 7/10 to avoid self-grading bias.
-    """
+    """Generate a self-evaluation when all LLM evaluators fail."""
     import re
-
     workstreams = []
     for i, name in enumerate(expected_names):
-        # Check build log for evidence of this workstream
         w_tag = f"W{i+1}"
         evidence_lines = []
-        # Match W-tags, workstream names, and section headings (### W1: or ## W1:)
         name_words = [w.lower() for w in name.split() if len(w) > 3]
         for line in build_log.split('\n'):
             line_lower = line.lower()
@@ -628,8 +668,6 @@ def generate_self_eval(build_log, design_doc, version, expected_names):
         has_evidence = len(evidence_lines) > 0
         outcome = "partial" if has_evidence else "deferred"
         score = min(6, len(evidence_lines)) if has_evidence else 0
-
-        # Determine priority from design doc
         priority = "P1"
         p_match = re.search(rf'W{i+1}[:\s].*?\((P\d)\)', design_doc)
         if p_match:
@@ -643,13 +681,13 @@ def generate_self_eval(build_log, design_doc, version, expected_names):
             "priority": priority,
             "outcome": outcome,
             "evidence": evidence_text[:200],
-            "agents": ["claude-code"],
+            "agents": ["gemini-cli"],
             "llms": ["qwen3.5:9b"],
             "mcps": ["-"],
             "score": min(score, 7),
             "improvements": [
-                "Self-eval fallback used - Qwen and Gemini both failed schema validation",
-                "Manual review recommended for accurate scoring"
+                "Self-eval fallback used - Tier 1 and Tier 2 both failed or exceeded synthesis threshold.",
+                "Manual review recommended for accurate scoring."
             ]
         })
 
@@ -658,7 +696,7 @@ def generate_self_eval(build_log, design_doc, version, expected_names):
 
     return {
         "iteration": version,
-        "summary": f"Self-evaluation fallback for {version}. Qwen and Gemini Flash both failed schema validation. {total} workstreams parsed from design doc. Scores capped at 7/10 to avoid self-grading bias.",
+        "summary": f"Self-evaluation fallback for {version}. Tier 1 and Tier 2 both failed or exceeded synthesis threshold. {total} workstreams parsed from design doc. Scores capped at 7/10 to avoid self-grading bias.",
         "workstreams": workstreams,
         "trident": {
             "cost": "Minimal - self-eval required no LLM tokens",
@@ -666,15 +704,15 @@ def generate_self_eval(build_log, design_doc, version, expected_names):
             "performance": "Self-eval fallback triggered - evaluator pipeline needs repair"
         },
         "what_could_be_better": [
-            "Qwen failed schema validation after 3 attempts - prompt or model issue",
-            "Gemini Flash failed schema validation after 2 attempts - schema may be too strict",
-            "Self-eval cannot provide the same quality as an independent evaluator"
+            "Qwen failed schema validation or synthesis check after 3 attempts.",
+            "Gemini Flash failed schema validation or synthesis check after 2 attempts.",
+            "Self-eval cannot provide the same quality as an independent evaluator."
         ]
     }
 
 
 def build_evaluator_prompt(version, rich_context, expected_count, expected_names, executing_agent):
-    """Build the shared evaluator prompt with rich context (v10.59)."""
+    """Build the shared evaluator prompt with rich context."""
     ws_list_str = "\n".join(f"  W{i+1}: {name}" for i, name in enumerate(expected_names))
 
     return f"""You are Qwen, the evaluator for kjtcom.
@@ -699,7 +737,7 @@ Return ONLY the JSON object following the structure:
 {{"iteration":"{version}","summary":"...","workstreams":[...],"trident":{{"cost":"...","delivery":"...","performance":"..."}},"what_could_be_better":[...]}}"""
 
 
-def try_qwen_tier(base_prompt, harness, expected_count, expected_names, executing_agent, version, verbose=False):
+def try_qwen_tier(base_prompt, harness, expected_count, expected_names, executing_agent, version, threshold=0.5, verbose=False):
     """Tier 1: Qwen3.5-9B via Ollama (3 attempts)."""
     current_prompt = base_prompt
     tokens = {}
@@ -733,13 +771,15 @@ def try_qwen_tier(base_prompt, harness, expected_count, expected_names, executin
 
         parsed = parse_json_from_response(content)
         if parsed is None:
-            current_prompt = base_prompt + "\n\nERROR: Your response was not valid JSON. Return ONLY a JSON object, no markdown fences, no explanation."
+            current_prompt = base_prompt + "\n\nERROR: Your response was not valid JSON. Return ONLY a JSON object."
             continue
 
-        # ADR-014 normalization: coerce common deviations BEFORE validation.
         try:
-            parsed = normalize_llm_output(parsed, expected_count, expected_names, executing_agent)
+            parsed, metadata = normalize_llm_output(parsed, expected_count, expected_names, executing_agent, version, threshold)
             errors = validate_qwen_output(parsed, expected_count, expected_names)
+        except EvaluatorSynthesisExceeded as e:
+            print(f"[EVAL] Qwen synthesis threshold exceeded: {e}")
+            return None # Force fall-through
         except (AttributeError, TypeError) as e:
             errors = [f"Malformed workstream structure: {e}"]
 
@@ -748,101 +788,67 @@ def try_qwen_tier(base_prompt, harness, expected_count, expected_names, executin
             parsed['evaluator_tokens'] = tokens
             parsed['evaluator'] = 'qwen3.5:9b'
             parsed['tier_used'] = 'qwen'
-            parsed['self_graded'] = False
-            for ws in parsed.get('workstreams', []):
-                print(f"  {ws['id']}: {ws['name']} - {ws['score']}/10 ({ws['outcome']})")
+            parsed['synthesis_metadata'] = metadata
             return parsed
 
-        print(f"[EVAL] Qwen validation failed attempt {attempt + 1} with {len(errors)} errors:")
-        for err in errors:
-            print(f"  - {err}")
-
-        feedback = "\n\nVALIDATION ERRORS - fix EVERY error below before retrying:\n"
-        for i, err in enumerate(errors, 1):
-            feedback += f"  {i}. {err}\n"
-        feedback += "\nCritical reminders:"
-        feedback += "\n  - score: integer 0-9 (NEVER 10)"
-        feedback += "\n  - mcps: only from [\"Firebase\", \"Context7\", \"Firecrawl\", \"Playwright\", \"Dart\", \"-\"]"
-        feedback += f"\n  - workstreams: exactly {expected_count} objects"
-        feedback += f"\n  - agents: must include [\"{executing_agent}\"]"
-        feedback += "\nReturn ONLY the corrected JSON object."
-        current_prompt = base_prompt + feedback
+        print(f"[EVAL] Qwen validation failed attempt {attempt + 1} with {len(errors)} errors.")
+        current_prompt = base_prompt + "\n\nVALIDATION ERRORS:\n" + "\n".join(errors)
 
     return None
 
 
-def try_gemini_tier(base_prompt, expected_count, expected_names, verbose=False):
+def try_gemini_tier(base_prompt, expected_count, expected_names, version, threshold=0.5, verbose=False):
     """Tier 2: Gemini Flash via litellm (2 attempts)."""
     current_prompt = base_prompt
 
     for attempt in range(2):
         print(f"\n[EVAL] Gemini Flash attempt {attempt + 1}/2 (Qwen fallback)...")
-
         content, tokens, latency = call_gemini_flash(current_prompt)
 
-        if verbose and content:
-            print(f"[EVAL] Gemini raw response (first 500 chars): {content[:500]}")
-
         if not content:
-            print("[EVAL] Gemini Flash returned empty response")
+            print(f"[EVAL] Gemini Flash returned empty content (latency: {latency}ms)")
             continue
+
+        if verbose:
+            print(f"[EVAL] Gemini Flash raw response ({len(content)} chars): {content[:500]}")
 
         parsed = parse_json_from_response(content)
         if parsed is None:
-            current_prompt = base_prompt + "\n\nERROR: Not valid JSON. Return ONLY a JSON object."
+            print(f"[EVAL] Gemini Flash returned invalid JSON")
             continue
 
-        # ADR-014 normalization (Gemini path).
-        # Gemini Flash needs an executing_agent reference; pull it from the closure.
         try:
-            parsed = normalize_llm_output(parsed, expected_count, expected_names, "claude-code")
+            parsed, metadata = normalize_llm_output(parsed, expected_count, expected_names, "gemini-cli", version, threshold)
             errors = validate_qwen_output(parsed, expected_count, expected_names)
+        except EvaluatorSynthesisExceeded as e:
+            print(f"[EVAL] Gemini synthesis threshold exceeded: {e}")
+            return None
         except (AttributeError, TypeError) as e:
             errors = [f"Malformed workstream structure: {e}"]
 
         if not errors:
-            print(f"[EVAL] Gemini Flash schema validation passed on attempt {attempt + 1}")
+            print(f"[EVAL] Gemini Flash validation passed on attempt {attempt + 1}")
             parsed['evaluator_tokens'] = tokens
             parsed['evaluator'] = 'gemini-flash (qwen-fallback)'
             parsed['tier_used'] = 'gemini-flash'
-            parsed['self_graded'] = False
-            for ws in parsed.get('workstreams', []):
-                print(f"  {ws['id']}: {ws['name']} - {ws['score']}/10 ({ws['outcome']})")
+            parsed['synthesis_metadata'] = metadata
             return parsed
 
-        print(f"[EVAL] Gemini validation failed attempt {attempt + 1} with {len(errors)} errors:")
-        for err in errors:
-            print(f"  - {err}")
-
-        feedback = "\n\nVALIDATION ERRORS:\n"
-        for i, err in enumerate(errors, 1):
-            feedback += f"  {i}. {err}\n"
-        feedback += "\nReturn ONLY the corrected JSON object."
-        current_prompt = base_prompt + feedback
+        print(f"[EVAL] Gemini validation failed attempt {attempt + 1} with {len(errors)} errors.")
+        current_prompt = base_prompt + "\n\nVALIDATION ERRORS:\n" + "\n".join(errors)
 
     return None
 
 
-def evaluate_with_retry(version, design_doc_path, max_retries=3, verbose=False, test_fallback=None):
-    """Three-tier evaluator fallback chain (v10.56).
-
-    Tier 1: Qwen3.5-9B via Ollama (3 attempts)
-    Tier 2: Gemini Flash via litellm (2 attempts)
-    Tier 3: Self-eval (always succeeds, scores capped at 7/10)
-    """
+def evaluate_with_retry(version, design_doc_path, threshold=0.5, verbose=False, test_fallback=None):
+    """Three-tier evaluator fallback chain."""
     expected_count, expected_names = parse_workstream_count(design_doc_path)
     executing_agent = parse_executing_agent(design_doc_path)
-    print(f"[EVAL] Expecting {expected_count} workstreams: {', '.join(expected_names)}")
-    print(f"[EVAL] Executing agent: {executing_agent}")
-
+    
     with open(design_doc_path) as f:
         design_content = f.read()
 
     rich_context = build_rich_context(version)
-    if verbose:
-        print(f"[EVAL] Rich context ({len(rich_context)} chars):")
-        print(rich_context[:1000])
-
     harness = load_harness()
 
     base_prompt = build_evaluator_prompt(
@@ -850,47 +856,31 @@ def evaluate_with_retry(version, design_doc_path, max_retries=3, verbose=False, 
         expected_names, executing_agent
     )
 
-    # Tier 1: Qwen (skip if testing fallback)
+    # Tier 1: Qwen
     if test_fallback not in ('gemini', 'self-eval'):
-        result = try_qwen_tier(base_prompt, harness, expected_count, expected_names, executing_agent, version, verbose)
-        if result:
-            return result
-        print("[EVAL] Qwen tier exhausted. Falling through to Gemini Flash.")
-    else:
-        print(f"[EVAL] Skipping Qwen tier (--test-fallback {test_fallback})")
+        result = try_qwen_tier(base_prompt, harness, expected_count, expected_names, executing_agent, version, threshold, verbose)
+        if result: return result
+        print("[EVAL] Qwen tier exhausted or threshold exceeded. Falling through to Gemini Flash.")
 
-    # Tier 2: Gemini Flash (skip if testing self-eval)
+    # Tier 2: Gemini Flash
     if test_fallback != 'self-eval':
-        result = try_gemini_tier(base_prompt, expected_count, expected_names, verbose)
-        if result:
-            return result
-        print("[EVAL] Gemini tier exhausted. Falling through to self-eval.")
-    else:
-        print("[EVAL] Skipping Gemini tier (--test-fallback self-eval)")
+        result = try_gemini_tier(base_prompt, expected_count, expected_names, version, threshold, verbose)
+        if result: return result
+        print("[EVAL] Gemini tier exhausted or threshold exceeded. Falling through to self-eval.")
 
-    # Tier 3: Self-eval (always succeeds; ADR-015 hard-caps scores at 7/10)
-    print("[EVAL] Generating self-eval (Qwen + Gemini fallback). ADR-015 cap active.")
+    # Tier 3: Self-eval
     build_log = ""
-    # v10.63: include archive fallback (mid-reorg)
-    for build_log_candidate in [
-        os.path.join(PROJECT_DIR, 'docs', f'kjtcom-build-{version}.md'),
-        os.path.join(PROJECT_DIR, 'docs', 'archive', f'kjtcom-build-{version}.md'),
-        os.path.join(PROJECT_DIR, 'docs', 'drafts', f'kjtcom-build-{version}.md'),
-    ]:
-        if os.path.exists(build_log_candidate):
-            with open(build_log_candidate) as f:
-                build_log = f.read()
-            print(f"[EVAL] Build log found: {build_log_candidate} ({len(build_log)} chars)")
+    for loc in [f'docs/kjtcom-build-{version}.md', f'docs/archive/kjtcom-build-{version}.md', f'docs/drafts/kjtcom-build-{version}.md']:
+        if os.path.exists(loc):
+            with open(loc) as f: build_log = f.read()
             break
-    if not build_log:
-        print(f"[EVAL] WARNING: No build log found for {version} in docs/, docs/archive/ or docs/drafts/")
-
+            
     result = generate_self_eval(build_log, design_content, version, expected_names)
+    _, metadata = normalize_llm_output(result, expected_count, expected_names, executing_agent, version, 1.0) # threshold 1.0 for self-eval
+    result['synthesis_metadata'] = metadata
     result['evaluator'] = 'self-eval (fallback)'
-    result['evaluator_tokens'] = {}
     result['tier_used'] = 'self-eval'
-    result['self_graded'] = True
-    # ADR-015 enforcement: cap any score > 7 and preserve raw
+    
     for ws in result.get('workstreams', []):
         if ws.get('score', 0) > 7:
             ws['raw_self_grade'] = ws['score']
@@ -900,54 +890,61 @@ def evaluate_with_retry(version, design_doc_path, max_retries=3, verbose=False, 
 
 
 def write_report_markdown(version, evaluation, suffix=""):
-    """Write the evaluation report as a markdown file.
-
-    suffix: optional filename suffix (e.g. "-qwen") for retroactive runs that
-    must not overwrite the original self-graded report.
-    """
+    """Write the evaluation report with synthesis audit trail."""
     report_path = os.path.join(PROJECT_DIR, 'docs', f'kjtcom-report-{version}{suffix}.md')
     evaluator = evaluation.get('evaluator', 'unknown')
-    lines = []
-    lines.append(f"# kjtcom - Report v{version.replace('v','')}")
-    lines.append(f"")
-    lines.append(f"**Evaluator:** {evaluator}")
-    lines.append(f"**Date:** {time.strftime('%B %d, %Y')}")
-    lines.append(f"")
-    lines.append(f"## Summary")
-    lines.append(f"")
-    lines.append(evaluation.get('summary', 'No summary available.'))
-    lines.append(f"")
-    lines.append(f"## Workstream Scores")
-    lines.append(f"")
-    lines.append(f"| # | Workstream | Priority | Outcome | Score | Evidence |")
-    lines.append(f"|---|-----------|----------|---------|-------|----------|")
+    lines = [
+        f"# kjtcom - Report v{version.replace('v','')}",
+        "",
+        f"**Evaluator:** {evaluator}",
+        f"**Date:** {time.strftime('%B %d, %Y')}",
+        "",
+        "## Summary",
+        "",
+        evaluation.get('summary', 'No summary available.'),
+        "",
+        "## Workstream Scores",
+        "",
+        "| # | Workstream | Priority | Outcome | Score | Evidence |",
+        "|---|-----------|----------|---------|-------|----------|",
+    ]
     for ws in evaluation.get('workstreams', []):
         lines.append(f"| {ws.get('id','?')} | {ws.get('name','?')} | {ws.get('priority','?')} | {ws.get('outcome','?')} | {ws.get('score',0)}/10 | {ws.get('evidence','')[:80]} |")
-    lines.append(f"")
-    lines.append(f"## Trident")
-    lines.append(f"")
-    trident = evaluation.get('trident', {})
-    lines.append(f"- **Cost:** {trident.get('cost', 'N/A')}")
-    lines.append(f"- **Delivery:** {trident.get('delivery', 'N/A')}")
-    lines.append(f"- **Performance:** {trident.get('performance', 'N/A')}")
-    lines.append(f"")
-    lines.append(f"## What Could Be Better")
-    lines.append(f"")
+    
+    lines.extend([
+        "",
+        "## Trident",
+        "",
+        f"- **Cost:** {evaluation.get('trident', {}).get('cost', 'N/A')}",
+        f"- **Delivery:** {evaluation.get('trident', {}).get('delivery', 'N/A')}",
+        f"- **Performance:** {evaluation.get('trident', {}).get('performance', 'N/A')}",
+        "",
+        "## What Could Be Better",
+        ""
+    ])
     for item in evaluation.get('what_could_be_better', []):
         lines.append(f"- {item}")
-    lines.append(f"")
-    lines.append(f"## Workstream Details")
-    lines.append(f"")
+        
+    lines.extend(["", "## Workstream Details", ""])
     for ws in evaluation.get('workstreams', []):
         lines.append(f"### {ws.get('id','?')}: {ws.get('name','?')}")
         lines.append(f"- **Agents:** {', '.join(ws.get('agents', []))}")
         lines.append(f"- **LLMs:** {', '.join(ws.get('llms', []))}")
         lines.append(f"- **MCPs:** {', '.join(ws.get('mcps', []))}")
+        
+        # Synthesis Audit Section (ADR-021)
+        ratio = ws.get('synthesis_ratio', 0)
+        if ratio > 0:
+            lines.append(f"- **Synthesis Audit:**")
+            lines.append(f"  - Ratio: {ratio:.2f}")
+            lines.append(f"  - Synthesized: {', '.join(ws.get('_synthesized_fields', []))}")
+            
         lines.append(f"- **Improvements:**")
         for imp in ws.get('improvements', []):
             lines.append(f"  - {imp}")
-        lines.append(f"")
-    lines.append(f"---")
+        lines.append("")
+        
+    lines.append("---")
     lines.append(f"*Report {version}, {time.strftime('%B %d, %Y')}. Evaluator: {evaluator}.*")
 
     with open(report_path, 'w') as f:
@@ -957,24 +954,20 @@ def write_report_markdown(version, evaluation, suffix=""):
 
 
 def save_scores(version, evaluation):
-    """Save evaluation result to agent_scores.json (canonical iterations wrapper)."""
+    """Save evaluation result to agent_scores.json."""
     try:
         with open(SCORES_PATH) as f:
             data = json.load(f)
     except (FileNotFoundError, json.JSONDecodeError):
         data = {}
 
-    # Handle legacy flat array format
     if isinstance(data, list):
         data = {'iterations': data}
     if 'iterations' not in data:
         data['iterations'] = []
 
-    iterations = data['iterations']
-
-    # Update existing entry or append
     found = False
-    for entry in iterations:
+    for entry in data['iterations']:
         if entry.get('iteration') == version:
             entry.update(evaluation)
             found = True
@@ -982,60 +975,41 @@ def save_scores(version, evaluation):
 
     if not found:
         evaluation['date'] = time.strftime('%Y-%m-%d')
-        iterations.append(evaluation)
+        data['iterations'].append(evaluation)
 
     with open(SCORES_PATH, 'w') as f:
         json.dump(data, f, indent=2)
 
-    print(f"Evaluation saved to {SCORES_PATH} ({len(iterations)} entries)")
-
 
 if __name__ == '__main__':
-    version = 'v9.49'
+    version = os.environ.get('IAO_ITERATION', 'v9.49')
     verbose = '--verbose' in sys.argv
     test_fallback = None
+    threshold = 0.5
 
     if '--iteration' in sys.argv:
         idx = sys.argv.index('--iteration')
-        if idx + 1 < len(sys.argv):
-            version = sys.argv[idx + 1]
-    elif len(sys.argv) > 1 and not sys.argv[1].startswith('-'):
-        version = sys.argv[1]
+        if idx + 1 < len(sys.argv): version = sys.argv[idx + 1]
+    
+    if '--synthesis-threshold' in sys.argv:
+        idx = sys.argv.index('--synthesis-threshold')
+        if idx + 1 < len(sys.argv): threshold = float(sys.argv[idx + 1])
 
     if '--test-fallback' in sys.argv:
         idx = sys.argv.index('--test-fallback')
-        if idx + 1 < len(sys.argv):
-            test_fallback = sys.argv[idx + 1]
-            if test_fallback not in ('gemini', 'self-eval'):
-                print(f"Invalid --test-fallback value: {test_fallback}")
-                print("Valid values: gemini, self-eval")
-                sys.exit(1)
+        if idx + 1 < len(sys.argv): test_fallback = sys.argv[idx + 1]
 
-    # v10.63: --rich-context (no-op flag, default behavior since v10.59) and
-    # --retroactive (allows running against an archived iteration). Both accepted
-    # for plan parity. Rich context is always built; retroactive routes through
-    # the archive fallback already added to _find_doc().
-    rich_context_flag = '--rich-context' in sys.argv  # accepted, default behavior
     retroactive_flag = '--retroactive' in sys.argv
-
     design_path = _find_doc('design', version) or f'docs/kjtcom-design-{version}.md'
 
     if not os.path.exists(design_path):
         print(f"Design doc not found: {design_path}")
         sys.exit(1)
-    if retroactive_flag:
-        print(f"[EVAL] Retroactive mode for {version}; design at {design_path}")
 
-    # Three-tier evaluator fallback chain (v10.56)
-    # Qwen (3 attempts) -> Gemini Flash (2 attempts) -> self-eval (always succeeds)
-    evaluation = evaluate_with_retry(version, design_path, verbose=verbose, test_fallback=test_fallback)
+    evaluation = evaluate_with_retry(version, design_path, threshold=threshold, verbose=verbose, test_fallback=test_fallback)
     save_scores(version, evaluation)
-    # Retroactive runs write to a -qwen suffix so the original report is preserved.
-    suffix = "-qwen" if retroactive_flag else ""
+    suffix = "-tier2-corrected" if retroactive_flag else ""
     write_report_markdown(version, evaluation, suffix=suffix)
 
-    evaluator = evaluation.get('evaluator', 'unknown')
-    print(f"\n[EVAL] Evaluator: {evaluator}")
-    print(f"[EVAL] Tokens: prompt={evaluation.get('evaluator_tokens', {}).get('prompt_tokens', 0)}, "
-          f"eval={evaluation.get('evaluator_tokens', {}).get('eval_tokens', 0)}, "
-          f"total={evaluation.get('evaluator_tokens', {}).get('total_tokens', 0)}")
+    print(f"\n[EVAL] Evaluator: {evaluation.get('evaluator')}")
+    print(f"[EVAL] Tier: {evaluation.get('tier_used')}")

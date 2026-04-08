@@ -1,6 +1,6 @@
 {
-  "schema_version": 1,
-  "last_synced": "2026-04-06T23:25:58.196177Z",
+  "schema_version": 2,
+  "last_synced": "2026-04-08T02:30:51.723794Z",
   "scripts": [
     {
       "path": "pipeline/scripts/backfill_country_codes.py",
@@ -14,7 +14,18 @@
       "last_used_date": "never",
       "owner_workstream": "unassigned",
       "lines": 159,
-      "status": "stale"
+      "status": "stale",
+      "linked_gotchas": [],
+      "pipeline": "common",
+      "inputs": [],
+      "outputs": [],
+      "dependencies": [
+        "argparse",
+        "google.cloud",
+        "os",
+        "pycountry",
+        "sys"
+      ]
     },
     {
       "path": "pipeline/scripts/backfill_schema_v3.py",
@@ -30,7 +41,17 @@
       "last_used_date": "never",
       "owner_workstream": "unassigned",
       "lines": 180,
-      "status": "stale"
+      "status": "stale",
+      "linked_gotchas": [],
+      "pipeline": "calgold",
+      "inputs": [],
+      "outputs": [],
+      "dependencies": [
+        "argparse",
+        "google.cloud",
+        "os",
+        "sys"
+      ]
     },
     {
       "path": "pipeline/scripts/backfill_tripledb_enrichment.py",
@@ -46,7 +67,23 @@
       "last_used_date": "never",
       "owner_workstream": "unassigned",
       "lines": 244,
-      "status": "stale"
+      "status": "stale",
+      "linked_gotchas": [],
+      "pipeline": "tripledb",
+      "inputs": [],
+      "outputs": [],
+      "dependencies": [
+        "argparse",
+        "datetime",
+        "google.cloud",
+        "json",
+        "os",
+        "scripts.utils.thompson_schema",
+        "sys",
+        "time",
+        "urllib.parse",
+        "urllib.request"
+      ]
     },
     {
       "path": "pipeline/scripts/fix_all_lowercase.py",
@@ -59,7 +96,16 @@
       "last_used_date": "never",
       "owner_workstream": "unassigned",
       "lines": 108,
-      "status": "stale"
+      "status": "stale",
+      "linked_gotchas": [],
+      "pipeline": "common",
+      "inputs": [],
+      "outputs": [],
+      "dependencies": [
+        "argparse",
+        "google.cloud",
+        "sys"
+      ]
     },
     {
       "path": "pipeline/scripts/fix_calgold_shows_case.py",
@@ -72,7 +118,16 @@
       "last_used_date": "never",
       "owner_workstream": "unassigned",
       "lines": 84,
-      "status": "stale"
+      "status": "stale",
+      "linked_gotchas": [],
+      "pipeline": "calgold",
+      "inputs": [],
+      "outputs": [],
+      "dependencies": [
+        "argparse",
+        "google.cloud",
+        "sys"
+      ]
     },
     {
       "path": "pipeline/scripts/fix_tripledb_shows_case.py",
@@ -85,7 +140,16 @@
       "last_used_date": "never",
       "owner_workstream": "unassigned",
       "lines": 84,
-      "status": "stale"
+      "status": "stale",
+      "linked_gotchas": [],
+      "pipeline": "calgold",
+      "inputs": [],
+      "outputs": [],
+      "dependencies": [
+        "argparse",
+        "google.cloud",
+        "sys"
+      ]
     },
     {
       "path": "pipeline/scripts/generate_value_index.py",
@@ -98,7 +162,40 @@
       "last_used_date": "never",
       "owner_workstream": "unassigned",
       "lines": 65,
-      "status": "stale"
+      "status": "stale",
+      "linked_gotchas": [],
+      "pipeline": "common",
+      "inputs": [],
+      "outputs": [],
+      "dependencies": [
+        "collections",
+        "google.cloud",
+        "json",
+        "os"
+      ]
+    },
+    {
+      "path": "pipeline/scripts/migrate_bourdain_to_production.py",
+      "purpose": "Migrate Bourdain entities from staging to production Firestore.",
+      "function_names": [
+        "main"
+      ],
+      "created_iteration": "unknown",
+      "last_modified_date": "2026-04-07",
+      "last_used_date": "never",
+      "owner_workstream": "unassigned",
+      "lines": 46,
+      "status": "stale",
+      "linked_gotchas": [],
+      "pipeline": "bourdain",
+      "inputs": [],
+      "outputs": [],
+      "dependencies": [
+        "firebase_admin",
+        "google.cloud.firestore_v1.base_query",
+        "os",
+        "sys"
+      ]
     },
     {
       "path": "pipeline/scripts/migrate_staging_to_production.py",
@@ -111,7 +208,16 @@
       "last_used_date": "never",
       "owner_workstream": "unassigned",
       "lines": 82,
-      "status": "stale"
+      "status": "stale",
+      "linked_gotchas": [],
+      "pipeline": "common",
+      "inputs": [],
+      "outputs": [],
+      "dependencies": [
+        "firebase_admin",
+        "os",
+        "sys"
+      ]
     },
     {
       "path": "pipeline/scripts/migrate_tripledb.py",
@@ -129,7 +235,20 @@
       "last_used_date": "never",
       "owner_workstream": "unassigned",
       "lines": 387,
-      "status": "stale"
+      "status": "stale",
+      "linked_gotchas": [],
+      "pipeline": "tripledb",
+      "inputs": [],
+      "outputs": [],
+      "dependencies": [
+        "argparse",
+        "datetime",
+        "firebase_admin",
+        "hashlib",
+        "os",
+        "re",
+        "sys"
+      ]
     },
     {
       "path": "pipeline/scripts/phase1_acquire.py",
@@ -145,7 +264,25 @@
       "last_used_date": "never",
       "owner_workstream": "unassigned",
       "lines": 150,
-      "status": "stale"
+      "status": "stale",
+      "linked_gotchas": [],
+      "pipeline": "calgold",
+      "inputs": [
+        "pipeline/data/{pipeline}/parts_unknown_acquisition_failures.jsonl"
+      ],
+      "outputs": [
+        "pipeline/data/{pipeline}/checkpoint.json"
+      ],
+      "dependencies": [
+        "argparse",
+        "datetime",
+        "json",
+        "os",
+        "scripts.utils.checkpoint",
+        "subprocess",
+        "sys",
+        "time"
+      ]
     },
     {
       "path": "pipeline/scripts/phase2_transcribe.py",
@@ -159,7 +296,23 @@
       "last_used_date": "never",
       "owner_workstream": "unassigned",
       "lines": 99,
-      "status": "stale"
+      "status": "stale",
+      "linked_gotchas": [],
+      "pipeline": "common",
+      "inputs": [],
+      "outputs": [
+        "pipeline/data/{pipeline}/checkpoint.json"
+      ],
+      "dependencies": [
+        "argparse",
+        "faster_whisper",
+        "glob",
+        "json",
+        "os",
+        "scripts.utils.checkpoint",
+        "signal",
+        "sys"
+      ]
     },
     {
       "path": "pipeline/scripts/phase3_extract.py",
@@ -172,7 +325,22 @@
       "last_used_date": "never",
       "owner_workstream": "unassigned",
       "lines": 107,
-      "status": "stale"
+      "status": "stale",
+      "linked_gotchas": [],
+      "pipeline": "common",
+      "inputs": [],
+      "outputs": [
+        "pipeline/data/{pipeline}/checkpoint.json"
+      ],
+      "dependencies": [
+        "argparse",
+        "glob",
+        "google",
+        "json",
+        "os",
+        "scripts.utils.checkpoint",
+        "sys"
+      ]
     },
     {
       "path": "pipeline/scripts/phase4_normalize.py",
@@ -182,10 +350,25 @@
       ],
       "created_iteration": "unknown",
       "last_modified_date": "2026-03-29",
-      "last_used_date": "never",
+      "last_used_date": "2026-04-06T03:37:54.311315+00:00",
       "owner_workstream": "unassigned",
       "lines": 112,
-      "status": "stale"
+      "status": "active",
+      "linked_gotchas": [],
+      "pipeline": "common",
+      "inputs": [],
+      "outputs": [
+        "pipeline/data/{pipeline}/checkpoint.json"
+      ],
+      "dependencies": [
+        "argparse",
+        "glob",
+        "json",
+        "os",
+        "scripts.utils.checkpoint",
+        "scripts.utils.thompson_schema",
+        "sys"
+      ]
     },
     {
       "path": "pipeline/scripts/phase5_geocode.py",
@@ -200,7 +383,26 @@
       "last_used_date": "never",
       "owner_workstream": "unassigned",
       "lines": 147,
-      "status": "stale"
+      "status": "stale",
+      "linked_gotchas": [],
+      "pipeline": "common",
+      "inputs": [],
+      "outputs": [
+        "pipeline/data/{pipeline}/checkpoint.json"
+      ],
+      "dependencies": [
+        "argparse",
+        "datetime",
+        "glob",
+        "json",
+        "os",
+        "scripts.utils.checkpoint",
+        "scripts.utils.thompson_schema",
+        "sys",
+        "time",
+        "urllib.parse",
+        "urllib.request"
+      ]
     },
     {
       "path": "pipeline/scripts/phase6_enrich.py",
@@ -214,7 +416,25 @@
       "last_used_date": "never",
       "owner_workstream": "unassigned",
       "lines": 151,
-      "status": "stale"
+      "status": "stale",
+      "linked_gotchas": [],
+      "pipeline": "common",
+      "inputs": [],
+      "outputs": [
+        "pipeline/data/{pipeline}/checkpoint.json"
+      ],
+      "dependencies": [
+        "argparse",
+        "datetime",
+        "glob",
+        "json",
+        "os",
+        "scripts.utils.checkpoint",
+        "scripts.utils.thompson_schema",
+        "sys",
+        "urllib.parse",
+        "urllib.request"
+      ]
     },
     {
       "path": "pipeline/scripts/phase7_load.py",
@@ -227,7 +447,23 @@
       "last_used_date": "never",
       "owner_workstream": "unassigned",
       "lines": 140,
-      "status": "stale"
+      "status": "stale",
+      "linked_gotchas": [],
+      "pipeline": "common",
+      "inputs": [],
+      "outputs": [
+        "pipeline/data/{pipeline}/checkpoint.json"
+      ],
+      "dependencies": [
+        "argparse",
+        "datetime",
+        "firebase_admin",
+        "glob",
+        "json",
+        "os",
+        "scripts.utils.checkpoint",
+        "sys"
+      ]
     },
     {
       "path": "pipeline/scripts/query_assessment.py",
@@ -240,7 +476,14 @@
       "last_used_date": "never",
       "owner_workstream": "unassigned",
       "lines": 218,
-      "status": "stale"
+      "status": "stale",
+      "linked_gotchas": [],
+      "pipeline": "calgold",
+      "inputs": [],
+      "outputs": [],
+      "dependencies": [
+        "google.cloud"
+      ]
     },
     {
       "path": "pipeline/scripts/query_assessment_2.py",
@@ -251,7 +494,14 @@
       "last_used_date": "never",
       "owner_workstream": "unassigned",
       "lines": 81,
-      "status": "stale"
+      "status": "stale",
+      "linked_gotchas": [],
+      "pipeline": "common",
+      "inputs": [],
+      "outputs": [],
+      "dependencies": [
+        "google.cloud"
+      ]
     },
     {
       "path": "pipeline/scripts/run_phase2_overnight.py",
@@ -262,7 +512,43 @@
       "last_used_date": "never",
       "owner_workstream": "unassigned",
       "lines": 48,
-      "status": "stale"
+      "status": "stale",
+      "linked_gotchas": [],
+      "pipeline": "bourdain",
+      "inputs": [],
+      "outputs": [],
+      "dependencies": [
+        "os",
+        "subprocess",
+        "sys"
+      ]
+    },
+    {
+      "path": "pipeline/scripts/run_phase3_overnight.py",
+      "purpose": "Overnight wrapper for Parts Unknown Phase 3 (v10.65).",
+      "function_names": [
+        "get_next_batch"
+      ],
+      "created_iteration": "unknown",
+      "last_modified_date": "2026-04-08",
+      "last_used_date": "never",
+      "owner_workstream": "unassigned",
+      "lines": 84,
+      "status": "stale",
+      "linked_gotchas": [],
+      "pipeline": "bourdain",
+      "inputs": [
+        "pipeline/data/bourdain/.checkpoint_transcribe.json"
+      ],
+      "outputs": [
+        "pipeline/data/bourdain/.checkpoint_transcribe.json"
+      ],
+      "dependencies": [
+        "json",
+        "os",
+        "subprocess",
+        "sys"
+      ]
     },
     {
       "path": "pipeline/scripts/utils/checkpoint.py",
@@ -280,7 +566,15 @@
       "last_used_date": "never",
       "owner_workstream": "unassigned",
       "lines": 41,
-      "status": "stale"
+      "status": "stale",
+      "linked_gotchas": [],
+      "pipeline": "common",
+      "inputs": [],
+      "outputs": [],
+      "dependencies": [
+        "json",
+        "os"
+      ]
     },
     {
       "path": "pipeline/scripts/utils/geohash.py",
@@ -291,7 +585,14 @@
       "last_used_date": "never",
       "owner_workstream": "unassigned",
       "lines": 5,
-      "status": "stale"
+      "status": "stale",
+      "linked_gotchas": [],
+      "pipeline": "common",
+      "inputs": [],
+      "outputs": [],
+      "dependencies": [
+        "pipeline.scripts.utils.thompson_schema"
+      ]
     },
     {
       "path": "pipeline/scripts/utils/thompson_schema.py",
@@ -310,7 +611,16 @@
       "last_used_date": "never",
       "owner_workstream": "unassigned",
       "lines": 190,
-      "status": "stale"
+      "status": "stale",
+      "linked_gotchas": [],
+      "pipeline": "common",
+      "inputs": [],
+      "outputs": [],
+      "dependencies": [
+        "datetime",
+        "hashlib",
+        "re"
+      ]
     },
     {
       "path": "scripts/analyze_events.py",
@@ -326,7 +636,17 @@
       "last_used_date": "never",
       "owner_workstream": "unassigned",
       "lines": 149,
-      "status": "stale"
+      "status": "stale",
+      "linked_gotchas": [],
+      "pipeline": "none",
+      "inputs": [],
+      "outputs": [],
+      "dependencies": [
+        "collections",
+        "json",
+        "os",
+        "sys"
+      ]
     },
     {
       "path": "scripts/bless_baseline.py",
@@ -340,7 +660,18 @@
       "last_used_date": "never",
       "owner_workstream": "unassigned",
       "lines": 55,
-      "status": "stale"
+      "status": "stale",
+      "linked_gotchas": [],
+      "pipeline": "none",
+      "inputs": [],
+      "outputs": [],
+      "dependencies": [
+        "argparse",
+        "os",
+        "playwright.sync_api",
+        "sys",
+        "time"
+      ]
     },
     {
       "path": "scripts/brave_search.py",
@@ -354,7 +685,19 @@
       "last_used_date": "never",
       "owner_workstream": "unassigned",
       "lines": 70,
-      "status": "stale"
+      "status": "stale",
+      "linked_gotchas": [],
+      "pipeline": "none",
+      "inputs": [],
+      "outputs": [],
+      "dependencies": [
+        "json",
+        "os",
+        "requests",
+        "sys",
+        "time",
+        "utils.iao_logger"
+      ]
     },
     {
       "path": "scripts/build_architecture_html.py",
@@ -367,7 +710,42 @@
       "last_used_date": "never",
       "owner_workstream": "unassigned",
       "lines": 114,
-      "status": "stale"
+      "status": "stale",
+      "linked_gotchas": [],
+      "pipeline": "none",
+      "inputs": [],
+      "outputs": [],
+      "dependencies": [
+        "os",
+        "sys"
+      ]
+    },
+    {
+      "path": "scripts/build_context_bundle.py",
+      "purpose": "Context Bundle Generator (ADR-019).",
+      "function_names": [
+        "_find_doc",
+        "build_bundle"
+      ],
+      "created_iteration": "unknown",
+      "last_modified_date": "2026-04-07",
+      "last_used_date": "never",
+      "owner_workstream": "unassigned",
+      "lines": 148,
+      "status": "stale",
+      "linked_gotchas": [],
+      "pipeline": "none",
+      "inputs": [],
+      "outputs": [],
+      "dependencies": [
+        "argparse",
+        "datetime",
+        "json",
+        "os",
+        "re",
+        "scripts.firestore_query",
+        "sys"
+      ]
     },
     {
       "path": "scripts/build_registry.py",
@@ -384,7 +762,20 @@
       "last_used_date": "never",
       "owner_workstream": "unassigned",
       "lines": 174,
-      "status": "stale"
+      "status": "stale",
+      "linked_gotchas": [],
+      "pipeline": "none",
+      "inputs": [],
+      "outputs": [],
+      "dependencies": [
+        "json",
+        "os",
+        "pathlib",
+        "re",
+        "requests",
+        "sys",
+        "time"
+      ]
     },
     {
       "path": "scripts/build_registry_v2.py",
@@ -400,7 +791,23 @@
       "last_used_date": "never",
       "owner_workstream": "unassigned",
       "lines": 270,
-      "status": "stale"
+      "status": "stale",
+      "linked_gotchas": [],
+      "pipeline": "none",
+      "inputs": [],
+      "outputs": [],
+      "dependencies": [
+        "chromadb",
+        "json",
+        "os",
+        "re",
+        "requests",
+        "subprocess",
+        "sys",
+        "time",
+        "utils.iao_logger",
+        "utils.ollama_config"
+      ]
     },
     {
       "path": "scripts/cleanup_docs.py",
@@ -413,7 +820,17 @@
       "last_used_date": "never",
       "owner_workstream": "unassigned",
       "lines": 36,
-      "status": "stale"
+      "status": "stale",
+      "linked_gotchas": [],
+      "pipeline": "none",
+      "inputs": [],
+      "outputs": [
+        "docs/kjtcom-changelog.md"
+      ],
+      "dependencies": [
+        "glob",
+        "os"
+      ]
     },
     {
       "path": "scripts/embed_archive.py",
@@ -429,7 +846,21 @@
       "last_used_date": "never",
       "owner_workstream": "unassigned",
       "lines": 134,
-      "status": "stale"
+      "status": "stale",
+      "linked_gotchas": [],
+      "pipeline": "none",
+      "inputs": [],
+      "outputs": [],
+      "dependencies": [
+        "chromadb",
+        "json",
+        "os",
+        "re",
+        "requests",
+        "sys",
+        "time",
+        "utils.iao_logger"
+      ]
     },
     {
       "path": "scripts/enrich_counties.py",
@@ -448,7 +879,22 @@
       "last_used_date": "never",
       "owner_workstream": "unassigned",
       "lines": 240,
-      "status": "stale"
+      "status": "stale",
+      "linked_gotchas": [],
+      "pipeline": "tripledb",
+      "inputs": [],
+      "outputs": [],
+      "dependencies": [
+        "argparse",
+        "firebase_admin",
+        "google.cloud.firestore_v1.base_query",
+        "json",
+        "os",
+        "requests",
+        "sys",
+        "time",
+        "utils.iao_logger"
+      ]
     },
     {
       "path": "scripts/firestore_query.py",
@@ -468,7 +914,20 @@
       "last_used_date": "never",
       "owner_workstream": "unassigned",
       "lines": 208,
-      "status": "stale"
+      "status": "stale",
+      "linked_gotchas": [],
+      "pipeline": "tripledb",
+      "inputs": [],
+      "outputs": [],
+      "dependencies": [
+        "firebase_admin",
+        "google.cloud.firestore_v1.base_query",
+        "json",
+        "os",
+        "sys",
+        "time",
+        "utils.iao_logger"
+      ]
     },
     {
       "path": "scripts/generate_artifacts.py",
@@ -496,11 +955,33 @@
         "main"
       ],
       "created_iteration": "unknown",
-      "last_modified_date": "2026-04-06",
+      "last_modified_date": "2026-04-07",
       "last_used_date": "never",
       "owner_workstream": "unassigned",
-      "lines": 677,
-      "status": "stale"
+      "lines": 693,
+      "status": "stale",
+      "linked_gotchas": [],
+      "pipeline": "none",
+      "inputs": [
+        "data/gotcha_archive.json",
+        "data/middleware_registry.json",
+        "data/schema_reference.json"
+      ],
+      "outputs": [],
+      "dependencies": [
+        "argparse",
+        "datetime",
+        "glob",
+        "json",
+        "os",
+        "re",
+        "shutil",
+        "subprocess",
+        "sys",
+        "time",
+        "utils.iao_logger",
+        "utils.ollama_logged"
+      ]
     },
     {
       "path": "scripts/generate_leaderboard.py",
@@ -513,7 +994,16 @@
       "last_used_date": "never",
       "owner_workstream": "unassigned",
       "lines": 70,
-      "status": "stale"
+      "status": "stale",
+      "linked_gotchas": [],
+      "pipeline": "none",
+      "inputs": [],
+      "outputs": [],
+      "dependencies": [
+        "json",
+        "os",
+        "sys"
+      ]
     },
     {
       "path": "scripts/intent_router.py",
@@ -528,7 +1018,20 @@
       "last_used_date": "never",
       "owner_workstream": "unassigned",
       "lines": 144,
-      "status": "stale"
+      "status": "stale",
+      "linked_gotchas": [],
+      "pipeline": "calgold",
+      "inputs": [],
+      "outputs": [],
+      "dependencies": [
+        "json",
+        "litellm",
+        "os",
+        "sys",
+        "time",
+        "utils.iao_logger",
+        "utils.ollama_config"
+      ]
     },
     {
       "path": "scripts/iteration_deltas.py",
@@ -540,11 +1043,26 @@
         "main"
       ],
       "created_iteration": "unknown",
-      "last_modified_date": "2026-04-06",
+      "last_modified_date": "2026-04-08",
       "last_used_date": "never",
       "owner_workstream": "unassigned",
-      "lines": 110,
-      "status": "stale"
+      "lines": 121,
+      "status": "stale",
+      "linked_gotchas": [],
+      "pipeline": "none",
+      "inputs": [
+        "data/gotcha_archive.json",
+        "data/script_registry.json"
+      ],
+      "outputs": [],
+      "dependencies": [
+        "argparse",
+        "datetime",
+        "firestore_query",
+        "json",
+        "os",
+        "sys"
+      ]
     },
     {
       "path": "scripts/panther_scrape.py",
@@ -555,7 +1073,22 @@
       "last_used_date": "never",
       "owner_workstream": "unassigned",
       "lines": 159,
-      "status": "stale"
+      "status": "stale",
+      "linked_gotchas": [],
+      "pipeline": "none",
+      "inputs": [],
+      "outputs": [
+        "{OUTPUT_DIR}/panther-css-tokens.json",
+        "{OUTPUT_DIR}/panther-dom-structure.json",
+        "{OUTPUT_DIR}/panther-field-sidebar.html",
+        "{OUTPUT_DIR}/panther-query-editor.html"
+      ],
+      "dependencies": [
+        "asyncio",
+        "json",
+        "os",
+        "playwright.async_api"
+      ]
     },
     {
       "path": "scripts/post_flight.py",
@@ -568,14 +1101,35 @@
         "verify_claw3d_no_external_json",
         "verify_static_assets",
         "check_artifacts",
+        "write_urgent_build_break_file",
         "run_all"
       ],
       "created_iteration": "unknown",
-      "last_modified_date": "2026-04-06",
+      "last_modified_date": "2026-04-08",
       "last_used_date": "never",
       "owner_workstream": "unassigned",
-      "lines": 319,
-      "status": "stale"
+      "lines": 400,
+      "status": "stale",
+      "linked_gotchas": [],
+      "pipeline": "tripledb",
+      "inputs": [],
+      "outputs": [],
+      "dependencies": [
+        "firestore_query",
+        "json",
+        "os",
+        "postflight_checks.dart_analyze_changed",
+        "postflight_checks.deployed_iteration_matches",
+        "postflight_checks.firebase_oauth_probe",
+        "postflight_checks.flutter_build_passes",
+        "postflight_checks.visual_baseline_diff",
+        "re",
+        "requests",
+        "subprocess",
+        "sys",
+        "time",
+        "utils.iao_logger"
+      ]
     },
     {
       "path": "scripts/postflight_checks/claw3d_label_legibility.py",
@@ -588,7 +1142,118 @@
       "last_used_date": "never",
       "owner_workstream": "unassigned",
       "lines": 63,
-      "status": "stale"
+      "status": "stale",
+      "linked_gotchas": [],
+      "pipeline": "none",
+      "inputs": [],
+      "outputs": [],
+      "dependencies": [
+        "os",
+        "playwright.sync_api",
+        "sys",
+        "time"
+      ]
+    },
+    {
+      "path": "scripts/postflight_checks/dart_analyze_changed.py",
+      "purpose": "Dart analyze check for changed files. (ADR-020)",
+      "function_names": [
+        "get_changed_dart_files",
+        "run_analyze",
+        "run_check"
+      ],
+      "created_iteration": "unknown",
+      "last_modified_date": "2026-04-07",
+      "last_used_date": "never",
+      "owner_workstream": "unassigned",
+      "lines": 93,
+      "status": "stale",
+      "linked_gotchas": [],
+      "pipeline": "none",
+      "inputs": [],
+      "outputs": [],
+      "dependencies": [
+        "os",
+        "pathlib",
+        "re",
+        "subprocess",
+        "sys"
+      ]
+    },
+    {
+      "path": "scripts/postflight_checks/deployed_iteration_matches.py",
+      "purpose": "Post-flight check: Verify live site matches current iteration.",
+      "function_names": [
+        "run_check"
+      ],
+      "created_iteration": "unknown",
+      "last_modified_date": "2026-04-07",
+      "last_used_date": "never",
+      "owner_workstream": "unassigned",
+      "lines": 37,
+      "status": "stale",
+      "linked_gotchas": [],
+      "pipeline": "none",
+      "inputs": [],
+      "outputs": [],
+      "dependencies": [
+        "argparse",
+        "os",
+        "re",
+        "requests",
+        "sys"
+      ]
+    },
+    {
+      "path": "scripts/postflight_checks/firebase_oauth_probe.py",
+      "purpose": "Firebase dual-path probe (ADR-023 / G53 / G95).",
+      "function_names": [
+        "check_sa",
+        "check_ci_token",
+        "check_oauth",
+        "run_probe"
+      ],
+      "created_iteration": "unknown",
+      "last_modified_date": "2026-04-08",
+      "last_used_date": "never",
+      "owner_workstream": "unassigned",
+      "lines": 66,
+      "status": "stale",
+      "linked_gotchas": [],
+      "pipeline": "none",
+      "inputs": [],
+      "outputs": [],
+      "dependencies": [
+        "os",
+        "subprocess",
+        "sys"
+      ]
+    },
+    {
+      "path": "scripts/postflight_checks/flutter_build_passes.py",
+      "purpose": "Build gatekeeper post-flight check. (ADR-020)",
+      "function_names": [
+        "is_app_touched",
+        "run_build",
+        "get_error_summary",
+        "run_check"
+      ],
+      "created_iteration": "unknown",
+      "last_modified_date": "2026-04-07",
+      "last_used_date": "never",
+      "owner_workstream": "unassigned",
+      "lines": 87,
+      "status": "stale",
+      "linked_gotchas": [],
+      "pipeline": "none",
+      "inputs": [],
+      "outputs": [],
+      "dependencies": [
+        "os",
+        "pathlib",
+        "subprocess",
+        "sys"
+      ]
     },
     {
       "path": "scripts/postflight_checks/production_data_render.py",
@@ -601,7 +1266,17 @@
       "last_used_date": "never",
       "owner_workstream": "unassigned",
       "lines": 106,
-      "status": "stale"
+      "status": "stale",
+      "linked_gotchas": [],
+      "pipeline": "none",
+      "inputs": [],
+      "outputs": [],
+      "dependencies": [
+        "os",
+        "playwright.sync_api",
+        "sys",
+        "time"
+      ]
     },
     {
       "path": "scripts/postflight_checks/visual_baseline_diff.py",
@@ -615,7 +1290,20 @@
       "last_used_date": "never",
       "owner_workstream": "unassigned",
       "lines": 64,
-      "status": "stale"
+      "status": "stale",
+      "linked_gotchas": [],
+      "pipeline": "none",
+      "inputs": [],
+      "outputs": [],
+      "dependencies": [
+        "PIL",
+        "imagehash",
+        "json",
+        "os",
+        "playwright.sync_api",
+        "sys",
+        "time"
+      ]
     },
     {
       "path": "scripts/pre_flight.py",
@@ -631,7 +1319,20 @@
       "last_used_date": "never",
       "owner_workstream": "unassigned",
       "lines": 90,
-      "status": "stale"
+      "status": "stale",
+      "linked_gotchas": [],
+      "pipeline": "none",
+      "inputs": [],
+      "outputs": [],
+      "dependencies": [
+        "datetime",
+        "os",
+        "requests",
+        "shutil",
+        "socket",
+        "subprocess",
+        "sys"
+      ]
     },
     {
       "path": "scripts/query_rag.py",
@@ -646,7 +1347,46 @@
       "last_used_date": "never",
       "owner_workstream": "unassigned",
       "lines": 102,
-      "status": "stale"
+      "status": "stale",
+      "linked_gotchas": [],
+      "pipeline": "none",
+      "inputs": [],
+      "outputs": [],
+      "dependencies": [
+        "chromadb",
+        "json",
+        "os",
+        "requests",
+        "sys",
+        "time",
+        "utils.iao_logger"
+      ]
+    },
+    {
+      "path": "scripts/query_registry.py",
+      "purpose": "Query the kjtcom script registry (ADR-022).",
+      "function_names": [
+        "load_registry",
+        "main"
+      ],
+      "created_iteration": "unknown",
+      "last_modified_date": "2026-04-07",
+      "last_used_date": "never",
+      "owner_workstream": "unassigned",
+      "lines": 79,
+      "status": "stale",
+      "linked_gotchas": [],
+      "pipeline": "none",
+      "inputs": [
+        "data/script_registry.json"
+      ],
+      "outputs": [],
+      "dependencies": [
+        "argparse",
+        "json",
+        "os",
+        "sys"
+      ]
     },
     {
       "path": "scripts/run_archive_analysis.py",
@@ -662,7 +1402,20 @@
       "last_used_date": "never",
       "owner_workstream": "unassigned",
       "lines": 170,
-      "status": "stale"
+      "status": "stale",
+      "linked_gotchas": [],
+      "pipeline": "none",
+      "inputs": [],
+      "outputs": [],
+      "dependencies": [
+        "json",
+        "litellm",
+        "os",
+        "subprocess",
+        "sys",
+        "time",
+        "utils.ollama_config"
+      ]
     },
     {
       "path": "scripts/run_evaluator.py",
@@ -690,28 +1443,71 @@
         "evaluate_with_retry"
       ],
       "created_iteration": "unknown",
-      "last_modified_date": "2026-04-06",
+      "last_modified_date": "2026-04-07",
       "last_used_date": "never",
       "owner_workstream": "unassigned",
-      "lines": 1041,
-      "status": "stale"
+      "lines": 1015,
+      "status": "stale",
+      "linked_gotchas": [],
+      "pipeline": "none",
+      "inputs": [
+        "data/claw3d_components.json",
+        "data/eval_schema.json",
+        "data/gotcha_archive.json",
+        "data/middleware_registry.json"
+      ],
+      "outputs": [],
+      "dependencies": [
+        "json",
+        "jsonschema",
+        "litellm",
+        "os",
+        "re",
+        "subprocess",
+        "sys",
+        "time",
+        "utils.iao_logger",
+        "utils.ollama_config"
+      ]
     },
     {
       "path": "scripts/sync_script_registry.py",
-      "purpose": "Sync data/script_registry.json (ADR-017).",
+      "purpose": "Sync data/script_registry.json (ADR-017 / ADR-022).",
       "function_names": [
         "docstring_purpose",
         "function_names",
         "last_used",
         "status_for",
+        "extract_metadata_heuristics",
         "main"
       ],
       "created_iteration": "unknown",
-      "last_modified_date": "2026-04-06",
+      "last_modified_date": "2026-04-07",
       "last_used_date": "never",
       "owner_workstream": "unassigned",
-      "lines": 143,
-      "status": "stale"
+      "lines": 207,
+      "status": "stale",
+      "linked_gotchas": [],
+      "pipeline": "calgold",
+      "inputs": [
+        "data/iao_event_log.jsonl",
+        "data/script_registry.json",
+        "pipeline/data/{pipeline}/checkpoint.json"
+      ],
+      "outputs": [
+        "data/iao_event_log.jsonl",
+        "pipeline/data/{pipeline}/checkpoint.json"
+      ],
+      "dependencies": [
+        "ast",
+        "datetime",
+        "json",
+        "os",
+        "pathlib",
+        "re",
+        "subprocess",
+        "time"
+      ]
     },
     {
       "path": "scripts/telegram_bot.py",
@@ -726,7 +1522,33 @@
       "last_used_date": "never",
       "owner_workstream": "unassigned",
       "lines": 619,
-      "status": "stale"
+      "status": "stale",
+      "linked_gotchas": [],
+      "pipeline": "none",
+      "inputs": [],
+      "outputs": [],
+      "dependencies": [
+        "analyze_events",
+        "brave_search",
+        "chromadb",
+        "firestore_query",
+        "intent_router",
+        "interpreter",
+        "json",
+        "litellm",
+        "logging",
+        "os",
+        "query_rag",
+        "requests",
+        "sdnotify",
+        "subprocess",
+        "sys",
+        "telegram",
+        "telegram.ext",
+        "time",
+        "utils.iao_logger",
+        "utils.ollama_config"
+      ]
     },
     {
       "path": "scripts/test_eval_schema.py",
@@ -752,7 +1574,17 @@
       "last_used_date": "never",
       "owner_workstream": "unassigned",
       "lines": 184,
-      "status": "stale"
+      "status": "stale",
+      "linked_gotchas": [],
+      "pipeline": "none",
+      "inputs": [],
+      "outputs": [],
+      "dependencies": [
+        "json",
+        "jsonschema",
+        "os",
+        "sys"
+      ]
     },
     {
       "path": "scripts/utils/consolidate_gotchas.py",
@@ -766,7 +1598,18 @@
       "last_used_date": "never",
       "owner_workstream": "unassigned",
       "lines": 56,
-      "status": "stale"
+      "status": "stale",
+      "linked_gotchas": [],
+      "pipeline": "none",
+      "inputs": [
+        "data/gotcha_archive.json"
+      ],
+      "outputs": [],
+      "dependencies": [
+        "json",
+        "os",
+        "re"
+      ]
     },
     {
       "path": "scripts/utils/consolidate_gotchas_v2.py",
@@ -781,7 +1624,18 @@
       "last_used_date": "never",
       "owner_workstream": "unassigned",
       "lines": 86,
-      "status": "stale"
+      "status": "stale",
+      "linked_gotchas": [],
+      "pipeline": "none",
+      "inputs": [
+        "data/gotcha_archive.json"
+      ],
+      "outputs": [],
+      "dependencies": [
+        "json",
+        "os",
+        "re"
+      ]
     },
     {
       "path": "scripts/utils/count_staging.py",
@@ -792,7 +1646,15 @@
       "last_used_date": "never",
       "owner_workstream": "unassigned",
       "lines": 14,
-      "status": "stale"
+      "status": "stale",
+      "linked_gotchas": [],
+      "pipeline": "bourdain",
+      "inputs": [],
+      "outputs": [],
+      "dependencies": [
+        "firebase_admin",
+        "os"
+      ]
     },
     {
       "path": "scripts/utils/generate_bourdain_summary.py",
@@ -805,7 +1667,19 @@
       "last_used_date": "never",
       "owner_workstream": "unassigned",
       "lines": 43,
-      "status": "stale"
+      "status": "stale",
+      "linked_gotchas": [],
+      "pipeline": "none",
+      "inputs": [
+        "pipeline/data/bourdain/parts_unknown_acquisition_failures.jsonl",
+        "pipeline/data/bourdain/transcripts/*.json"
+      ],
+      "outputs": [],
+      "dependencies": [
+        "glob",
+        "json",
+        "os"
+      ]
     },
     {
       "path": "scripts/utils/iao_logger.py",
@@ -814,11 +1688,21 @@
         "log_event"
       ],
       "created_iteration": "unknown",
-      "last_modified_date": "2026-04-06",
+      "last_modified_date": "2026-04-08",
       "last_used_date": "never",
       "owner_workstream": "unassigned",
-      "lines": 60,
-      "status": "stale"
+      "lines": 64,
+      "status": "stale",
+      "linked_gotchas": [],
+      "pipeline": "none",
+      "inputs": [],
+      "outputs": [],
+      "dependencies": [
+        "datetime",
+        "json",
+        "os",
+        "sys"
+      ]
     },
     {
       "path": "scripts/utils/ollama_config.py",
@@ -833,7 +1717,12 @@
       "last_used_date": "never",
       "owner_workstream": "unassigned",
       "lines": 59,
-      "status": "stale"
+      "status": "stale",
+      "linked_gotchas": [],
+      "pipeline": "none",
+      "inputs": [],
+      "outputs": [],
+      "dependencies": []
     },
     {
       "path": "scripts/utils/ollama_logged.py",
@@ -847,7 +1736,18 @@
       "last_used_date": "never",
       "owner_workstream": "unassigned",
       "lines": 115,
-      "status": "stale"
+      "status": "stale",
+      "linked_gotchas": [],
+      "pipeline": "none",
+      "inputs": [],
+      "outputs": [],
+      "dependencies": [
+        "json",
+        "requests",
+        "time",
+        "utils.iao_logger",
+        "utils.ollama_config"
+      ]
     },
     {
       "path": "scripts/utils/retry_bless_root.py",
@@ -858,7 +1758,17 @@
       "last_used_date": "never",
       "owner_workstream": "unassigned",
       "lines": 15,
-      "status": "stale"
+      "status": "stale",
+      "linked_gotchas": [],
+      "pipeline": "none",
+      "inputs": [
+        "data/postflight-baselines/root.png"
+      ],
+      "outputs": [],
+      "dependencies": [
+        "playwright.sync_api",
+        "time"
+      ]
     },
     {
       "path": "scripts/utils/sync_claw3d_data.py",
@@ -871,7 +1781,19 @@
       "last_used_date": "never",
       "owner_workstream": "unassigned",
       "lines": 48,
-      "status": "stale"
+      "status": "stale",
+      "linked_gotchas": [],
+      "pipeline": "none",
+      "inputs": [
+        "data/claw3d_components.json",
+        "data/claw3d_iterations.json"
+      ],
+      "outputs": [],
+      "dependencies": [
+        "json",
+        "os",
+        "re"
+      ]
     }
   ]
 }

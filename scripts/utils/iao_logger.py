@@ -14,7 +14,6 @@ LOG_PATH = os.path.join(os.path.dirname(__file__), '..', '..', 'data', 'iao_even
 _ITERATION = os.environ.get("IAO_ITERATION")
 if not _ITERATION:
     print("[iao_logger] ERROR: IAO_ITERATION environment variable is NOT SET.", file=sys.stderr)
-    # We don't raise here to avoid crashing agents on import, but we'll flag it in events
     _ITERATION = "MISSING_ENV_VAR"
 else:
     print(f"[iao_logger] iteration={_ITERATION}", file=sys.stderr)
@@ -23,7 +22,8 @@ else:
 def log_event(event_type, source_agent, target, action,
               input_summary="", output_summary="",
               tokens=None, latency_ms=None,
-              status="success", error=None, gotcha_triggered=None):
+              status="success", error=None, gotcha_triggered=None,
+              workstream_id=None):
     """Log a structured event to the JSONL event stream.
 
     Args:
@@ -38,10 +38,14 @@ def log_event(event_type, source_agent, target, action,
         status: success | error | timeout | empty_response
         error: Error message if applicable
         gotcha_triggered: Gotcha ID if this event triggered a known gotcha
+        workstream_id: ADR-022: Workstream ID (e.g. W1, W12). Defaults to IAO_WORKSTREAM_ID env.
     """
+    ws_id = workstream_id or os.environ.get("IAO_WORKSTREAM_ID")
+    
     event = {
         "timestamp": datetime.now(timezone.utc).isoformat(),
         "iteration": _ITERATION,
+        "workstream_id": ws_id,
         "event_type": event_type,
         "source_agent": source_agent,
         "target": target,
