@@ -181,48 +181,66 @@ def _preflight_checks():
         "disk": _check_disk(),
     }
 
+def _load_plugins(dir_path: Path):
+    """Dynamically load all .py plugins from a directory (10.69 W2)."""
+    import importlib.util
+    plugins = {}
+    if not dir_path.exists():
+        return plugins
+
+    for p in dir_path.glob("*.py"):
+        if p.name == "__init__.py":
+            continue
+        
+        module_name = f"iao_plugin_{p.stem}"
+        spec = importlib.util.spec_from_file_location(module_name, str(p))
+        if spec and spec.loader:
+            try:
+                mod = importlib.util.module_from_spec(spec)
+                spec.loader.exec_module(mod)
+                if hasattr(mod, "check"):
+                    plugins[p.stem] = mod
+            except Exception as e:
+                print(f"[iao.doctor] Failed to load plugin {p.name}: {e}", file=sys.stderr)
+    return plugins
+
+
 def _postflight_checks():
-    from iao.postflight import (
-        build_gatekeeper,
-        artifacts_present,
-        map_tab_renders,
-        claw3d_version_matches,
-        deployed_claw3d_matches,
-        deployed_flutter_matches,
-    )
+    """Run dynamic post-flight plugins from base and project (10.69 W2)."""
+    from iao.paths import find_project_root
+    try:
+        root = find_project_root()
+        iao_json = root / ".iao.json"
+        project_code = "kjtco" # default
+        if iao_json.exists():
+            project_code = json.loads(iao_json.read_text()).get("project_code", "kjtco")
+    except Exception:
+        root = Path.cwd()
+        project_code = "kjtco"
+
+    # Base plugins from the package itself
+    package_dir = Path(__file__).parent / "postflight"
+    base_plugins = _load_plugins(package_dir)
+    
+    # Project plugins from [project_code]/postflight
+    project_dir = root / project_code / "postflight"
+    project_plugins = _load_plugins(project_dir)
+    
+    # Merge, project overrides base if same name
+    all_plugins = {**base_plugins, **project_plugins}
     
     results = {}
-    results["build_gatekeeper"] = build_gatekeeper.check()
-    results["artifacts_present"] = artifacts_present.check()
-    results["map_tab_renders"] = map_tab_renders.run_all_renders()
-    
-    # claw3d_version_matches
-    cv_res = claw3d_version_matches.check()
-    if isinstance(cv_res, tuple):
-        if cv_res[0] == "deferred":
-            results["claw3d_version_matches"] = cv_res
-        else:
-            results["claw3d_version_matches"] = ("ok" if cv_res[0] else "fail", cv_res[1])
-    else:
-        results["claw3d_version_matches"] = ("ok", "matches") if cv_res else ("fail", "mismatch")
-    
-    # deployed_claw3d_matches
-    iter_val = os.environ.get("IAO_ITERATION", "unknown")
-    dc_res = deployed_claw3d_matches.run_check(iter_val)
-    if dc_res == "deferred":
-        results["deployed_claw3d_matches"] = ("deferred", "deploy paused")
-    elif dc_res is True:
-        results["deployed_claw3d_matches"] = ("ok", "matches")
-    else:
-        results["deployed_claw3d_matches"] = ("fail", "mismatch")
-    
-    # deployed_flutter_matches
-    df_res = deployed_flutter_matches.check()
-    if isinstance(df_res, tuple):
-        results["deployed_flutter_matches"] = df_res
-    else:
-        results["deployed_flutter_matches"] = ("ok", "matches") if df_res else ("fail", "mismatch")
-    
+    for name, mod in all_plugins.items():
+        try:
+            res = mod.check()
+            # Standardize output to (status, message)
+            if isinstance(res, tuple) and len(res) == 2:
+                results[name] = res
+            else:
+                results[name] = ("ok" if res else "fail", str(res))
+        except Exception as e:
+            results[name] = ("fail", f"error: {e}")
+            
     return results
 
 def run_all(level: str = "quick") -> dict[str, tuple[str, str]]:

@@ -272,9 +272,17 @@ Project-specific `pre_flight.py` and `post_flight.py` are refactored to be thin 
 
 When Qwen Tier 1 fell through on synthesis ratio, Gemini Flash Tier 2 produced structurally valid JSON that invented a W16 not in the design. Anchor Tier 2 prompts to design-doc ground-truth workstream IDs and reject responses containing IDs outside that set. Cross-ref: G98, ADR-021 extended, W8.
 
-### iaomw-Pattern-29: Synthesis Substring Match Overcounting (G97)
+### iaomw-Pattern-30: 5-Char Project Provenance (10.68)
 
-`any(cf in f for f in synthesized)` matched `improvements_padded` as if it contained `improvements`, double-counting and producing ratios > 1.0. Fix: exact-match prefix (`field.split("(", 1)[0] in core_fields`). Cross-ref: G97, W7.
+- **Symptoms:** Confusion about where a script or ADR originated when shared across projects.
+- **Cause:** Lack of explicit project prefixing.
+- **Correction:** Register unique 5-char code (e.g. `kjtco`, `iaomw`) in `projects.json` and prefix all major IDs.
+
+### iaomw-Pattern-31: Formal Phase Chartering (10.69)
+
+- **Symptoms:** Phase objectives creep or become unclear as iterations progress; graduation criteria are undefined.
+- **Cause:** Ad-hoc phase transitions without a formal contract.
+- **Correction:** Every phase MUST begin with a formal charter in design §1, defining Objectives, Entry/Exit criteria, and planned iterations. Upon phase completion, extract to `docs/phase-charters/` for canonical project history.
 
 
 ---

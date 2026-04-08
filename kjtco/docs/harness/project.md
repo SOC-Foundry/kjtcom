@@ -8,9 +8,9 @@
 **Base imports (acknowledged):**
 - iaomw-Pillar-1..10
 - iaomw-ADR-001..014
-- iaomw-Pattern-01..25
+- iaomw-Pattern-01..31
 
-*Acknowledging base imports means kjtco has read them and operates under them.*
+*Acknowledging base imports means kjtco has read them and operates under them. Pattern 30 (5-char provenance) is active for kjtco. Pattern 31 (Formal Phase Chartering) is implemented for Phase 10.*
 
 ---
 

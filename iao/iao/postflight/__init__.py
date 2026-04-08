@@ -1,20 +1,2 @@
-"""iao postflight check modules."""
-from iao.postflight import (
-    deployed_flutter_matches,
-    deployed_claw3d_matches,
-    claw3d_version_matches,
-    build_gatekeeper,
-    artifacts_present,
-    firestore_baseline,
-    map_tab_renders,
-)
-
-__all__ = [
-    "deployed_flutter_matches",
-    "deployed_claw3d_matches",
-    "claw3d_version_matches",
-    "build_gatekeeper",
-    "artifacts_present",
-    "firestore_baseline",
-    "map_tab_renders",
-]
+"""iao postflight check modules (10.69 W2 dynamic loader)."""
+# Plugins are loaded dynamically by doctor.py

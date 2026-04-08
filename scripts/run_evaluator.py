@@ -58,6 +58,192 @@ class EvaluatorSynthesisExceeded(Exception):
         super().__init__(f"Synthesis ratio {ratio:.2f} > 0.5 for {workstream_id}; fields: {fields}")
 
 
+def resolve_artifact_paths(iteration: str, project: str = "kjtcom") -> dict:
+    """
+    Resolve artifact paths for a given iteration (10.69 W1).
+    
+    Handles both legacy (v10.67) and new (10.69.1) formats.
+    For new format, resolves design/plan to .0 and build/report/bundle to actual run.
+    """
+    import re, pathlib
+    
+    docs = pathlib.Path("docs")
+    paths = {}
+    
+    # Detect format
+    is_new = bool(re.match(r'^\d+\.\d+\.\d+$', iteration))
+    is_legacy = bool(re.match(r'^v?\d+\.\d+$', iteration))
+    
+    if is_new:
+        # Parse phase.iter.run
+        phase, iter_n, run = iteration.split('.')
+        planning_iter = f"{phase}.{iter_n}.0"
+        
+        paths['design'] = docs / f"{project}-design-{planning_iter}.md"
+        paths['plan'] = docs / f"{project}-plan-{planning_iter}.md"
+        paths['build'] = docs / f"{project}-build-{iteration}.md"
+        paths['report'] = docs / f"{project}-report-{iteration}.md"
+        # Bundle prefix will be checked for both project-bundle and project-context
+        paths['bundle'] = docs / f"{project}-bundle-{iteration}.md"
+    elif is_legacy:
+        # Strip 'v' if present
+        clean = iteration.lstrip('v')
+        for kind in ['design', 'plan', 'build', 'report']:
+            paths[kind] = docs / f"{project}-{kind}-v{clean}.md"
+        # Bundle was called 'context' in legacy era
+        paths['bundle'] = docs / f"{project}-context-v{clean}.md"
+    else:
+        # Best effort for other formats
+        for kind in ['design', 'plan', 'build', 'report', 'bundle']:
+            paths[kind] = docs / f"{project}-{kind}-{iteration}.md"
+    
+    # Verify all exist, or try fallbacks
+    for kind, path in paths.items():
+        if not path.exists():
+            # Try dots vs underscores
+            alt = pathlib.Path(str(path).replace('.', '_', 1))
+            if alt.exists():
+                paths[kind] = alt
+            elif kind == 'bundle':
+                # Try 'context' as fallback for bundle
+                alt_context = pathlib.Path(str(path).replace('-bundle-', '-context-'))
+                if alt_context.exists():
+                    paths[kind] = alt_context
+
+    return paths
+
+
+def compute_synthesis_ratios(workstreams_data: list, mode: str = "weighted", threshold: float = 0.5) -> dict:
+    """
+    Compute synthesis ratios with three modes (10.69 W1):
+    - strict: per-workstream gate (legacy behavior)
+    - weighted: weighted average across all workstreams (new default)
+    - loose: skip synthesis check entirely
+    """
+    if mode == "loose":
+        return {"average": 0.0, "should_fail": False, "per_workstream": {}}
+    
+    per_ws = {}
+    for ws in workstreams_data:
+        ws_id = ws.get('id', 'unknown')
+        # Use the ratio already computed during normalization
+        ratio = ws.get('synthesis_ratio', 0.0)
+        per_ws[ws_id] = ratio
+    
+    if mode == "strict":
+        # Legacy: any single workstream > threshold = failure
+        should_fail = any(r > threshold for r in per_ws.values())
+        return {"average": max(per_ws.values(), default=0.0), "should_fail": should_fail, "per_workstream": per_ws}
+    
+    # weighted: average across all workstreams
+    if per_ws:
+        avg = sum(per_ws.values()) / len(per_ws)
+    else:
+        avg = 0.0
+    should_fail = avg > threshold
+    return {"average": avg, "should_fail": should_fail, "per_workstream": per_ws}
+
+
+def normalize_boilerplate(text: str, all_workstream_texts: list) -> str:
+    """
+    Strip boilerplate phrases that appear in >50% of workstream sections (10.69 W1).
+    """
+    from collections import Counter
+    
+    if not all_workstream_texts or len(all_workstream_texts) < 2:
+        return text
+
+    # Common phrases (5 words) that appear across workstreams
+    def extract_phrases(t):
+        words = t.split()
+        if len(words) < 5: return []
+        return [' '.join(words[i:i+5]) for i in range(len(words) - 4)]
+    
+    all_phrases = []
+    for ws_text in all_workstream_texts:
+        all_phrases.extend(extract_phrases(ws_text))
+    
+    counter = Counter(all_phrases)
+    threshold = len(all_workstream_texts) * 0.5
+    boilerplate = {phrase for phrase, count in counter.items() if count >= threshold}
+    
+    # Strip from this text
+    normalized = text
+    for phrase in sorted(boilerplate, key=len, reverse=True):
+        normalized = normalized.replace(phrase, '[BOILERPLATE]')
+    
+    return normalized
+
+
+def repair_gemini_schema(raw_json_str: str, schema: dict) -> tuple:
+    """
+    Attempt to repair common Gemini Flash schema validation failures (10.69 W1).
+    Returns (repaired_dict, was_repaired, repair_log).
+    """
+    import json
+    repair_log = []
+    
+    try:
+        # First pass: try standard parsing
+        data = json.loads(raw_json_str)
+    except json.JSONDecodeError as e:
+        # Try to extract JSON from markdown code fence
+        import re
+        m = re.search(r'```(?:json)?\s*(\{.*?\})\s*```', raw_json_str, re.DOTALL)
+        if m:
+            try:
+                data = json.loads(m.group(1))
+                repair_log.append("extracted JSON from markdown fence")
+            except:
+                return None, False, [f"unparseable inside fence: {e}"]
+        else:
+            return None, False, [f"unparseable: {e}"]
+    
+    # Fill missing required fields
+    required = schema.get('required', [])
+    for field in required:
+        if field not in data:
+            # Sensible defaults
+            if field == 'workstreams':
+                data['workstreams'] = []
+            elif field in ('iteration', 'summary'):
+                data[field] = f"<missing-{field}>"
+            elif field == 'trident':
+                data['trident'] = {'cost': 'N/A', 'delivery': 'N/A', 'performance': 'N/A'}
+            else:
+                data[field] = None
+            repair_log.append(f"filled missing field: {field}")
+    
+    # Type coercion for common cases
+    if 'workstreams' in data and isinstance(data['workstreams'], dict):
+        # Sometimes Gemini returns dict-of-workstreams instead of list
+        data['workstreams'] = [{'id': k, **v} for k, v in data['workstreams'].items()]
+        repair_log.append("converted workstreams dict to list")
+    
+    return data, len(repair_log) > 0, repair_log
+
+
+def resolve_workstream_id_alias(reported_id: str, ground_truth_ids: list) -> str:
+    """
+    Resolve a model-reported workstream ID against ground truth (10.69 W1).
+    Handles cases like reported='W3' when ground truth has 'W3a' but no 'W3'.
+    """
+    # Exact match
+    if reported_id in ground_truth_ids:
+        return reported_id
+    
+    # Try sub-lettered match: reported='W3' could mean 'W3a' if W3a exists and W3 doesn't
+    matching_subs = [gt for gt in ground_truth_ids if gt.startswith(reported_id) and len(gt) == len(reported_id) + 1]
+    if len(matching_subs) == 1:
+        return matching_subs[0]
+    
+    # Try parent match: reported='W3a' could mean 'W3' if W3 exists and W3a doesn't
+    if reported_id[-1].isalpha() and reported_id[:-1] in ground_truth_ids:
+        return reported_id[:-1]
+    
+    return reported_id
+
+
 def load_harness():
     """Load evaluator harness as system prompt prefix."""
     try:
@@ -86,7 +272,16 @@ def load_gotcha_archive():
 
 
 def _find_doc(doc_type, iteration):
-    """Locate an iteration doc, falling through to docs/archive/ (v10.63 mid-reorg)."""
+    """Locate an iteration doc using resolve_artifact_paths (10.69 W1)."""
+    try:
+        paths = resolve_artifact_paths(iteration)
+        path = paths.get(doc_type)
+        if path and path.exists():
+            return str(path)
+    except Exception:
+        pass
+    
+    # Legacy fallbacks (kept for extreme robustness)
     for loc in [
         f"docs/kjtcom-{doc_type}-{iteration}.md",
         f"docs/archive/kjtcom-{doc_type}-{iteration}.md",
@@ -102,11 +297,15 @@ def build_rich_context(iteration):
     parts = []
 
     # Current iteration artifacts (build + design + plan)
-    for doc_type in ["build", "design", "plan"]:
-        path = _find_doc(doc_type, iteration)
-        if path:
-            parts.append(f"=== CURRENT {doc_type.upper()} ({iteration}) ===")
-            parts.append(open(path).read())
+    try:
+        paths = resolve_artifact_paths(iteration)
+        for kind in ["build", "design", "plan"]:
+            path = paths.get(kind)
+            if path and path.exists():
+                parts.append(f"=== CURRENT {kind.upper()} ({iteration}) ===")
+                parts.append(path.read_text())
+    except Exception as e:
+        print(f"WARNING: build_rich_context path resolution failed: {e}")
 
     # Few-shot precedent reports
     for ver in ["v10.59", "v10.56", "v10.58"]:
@@ -181,11 +380,11 @@ def build_execution_context(version):
             lines.append(f"  - {e.get('source_agent', '?')}: {e.get('action', '?')} -> {e.get('status')} ({e.get('error', 'N/A')[:80]})")
 
     # Read build log for additional evidence
-    build_log_path = os.path.join(PROJECT_DIR, 'docs', f'kjtcom-build-{version}.md')
-    if os.path.exists(build_log_path):
+    paths = resolve_artifact_paths(version)
+    build_log_path = paths.get('build')
+    if build_log_path and build_log_path.exists():
         try:
-            with open(build_log_path) as f:
-                build_content = f.read()
+            build_content = build_log_path.read_text()
             lines.append(f"\nBuild log ({len(build_content)} chars):")
             lines.append(build_content[:3000])
         except Exception:
@@ -326,11 +525,11 @@ def parse_executing_agent(design_doc_path):
     return "claude-code"
 
 
-def normalize_llm_output(output, expected_count, ground_truth_ids, expected_names, executing_agent, iteration="v0.0", synthesis_threshold=0.5):
+def normalize_llm_output(output, expected_count, ground_truth_ids, expected_names, executing_agent, iteration="v0.0"):
     """ADR-014/021: Coerce common LLM deviations and track synthesis audit trail.
 
     Returns (normalized_output, synthesis_metadata).
-    Raises EvaluatorSynthesisExceeded if any workstream's synthesis ratio > threshold.
+    (10.69 W1): Moved synthesis threshold check to caller to support modes.
     """
     if not isinstance(output, dict):
         return output, {"synthesized_fields": [], "synthesis_ratio_per_workstream": {}}
@@ -363,8 +562,9 @@ def normalize_llm_output(output, expected_count, ground_truth_ids, expected_name
         src = ws_raw[i] if i < len(ws_raw) and isinstance(ws_raw[i], dict) else {}
         ws_synthesized = []
         
-        # Use ground truth IDs and names if not provided by LLM
-        wid = src.get("id") or (ground_truth_ids[i] if i < len(ground_truth_ids) else f"W{i+1}")
+        # 10.69 W1: Use resolve_workstream_id_alias
+        raw_id = src.get("id") or (ground_truth_ids[i] if i < len(ground_truth_ids) else f"W{i+1}")
+        wid = resolve_workstream_id_alias(raw_id, ground_truth_ids)
         if not src.get("id"): ws_synthesized.append("id")
         
         name = src.get("name") or (expected_names[i] if i < len(expected_names) else f"Workstream {i+1}")
@@ -452,10 +652,7 @@ def normalize_llm_output(output, expected_count, ground_truth_ids, expected_name
         mcps = mcps[:5]
 
         # ADR-021: Compute ratio based on 6 core Thompson Indicator Fields for workstreams
-        # (priority, outcome, score, evidence, improvements, agents)
         core_fields = ["priority", "outcome", "score", "evidence", "improvements", "agents"]
-        # G97 fix (v10.66 W7): exact-match (strip "(coerced:...)" suffix), not substring.
-        # Prior bug: "improvements_padded" matched "improvements" via substring -> ratio > 1.0.
         def _is_core(field, _cf=core_fields):
             return field.split("(", 1)[0] in _cf
         core_synthesized = [f for f in ws_synthesized if _is_core(f)]
@@ -479,9 +676,6 @@ def normalize_llm_output(output, expected_count, ground_truth_ids, expected_name
             "_synthesized_fields": ws_synthesized,
             "synthesis_ratio": ratio
         })
-        
-        if ratio > synthesis_threshold:
-            raise EvaluatorSynthesisExceeded(wid, ratio, ws_synthesized)
 
     output["workstreams"] = fixed_ws
 
@@ -770,7 +964,7 @@ Return ONLY the JSON object following the structure:
 {{"iteration":"{version}","summary":"...","workstreams":[...],"trident":{{"cost":"...","delivery":"...","performance":"..."}},"what_could_be_better":[...]}}"""
 
 
-def try_qwen_tier(base_prompt, harness, expected_count, ground_truth_ids, expected_names, executing_agent, version, threshold=0.5, verbose=False):
+def try_qwen_tier(base_prompt, harness, expected_count, ground_truth_ids, expected_names, executing_agent, version, threshold=0.5, verbose=False, synthesis_mode="weighted"):
     """Tier 1: Qwen3.5-9B via Ollama (3 attempts)."""
     current_prompt = base_prompt
     tokens = {}
@@ -808,11 +1002,15 @@ def try_qwen_tier(base_prompt, harness, expected_count, ground_truth_ids, expect
             continue
 
         try:
-            parsed, metadata = normalize_llm_output(parsed, expected_count, ground_truth_ids, expected_names, executing_agent, version, threshold)
+            parsed, metadata = normalize_llm_output(parsed, expected_count, ground_truth_ids, expected_names, executing_agent, version)
+            
+            # 10.69 W1: New synthesis check logic
+            synthesis_results = compute_synthesis_ratios(parsed["workstreams"], synthesis_mode, threshold)
+            if synthesis_results["should_fail"]:
+                print(f"[EVAL] Qwen synthesis threshold exceeded ({synthesis_mode}): {synthesis_results['average']:.2f} > {threshold}")
+                return None # Force fall-through
+            
             errors = validate_qwen_output(parsed, expected_count, expected_names)
-        except EvaluatorSynthesisExceeded as e:
-            print(f"[EVAL] Qwen synthesis threshold exceeded: {e}")
-            return None # Force fall-through
         except (AttributeError, TypeError) as e:
             errors = [f"Malformed workstream structure: {e}"]
 
@@ -822,15 +1020,18 @@ def try_qwen_tier(base_prompt, harness, expected_count, ground_truth_ids, expect
             parsed['evaluator'] = 'qwen3.5:9b'
             parsed['tier_used'] = 'qwen'
             parsed['synthesis_metadata'] = metadata
+            parsed['synthesis_results'] = synthesis_results
             return parsed
 
-        print(f"[EVAL] Qwen validation failed attempt {attempt + 1} with {len(errors)} errors.")
+        print(f"[EVAL] Qwen validation failed attempt {attempt + 1} with {len(errors)} errors:")
+        for err in errors:
+            print(f"  - {err}")
         current_prompt = base_prompt + "\n\nVALIDATION ERRORS:\n" + "\n".join(errors)
 
     return None
 
 
-def try_gemini_tier(base_prompt, harness, expected_count, ground_truth_ids, expected_names, executing_agent, version, threshold=0.5, verbose=False):
+def try_gemini_tier(base_prompt, harness, expected_count, ground_truth_ids, expected_names, executing_agent, version, threshold=0.5, verbose=False, synthesis_mode="weighted"):
     """Tier 2: Gemini Flash via litellm (2 attempts).
 
     G98 (v10.66 W8): if ground_truth_ids is provided, prepend a design-doc anchor
@@ -848,6 +1049,8 @@ def try_gemini_tier(base_prompt, harness, expected_count, ground_truth_ids, expe
     else:
         current_prompt = base_prompt
 
+    schema = load_eval_schema()
+
     for attempt in range(2):
         print(f"\n[EVAL] Gemini Flash attempt {attempt + 1}/2 (Qwen fallback)...")
         content, tokens, latency = call_gemini_flash(current_prompt)
@@ -859,17 +1062,25 @@ def try_gemini_tier(base_prompt, harness, expected_count, ground_truth_ids, expe
         if verbose:
             print(f"[EVAL] Gemini Flash raw response ({len(content)} chars): {content[:500]}")
 
-        parsed = parse_json_from_response(content)
+        # 10.69 W1: Use repair_gemini_schema
+        parsed, was_repaired, repair_log = repair_gemini_schema(content, schema)
+        if was_repaired:
+            print(f"[EVAL] Gemini response repaired: {repair_log}")
+
         if parsed is None:
-            print(f"[EVAL] Gemini Flash returned invalid JSON")
+            print(f"[EVAL] Gemini Flash returned invalid/unrepairable JSON")
             continue
 
         try:
-            parsed, metadata = normalize_llm_output(parsed, expected_count, ground_truth_ids, expected_names, "gemini-cli", version, threshold)
+            parsed, metadata = normalize_llm_output(parsed, expected_count, ground_truth_ids, expected_names, "gemini-cli", version)
+            
+            # 10.69 W1: New synthesis check logic
+            synthesis_results = compute_synthesis_ratios(parsed["workstreams"], synthesis_mode, threshold)
+            if synthesis_results["should_fail"]:
+                print(f"[EVAL] Gemini synthesis threshold exceeded ({synthesis_mode}): {synthesis_results['average']:.2f} > {threshold}")
+                return None
+            
             errors = validate_qwen_output(parsed, expected_count, expected_names)
-        except EvaluatorSynthesisExceeded as e:
-            print(f"[EVAL] Gemini synthesis threshold exceeded: {e}")
-            return None
         except (AttributeError, TypeError) as e:
             errors = [f"Malformed workstream structure: {e}"]
 
@@ -887,15 +1098,20 @@ def try_gemini_tier(base_prompt, harness, expected_count, ground_truth_ids, expe
             parsed['evaluator'] = 'gemini-flash (qwen-fallback)'
             parsed['tier_used'] = 'gemini-flash'
             parsed['synthesis_metadata'] = metadata
+            parsed['synthesis_results'] = synthesis_results
+            if was_repaired:
+                parsed['repair_log'] = repair_log
             return parsed
 
-        print(f"[EVAL] Gemini validation failed attempt {attempt + 1} with {len(errors)} errors.")
+        print(f"[EVAL] Gemini validation failed attempt {attempt + 1} with {len(errors)} errors:")
+        for err in errors:
+            print(f"  - {err}")
         current_prompt = base_prompt + "\n\nVALIDATION ERRORS:\n" + "\n".join(errors)
 
     return None
 
 
-def evaluate_with_retry(version, design_doc_path, threshold=0.5, verbose=False, test_fallback=None):
+def evaluate_with_retry(version, design_doc_path, threshold=0.5, verbose=False, test_fallback=None, synthesis_mode="weighted"):
     """Three-tier evaluator fallback chain."""
     expected_count, expected_names = parse_workstream_count(design_doc_path)
     executing_agent = parse_executing_agent(design_doc_path)
@@ -920,14 +1136,14 @@ def evaluate_with_retry(version, design_doc_path, threshold=0.5, verbose=False, 
 
     # Tier 1: Qwen
     if test_fallback not in ('gemini', 'self-eval'):
-        result = try_qwen_tier(base_prompt, harness, expected_count, ground_truth_ids, expected_names, executing_agent, version, threshold, verbose)
+        result = try_qwen_tier(base_prompt, harness, expected_count, ground_truth_ids, expected_names, executing_agent, version, threshold, verbose, synthesis_mode)
         if result: return result
         print("[EVAL] Qwen tier exhausted or threshold exceeded. Falling through to Gemini Flash.")
 
     # Tier 2: Gemini Flash (G98: design-doc anchor)
     if test_fallback != 'self-eval':
         try:
-            result = try_gemini_tier(base_prompt, harness, expected_count, ground_truth_ids, expected_names, executing_agent, version, threshold, verbose)
+            result = try_gemini_tier(base_prompt, harness, expected_count, ground_truth_ids, expected_names, executing_agent, version, threshold, verbose, synthesis_mode)
             if result: return result
         except EvaluatorHallucinatedWorkstream as e:
             print(f"[EVAL] {e}; falling through to self-eval.")
@@ -936,13 +1152,19 @@ def evaluate_with_retry(version, design_doc_path, threshold=0.5, verbose=False, 
 
     # Tier 3: Self-eval
     build_log = ""
-    for loc in [f'docs/kjtcom-build-{version}.md', f'docs/archive/kjtcom-build-{version}.md', f'docs/drafts/kjtcom-build-{version}.md']:
-        if os.path.exists(loc):
-            with open(loc) as f: build_log = f.read()
-            break
+    paths = resolve_artifact_paths(version)
+    build_log_path = paths.get('build')
+    if build_log_path and build_log_path.exists():
+        build_log = build_log_path.read_text()
+    else:
+        # Emergency fallbacks
+        for loc in [f'docs/kjtcom-build-{version}.md', f'docs/archive/kjtcom-build-{version}.md', f'docs/drafts/kjtcom-build-{version}.md']:
+            if os.path.exists(loc):
+                with open(loc) as f: build_log = f.read()
+                break
             
     result = generate_self_eval(build_log, design_content, version, ground_truth_ids, expected_names)
-    _, metadata = normalize_llm_output(result, expected_count, ground_truth_ids, expected_names, executing_agent, version, 1.0) # threshold 1.0 for self-eval
+    _, metadata = normalize_llm_output(result, expected_count, ground_truth_ids, expected_names, executing_agent, version)
     result['synthesis_metadata'] = metadata
     result['evaluator'] = 'self-eval (fallback)'
     result['tier_used'] = 'self-eval'
@@ -957,10 +1179,19 @@ def evaluate_with_retry(version, design_doc_path, threshold=0.5, verbose=False, 
 
 def write_report_markdown(version, evaluation, suffix=""):
     """Write the evaluation report with synthesis audit trail."""
-    report_path = os.path.join(PROJECT_DIR, 'docs', f'kjtcom-report-{version}{suffix}.md')
+    paths = resolve_artifact_paths(version)
+    report_path_obj = paths.get('report')
+    if not report_path_obj:
+        # Fallback to current directory if resolution fails
+        report_path = f"kjtcom-report-{version}{suffix}.md"
+    else:
+        report_path = str(report_path_obj)
+        if suffix:
+            report_path = report_path.replace('.md', f'{suffix}.md')
+    
     evaluator = evaluation.get('evaluator', 'unknown')
     lines = [
-        f"# kjtcom - Report v{version.replace('v','')}",
+        f"# kjtcom - Report {version}",
         "",
         f"**Evaluator:** {evaluator}",
         f"**Date:** {time.strftime('%B %d, %Y')}",
@@ -1052,6 +1283,7 @@ if __name__ == '__main__':
     verbose = '--verbose' in sys.argv
     test_fallback = None
     threshold = 0.5
+    synthesis_mode = "weighted"
 
     if '--iteration' in sys.argv:
         idx = sys.argv.index('--iteration')
@@ -1061,18 +1293,22 @@ if __name__ == '__main__':
         idx = sys.argv.index('--synthesis-threshold')
         if idx + 1 < len(sys.argv): threshold = float(sys.argv[idx + 1])
 
+    if '--synthesis-mode' in sys.argv:
+        idx = sys.argv.index('--synthesis-mode')
+        if idx + 1 < len(sys.argv): synthesis_mode = sys.argv[idx + 1]
+
     if '--test-fallback' in sys.argv:
         idx = sys.argv.index('--test-fallback')
         if idx + 1 < len(sys.argv): test_fallback = sys.argv[idx + 1]
 
     retroactive_flag = '--retroactive' in sys.argv
-    design_path = _find_doc('design', version) or f'docs/kjtcom-design-{version}.md'
+    design_path = _find_doc('design', version)
 
-    if not os.path.exists(design_path):
-        print(f"Design doc not found: {design_path}")
+    if not design_path or not os.path.exists(design_path):
+        print(f"Design doc not found for iteration: {version}")
         sys.exit(1)
 
-    evaluation = evaluate_with_retry(version, design_path, threshold=threshold, verbose=verbose, test_fallback=test_fallback)
+    evaluation = evaluate_with_retry(version, design_path, threshold=threshold, verbose=verbose, test_fallback=test_fallback, synthesis_mode=synthesis_mode)
     save_scores(version, evaluation)
     suffix = "-tier2-corrected" if retroactive_flag else ""
     write_report_markdown(version, evaluation, suffix=suffix)

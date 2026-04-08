@@ -3,7 +3,7 @@
   "type": "object",
   "required": ["iteration", "summary", "workstreams", "trident", "what_could_be_better"],
   "properties": {
-    "iteration": {"type": "string", "pattern": "^v[0-9]+\\.[0-9]+$"},
+    "iteration": {"type": "string", "pattern": "^([0-9]+\\.[0-9]+\\.[0-9]+|v[0-9]+\\.[0-9]+)$"},
     "summary": {
       "type": "string",
       "minLength": 50,
@@ -16,7 +16,7 @@
         "type": "object",
         "required": ["id", "name", "priority", "outcome", "evidence", "agents", "llms", "mcps", "score", "improvements"],
         "properties": {
-          "id": {"type": "string", "pattern": "^W[0-9]+$"},
+          "id": {"type": "string", "pattern": "^W[0-9]+[a-z]?$"},
           "name": {"type": "string", "minLength": 5},
           "priority": {"type": "string", "enum": ["P0", "P1", "P2", "P3"]},
           "outcome": {"type": "string", "enum": ["complete", "partial", "failed", "deferred"]},

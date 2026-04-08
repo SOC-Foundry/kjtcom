@@ -64,6 +64,14 @@ def cmd_project(args):
         print(f"Removed: {args.name}")
 
 
+def cmd_log(args):
+    from iao.logger import log_workstream_complete
+    if args.log_cmd == "workstream-complete":
+        log_workstream_complete(args.workstream_id, args.status, args.summary)
+    else:
+        print("ERROR: missing log subcommand")
+
+
 def cmd_init(args):
     target = Path(args.path).resolve() if args.path else Path.cwd()
     iao = target / ".iao.json"
@@ -91,9 +99,20 @@ def cmd_status(args):
     data = _load_projects()
     project_root = results.get("project_root", ("fail", "(none)"))[1]
     
+    from iao.paths import find_project_root
+    mode = "active"
+    try:
+        root = find_project_root()
+        iao_json = root / ".iao.json"
+        if iao_json.exists():
+            mode = json.loads(iao_json.read_text()).get("mode", "active")
+    except Exception:
+        pass
+
     print("iao status")
     print("──────────")
     print(f"project:     {data.get('active') or '(none)'} ({project_root})")
+    print(f"mode:        {mode}")
     print(f"iteration:   {os.environ.get('IAO_ITERATION', 'unknown')}")
     print(f"cwd:         {os.getcwd()}")
     
@@ -176,6 +195,13 @@ def main():
 
     sub.add_parser("push")
 
+    pl = sub.add_parser("log")
+    pls = pl.add_subparsers(dest="log_cmd")
+    wc = pls.add_parser("workstream-complete")
+    wc.add_argument("workstream_id")
+    wc.add_argument("status", choices=["pass", "partial", "fail", "deferred"])
+    wc.add_argument("summary")
+
     sub.add_parser("status")
     sub.add_parser("eval")
     sub.add_parser("registry")
@@ -185,6 +211,8 @@ def main():
         cmd_project(args)
     elif args.cmd == "init":
         cmd_init(args)
+    elif args.cmd == "log":
+        cmd_log(args)
     elif args.cmd == "status":
         cmd_status(args)
     elif args.cmd == "check":

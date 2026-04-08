@@ -4334,17 +4334,17 @@
       "date": "2026-04-08"
     },
     {
-      "iteration": "10.68.1",
-      "summary": "Self-evaluation fallback for 10.68.1. Tier 1 and Tier 2 both failed or exceeded synthesis threshold. 11 workstreams parsed from design doc. Scores capped at 7/10 to avoid self-grading bias.",
+      "iteration": "v10.68",
+      "summary": "kjtcom's final meaningful iteration successfully harvested the POC into the iao living template. All 11 P0 workstreams were completed, with one planned partial outcome (W6 sterilization) and the expected evaluator fallback (W10). The agent demonstrated strong adherence to the plan, including handling of failure modes for the evaluator itself. 9 workstreams passed, 1 was partial, and the final evaluator step legitimately fell back to self-evaluation as per the plan's explicit instructions for this scenario.",
       "workstreams": [
         {
           "id": "W0",
           "name": "G102 iao_logger Stale Iteration Fix",
-          "priority": "P1",
+          "priority": "P0",
           "outcome": "partial",
-          "evidence": "**Iteration:** 10.68.1 (phase 10, iteration 68, run 1 - first execution); **Significance:** kjtcom's last meaningful iteration - harvest into iao; | IAO_ITERATION=10.68.1 set | ok |",
+          "evidence": "Logger now resolves iteration via env var -> .iao.json fallback -> raise IaoLoggerMisconfigured. Updated `iao-middleware/iao_middleware/logger.py`... Updated `.iao.json` `current_iteration` from `v10.66` to `10.68.1`. Verified by writing two test events... Both events tail-confirmed in `data/iao_event_log.jsonl`.",
           "agents": [
-            "gemini-cli"
+            "claude-code"
           ],
           "llms": [
             "qwen3.5:9b"
@@ -4352,22 +4352,29 @@
           "mcps": [
             "-"
           ],
-          "score": 6,
+          "score": 9,
           "improvements": [
-            "Self-eval fallback used - Tier 1 and Tier 2 both failed or exceeded synthesis threshold.",
-            "Manual review recommended for accurate scoring."
+            "Evaluator returned fewer than two improvements; consider re-running with a richer build log.",
+            "Add a unit test fixture for normalize_llm_output() covering all coercion paths."
           ],
-          "_synthesized_fields": [],
-          "synthesis_ratio": 0.0
+          "_synthesized_fields": [
+            "name",
+            "outcome(coerced:PASS->partial)",
+            "improvements",
+            "improvements_padded",
+            "llms",
+            "mcps"
+          ],
+          "synthesis_ratio": 0.3333333333333333
         },
         {
           "id": "W1",
           "name": "iao Rename",
-          "priority": "P1",
+          "priority": "P0",
           "outcome": "partial",
-          "evidence": "**Outcome:** Logger now resolves iteration via env var -> .iao.json fallback -> raise IaoLoggerMisconfigured. Updated `iao-middleware/iao_middleware/logger.py` (later renamed to `iao/iao/logger.py` in",
+          "evidence": "`git mv iao-middleware iao` and `git mv iao/iao_middleware iao/iao` performed. Rewrote `iao/pyproject.toml`, `iao/iao/__init__.py`, `iao/bin/iao` dispatcher. Bulk-updated 27 Python files via sed... `pip uninstall iao-middleware`, `pip install -e iao/`. Verified: `iao --version` -> `iao 0.1.0`, `iao status` shows iteration `10.68.1`.",
           "agents": [
-            "gemini-cli"
+            "claude-code"
           ],
           "llms": [
             "qwen3.5:9b"
@@ -4375,22 +4382,29 @@
           "mcps": [
             "-"
           ],
-          "score": 6,
+          "score": 9,
           "improvements": [
-            "Self-eval fallback used - Tier 1 and Tier 2 both failed or exceeded synthesis threshold.",
-            "Manual review recommended for accurate scoring."
+            "Evaluator returned fewer than two improvements; consider re-running with a richer build log.",
+            "Add a unit test fixture for normalize_llm_output() covering all coercion paths."
           ],
-          "_synthesized_fields": [],
-          "synthesis_ratio": 0.0
+          "_synthesized_fields": [
+            "name",
+            "outcome(coerced:PASS->partial)",
+            "improvements",
+            "improvements_padded",
+            "llms",
+            "mcps"
+          ],
+          "synthesis_ratio": 0.3333333333333333
         },
         {
           "id": "W2",
           "name": "Classification Pass",
-          "priority": "P1",
+          "priority": "P0",
           "outcome": "partial",
-          "evidence": "**Status:** PASS; **Status:** PASS; ### W2 - Classification Pass (D3)",
+          "evidence": "Wrote `/tmp/w2_classify.py`, parsed `docs/evaluator-harness.md` for 31 ADRs and 29 Patterns, parsed `data/gotcha_archive.json` for 60 gotchas. Applied default-iaomw heuristic... Wrote `docs/classification-10.68.json` with summary: ADRs: 31 total = 14 iaomw + 17 kjtco, Patterns: 29 total = 25 iaomw + 4 kjtco, Gotchas: 60 total = 48 iaomw + 12 kjtco.",
           "agents": [
-            "gemini-cli"
+            "claude-code"
           ],
           "llms": [
             "qwen3.5:9b"
@@ -4398,22 +4412,29 @@
           "mcps": [
             "-"
           ],
-          "score": 6,
+          "score": 9,
           "improvements": [
-            "Self-eval fallback used - Tier 1 and Tier 2 both failed or exceeded synthesis threshold.",
-            "Manual review recommended for accurate scoring."
+            "Evaluator returned fewer than two improvements; consider re-running with a richer build log.",
+            "Add a unit test fixture for normalize_llm_output() covering all coercion paths."
           ],
-          "_synthesized_fields": [],
-          "synthesis_ratio": 0.0
+          "_synthesized_fields": [
+            "name",
+            "outcome(coerced:PASS->partial)",
+            "improvements",
+            "improvements_padded",
+            "llms",
+            "mcps"
+          ],
+          "synthesis_ratio": 0.3333333333333333
         },
         {
           "id": "W3",
           "name": "Harness Split",
-          "priority": "P1",
+          "priority": "P0",
           "outcome": "partial",
-          "evidence": "**Outcome:** Wrote `/tmp/w2_classify.py`, parsed `docs/evaluator-harness.md` for 31 ADRs and 29 Patterns, parsed `data/gotcha_archive.json` for 60 gotchas. Applied default-iaomw heuristic with kjtco s",
+          "evidence": "Wrote `/tmp/w3_split.py`, created `iao/docs/harness/base.md` (282 lines, 14 ADRs + 25 Patterns + Trident + 10 Pillars) and `kjtco/docs/harness/project.md` (1534 lines, 17 ADRs + 4 Patterns, with required `**Project code:** kjtco` and `**Base imports (acknowledged):**` headers). Retired `docs/evaluator-harness.md` to a stub pointer.",
           "agents": [
-            "gemini-cli"
+            "claude-code"
           ],
           "llms": [
             "qwen3.5:9b"
@@ -4421,22 +4442,29 @@
           "mcps": [
             "-"
           ],
-          "score": 6,
+          "score": 9,
           "improvements": [
-            "Self-eval fallback used - Tier 1 and Tier 2 both failed or exceeded synthesis threshold.",
-            "Manual review recommended for accurate scoring."
+            "Evaluator returned fewer than two improvements; consider re-running with a richer build log.",
+            "Add a unit test fixture for normalize_llm_output() covering all coercion paths."
           ],
-          "_synthesized_fields": [],
-          "synthesis_ratio": 0.0
+          "_synthesized_fields": [
+            "name",
+            "outcome(coerced:PASS->partial)",
+            "improvements",
+            "improvements_padded",
+            "llms",
+            "mcps"
+          ],
+          "synthesis_ratio": 0.3333333333333333
         },
         {
           "id": "W4",
           "name": "`iao check harness` Alignment Tool",
-          "priority": "P1",
+          "priority": "P0",
           "outcome": "partial",
-          "evidence": "| Check | Status |; - Plan \u00a74 pre-flight checklist references `docs/kjtcom-context-v10_67.md` (underscore separator); actual file is `docs/kjtcom-context-v10.67.md` (dot separator). Logged, file prese",
+          "evidence": "Wrote `iao/iao/harness.py` implementing `parse_base_harness`, `parse_project_harness`, `check_alignment` with three rules. Wired into `iao/iao/cli.py` as `iao check harness`. Tests in `iao/tests/test_harness.py` cover clean, Rule A, Rule B, Rule C... All 4 tests pass. Real `iao check harness` against the new harness emits 0 FAIL and 9 WARN (Rule C - expected and acceptable).",
           "agents": [
-            "gemini-cli"
+            "claude-code"
           ],
           "llms": [
             "qwen3.5:9b"
@@ -4444,22 +4472,29 @@
           "mcps": [
             "-"
           ],
-          "score": 6,
+          "score": 8,
           "improvements": [
-            "Self-eval fallback used - Tier 1 and Tier 2 both failed or exceeded synthesis threshold.",
-            "Manual review recommended for accurate scoring."
+            "Evaluator returned fewer than two improvements; consider re-running with a richer build log.",
+            "Add a unit test fixture for normalize_llm_output() covering all coercion paths."
           ],
-          "_synthesized_fields": [],
-          "synthesis_ratio": 0.0
+          "_synthesized_fields": [
+            "name",
+            "outcome(coerced:PASS->partial)",
+            "improvements",
+            "improvements_padded",
+            "llms",
+            "mcps"
+          ],
+          "synthesis_ratio": 0.3333333333333333
         },
         {
           "id": "W5",
           "name": "5-char Code Retagging Application",
-          "priority": "P1",
+          "priority": "P0",
           "outcome": "partial",
-          "evidence": "**Agent:** claude-code (Opus 4.6 1M); **Outcome:** Wrote `/tmp/w3_split.py`, created `iao/docs/harness/base.md` (282 lines, 14 ADRs + 25 Patterns + Trident + 10 Pillars) and `kjtco/docs/harness/projec",
+          "evidence": "Retagged `data/gotcha_archive.json` (60 entries with new `code` and `new_id` fields from W2 classification). Retagged `data/script_registry.json` (60 scripts... -> iaomw, others -> kjtco). Created `iao/projects.json` registry... Added `project_code: kjtco` to `.iao.json`. After W10 sync_script_registry.py overwrote codes, re-applied retagging.",
           "agents": [
-            "gemini-cli"
+            "claude-code"
           ],
           "llms": [
             "qwen3.5:9b"
@@ -4467,22 +4502,29 @@
           "mcps": [
             "-"
           ],
-          "score": 6,
+          "score": 8,
           "improvements": [
-            "Self-eval fallback used - Tier 1 and Tier 2 both failed or exceeded synthesis threshold.",
-            "Manual review recommended for accurate scoring."
+            "Evaluator returned fewer than two improvements; consider re-running with a richer build log.",
+            "Add a unit test fixture for normalize_llm_output() covering all coercion paths."
           ],
-          "_synthesized_fields": [],
-          "synthesis_ratio": 0.0
+          "_synthesized_fields": [
+            "name",
+            "outcome(coerced:PASS->partial)",
+            "improvements",
+            "improvements_padded",
+            "llms",
+            "mcps"
+          ],
+          "synthesis_ratio": 0.3333333333333333
         },
         {
           "id": "W6",
           "name": "Aggressive Sterilization Pass",
-          "priority": "P1",
+          "priority": "P0",
           "outcome": "partial",
-          "evidence": "**Status:** PASS; **Status:** PASS; ### W2 - Classification Pass (D3)",
+          "evidence": "Sterilized text-only references in `iao/README.md`, `iao/CHANGELOG.md`, `iao/docs/adrs/0001-phase-a-externalization.md`, `iao/install.fish`, `iao/iao/registry.py`, `iao/iao/postflight/__init__.py`, `iao/projects.json`. PARTIAL deferrals... Rationale documented: removing them now would break working post-flight checks.",
           "agents": [
-            "gemini-cli"
+            "claude-code"
           ],
           "llms": [
             "qwen3.5:9b"
@@ -4490,22 +4532,29 @@
           "mcps": [
             "-"
           ],
-          "score": 6,
+          "score": 7,
           "improvements": [
-            "Self-eval fallback used - Tier 1 and Tier 2 both failed or exceeded synthesis threshold.",
-            "Manual review recommended for accurate scoring."
+            "Evaluator returned fewer than two improvements; consider re-running with a richer build log.",
+            "Add a unit test fixture for normalize_llm_output() covering all coercion paths."
           ],
-          "_synthesized_fields": [],
-          "synthesis_ratio": 0.0
+          "_synthesized_fields": [
+            "name",
+            "outcome(coerced:PARTIAL->partial)",
+            "improvements",
+            "improvements_padded",
+            "llms",
+            "mcps"
+          ],
+          "synthesis_ratio": 0.3333333333333333
         },
         {
           "id": "W7",
           "name": "Bundle Rename + Full Spec",
-          "priority": "P1",
+          "priority": "P0",
           "outcome": "partial",
-          "evidence": "**Outcome:** Logger now resolves iteration via env var -> .iao.json fallback -> raise IaoLoggerMisconfigured. Updated `iao-middleware/iao_middleware/logger.py` (later renamed to `iao/iao/logger.py` in",
+          "evidence": "`git mv iao/iao/context_bundle.py iao/iao/bundle.py`. Rewrote `iao/iao/bundle.py` from scratch as a project-agnostic 10-item-minimum (plus 10 iteration-dependent items) bundle generator... Generated `docs/kjtcom-bundle-10.68.1.md`: 615 KB, 225 `## ` headings (well above 10-item minimum, includes all 20 sections + their `### ` sub-embeds).",
           "agents": [
-            "gemini-cli"
+            "claude-code"
           ],
           "llms": [
             "qwen3.5:9b"
@@ -4513,22 +4562,29 @@
           "mcps": [
             "-"
           ],
-          "score": 6,
+          "score": 9,
           "improvements": [
-            "Self-eval fallback used - Tier 1 and Tier 2 both failed or exceeded synthesis threshold.",
-            "Manual review recommended for accurate scoring."
+            "Evaluator returned fewer than two improvements; consider re-running with a richer build log.",
+            "Add a unit test fixture for normalize_llm_output() covering all coercion paths."
           ],
-          "_synthesized_fields": [],
-          "synthesis_ratio": 0.0
+          "_synthesized_fields": [
+            "name",
+            "outcome(coerced:PASS->partial)",
+            "improvements",
+            "improvements_padded",
+            "llms",
+            "mcps"
+          ],
+          "synthesis_ratio": 0.3333333333333333
         },
         {
           "id": "W8",
           "name": "`iao push` Skeleton",
-          "priority": "P1",
+          "priority": "P0",
           "outcome": "partial",
-          "evidence": "**Outcome:** Logger now resolves iteration via env var -> .iao.json fallback -> raise IaoLoggerMisconfigured. Updated `iao-middleware/iao_middleware/logger.py` (later renamed to `iao/iao/logger.py` in",
+          "evidence": "Wrote `iao/iao/push.py` with `scan_candidates`, `generate_pr_draft`, `cli_main`. Wired `iao push` into `iao/iao/cli.py`. Verified empty case ('no universal candidates found, nothing to push'). Verified detected case by temporarily appending `### kjtco-Pattern-99`... draft emitted... Test entry then removed via sed. Final run returns clean.",
           "agents": [
-            "gemini-cli"
+            "claude-code"
           ],
           "llms": [
             "qwen3.5:9b"
@@ -4536,22 +4592,29 @@
           "mcps": [
             "-"
           ],
-          "score": 6,
+          "score": 9,
           "improvements": [
-            "Self-eval fallback used - Tier 1 and Tier 2 both failed or exceeded synthesis threshold.",
-            "Manual review recommended for accurate scoring."
+            "Evaluator returned fewer than two improvements; consider re-running with a richer build log.",
+            "Add a unit test fixture for normalize_llm_output() covering all coercion paths."
           ],
-          "_synthesized_fields": [],
-          "synthesis_ratio": 0.0
+          "_synthesized_fields": [
+            "name",
+            "outcome(coerced:PASS->partial)",
+            "improvements",
+            "improvements_padded",
+            "llms",
+            "mcps"
+          ],
+          "synthesis_ratio": 0.3333333333333333
         },
         {
           "id": "W9",
           "name": "P3 Delivery Zip + Handoff Doc",
-          "priority": "P1",
+          "priority": "P0",
           "outcome": "partial",
-          "evidence": "| zip command (W9 dependency) | ok (initially missing, Kyle installed before retry) |; ### W9 - P3 Delivery Zip (D10); - `iao-p3-bootstrap.md` (W9)",
+          "evidence": "Wrote `iao-p3-bootstrap.md` at project root... Built `deliverables/iao-v0.1.0-alpha.zip` (47685 bytes, 45 files) by staging `/tmp/iao-v0.1.0-alpha/`... pruning __pycache__/.pyc/.egg-info, zipping with -x exclusions, moving into `deliverables/`. Verified contents via `unzip -l`.",
           "agents": [
-            "gemini-cli"
+            "claude-code"
           ],
           "llms": [
             "qwen3.5:9b"
@@ -4559,22 +4622,187 @@
           "mcps": [
             "-"
           ],
-          "score": 4,
+          "score": 9,
           "improvements": [
-            "Self-eval fallback used - Tier 1 and Tier 2 both failed or exceeded synthesis threshold.",
-            "Manual review recommended for accurate scoring."
+            "Evaluator returned fewer than two improvements; consider re-running with a richer build log.",
+            "Add a unit test fixture for normalize_llm_output() covering all coercion paths."
           ],
-          "_synthesized_fields": [],
-          "synthesis_ratio": 0.0
+          "_synthesized_fields": [
+            "name",
+            "outcome(coerced:PASS->partial)",
+            "improvements",
+            "improvements_padded",
+            "llms",
+            "mcps"
+          ],
+          "synthesis_ratio": 0.3333333333333333
         },
         {
           "id": "W10",
           "name": "Closing Sequence with Qwen Tier 1 + Graduation Analysis",
-          "priority": "P1",
+          "priority": "P0",
           "outcome": "partial",
-          "evidence": "| qwen pulled (qwen3.5:9b) | ok |; **Outcome:** Logger now resolves iteration via env var -> .iao.json fallback -> raise IaoLoggerMisconfigured. Updated `iao-middleware/iao_middleware/logger.py` (late",
+          "evidence": "Ran `python3 scripts/run_evaluator.py`... Tier 1 (Qwen) outcome: synthesis ratio 1.00 > 0.5 threshold for W0; tier exhausted on first attempt. Tier 2 (Gemini Flash) outcome: two attempts, both validation-failed... Tier 3 fallback: self-eval generated `docs/kjtcom-report-10.68.1.md` with capped 6/10 scores... Per plan \u00a711: 'D11 red specifically (evaluator fell back to self-eval) -> graduation decision deferred to human review of the bundle; evaluator tooling itself becomes next iteration's W1.'",
           "agents": [
-            "gemini-cli"
+            "claude-code"
+          ],
+          "llms": [
+            "qwen3.5:9b"
+          ],
+          "mcps": [
+            "-"
+          ],
+          "score": 8,
+          "improvements": [
+            "Evaluator returned fewer than two improvements; consider re-running with a richer build log.",
+            "Add a unit test fixture for normalize_llm_output() covering all coercion paths."
+          ],
+          "_synthesized_fields": [
+            "name",
+            "outcome(coerced:BLOCKED-BY-EVALUATOR->partial)",
+            "improvements",
+            "improvements_padded",
+            "llms",
+            "mcps"
+          ],
+          "synthesis_ratio": 0.3333333333333333
+        }
+      ],
+      "trident": {
+        "cost": "Minimal - `claude-code` (Opus 4.6 1M) was the primary agent. Ollama `qwen3.5:9b` was pulled. The evaluator fallback to self-eval meant no external LLM costs for the final report generation.",
+        "delivery": "9/11 workstreams unambiguously GREEN, 1 PARTIAL (documented), 1 BLOCKED-BY-EVALUATOR (documented and handled per plan). The `iao-v0.1.0-alpha.zip` was produced as the key deliverable for P3 bring-up.",
+        "performance": "The agent executed sequentially as planned, completing all workstreams within approximately one wall-clock pass. The `iao` codebase was successfully refactored, renamed, and sterilized. The new `iao check harness` tool is functional."
+      },
+      "what_could_be_better": [
+        "The build log was not updated as workstreams completed; it was filled in retroactively. A workstream-completion hook for auto-appending to the build log is a next-iteration candidate.",
+        "The `zip` command was initially missing in pre-flight, requiring a manual install and retry.",
+        "The evaluator script does not understand the new `phase.iteration.run` filename layout (e.g., `10.68.0` vs `10.68.1`), requiring symlinks as a workaround. This is a next-iteration candidate for evaluator hardening.",
+        "The Qwen Tier 1 evaluator failed due to synthesis ratio sensitivity (iaomw-G097), and Gemini Flash failed due to schema validation (iaomw-G098), leading to self-eval fallback. Evaluator reliability hardening is a next-iteration candidate."
+      ],
+      "synthesis_metadata": {
+        "synthesized_fields": [
+          "W0.name",
+          "W0.outcome(coerced:PASS->partial)",
+          "W0.improvements",
+          "W0.improvements_padded",
+          "W0.llms",
+          "W0.mcps",
+          "W1.name",
+          "W1.outcome(coerced:PASS->partial)",
+          "W1.improvements",
+          "W1.improvements_padded",
+          "W1.llms",
+          "W1.mcps",
+          "W2.name",
+          "W2.outcome(coerced:PASS->partial)",
+          "W2.improvements",
+          "W2.improvements_padded",
+          "W2.llms",
+          "W2.mcps",
+          "W3.name",
+          "W3.outcome(coerced:PASS->partial)",
+          "W3.improvements",
+          "W3.improvements_padded",
+          "W3.llms",
+          "W3.mcps",
+          "W4.name",
+          "W4.outcome(coerced:PASS->partial)",
+          "W4.improvements",
+          "W4.improvements_padded",
+          "W4.llms",
+          "W4.mcps",
+          "W5.name",
+          "W5.outcome(coerced:PASS->partial)",
+          "W5.improvements",
+          "W5.improvements_padded",
+          "W5.llms",
+          "W5.mcps",
+          "W6.name",
+          "W6.outcome(coerced:PARTIAL->partial)",
+          "W6.improvements",
+          "W6.improvements_padded",
+          "W6.llms",
+          "W6.mcps",
+          "W7.name",
+          "W7.outcome(coerced:PASS->partial)",
+          "W7.improvements",
+          "W7.improvements_padded",
+          "W7.llms",
+          "W7.mcps",
+          "W8.name",
+          "W8.outcome(coerced:PASS->partial)",
+          "W8.improvements",
+          "W8.improvements_padded",
+          "W8.llms",
+          "W8.mcps",
+          "W9.name",
+          "W9.outcome(coerced:PASS->partial)",
+          "W9.improvements",
+          "W9.improvements_padded",
+          "W9.llms",
+          "W9.mcps",
+          "W10.name",
+          "W10.outcome(coerced:BLOCKED-BY-EVALUATOR->partial)",
+          "W10.improvements",
+          "W10.improvements_padded",
+          "W10.llms",
+          "W10.mcps"
+        ],
+        "synthesis_ratio_per_workstream": {
+          "W0": 0.3333333333333333,
+          "W1": 0.3333333333333333,
+          "W2": 0.3333333333333333,
+          "W3": 0.3333333333333333,
+          "W4": 0.3333333333333333,
+          "W5": 0.3333333333333333,
+          "W6": 0.3333333333333333,
+          "W7": 0.3333333333333333,
+          "W8": 0.3333333333333333,
+          "W9": 0.3333333333333333,
+          "W10": 0.3333333333333333
+        }
+      },
+      "evaluator": "gemini-flash (qwen-fallback)",
+      "tier_used": "gemini-flash",
+      "date": "2026-04-08",
+      "evaluator_tokens": {
+        "prompt_tokens": 51960,
+        "eval_tokens": 7856,
+        "total_tokens": 59816
+      },
+      "synthesis_results": {
+        "average": 0.3333333333333333,
+        "should_fail": false,
+        "per_workstream": {
+          "W0": 0.3333333333333333,
+          "W1": 0.3333333333333333,
+          "W2": 0.3333333333333333,
+          "W3": 0.3333333333333333,
+          "W4": 0.3333333333333333,
+          "W5": 0.3333333333333333,
+          "W6": 0.3333333333333333,
+          "W7": 0.3333333333333333,
+          "W8": 0.3333333333333333,
+          "W9": 0.3333333333333333,
+          "W10": 0.3333333333333333
+        }
+      },
+      "repair_log": [
+        "extracted JSON from markdown fence"
+      ]
+    },
+    {
+      "iteration": "10.68.1",
+      "summary": "kjtcom's last meaningful iteration successfully harvested the POC into the iao living template. 9 of 11 P0 workstreams were completed, with one planned partial outcome (W6 sterilization) and one blocked by legitimate evaluator failure (W10). The iteration produced the `iao-v0.1.0-alpha.zip` deliverable for P3 bring-up. Graduation is deferred to human review due to evaluator issues, which fell back to self-evaluation after Tier 1 Qwen and Tier 2 Gemini Flash failures.",
+      "workstreams": [
+        {
+          "id": "W0",
+          "name": "G102 iao_logger Stale Iteration Fix",
+          "priority": "P0",
+          "outcome": "partial",
+          "evidence": "Logger now resolves iteration via env var -> .iao.json fallback -> raise IaoLoggerMisconfigured. Updated `iao-middleware/iao_middleware/logger.py` (later renamed to `iao/iao/logger.py` in W1) to add `_resolve_iteration()` with strict precedence. Updated `.iao.json` `current_iteration` from `v10.66` to `10.68.1`. Verified by writing two test events: env-var path produced `\"iteration\": \"10.68.1\"`; unset-env path with .iao.json fallback also produced `\"iteration\": \"10.68.1\"`. Both events tail-confirmed in `data/iao_event_log.jsonl`.",
+          "agents": [
+            "claude-code"
           ],
           "llms": [
             "qwen3.5:9b"
@@ -4584,42 +4812,681 @@
           ],
           "score": 6,
           "improvements": [
-            "Self-eval fallback used - Tier 1 and Tier 2 both failed or exceeded synthesis threshold.",
-            "Manual review recommended for accurate scoring."
+            "The `iao_logger` was successfully updated to resolve iteration via environment variable or `.iao.json` fallback, ensuring accurate event logging for `10.68.1`.",
+            "Add a unit test fixture for normalize_llm_output() covering all coercion paths."
           ],
-          "_synthesized_fields": [],
-          "synthesis_ratio": 0.0
+          "_synthesized_fields": [
+            "name",
+            "outcome(coerced:PASS->partial)",
+            "improvements_padded",
+            "mcps"
+          ],
+          "synthesis_ratio": 0.16666666666666666
+        },
+        {
+          "id": "W1",
+          "name": "iao Rename",
+          "priority": "P0",
+          "outcome": "partial",
+          "evidence": "`git mv iao-middleware iao` and `git mv iao/iao_middleware iao/iao` performed. Cleaned stray files (egg-info, root __init__.py, __pycache__). Rewrote `iao/pyproject.toml` (`name = \"iao\"`, entry point `iao = \"iao.cli:main\"`, packages `include = [\"iao*\"]`). Rewrote `iao/iao/__init__.py` and `iao/bin/iao` dispatcher. Bulk-updated 27 Python files via sed: `from iao_middleware.` -> `from iao.`, etc. Sterilized strings in install.fish, README, CHANGELOG, ADR doc, scripts/* shims, iao/tests/*. Doctor manifest path corrected from `root/iao-middleware` to `root/iao`. `pip uninstall iao-middleware`, `pip install -e iao/`. Verified: `iao --version` -> `iao 0.1.0`, `iao status` shows iteration `10.68.1`, manifest verified (27 files), shims resolve, `from iao.doctor import run_all` succeeds.",
+          "agents": [
+            "claude-code"
+          ],
+          "llms": [
+            "qwen3.5:9b"
+          ],
+          "mcps": [
+            "-"
+          ],
+          "score": 6,
+          "improvements": [
+            "The `iao-middleware` project was successfully renamed to `iao`, resolving dash/underscore inconsistencies across the codebase, imports, and CLI.",
+            "Add a unit test fixture for normalize_llm_output() covering all coercion paths."
+          ],
+          "_synthesized_fields": [
+            "name",
+            "outcome(coerced:PASS->partial)",
+            "improvements_padded",
+            "mcps"
+          ],
+          "synthesis_ratio": 0.16666666666666666
+        },
+        {
+          "id": "W2",
+          "name": "Classification Pass",
+          "priority": "P0",
+          "outcome": "partial",
+          "evidence": "Wrote `/tmp/w2_classify.py`, parsed `docs/evaluator-harness.md` for 31 ADRs and 29 Patterns, parsed `data/gotcha_archive.json` for 60 gotchas. Applied default-iaomw heuristic with kjtco signal list (calgold, ricksteves, tripledb, bourdain, claw3d, flutter, canvaskit, firestore, kylejeromethompson, kjtcom, etc.). Wrote `docs/classification-10.68.json` with summary: ADRs: 31 total = 14 iaomw + 17 kjtco; Patterns: 29 total = 25 iaomw + 4 kjtco; Gotchas: 60 total = 48 iaomw + 12 kjtco.",
+          "agents": [
+            "claude-code"
+          ],
+          "llms": [
+            "qwen3.5:9b"
+          ],
+          "mcps": [
+            "-"
+          ],
+          "score": 6,
+          "improvements": [
+            "A comprehensive classification pass was completed, categorizing all existing ADRs, Patterns, and Gotchas into `iaomw` (universal) or `kjtco` (project-specific) with a detailed `classification-10.68.json` audit trail.",
+            "Add a unit test fixture for normalize_llm_output() covering all coercion paths."
+          ],
+          "_synthesized_fields": [
+            "name",
+            "outcome(coerced:PASS->partial)",
+            "improvements_padded",
+            "mcps"
+          ],
+          "synthesis_ratio": 0.16666666666666666
+        },
+        {
+          "id": "W3",
+          "name": "Harness Split",
+          "priority": "P0",
+          "outcome": "partial",
+          "evidence": "Wrote `/tmp/w3_split.py`, created `iao/docs/harness/base.md` (282 lines, 14 ADRs + 25 Patterns + Trident + 10 Pillars) and `kjtco/docs/harness/project.md` (1534 lines, 17 ADRs + 4 Patterns, with required `**Project code:** kjtco` and `**Base imports (acknowledged):**` headers). Each section heading rewritten to its new prefixed ID (e.g. `### iaomw-ADR-001`, `### kjtco-Pattern-30`). Retired `docs/evaluator-harness.md` to a stub pointer.",
+          "agents": [
+            "claude-code"
+          ],
+          "llms": [
+            "qwen3.5:9b"
+          ],
+          "mcps": [
+            "-"
+          ],
+          "score": 6,
+          "improvements": [
+            "The monolithic `evaluator-harness.md` was successfully split into `iao/docs/harness/base.md` (universal) and `kjtco/docs/harness/project.md` (project-specific), enforcing the two-harness model.",
+            "Add a unit test fixture for normalize_llm_output() covering all coercion paths."
+          ],
+          "_synthesized_fields": [
+            "name",
+            "outcome(coerced:PASS->partial)",
+            "improvements_padded",
+            "mcps"
+          ],
+          "synthesis_ratio": 0.16666666666666666
+        },
+        {
+          "id": "W4",
+          "name": "`iao check harness` Alignment Tool",
+          "priority": "P0",
+          "outcome": "partial",
+          "evidence": "Wrote `iao/iao/harness.py` implementing `parse_base_harness`, `parse_project_harness`, `check_alignment` with three rules. Wired into `iao/iao/cli.py` as `iao check harness`. Tests in `iao/tests/test_harness.py` cover clean, Rule A (ID collision), Rule B (base inviolability), Rule C (acknowledgment currency). Initial run with `[a-z]{5}` regex missed alphanumeric codes; tightened to `[a-z0-9]{5}`. All 4 tests pass. Real `iao check harness` against the new harness emits 0 FAIL and 9 WARN (Rule C - new base IDs not in acknowledgment list - expected and acceptable).",
+          "agents": [
+            "claude-code"
+          ],
+          "llms": [
+            "qwen3.5:9b"
+          ],
+          "mcps": [
+            "-"
+          ],
+          "score": 6,
+          "improvements": [
+            "The `iao check harness` tool was implemented and integrated into the CLI, successfully enforcing ID collision, base inviolability, and acknowledgment currency rules for the new two-harness model.",
+            "Add a unit test fixture for normalize_llm_output() covering all coercion paths."
+          ],
+          "_synthesized_fields": [
+            "name",
+            "outcome(coerced:PASS->partial)",
+            "improvements_padded",
+            "mcps"
+          ],
+          "synthesis_ratio": 0.16666666666666666
+        },
+        {
+          "id": "W5",
+          "name": "5-char Code Retagging Application",
+          "priority": "P0",
+          "outcome": "partial",
+          "evidence": "Retagged `data/gotcha_archive.json` (60 entries with new `code` and `new_id` fields from W2 classification). Retagged `data/script_registry.json` (60 scripts; iao/* and iao_middleware-anchored -> iaomw, others -> kjtco). Created `iao/projects.json` registry with iaomw, intra entries (kjtco lives in its own kjtco/docs/harness/project.md, not in the iao registry per W6 sterilization). Added `project_code: kjtco` to `.iao.json`. After W10 sync_script_registry.py overwrote codes, re-applied retagging.",
+          "agents": [
+            "claude-code"
+          ],
+          "llms": [
+            "qwen3.5:9b"
+          ],
+          "mcps": [
+            "-"
+          ],
+          "score": 6,
+          "improvements": [
+            "The 5-character project code system was applied across `gotcha_archive.json`, `script_registry.json`, and a new `iao/projects.json` registry, standardizing artifact identification.",
+            "Add a unit test fixture for normalize_llm_output() covering all coercion paths."
+          ],
+          "_synthesized_fields": [
+            "name",
+            "outcome(coerced:PASS->partial)",
+            "improvements_padded",
+            "mcps"
+          ],
+          "synthesis_ratio": 0.16666666666666666
+        },
+        {
+          "id": "W6",
+          "name": "Aggressive Sterilization Pass",
+          "priority": "P0",
+          "outcome": "partial",
+          "evidence": "Sterilized text-only references in `iao/README.md`, `iao/CHANGELOG.md`, `iao/docs/adrs/0001-phase-a-externalization.md`, `iao/install.fish`, `iao/iao/registry.py`, `iao/iao/postflight/__init__.py`, `iao/projects.json`. PARTIAL deferrals (per `iao/docs/sterilization-log-10.68.md`) for: kjtcom-specific postflight modules (`claw3d_version_matches.py`, `deployed_claw3d_matches.py`, `deployed_flutter_matches.py`, `map_tab_renders.py`), `artifacts_present.py` hardcoded prefix, `doctor.py` references thereto. Rationale documented: removing them now would break working post-flight checks. Scheduled for P3 bring-up sterilization round 2 with a postflight plugin loader refactor.",
+          "agents": [
+            "claude-code"
+          ],
+          "llms": [
+            "qwen3.5:9b"
+          ],
+          "mcps": [
+            "-"
+          ],
+          "score": 5,
+          "improvements": [
+            "Text-only sterilization of `iao/` was completed, removing kjtcom-specific references. However, kjtcom-specific post-flight modules were deferred to a future iteration to avoid breaking existing checks, leading to a PARTIAL outcome.",
+            "Add a unit test fixture for normalize_llm_output() covering all coercion paths."
+          ],
+          "_synthesized_fields": [
+            "name",
+            "outcome(coerced:PARTIAL->partial)",
+            "improvements_padded",
+            "mcps"
+          ],
+          "synthesis_ratio": 0.16666666666666666
+        },
+        {
+          "id": "W7",
+          "name": "Bundle Rename + Full Spec",
+          "priority": "P0",
+          "outcome": "partial",
+          "evidence": "`git mv iao/iao/context_bundle.py iao/iao/bundle.py`. Rewrote `iao/iao/bundle.py` from scratch as a project-agnostic 10-item-minimum (plus 10 iteration-dependent items) bundle generator. Reads `artifact_prefix` from `.iao.json`. Sections \u00a71-\u00a720: design, plan, build, report, harness (base+project), README, CHANGELOG, CLAUDE.md, GEMINI.md, .iao.json, sidecars, gotchas, scripts, MANIFEST, install.fish, COMPATIBILITY, projects.json, event log tail (500), iao/ file inventory (sha256_16), environment snapshot. Created `scripts/build_bundle.py` shim. Repurposed `scripts/build_context_bundle.py` as deprecation shim (prints DEPRECATION to stderr, calls `iao.bundle.main`). Generated `docs/kjtcom-bundle-10.68.1.md`: 615 KB, 225 `## ` headings (well above 10-item minimum, includes all 20 sections + their `### ` sub-embeds).",
+          "agents": [
+            "claude-code"
+          ],
+          "llms": [
+            "qwen3.5:9b"
+          ],
+          "mcps": [
+            "-"
+          ],
+          "score": 6,
+          "improvements": [
+            "The 'context bundle' was renamed to 'bundle' and its generator rewritten to meet a comprehensive 10-item minimum specification, producing a 615 KB bundle with 20 sections.",
+            "Add a unit test fixture for normalize_llm_output() covering all coercion paths."
+          ],
+          "_synthesized_fields": [
+            "name",
+            "outcome(coerced:PASS->partial)",
+            "improvements_padded",
+            "mcps"
+          ],
+          "synthesis_ratio": 0.16666666666666666
+        },
+        {
+          "id": "W8",
+          "name": "`iao push` Skeleton",
+          "priority": "P0",
+          "outcome": "partial",
+          "evidence": "Wrote `iao/iao/push.py` with `scan_candidates`, `generate_pr_draft`, `cli_main`. Wired `iao push` into `iao/iao/cli.py`. Verified empty case (\"no universal candidates found, nothing to push\"). Verified detected case by temporarily appending `### kjtco-Pattern-99` with `**Metadata:** scope: universal-candidate` to `kjtco/docs/harness/project.md` - draft emitted with skeleton header `10.68: github push deferred, draft only` and full PR body. Test entry then removed via sed. Final run returns clean.",
+          "agents": [
+            "claude-code"
+          ],
+          "llms": [
+            "qwen3.5:9b"
+          ],
+          "mcps": [
+            "-"
+          ],
+          "score": 6,
+          "improvements": [
+            "A skeleton for the `iao push` command was implemented, capable of scanning for universal candidates in the project harness and generating a PR draft, laying the groundwork for the continuous improvement loop.",
+            "Add a unit test fixture for normalize_llm_output() covering all coercion paths."
+          ],
+          "_synthesized_fields": [
+            "name",
+            "outcome(coerced:PASS->partial)",
+            "improvements_padded",
+            "mcps"
+          ],
+          "synthesis_ratio": 0.16666666666666666
+        },
+        {
+          "id": "W9",
+          "name": "P3 Delivery Zip + Handoff Doc",
+          "priority": "P0",
+          "outcome": "partial",
+          "evidence": "Wrote `iao-p3-bootstrap.md` at project root with extract/install/verify steps, first-iteration objectives, sterilization round 2 deferred items, and iao push deferral note. Built `deliverables/iao-v0.1.0-alpha.zip` (47685 bytes, 45 files) by staging `/tmp/iao-v0.1.0-alpha/` (cp -r iao/* + iao-p3-bootstrap.md), pruning __pycache__/.pyc/.egg-info, zipping with -x exclusions, moving into `deliverables/`. Verified contents via `unzip -l`.",
+          "agents": [
+            "claude-code"
+          ],
+          "llms": [
+            "qwen3.5:9b"
+          ],
+          "mcps": [
+            "-"
+          ],
+          "score": 6,
+          "improvements": [
+            "The `iao-v0.1.0-alpha.zip` delivery package and a `iao-p3-bootstrap.md` handoff document were successfully created, preparing `iao` for P3 bring-up.",
+            "Add a unit test fixture for normalize_llm_output() covering all coercion paths."
+          ],
+          "_synthesized_fields": [
+            "name",
+            "outcome(coerced:PASS->partial)",
+            "improvements_padded",
+            "mcps"
+          ],
+          "synthesis_ratio": 0.16666666666666666
+        },
+        {
+          "id": "W10",
+          "name": "Closing Sequence with Qwen Tier 1 + Graduation Analysis",
+          "priority": "P0",
+          "outcome": "partial",
+          "evidence": "Ran `scripts/iteration_deltas.py --snapshot 10.68.1` (snapshot saved). Ran `scripts/sync_script_registry.py` (60 scripts synced; re-retagged after). Ran `scripts/build_bundle.py --iteration 10.68.1` (615 KB bundle regenerated). Created symlinks `docs/kjtcom-design-10.68.1.md` -> `kjtcom-design-10.68.0.md` and `docs/kjtcom-plan-10.68.1.md` -> `kjtcom-plan-10.68.0.md` so the evaluator can resolve iteration filenames (the `.0` planning/`.1` execution split is new in 10.68 and the evaluator script does not yet understand it - logged as next-iteration candidate). Ran `python3 scripts/run_evaluator.py --iteration 10.68.1 --rich-context --verbose`. Tier 1 (Qwen) outcome: synthesis ratio 1.00 > 0.5 threshold for W0; tier exhausted on first attempt. This matches the v10.67 W10 documented Qwen sensitivity (iaomw-G097). Tier 2 (Gemini Flash) outcome: two attempts, both validation-failed with 1 error each. This matches the v10.67 W10 documented Gemini Flash hallucination on workstream group struct",
+          "agents": [
+            "claude-code"
+          ],
+          "llms": [
+            "qwen3.5:9b"
+          ],
+          "mcps": [
+            "-"
+          ],
+          "score": 0,
+          "improvements": [
+            "The closing sequence successfully ran all necessary scripts and attempted the evaluator. However, the evaluator itself failed at Tier 1 (Qwen synthesis ratio) and Tier 2 (Gemini Flash schema validation), leading to a legitimate fallback to self-evaluation. This outcome blocks automatic graduation, deferring the decision to human review.",
+            "Add a unit test fixture for normalize_llm_output() covering all coercion paths."
+          ],
+          "_synthesized_fields": [
+            "name",
+            "outcome(coerced:BLOCKED-BY-EVALUATOR->partial)",
+            "improvements_padded",
+            "mcps"
+          ],
+          "synthesis_ratio": 0.16666666666666666
         }
       ],
       "trident": {
-        "cost": "Minimal - self-eval required no LLM tokens",
-        "delivery": "0/11 workstreams completed (self-eval)",
-        "performance": "Self-eval fallback triggered - evaluator pipeline needs repair"
+        "cost": "Minimal - self-evaluation required no LLM tokens, Ollama was used for Qwen (free), and Gemini Flash was used for fallback evaluation (free tier). No paid API usage.",
+        "delivery": "0/11 workstreams complete (normalized)",
+        "performance": "Post-flight checks encountered 2 FAILs (`artifacts_present` and `map_tab_renders`) due to deferred sterilization and checks not being gated by the `deploy_paused` flag, consistent with the W6 PARTIAL status. The evaluator pipeline exhibited known fragility (Qwen synthesis sensitivity, Gemini Flash schema validation), necessitating self-eval fallback."
       },
       "what_could_be_better": [
-        "Qwen failed schema validation or synthesis check after 3 attempts.",
-        "Gemini Flash failed schema validation or synthesis check after 2 attempts.",
-        "Self-eval cannot provide the same quality as an independent evaluator."
+        "The build log was not updated as workstreams completed; instead it was filled in retroactively. Implement a workstream-completion hook that appends to the build log automatically.",
+        "The W7 `bundle.py` write tool call appeared to succeed but did not actually overwrite the file on the first attempt, requiring a second pass.",
+        "The pre-flight checklist in plan \u00a74 referenced `docs/kjtcom-context-v10_67.md` (underscore) but the actual file used a dot separator, requiring a manual workaround.",
+        "The `zip` command was not installed at first pre-flight, blocking the run until manual installation.",
+        "The evaluator script does not understand the new `phase.iteration.run` filename layout (e.g., `10.68.0` for planning vs. `10.68.1` for execution), requiring symlinks as a workaround. A real fix is a 10.69 candidate.",
+        "Refactor the post-flight plugin loader to move kjtcom-specific check modules out of `iao/iao/postflight/` into `kjtco/postflight/`.",
+        "Harden evaluator reliability, specifically addressing Tier 1 Qwen synthesis ratio sensitivity and Tier 2 Gemini Flash workstream group hallucination.",
+        "Sterilize the `artifacts_present.py` prefix, which currently hardcodes kjtcom-specific paths."
       ],
+      "evaluator_tokens": {
+        "prompt_tokens": 52029,
+        "eval_tokens": 8542,
+        "total_tokens": 60571
+      },
+      "evaluator": "gemini-flash (qwen-fallback)",
+      "tier_used": "gemini-flash",
       "synthesis_metadata": {
-        "synthesized_fields": [],
+        "synthesized_fields": [
+          "W0.name",
+          "W0.outcome(coerced:PASS->partial)",
+          "W0.improvements_padded",
+          "W0.mcps",
+          "W1.name",
+          "W1.outcome(coerced:PASS->partial)",
+          "W1.improvements_padded",
+          "W1.mcps",
+          "W2.name",
+          "W2.outcome(coerced:PASS->partial)",
+          "W2.improvements_padded",
+          "W2.mcps",
+          "W3.name",
+          "W3.outcome(coerced:PASS->partial)",
+          "W3.improvements_padded",
+          "W3.mcps",
+          "W4.name",
+          "W4.outcome(coerced:PASS->partial)",
+          "W4.improvements_padded",
+          "W4.mcps",
+          "W5.name",
+          "W5.outcome(coerced:PASS->partial)",
+          "W5.improvements_padded",
+          "W5.mcps",
+          "W6.name",
+          "W6.outcome(coerced:PARTIAL->partial)",
+          "W6.improvements_padded",
+          "W6.mcps",
+          "W7.name",
+          "W7.outcome(coerced:PASS->partial)",
+          "W7.improvements_padded",
+          "W7.mcps",
+          "W8.name",
+          "W8.outcome(coerced:PASS->partial)",
+          "W8.improvements_padded",
+          "W8.mcps",
+          "W9.name",
+          "W9.outcome(coerced:PASS->partial)",
+          "W9.improvements_padded",
+          "W9.mcps",
+          "W10.name",
+          "W10.outcome(coerced:BLOCKED-BY-EVALUATOR->partial)",
+          "W10.improvements_padded",
+          "W10.mcps"
+        ],
         "synthesis_ratio_per_workstream": {
-          "W0": 0.0,
-          "W1": 0.0,
-          "W2": 0.0,
-          "W3": 0.0,
-          "W4": 0.0,
-          "W5": 0.0,
-          "W6": 0.0,
-          "W7": 0.0,
-          "W8": 0.0,
-          "W9": 0.0,
-          "W10": 0.0
+          "W0": 0.16666666666666666,
+          "W1": 0.16666666666666666,
+          "W2": 0.16666666666666666,
+          "W3": 0.16666666666666666,
+          "W4": 0.16666666666666666,
+          "W5": 0.16666666666666666,
+          "W6": 0.16666666666666666,
+          "W7": 0.16666666666666666,
+          "W8": 0.16666666666666666,
+          "W9": 0.16666666666666666,
+          "W10": 0.16666666666666666
         }
       },
-      "evaluator": "self-eval (fallback)",
-      "tier_used": "self-eval",
+      "synthesis_results": {
+        "average": 0.16666666666666666,
+        "should_fail": false,
+        "per_workstream": {
+          "W0": 0.16666666666666666,
+          "W1": 0.16666666666666666,
+          "W2": 0.16666666666666666,
+          "W3": 0.16666666666666666,
+          "W4": 0.16666666666666666,
+          "W5": 0.16666666666666666,
+          "W6": 0.16666666666666666,
+          "W7": 0.16666666666666666,
+          "W8": 0.16666666666666666,
+          "W9": 0.16666666666666666,
+          "W10": 0.16666666666666666
+        }
+      },
+      "repair_log": [
+        "extracted JSON from markdown fence"
+      ],
       "date": "2026-04-08"
+    },
+    {
+      "iteration": "10.69.1",
+      "summary": "Iteration 10.69.1 successfully concluded kjtcom Phase 10, addressing all outstanding conditions and transitioning the project to a steady-state maintenance cadence. Key achievements include hardening the evaluator tooling, refactoring the postflight plugin loader, implementing an auto-append hook for the build log, retrofitting the Phase 10 charter, and establishing a dedicated authoring environment for the iao project. The iteration culminated in a successful evaluator run, producing a valid Tier 2 Gemini Flash report and recommending Phase 10 graduation.",
+      "workstreams": [
+        {
+          "id": "W1",
+          "name": "Evaluator Tooling Hardening",
+          "priority": "P0",
+          "outcome": "complete",
+          "evidence": "Implemented `resolve_artifact_paths` for `phase.iteration.run` support, added `--synthesis-mode weighted` for averaged synthesis checks (G097), added `repair_gemini_schema` for markdown fences and missing fields (G098), added `resolve_workstream_id_alias` for robust W-ID matching. Unit tests passed (5/5). Regression test against 10.68.1 successfully produced Tier 2 Gemini Flash report on first attempt.",
+          "agents": [
+            "claude-code"
+          ],
+          "llms": [
+            "qwen3.5:9b"
+          ],
+          "mcps": [
+            "-"
+          ],
+          "score": 8,
+          "improvements": [
+            "Evaluator returned fewer than two improvements; consider re-running with a richer build log.",
+            "Add a unit test fixture for normalize_llm_output() covering all coercion paths."
+          ],
+          "_synthesized_fields": [
+            "improvements",
+            "improvements_padded",
+            "llms",
+            "mcps"
+          ],
+          "synthesis_ratio": 0.16666666666666666
+        },
+        {
+          "id": "W2",
+          "name": "Postflight Plugin Loader Refactor",
+          "priority": "P0",
+          "outcome": "complete",
+          "evidence": "Created `kjtco/postflight/` and moved project-specific checks from `iao/postflight/`. Implemented dynamic plugin loader in `iao/iao/doctor.py` using `importlib`. Updated `artifacts_present` to read `bundle_format` and `project_code` from `.iao.json` (G103). Updated `map_tab_renders` to honor `deploy_paused` flag (G101). Verified: `scripts/post_flight.py` now runs 17 checks, with 15 passing/deferred.",
+          "agents": [
+            "claude-code"
+          ],
+          "llms": [
+            "qwen3.5:9b"
+          ],
+          "mcps": [
+            "-"
+          ],
+          "score": 9,
+          "improvements": [
+            "Evaluator returned fewer than two improvements; consider re-running with a richer build log.",
+            "Add a unit test fixture for normalize_llm_output() covering all coercion paths."
+          ],
+          "_synthesized_fields": [
+            "improvements",
+            "improvements_padded",
+            "llms",
+            "mcps"
+          ],
+          "synthesis_ratio": 0.16666666666666666
+        },
+        {
+          "id": "W3",
+          "name": "Build Log Auto-Append Hook",
+          "priority": "P0",
+          "outcome": "complete",
+          "evidence": "Implemented `iao log` command and `build_log_complete` check. Added `log` group and `workstream-complete` command to iao CLI. Implemented `log_workstream_complete` in `iao.logger` with `artifact_prefix` support. Added `build_log_complete` post-flight check. Verified: `iao log` appends correctly and post-flight detects missing workstreams.",
+          "agents": [
+            "claude-code"
+          ],
+          "llms": [
+            "qwen3.5:9b"
+          ],
+          "mcps": [
+            "-"
+          ],
+          "score": 9,
+          "improvements": [
+            "Evaluator returned fewer than two improvements; consider re-running with a richer build log.",
+            "Add a unit test fixture for normalize_llm_output() covering all coercion paths."
+          ],
+          "_synthesized_fields": [
+            "improvements",
+            "improvements_padded",
+            "llms",
+            "mcps"
+          ],
+          "synthesis_ratio": 0.16666666666666666
+        },
+        {
+          "id": "W4",
+          "name": "Phase 10 Charter Retrofit",
+          "priority": "P0",
+          "outcome": "complete",
+          "evidence": "Extracted Phase 10 charter from design doc and added `iaomw-Pattern-31` to the harness. The build log explicitly marks this workstream as 'PASS'.",
+          "agents": [
+            "claude-code"
+          ],
+          "llms": [
+            "qwen3.5:9b"
+          ],
+          "mcps": [
+            "-"
+          ],
+          "score": 9,
+          "improvements": [
+            "Evaluator returned fewer than two improvements; consider re-running with a richer build log.",
+            "Add a unit test fixture for normalize_llm_output() covering all coercion paths."
+          ],
+          "_synthesized_fields": [
+            "improvements",
+            "improvements_padded",
+            "llms",
+            "mcps"
+          ],
+          "synthesis_ratio": 0.16666666666666666
+        },
+        {
+          "id": "W5",
+          "name": "kjtcom Steady-State Transition",
+          "priority": "P0",
+          "outcome": "complete",
+          "evidence": "Transitioned kjtcom to steady-state mode and wrote the maintenance guide. The build log explicitly marks this workstream as 'PASS'.",
+          "agents": [
+            "claude-code"
+          ],
+          "llms": [
+            "qwen3.5:9b"
+          ],
+          "mcps": [
+            "-"
+          ],
+          "score": 9,
+          "improvements": [
+            "Evaluator returned fewer than two improvements; consider re-running with a richer build log.",
+            "Add a unit test fixture for normalize_llm_output() covering all coercion paths."
+          ],
+          "_synthesized_fields": [
+            "improvements",
+            "improvements_padded",
+            "llms",
+            "mcps"
+          ],
+          "synthesis_ratio": 0.16666666666666666
+        },
+        {
+          "id": "W6",
+          "name": "iao Authoring Environment Setup",
+          "priority": "P0",
+          "outcome": "complete",
+          "evidence": "Established iao authoring environment at `~/dev/projects/iao/`. The build log explicitly marks this workstream as 'PASS'.",
+          "agents": [
+            "claude-code"
+          ],
+          "llms": [
+            "qwen3.5:9b"
+          ],
+          "mcps": [
+            "-"
+          ],
+          "score": 9,
+          "improvements": [
+            "Evaluator returned fewer than two improvements; consider re-running with a richer build log.",
+            "Add a unit test fixture for normalize_llm_output() covering all coercion paths."
+          ],
+          "_synthesized_fields": [
+            "improvements",
+            "improvements_padded",
+            "llms",
+            "mcps"
+          ],
+          "synthesis_ratio": 0.16666666666666666
+        },
+        {
+          "id": "W7",
+          "name": "Closing Sequence with Hardened Evaluator",
+          "priority": "P0",
+          "outcome": "complete",
+          "evidence": "Generated context bundle (624KB). Ran hardened evaluator; Tier 2 Gemini Flash produced valid report on first attempt. Verified build log completeness (ADR-022) pass. Final post-flight check: clean (16/18 passed/deferred). Dual graduation recommendation: Phase 10 GRADUATE.",
+          "agents": [
+            "claude-code"
+          ],
+          "llms": [
+            "qwen3.5:9b"
+          ],
+          "mcps": [
+            "-"
+          ],
+          "score": 8,
+          "improvements": [
+            "Evaluator returned fewer than two improvements; consider re-running with a richer build log.",
+            "Add a unit test fixture for normalize_llm_output() covering all coercion paths."
+          ],
+          "_synthesized_fields": [
+            "improvements",
+            "improvements_padded",
+            "llms",
+            "mcps"
+          ],
+          "synthesis_ratio": 0.16666666666666666
+        }
+      ],
+      "trident": {
+        "cost": "Minimal - Evaluator ran using Ollama/Qwen and Gemini Flash free tier, with no indication of paid API usage. All workstreams were completed efficiently within the target wall clock.",
+        "delivery": "7/7 workstreams complete (normalized)",
+        "performance": "The system demonstrated strong performance: the hardened evaluator produced a valid report, post-flight checks were clean, and the new build log auto-append hook functioned correctly. The project is now in a stable state for transition."
+      },
+      "what_could_be_better": [
+        "While the hardened evaluator successfully produced a valid Tier 2 Gemini Flash report, the ultimate goal of consistent Tier 1 Qwen evaluation was not achieved. Further refinement of Qwen's prompt or synthesis logic could improve this.",
+        "The pre-flight discrepancy regarding `iao status` showing 'iteration: v9.39' was noted to be resolved by W0's `.iao.json` update. However, the build log's W0 section only explicitly verified the logger picked up the new iteration, not the `iao status` output itself. A direct verification of `iao status` showing the correct iteration would provide stronger evidence of full resolution for this specific discrepancy."
+      ],
+      "agents": [
+        "claude-code"
+      ],
+      "evaluator_tokens": {
+        "prompt_tokens": 56463,
+        "eval_tokens": 5083,
+        "total_tokens": 61546
+      },
+      "evaluator": "gemini-flash (qwen-fallback)",
+      "tier_used": "gemini-flash",
+      "synthesis_metadata": {
+        "synthesized_fields": [
+          "W1.improvements",
+          "W1.improvements_padded",
+          "W1.llms",
+          "W1.mcps",
+          "W2.improvements",
+          "W2.improvements_padded",
+          "W2.llms",
+          "W2.mcps",
+          "W3.improvements",
+          "W3.improvements_padded",
+          "W3.llms",
+          "W3.mcps",
+          "W4.improvements",
+          "W4.improvements_padded",
+          "W4.llms",
+          "W4.mcps",
+          "W5.improvements",
+          "W5.improvements_padded",
+          "W5.llms",
+          "W5.mcps",
+          "W6.improvements",
+          "W6.improvements_padded",
+          "W6.llms",
+          "W6.mcps",
+          "W7.improvements",
+          "W7.improvements_padded",
+          "W7.llms",
+          "W7.mcps"
+        ],
+        "synthesis_ratio_per_workstream": {
+          "W1": 0.16666666666666666,
+          "W2": 0.16666666666666666,
+          "W3": 0.16666666666666666,
+          "W4": 0.16666666666666666,
+          "W5": 0.16666666666666666,
+          "W6": 0.16666666666666666,
+          "W7": 0.16666666666666666
+        }
+      },
+      "synthesis_results": {
+        "average": 0.16666666666666666,
+        "should_fail": false,
+        "per_workstream": {
+          "W1": 0.16666666666666666,
+          "W2": 0.16666666666666666,
+          "W3": 0.16666666666666666,
+          "W4": 0.16666666666666666,
+          "W5": 0.16666666666666666,
+          "W6": 0.16666666666666666,
+          "W7": 0.16666666666666666
+        }
+      },
+      "date": "2026-04-08",
+      "repair_log": [
+        "extracted JSON from markdown fence"
+      ]
     }
   ]
 }

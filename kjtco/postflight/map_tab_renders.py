@@ -48,8 +48,22 @@ def check_visual_diff(page_name, current_path, threshold=8):
     except Exception as e:
         return ("warn", f"{page_name} diff error: {e}")
 
-def run_all_renders():
+def check():
     """Main entry point for doctor.py."""
+    # G101: Honor deploy_paused
+    from iao.paths import find_project_root
+    import json
+    try:
+        root = find_project_root()
+        iao_json = root / ".iao.json"
+        if iao_json.exists():
+            config = json.loads(iao_json.read_text())
+            if config.get("deploy_paused"):
+                reason = config.get("deploy_paused_reason", "paused")
+                return ("deferred", f"deploy paused: {reason}")
+    except Exception:
+        pass
+
     try:
         from playwright.sync_api import sync_playwright
     except ImportError:

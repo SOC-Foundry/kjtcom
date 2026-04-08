@@ -45,6 +45,13 @@ def run_check(iteration=None):
         print(f"  FAIL: deployed_claw3d_matches (error: {e})")
         return False
 
+def check():
+    """Standard entry point for doctor.py."""
+    res = run_check()
+    if res == "deferred":
+        return ("deferred", "deploy paused")
+    return ("ok" if res is True else "fail", "matches" if res is True else "mismatch")
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("iteration", nargs="?", default=os.environ.get('IAO_ITERATION'))

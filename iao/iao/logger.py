@@ -8,6 +8,7 @@ import json
 import os
 import sys
 from datetime import datetime, timezone
+from pathlib import Path
 
 from iao.paths import find_project_root
 
@@ -57,6 +58,50 @@ try:
 except Exception as _e:
     print(f"[iao_logger] ERROR: {_e}", file=sys.stderr)
     _ITERATION = "MISSING_ENV_VAR"
+
+
+def log_workstream_complete(workstream_id, status, summary):
+    """ADR-022: Append a structured workstream completion entry to the build log. (10.69 W3)"""
+    from iao.paths import find_project_root
+    from datetime import datetime
+    import json
+    
+    try:
+        root = find_project_root()
+        iao_json = root / ".iao.json"
+        
+        # G103: Prefer artifact_prefix for filenames
+        prefix = "kjtcom"
+        if iao_json.exists():
+            config = json.loads(iao_json.read_text())
+            prefix = config.get("artifact_prefix") or config.get("name") or config.get("project_code") or "kjtcom"
+        
+        # Use _ITERATION resolved at module load time
+        build_log_path = root / "docs" / f"{prefix}-build-{_ITERATION}.md"
+        if not build_log_path.exists():
+            # Fallback to current directory or drafts
+            p_local = Path(f"{prefix}-build-{_ITERATION}.md")
+            if p_local.exists():
+                build_log_path = p_local
+            else:
+                draft = root / "docs" / "drafts" / f"{prefix}-build-{_ITERATION}.md"
+                if draft.exists():
+                    build_log_path = draft
+
+        # Prepare entry
+        ts = datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
+        status_tag = status.upper()
+        entry = f"\n### {workstream_id} — {status_tag}\n\n- {summary}\n- Completed: {ts}\n"
+        
+        if build_log_path.exists():
+            with open(build_log_path, 'a') as f:
+                f.write(entry)
+            print(f"[iao.log] Appended {workstream_id} to {build_log_path}")
+        else:
+            print(f"[iao.log] WARNING: build log not found at {build_log_path}; entry lost: {summary}")
+            
+    except Exception as e:
+        print(f"[iao.log] ERROR: {e}")
 
 
 def log_event(event_type, source_agent, target, action,
