@@ -1,10 +1,6 @@
-"""Shim: moved to iao-middleware/lib/query_registry.py in v10.66 W3."""
-import sys
-from pathlib import Path
-_iao_lib = Path(__file__).resolve().parent.parent / "iao-middleware" / "lib"
-if str(_iao_lib) not in sys.path:
-    sys.path.insert(0, str(_iao_lib))
-from query_registry import main  # noqa: E402,F401
+#!/usr/bin/env python3
+"""Shim for iao_middleware.registry — see iao-middleware/iao_middleware/registry.py"""
+from iao_middleware.registry import main
 
 if __name__ == "__main__":
     main()

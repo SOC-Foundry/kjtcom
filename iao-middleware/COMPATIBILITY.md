@@ -13,3 +13,6 @@
 | C9 | NVIDIA GPU CUDA | `nvidia-smi` | no | Only for transcription phases |
 | C10 | jsonschema module | `python3 -c "import jsonschema"` | yes | Evaluator validation |
 | C11 | litellm module | `python3 -c "import litellm"` | yes | Cloud tier eval |
+| C12 | iao CLI status | `iao status` | yes | CLI health |
+| C13 | iao config check | `iao check config` | yes | Config integrity |
+| C14 | iao path-agnostic | `cd /tmp && iao status \| grep -q project` | yes | Path resolution |

@@ -38,8 +38,15 @@ def extract_workstream_ids_from_design(design_path):
     """G98 (v10.66 W8): parse design doc for ### W<N> headers; return sorted IDs."""
     import re as _re
     text = open(design_path).read() if not hasattr(design_path, "read_text") else design_path.read_text()
-    matches = _re.findall(r'^###\s+W(\d+)[\s\u2014\-:]', text, _re.MULTILINE)
-    return [f"W{n}" for n in sorted(set(matches), key=int)]
+    # Support alpha suffixes like W3a, W3b
+    matches = _re.findall(r'^###\s+W(\d+[a-z]?)[\s\u2014\-:]', text, _re.MULTILINE)
+    # Sort by number first, then suffix
+    def sort_key(s):
+        m = _re.match(r'(\d+)([a-z]?)', s)
+        num = int(m.group(1))
+        sfx = m.group(2)
+        return (num, sfx)
+    return [f"W{n}" for n in sorted(set(matches), key=sort_key)]
 
 
 class EvaluatorSynthesisExceeded(Exception):
@@ -246,7 +253,7 @@ def parse_workstream_count(design_doc_path):
 
     # Try heading format first: ### W1: Name (P0)
     for line in lines:
-        m = re.match(r'^###\s+W(\d+)[:\s]+(.+?)(?:\s*\(P\d\))?\s*$', line)
+        m = re.match(r'^###\s+W(\d+[a-z]?)[\s\u2014\-:]+(.+?)(?:\s*\(P\d\))?\s*$', line)
         if m:
             w_count += 1
             w_names.append(m.group(2).strip())
@@ -319,7 +326,7 @@ def parse_executing_agent(design_doc_path):
     return "claude-code"
 
 
-def normalize_llm_output(output, expected_count, expected_names, executing_agent, iteration="v0.0", synthesis_threshold=0.5):
+def normalize_llm_output(output, expected_count, ground_truth_ids, expected_names, executing_agent, iteration="v0.0", synthesis_threshold=0.5):
     """ADR-014/021: Coerce common LLM deviations and track synthesis audit trail.
 
     Returns (normalized_output, synthesis_metadata).
@@ -356,7 +363,8 @@ def normalize_llm_output(output, expected_count, expected_names, executing_agent
         src = ws_raw[i] if i < len(ws_raw) and isinstance(ws_raw[i], dict) else {}
         ws_synthesized = []
         
-        wid = src.get("id") or f"W{i+1}"
+        # Use ground truth IDs and names if not provided by LLM
+        wid = src.get("id") or (ground_truth_ids[i] if i < len(ground_truth_ids) else f"W{i+1}")
         if not src.get("id"): ws_synthesized.append("id")
         
         name = src.get("name") or (expected_names[i] if i < len(expected_names) else f"Workstream {i+1}")
@@ -669,12 +677,11 @@ def call_gemini_flash(prompt):
         return None, {}, 0
 
 
-def generate_self_eval(build_log, design_doc, version, expected_names):
+def generate_self_eval(build_log, design_doc, version, ground_truth_ids, expected_names):
     """Generate a self-evaluation when all LLM evaluators fail."""
     import re
     workstreams = []
-    for i, name in enumerate(expected_names):
-        w_tag = f"W{i+1}"
+    for i, (w_tag, name) in enumerate(zip(ground_truth_ids, expected_names)):
         evidence_lines = []
         name_words = [w.lower() for w in name.split() if len(w) > 3]
         for line in build_log.split('\n'):
@@ -688,7 +695,8 @@ def generate_self_eval(build_log, design_doc, version, expected_names):
         outcome = "partial" if has_evidence else "deferred"
         score = min(6, len(evidence_lines)) if has_evidence else 0
         priority = "P1"
-        p_match = re.search(rf'W{i+1}[:\s].*?\((P\d)\)', design_doc)
+        # Find priority in design doc near the workstream header
+        p_match = re.search(rf'{w_tag}[:\s].*?\((P\d)\)', design_doc)
         if p_match:
             priority = p_match.group(1)
 
@@ -710,7 +718,7 @@ def generate_self_eval(build_log, design_doc, version, expected_names):
             ]
         })
 
-    total = len(expected_names)
+    total = len(ground_truth_ids)
     completed = sum(1 for ws in workstreams if ws['outcome'] == 'complete')
 
     return {
@@ -730,15 +738,21 @@ def generate_self_eval(build_log, design_doc, version, expected_names):
     }
 
 
-def build_evaluator_prompt(version, rich_context, expected_count, expected_names, executing_agent):
+def build_evaluator_prompt(version, rich_context, expected_count, ground_truth_ids, expected_names, executing_agent):
     """Build the shared evaluator prompt with rich context."""
-    ws_list_str = "\n".join(f"  W{i+1}: {name}" for i, name in enumerate(expected_names))
+    ws_list_str = "\n".join(f"  {w_tag}: {name}" for w_tag, name in zip(ground_truth_ids, expected_names))
 
     return f"""You are Qwen, the evaluator for kjtcom.
 
 IMPORTANT: Study the EXAMPLE REPORTS in the context below. Your output must follow the Thompson Schema evaluation logic.
 Use the build log and design doc to score each workstream 1-9 out of 10.
 Use the middleware registry, gotcha archive, and ADRs for context about the project.
+
+GROUND TRUTH WORKSTREAM IDS: {ground_truth_ids}
+You MUST return EXACTLY {expected_count} workstreams with these exact IDs.
+
+WORKSTREAM LIST:
+{ws_list_str}
 
 OUTPUT RULES:
 - Return ONLY a JSON object. No markdown fences. No explanation. No preamble.
@@ -756,7 +770,7 @@ Return ONLY the JSON object following the structure:
 {{"iteration":"{version}","summary":"...","workstreams":[...],"trident":{{"cost":"...","delivery":"...","performance":"..."}},"what_could_be_better":[...]}}"""
 
 
-def try_qwen_tier(base_prompt, harness, expected_count, expected_names, executing_agent, version, threshold=0.5, verbose=False):
+def try_qwen_tier(base_prompt, harness, expected_count, ground_truth_ids, expected_names, executing_agent, version, threshold=0.5, verbose=False):
     """Tier 1: Qwen3.5-9B via Ollama (3 attempts)."""
     current_prompt = base_prompt
     tokens = {}
@@ -794,7 +808,7 @@ def try_qwen_tier(base_prompt, harness, expected_count, expected_names, executin
             continue
 
         try:
-            parsed, metadata = normalize_llm_output(parsed, expected_count, expected_names, executing_agent, version, threshold)
+            parsed, metadata = normalize_llm_output(parsed, expected_count, ground_truth_ids, expected_names, executing_agent, version, threshold)
             errors = validate_qwen_output(parsed, expected_count, expected_names)
         except EvaluatorSynthesisExceeded as e:
             print(f"[EVAL] Qwen synthesis threshold exceeded: {e}")
@@ -816,7 +830,7 @@ def try_qwen_tier(base_prompt, harness, expected_count, expected_names, executin
     return None
 
 
-def try_gemini_tier(base_prompt, expected_count, expected_names, version, threshold=0.5, verbose=False, ground_truth_ids=None):
+def try_gemini_tier(base_prompt, harness, expected_count, ground_truth_ids, expected_names, executing_agent, version, threshold=0.5, verbose=False):
     """Tier 2: Gemini Flash via litellm (2 attempts).
 
     G98 (v10.66 W8): if ground_truth_ids is provided, prepend a design-doc anchor
@@ -851,7 +865,7 @@ def try_gemini_tier(base_prompt, expected_count, expected_names, version, thresh
             continue
 
         try:
-            parsed, metadata = normalize_llm_output(parsed, expected_count, expected_names, "gemini-cli", version, threshold)
+            parsed, metadata = normalize_llm_output(parsed, expected_count, ground_truth_ids, expected_names, "gemini-cli", version, threshold)
             errors = validate_qwen_output(parsed, expected_count, expected_names)
         except EvaluatorSynthesisExceeded as e:
             print(f"[EVAL] Gemini synthesis threshold exceeded: {e}")
@@ -892,26 +906,28 @@ def evaluate_with_retry(version, design_doc_path, threshold=0.5, verbose=False, 
     rich_context = build_rich_context(version)
     harness = load_harness()
 
+    ground_truth_ids = extract_workstream_ids_from_design(design_doc_path)
+    
     base_prompt = build_evaluator_prompt(
-        version, rich_context, expected_count,
-        expected_names, executing_agent
+        version,
+        rich_context,
+        expected_count,
+        ground_truth_ids,
+        expected_names,
+        executing_agent
     )
+
 
     # Tier 1: Qwen
     if test_fallback not in ('gemini', 'self-eval'):
-        result = try_qwen_tier(base_prompt, harness, expected_count, expected_names, executing_agent, version, threshold, verbose)
+        result = try_qwen_tier(base_prompt, harness, expected_count, ground_truth_ids, expected_names, executing_agent, version, threshold, verbose)
         if result: return result
         print("[EVAL] Qwen tier exhausted or threshold exceeded. Falling through to Gemini Flash.")
 
     # Tier 2: Gemini Flash (G98: design-doc anchor)
     if test_fallback != 'self-eval':
         try:
-            ground_truth_ids = extract_workstream_ids_from_design(design_doc_path)
-        except Exception as _e:
-            ground_truth_ids = None
-            print(f"[EVAL] G98: ground truth extraction failed: {_e}")
-        try:
-            result = try_gemini_tier(base_prompt, expected_count, expected_names, version, threshold, verbose, ground_truth_ids=ground_truth_ids)
+            result = try_gemini_tier(base_prompt, harness, expected_count, ground_truth_ids, expected_names, executing_agent, version, threshold, verbose)
             if result: return result
         except EvaluatorHallucinatedWorkstream as e:
             print(f"[EVAL] {e}; falling through to self-eval.")
@@ -925,8 +941,8 @@ def evaluate_with_retry(version, design_doc_path, threshold=0.5, verbose=False, 
             with open(loc) as f: build_log = f.read()
             break
             
-    result = generate_self_eval(build_log, design_content, version, expected_names)
-    _, metadata = normalize_llm_output(result, expected_count, expected_names, executing_agent, version, 1.0) # threshold 1.0 for self-eval
+    result = generate_self_eval(build_log, design_content, version, ground_truth_ids, expected_names)
+    _, metadata = normalize_llm_output(result, expected_count, ground_truth_ids, expected_names, executing_agent, version, 1.0) # threshold 1.0 for self-eval
     result['synthesis_metadata'] = metadata
     result['evaluator'] = 'self-eval (fallback)'
     result['tier_used'] = 'self-eval'

@@ -1099,6 +1099,42 @@ When Qwen Tier 1 fell through on synthesis ratio, Gemini Flash Tier 2 produced s
 
 claw3d.html's hardcoded title and dropdown drifted from the Flutter app's deploy state. Two surfaces -> two checks. Add an in-repo pre-deploy check so staleness fails fast. Cross-ref: G101, ADR-025, W10.
 
+### ADR-026: Phase B Exit Criteria
+
+**Status:** Accepted (v10.67)
+**Goal:** Define binary readiness for standalone repo extraction.
+
+Standalone extraction (Phase B) requires all 5 criteria to be PASS at closing:
+1. **Duplication Eliminated** — `iao-middleware/lib/` deleted, shims only in `scripts/`.
+2. **Doctor Unified** — `pre_flight.py`, `post_flight.py`, and `iao` CLI use shared `doctor.run_all`.
+3. **CLI Stable** — `iao --version` returns 0.1.0, entry points verified.
+4. **Installer Idempotent** — `install.fish` marker block check passes.
+5. **Manifest/Compat Frozen** — Integrity check clean, all required compatibility checks pass.
+
+### ADR-027: Doctor Unification
+
+**Status:** Accepted (v10.67)
+**Goal:** Centralize environment and verification logic.
+
+Project-specific `pre_flight.py` and `post_flight.py` are refactored to be thin wrappers over `iao_middleware.doctor`. 
+- **Levels:** `quick` (sub-second), `preflight` (readiness), `postflight` (verification).
+- **Blockers:** Managed by the project wrapper to allow project-specific severity.
+- **Benefits:** Fixes in check logic (e.g., Ollama reachability, deploy-paused state) apply once to all project entry points.
+
+### ADR-028: Dash/Underscore Naming Convention
+
+**Status:** Accepted (v10.67)
+**Goal:** Resolve Python import vs Git repo naming conflict.
+
+Following the scikit-learn pattern:
+- **Git Repo:** `SOC-Foundry/iao-middleware` (dash)
+- **Local Subdir:** `iao-middleware/` (dash)
+- **Python Package:** `iao_middleware/` (underscore)
+- **Python Import:** `import iao_middleware`
+- **CLI Binary:** `iao` (simple)
+
+This convention ensures that the package is valid for Python's import system while remaining idiomatic for Git and CLI usage.
+
 ---
 
 ## Gotcha Cross-Reference (v10.66 additions)

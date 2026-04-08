@@ -7,5 +7,8 @@
   "current_iteration": "v10.66",
   "phase": 10,
   "evaluator_default_tier": "qwen",
-  "created_at": "2026-04-08T07:00:00+00:00"
+  "created_at": "2026-04-08T07:00:00+00:00",
+  "deploy_paused": true,
+  "deploy_paused_reason": "Focus on iao-middleware Phase A hardening (v10.67) and extraction (v10.68)",
+  "deploy_paused_since": "2026-04-08"
 }

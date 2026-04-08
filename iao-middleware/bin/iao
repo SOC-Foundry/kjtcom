@@ -1,12 +1,17 @@
 #!/usr/bin/env bash
+# iao CLI dispatcher
+# v0.1.0
 set -e
-SCRIPT="$0"
-while [ -L "$SCRIPT" ]; do
-    LINK="$(readlink "$SCRIPT")"
-    case "$LINK" in /*) SCRIPT="$LINK" ;; *) SCRIPT="$(dirname "$SCRIPT")/$LINK" ;; esac
-done
-BIN_DIR="$(cd "$(dirname "$SCRIPT")" && pwd)"
-IAO_HOME="${IAO_MIDDLEWARE_HOME:-$(dirname "$BIN_DIR")}"
-LIB_DIR="$IAO_HOME/lib"
-export IAO_MIDDLEWARE_HOME="$IAO_HOME"
-exec python3 "$LIB_DIR/iao_main.py" "$@"
+
+# Resolve the real script directory (follow symlinks)
+SCRIPT="$(readlink -f "${BASH_SOURCE[0]}")"
+BIN_DIR="$(dirname "$SCRIPT")"
+MIDDLEWARE_ROOT="$(dirname "$BIN_DIR")"
+
+# Ensure iao_middleware package is on path
+# (pyproject.toml install handles this, but fallback for uninstalled use)
+if ! python3 -c "import iao_middleware" 2>/dev/null; then
+    export PYTHONPATH="$MIDDLEWARE_ROOT:$PYTHONPATH"
+fi
+
+exec python3 -m iao_middleware.cli "$@"

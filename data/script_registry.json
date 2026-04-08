@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "last_synced": "2026-04-08T07:08:58.961993Z",
+  "last_synced": "2026-04-08T10:01:53.059996Z",
   "scripts": [
     {
       "path": "pipeline/scripts/backfill_country_codes.py",
@@ -722,32 +722,13 @@
     },
     {
       "path": "scripts/build_context_bundle.py",
-      "purpose": "Context Bundle Generator (ADR-019, expanded to spec \u00a71-\u00a711 in v10.66 W1).",
-      "function_names": [
-        "_resolve_project_root",
-        "_find_doc",
-        "_read",
-        "_embed",
-        "_section_immutable_inputs",
-        "_section_execution_audit",
-        "_section_launch_artifacts",
-        "_section_harness_state",
-        "_dedup_adrs",
-        "_section_platform_state",
-        "_section_delta_state",
-        "_section_pipeline_state",
-        "_tail",
-        "_section_environment_state",
-        "_section_artifacts_inventory",
-        "_section_diagnostic_captures",
-        "_section_install_fish",
-        "build_bundle"
-      ],
+      "purpose": "Shim for iao_middleware.context_bundle \u2014 see iao-middleware/iao_middleware/context_bundle.py",
+      "function_names": [],
       "created_iteration": "unknown",
       "last_modified_date": "2026-04-08",
       "last_used_date": "never",
       "owner_workstream": "unassigned",
-      "lines": 365,
+      "lines": 6,
       "status": "stale",
       "linked_gotchas": [],
       "pipeline": "none",
@@ -757,6 +738,7 @@
         "argparse",
         "datetime",
         "hashlib",
+        "iao_middleware.context_bundle",
         "iao_paths",
         "json",
         "os",
@@ -828,6 +810,24 @@
         "time",
         "utils.iao_logger",
         "utils.ollama_config"
+      ]
+    },
+    {
+      "path": "scripts/check_compatibility.py",
+      "purpose": "Shim for iao_middleware.compatibility \u2014 see iao-middleware/iao_middleware/compatibility.py",
+      "function_names": [],
+      "created_iteration": "unknown",
+      "last_modified_date": "2026-04-08",
+      "last_used_date": "never",
+      "owner_workstream": "unassigned",
+      "lines": 6,
+      "status": "stale",
+      "linked_gotchas": [],
+      "pipeline": "none",
+      "inputs": [],
+      "outputs": [],
+      "dependencies": [
+        "iao_middleware.compatibility"
       ]
     },
     {
@@ -1115,21 +1115,13 @@
       "path": "scripts/post_flight.py",
       "purpose": "Post-flight verification for kjtcom iterations.",
       "function_names": [
-        "verify_site",
-        "verify_bot_status",
-        "verify_bot_query",
-        "verify_mcps",
-        "verify_claw3d_no_external_json",
-        "verify_static_assets",
-        "check_artifacts",
-        "write_urgent_build_break_file",
-        "run_all"
+        "main"
       ],
       "created_iteration": "unknown",
       "last_modified_date": "2026-04-08",
       "last_used_date": "never",
       "owner_workstream": "unassigned",
-      "lines": 416,
+      "lines": 46,
       "status": "stale",
       "linked_gotchas": [],
       "pipeline": "tripledb",
@@ -1137,6 +1129,7 @@
       "outputs": [],
       "dependencies": [
         "firestore_query",
+        "iao_middleware.doctor",
         "json",
         "os",
         "postflight_checks.claw3d_version_matches",
@@ -1156,240 +1149,16 @@
       ]
     },
     {
-      "path": "scripts/postflight_checks/claw3d_label_legibility.py",
-      "purpose": "W3 post-flight check (v10.63): claw3d label legibility screenshot capture.",
-      "function_names": [
-        "run"
-      ],
-      "created_iteration": "unknown",
-      "last_modified_date": "2026-04-06",
-      "last_used_date": "never",
-      "owner_workstream": "unassigned",
-      "lines": 63,
-      "status": "stale",
-      "linked_gotchas": [],
-      "pipeline": "none",
-      "inputs": [],
-      "outputs": [],
-      "dependencies": [
-        "os",
-        "playwright.sync_api",
-        "sys",
-        "time"
-      ]
-    },
-    {
-      "path": "scripts/postflight_checks/claw3d_version_matches.py",
-      "purpose": "claw3d_version_matches.py - in-repo pre-deploy check for claw3d.html version stamp (v10.66 W10, G101).",
-      "function_names": [
-        "check"
-      ],
-      "created_iteration": "unknown",
-      "last_modified_date": "2026-04-08",
-      "last_used_date": "never",
-      "owner_workstream": "unassigned",
-      "lines": 31,
-      "status": "stale",
-      "linked_gotchas": [],
-      "pipeline": "none",
-      "inputs": [],
-      "outputs": [],
-      "dependencies": [
-        "iao_paths",
-        "os",
-        "pathlib",
-        "re",
-        "sys"
-      ]
-    },
-    {
-      "path": "scripts/postflight_checks/dart_analyze_changed.py",
-      "purpose": "Dart analyze check for changed files. (ADR-020)",
-      "function_names": [
-        "get_changed_dart_files",
-        "run_analyze",
-        "run_check"
-      ],
-      "created_iteration": "unknown",
-      "last_modified_date": "2026-04-07",
-      "last_used_date": "never",
-      "owner_workstream": "unassigned",
-      "lines": 93,
-      "status": "stale",
-      "linked_gotchas": [],
-      "pipeline": "none",
-      "inputs": [],
-      "outputs": [],
-      "dependencies": [
-        "os",
-        "pathlib",
-        "re",
-        "subprocess",
-        "sys"
-      ]
-    },
-    {
-      "path": "scripts/postflight_checks/deployed_claw3d_matches.py",
-      "purpose": "Post-flight check: verify deployed claw3d.html version matches IAO_ITERATION.",
-      "function_names": [
-        "run_check"
-      ],
-      "created_iteration": "unknown",
-      "last_modified_date": "2026-04-08",
-      "last_used_date": "never",
-      "owner_workstream": "unassigned",
-      "lines": 34,
-      "status": "stale",
-      "linked_gotchas": [],
-      "pipeline": "none",
-      "inputs": [],
-      "outputs": [],
-      "dependencies": [
-        "argparse",
-        "os",
-        "re",
-        "requests",
-        "sys"
-      ]
-    },
-    {
-      "path": "scripts/postflight_checks/deployed_flutter_matches.py",
-      "purpose": "deployed_flutter_matches.py - verify Flutter app deploy matches IAO_ITERATION (v10.66 W10).",
-      "function_names": [
-        "check"
-      ],
-      "created_iteration": "unknown",
-      "last_modified_date": "2026-04-08",
-      "last_used_date": "never",
-      "owner_workstream": "unassigned",
-      "lines": 28,
-      "status": "stale",
-      "linked_gotchas": [],
-      "pipeline": "none",
-      "inputs": [],
-      "outputs": [],
-      "dependencies": [
-        "os",
-        "re",
-        "sys",
-        "urllib.request"
-      ]
-    },
-    {
-      "path": "scripts/postflight_checks/firebase_oauth_probe.py",
-      "purpose": "Firebase dual-path probe (ADR-023 / G53 / G95).",
-      "function_names": [
-        "check_sa",
-        "check_ci_token",
-        "check_oauth",
-        "run_probe"
-      ],
-      "created_iteration": "unknown",
-      "last_modified_date": "2026-04-08",
-      "last_used_date": "never",
-      "owner_workstream": "unassigned",
-      "lines": 66,
-      "status": "stale",
-      "linked_gotchas": [],
-      "pipeline": "none",
-      "inputs": [],
-      "outputs": [],
-      "dependencies": [
-        "os",
-        "subprocess",
-        "sys"
-      ]
-    },
-    {
-      "path": "scripts/postflight_checks/flutter_build_passes.py",
-      "purpose": "Build gatekeeper post-flight check. (ADR-020)",
-      "function_names": [
-        "is_app_touched",
-        "run_build",
-        "get_error_summary",
-        "run_check"
-      ],
-      "created_iteration": "unknown",
-      "last_modified_date": "2026-04-07",
-      "last_used_date": "never",
-      "owner_workstream": "unassigned",
-      "lines": 87,
-      "status": "stale",
-      "linked_gotchas": [],
-      "pipeline": "none",
-      "inputs": [],
-      "outputs": [],
-      "dependencies": [
-        "os",
-        "pathlib",
-        "subprocess",
-        "sys"
-      ]
-    },
-    {
-      "path": "scripts/postflight_checks/production_data_render.py",
-      "purpose": "W3 post-flight check (v10.63): production data render via Playwright.",
-      "function_names": [
-        "run"
-      ],
-      "created_iteration": "unknown",
-      "last_modified_date": "2026-04-06",
-      "last_used_date": "never",
-      "owner_workstream": "unassigned",
-      "lines": 106,
-      "status": "stale",
-      "linked_gotchas": [],
-      "pipeline": "none",
-      "inputs": [],
-      "outputs": [],
-      "dependencies": [
-        "os",
-        "playwright.sync_api",
-        "sys",
-        "time"
-      ]
-    },
-    {
-      "path": "scripts/postflight_checks/visual_baseline_diff.py",
-      "purpose": "Visual baseline diff check (ADR-018).",
-      "function_names": [
-        "run_check",
-        "main"
-      ],
-      "created_iteration": "unknown",
-      "last_modified_date": "2026-04-06",
-      "last_used_date": "never",
-      "owner_workstream": "unassigned",
-      "lines": 64,
-      "status": "stale",
-      "linked_gotchas": [],
-      "pipeline": "none",
-      "inputs": [],
-      "outputs": [],
-      "dependencies": [
-        "PIL",
-        "imagehash",
-        "json",
-        "os",
-        "playwright.sync_api",
-        "sys",
-        "time"
-      ]
-    },
-    {
       "path": "scripts/pre_flight.py",
       "purpose": "Pre-flight environment verification (ADR-011 / G71).",
       "function_names": [
-        "check",
-        "check_gpu",
-        "check_site",
         "main"
       ],
       "created_iteration": "unknown",
-      "last_modified_date": "2026-04-06",
+      "last_modified_date": "2026-04-08",
       "last_used_date": "never",
       "owner_workstream": "unassigned",
-      "lines": 90,
+      "lines": 53,
       "status": "stale",
       "linked_gotchas": [],
       "pipeline": "none",
@@ -1397,6 +1166,7 @@
       "outputs": [],
       "dependencies": [
         "datetime",
+        "iao_middleware.doctor",
         "os",
         "requests",
         "shutil",
@@ -1435,13 +1205,13 @@
     },
     {
       "path": "scripts/query_registry.py",
-      "purpose": "Shim: moved to iao-middleware/lib/query_registry.py in v10.66 W3.",
+      "purpose": "Shim for iao_middleware.registry \u2014 see iao-middleware/iao_middleware/registry.py",
       "function_names": [],
       "created_iteration": "unknown",
       "last_modified_date": "2026-04-08",
       "last_used_date": "never",
       "owner_workstream": "unassigned",
-      "lines": 10,
+      "lines": 6,
       "status": "stale",
       "linked_gotchas": [],
       "pipeline": "none",
@@ -1451,6 +1221,7 @@
       "outputs": [],
       "dependencies": [
         "argparse",
+        "iao_middleware.registry",
         "json",
         "os",
         "pathlib",
@@ -1516,7 +1287,7 @@
       "last_modified_date": "2026-04-08",
       "last_used_date": "never",
       "owner_workstream": "unassigned",
-      "lines": 1065,
+      "lines": 1081,
       "status": "stale",
       "linked_gotchas": [],
       "pipeline": "none",
@@ -1753,15 +1524,13 @@
     },
     {
       "path": "scripts/utils/iao_logger.py",
-      "purpose": "Structured event logger for IAO P3 Diligence.",
-      "function_names": [
-        "log_event"
-      ],
+      "purpose": "Shim for iao_middleware.logger \u2014 see iao-middleware/iao_middleware/logger.py",
+      "function_names": [],
       "created_iteration": "unknown",
       "last_modified_date": "2026-04-08",
       "last_used_date": "never",
       "owner_workstream": "unassigned",
-      "lines": 64,
+      "lines": 7,
       "status": "stale",
       "linked_gotchas": [],
       "pipeline": "none",
@@ -1769,6 +1538,7 @@
       "outputs": [],
       "dependencies": [
         "datetime",
+        "iao_middleware.logger",
         "json",
         "os",
         "sys"

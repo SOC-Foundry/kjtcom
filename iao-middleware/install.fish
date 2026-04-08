@@ -22,21 +22,21 @@ echo "  destination: ~/iao-middleware/"
 echo ""
 
 # Compatibility check (if checker present)
-if test -f $SCRIPT_DIR/lib/check_compatibility.py
+if test -f $SCRIPT_DIR/iao_middleware/compatibility.py
     echo "Running compatibility check..."
-    python3 $SCRIPT_DIR/lib/check_compatibility.py
+    python3 $SCRIPT_DIR/iao_middleware/compatibility.py
     or begin
         echo "ERROR: compatibility check failed"
         exit 1
     end
 else
-    echo "(compatibility check deferred - W5 not yet shipped)"
+    echo "(compatibility check deferred)"
 end
 
 # Copy components
 mkdir -p ~/iao-middleware
 cp -r $SCRIPT_DIR/bin ~/iao-middleware/
-cp -r $SCRIPT_DIR/lib ~/iao-middleware/
+cp -r $SCRIPT_DIR/iao_middleware ~/iao-middleware/
 cp -r $SCRIPT_DIR/prompts ~/iao-middleware/
 cp -r $SCRIPT_DIR/templates ~/iao-middleware/
 test -f $SCRIPT_DIR/MANIFEST.json; and cp $SCRIPT_DIR/MANIFEST.json ~/iao-middleware/

@@ -1,65 +1,33 @@
 {
-  "version": "0.1",
+  "version": "0.1.0",
+  "generated": "2026-04-08",
   "files": {
-    "__init__.py": {
-      "sha256_16": "e3b0c44298fc1c14",
-      "size": 0
-    },
-    "lib/__init__.py": {
-      "sha256_16": "e3b0c44298fc1c14",
-      "size": 0
-    },
-    "lib/build_context_bundle.py": {
-      "sha256_16": "1be66cf4defce8cf",
-      "size": 12506
-    },
-    "lib/iao_logger.py": {
-      "sha256_16": "f25efd0f59c6eaff",
-      "size": 2582
-    },
-    "lib/iao_paths.py": {
-      "sha256_16": "cc9b66a8edefe97c",
-      "size": 1185
-    },
-    "lib/postflight_checks/__init__.py": {
-      "sha256_16": "e3b0c44298fc1c14",
-      "size": 0
-    },
-    "lib/postflight_checks/claw3d_label_legibility.py": {
-      "sha256_16": "62626367a2525f81",
-      "size": 2232
-    },
-    "lib/postflight_checks/dart_analyze_changed.py": {
-      "sha256_16": "95d06dd8e5cb20f2",
-      "size": 3178
-    },
-    "lib/postflight_checks/deployed_iteration_matches.py": {
-      "sha256_16": "a0adf55f3c60ee6c",
-      "size": 1439
-    },
-    "lib/postflight_checks/firebase_oauth_probe.py": {
-      "sha256_16": "4885d532a85b6fe7",
-      "size": 2528
-    },
-    "lib/postflight_checks/flutter_build_passes.py": {
-      "sha256_16": "33ac9c8f1afb4f63",
-      "size": 2946
-    },
-    "lib/postflight_checks/production_data_render.py": {
-      "sha256_16": "01e7f4325d9a7745",
-      "size": 3854
-    },
-    "lib/postflight_checks/visual_baseline_diff.py": {
-      "sha256_16": "dd4c4e4fddc99172",
-      "size": 2464
-    },
-    "lib/query_registry.py": {
-      "sha256_16": "1df0ab58a1f41ac5",
-      "size": 2507
-    },
-    "lib/test_iao_paths.py": {
-      "sha256_16": "a2223c5c3f301876",
-      "size": 1476
-    }
+    "CHANGELOG.md": "c7a3d3aa62839bdd",
+    "COMPATIBILITY.md": "c752646f54f0bfc1",
+    "README.md": "4e90d9dc1ef00b58",
+    "VERSION": "e9dd8507f4bf0c6f",
+    "__init__.py": "e3b0c44298fc1c14",
+    "bin/iao": "5cd7829ddbc7db90",
+    "docs/adrs/0001-phase-a-externalization.md": "854b6a3fe8d881ed",
+    "iao_middleware/__init__.py": "449c1f21db25a05a",
+    "iao_middleware/cli.py": "d67b249c0b8ab393",
+    "iao_middleware/compatibility.py": "4853d54ee816f6e5",
+    "iao_middleware/context_bundle.py": "9bb7876c85b08053",
+    "iao_middleware/doctor.py": "eab494d72c67cefc",
+    "iao_middleware/logger.py": "4137ff8a4b76e704",
+    "iao_middleware/paths.py": "cc9b66a8edefe97c",
+    "iao_middleware/postflight/__init__.py": "d5470a232b1c4537",
+    "iao_middleware/postflight/artifacts_present.py": "464417b6732737e6",
+    "iao_middleware/postflight/build_gatekeeper.py": "bf6fdfe18e9bc3ef",
+    "iao_middleware/postflight/claw3d_version_matches.py": "7535b04f460137ae",
+    "iao_middleware/postflight/deployed_claw3d_matches.py": "22abbc5fcb1439dd",
+    "iao_middleware/postflight/deployed_flutter_matches.py": "0364ccea5f933563",
+    "iao_middleware/postflight/firestore_baseline.py": "aabf3c804d3841cd",
+    "iao_middleware/postflight/map_tab_renders.py": "bbc99ade99dc265d",
+    "iao_middleware/registry.py": "52f7f0093a378970",
+    "install.fish": "2201de11f2e476d9",
+    "pyproject.toml": "73dc30fbfd3989cf",
+    "tests/test_doctor.py": "9e74d129c8c07f7d",
+    "tests/test_paths.py": "595e624fdb5320c3"
   }
 }
