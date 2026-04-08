@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 """Pre-flight environment verification (ADR-011 / G71).
-Thin wrapper over iao_middleware.doctor.
+Thin wrapper over iao.doctor.
 Follows Pillar 6: Notes discrepancies and proceeds unless a BLOCKER fails.
 """
 import os
 import sys
 from datetime import datetime
-from iao_middleware.doctor import run_all
+from iao.doctor import run_all
 
 def main():
     iteration = os.environ.get("IAO_ITERATION", "unknown")

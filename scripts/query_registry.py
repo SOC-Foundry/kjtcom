@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-"""Shim for iao_middleware.registry — see iao-middleware/iao_middleware/registry.py"""
-from iao_middleware.registry import main
+"""Shim for iao.registry — see iao/iao/registry.py"""
+from iao.registry import main
 
 if __name__ == "__main__":
     main()

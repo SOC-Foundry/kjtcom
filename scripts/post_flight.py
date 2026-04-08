@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 """Post-flight verification for kjtcom iterations.
-Thin wrapper over iao_middleware.doctor.
+Thin wrapper over iao.doctor.
 """
 import os
 import sys
-from iao_middleware.doctor import run_all
+from iao.doctor import run_all
 
 def main():
     iteration = sys.argv[1] if len(sys.argv) > 1 else os.environ.get('IAO_ITERATION', 'unknown')

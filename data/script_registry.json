@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "last_synced": "2026-04-08T10:01:53.059996Z",
+  "last_synced": "2026-04-08T12:56:57.938405Z",
   "scripts": [
     {
       "path": "pipeline/scripts/backfill_country_codes.py",
@@ -25,7 +25,8 @@
         "os",
         "pycountry",
         "sys"
-      ]
+      ],
+      "code": "kjtco"
     },
     {
       "path": "pipeline/scripts/backfill_schema_v3.py",
@@ -51,7 +52,8 @@
         "google.cloud",
         "os",
         "sys"
-      ]
+      ],
+      "code": "kjtco"
     },
     {
       "path": "pipeline/scripts/backfill_tripledb_enrichment.py",
@@ -83,7 +85,8 @@
         "time",
         "urllib.parse",
         "urllib.request"
-      ]
+      ],
+      "code": "kjtco"
     },
     {
       "path": "pipeline/scripts/fix_all_lowercase.py",
@@ -105,7 +108,8 @@
         "argparse",
         "google.cloud",
         "sys"
-      ]
+      ],
+      "code": "kjtco"
     },
     {
       "path": "pipeline/scripts/fix_calgold_shows_case.py",
@@ -127,7 +131,8 @@
         "argparse",
         "google.cloud",
         "sys"
-      ]
+      ],
+      "code": "kjtco"
     },
     {
       "path": "pipeline/scripts/fix_tripledb_shows_case.py",
@@ -149,7 +154,8 @@
         "argparse",
         "google.cloud",
         "sys"
-      ]
+      ],
+      "code": "kjtco"
     },
     {
       "path": "pipeline/scripts/generate_value_index.py",
@@ -172,7 +178,8 @@
         "google.cloud",
         "json",
         "os"
-      ]
+      ],
+      "code": "kjtco"
     },
     {
       "path": "pipeline/scripts/migrate_bourdain_to_production.py",
@@ -195,7 +202,8 @@
         "google.cloud.firestore_v1.base_query",
         "os",
         "sys"
-      ]
+      ],
+      "code": "kjtco"
     },
     {
       "path": "pipeline/scripts/migrate_staging_to_production.py",
@@ -217,7 +225,8 @@
         "firebase_admin",
         "os",
         "sys"
-      ]
+      ],
+      "code": "kjtco"
     },
     {
       "path": "pipeline/scripts/migrate_tripledb.py",
@@ -248,7 +257,8 @@
         "os",
         "re",
         "sys"
-      ]
+      ],
+      "code": "kjtco"
     },
     {
       "path": "pipeline/scripts/phase1_acquire.py",
@@ -282,7 +292,8 @@
         "subprocess",
         "sys",
         "time"
-      ]
+      ],
+      "code": "kjtco"
     },
     {
       "path": "pipeline/scripts/phase2_transcribe.py",
@@ -312,7 +323,8 @@
         "scripts.utils.checkpoint",
         "signal",
         "sys"
-      ]
+      ],
+      "code": "kjtco"
     },
     {
       "path": "pipeline/scripts/phase3_extract.py",
@@ -340,7 +352,8 @@
         "os",
         "scripts.utils.checkpoint",
         "sys"
-      ]
+      ],
+      "code": "kjtco"
     },
     {
       "path": "pipeline/scripts/phase4_normalize.py",
@@ -368,7 +381,8 @@
         "scripts.utils.checkpoint",
         "scripts.utils.thompson_schema",
         "sys"
-      ]
+      ],
+      "code": "kjtco"
     },
     {
       "path": "pipeline/scripts/phase5_geocode.py",
@@ -402,7 +416,8 @@
         "time",
         "urllib.parse",
         "urllib.request"
-      ]
+      ],
+      "code": "kjtco"
     },
     {
       "path": "pipeline/scripts/phase6_enrich.py",
@@ -434,7 +449,8 @@
         "sys",
         "urllib.parse",
         "urllib.request"
-      ]
+      ],
+      "code": "kjtco"
     },
     {
       "path": "pipeline/scripts/phase7_load.py",
@@ -463,7 +479,8 @@
         "os",
         "scripts.utils.checkpoint",
         "sys"
-      ]
+      ],
+      "code": "kjtco"
     },
     {
       "path": "pipeline/scripts/query_assessment.py",
@@ -483,7 +500,8 @@
       "outputs": [],
       "dependencies": [
         "google.cloud"
-      ]
+      ],
+      "code": "kjtco"
     },
     {
       "path": "pipeline/scripts/query_assessment_2.py",
@@ -501,7 +519,8 @@
       "outputs": [],
       "dependencies": [
         "google.cloud"
-      ]
+      ],
+      "code": "kjtco"
     },
     {
       "path": "pipeline/scripts/run_phase2_overnight.py",
@@ -521,7 +540,8 @@
         "os",
         "subprocess",
         "sys"
-      ]
+      ],
+      "code": "kjtco"
     },
     {
       "path": "pipeline/scripts/run_phase3_overnight.py",
@@ -548,7 +568,8 @@
         "os",
         "subprocess",
         "sys"
-      ]
+      ],
+      "code": "kjtco"
     },
     {
       "path": "pipeline/scripts/utils/checkpoint.py",
@@ -574,7 +595,8 @@
       "dependencies": [
         "json",
         "os"
-      ]
+      ],
+      "code": "kjtco"
     },
     {
       "path": "pipeline/scripts/utils/geohash.py",
@@ -592,7 +614,8 @@
       "outputs": [],
       "dependencies": [
         "pipeline.scripts.utils.thompson_schema"
-      ]
+      ],
+      "code": "kjtco"
     },
     {
       "path": "pipeline/scripts/utils/thompson_schema.py",
@@ -620,7 +643,8 @@
         "datetime",
         "hashlib",
         "re"
-      ]
+      ],
+      "code": "kjtco"
     },
     {
       "path": "scripts/analyze_events.py",
@@ -646,7 +670,8 @@
         "json",
         "os",
         "sys"
-      ]
+      ],
+      "code": "kjtco"
     },
     {
       "path": "scripts/bless_baseline.py",
@@ -671,7 +696,8 @@
         "playwright.sync_api",
         "sys",
         "time"
-      ]
+      ],
+      "code": "kjtco"
     },
     {
       "path": "scripts/brave_search.py",
@@ -697,7 +723,8 @@
         "sys",
         "time",
         "utils.iao_logger"
-      ]
+      ],
+      "code": "kjtco"
     },
     {
       "path": "scripts/build_architecture_html.py",
@@ -718,17 +745,37 @@
       "dependencies": [
         "os",
         "sys"
-      ]
+      ],
+      "code": "kjtco"
     },
     {
-      "path": "scripts/build_context_bundle.py",
-      "purpose": "Shim for iao_middleware.context_bundle \u2014 see iao-middleware/iao_middleware/context_bundle.py",
+      "path": "scripts/build_bundle.py",
+      "purpose": "Shim for iao.bundle.",
       "function_names": [],
       "created_iteration": "unknown",
       "last_modified_date": "2026-04-08",
       "last_used_date": "never",
       "owner_workstream": "unassigned",
-      "lines": 6,
+      "lines": 5,
+      "status": "stale",
+      "linked_gotchas": [],
+      "pipeline": "none",
+      "inputs": [],
+      "outputs": [],
+      "dependencies": [
+        "iao.bundle"
+      ],
+      "code": "kjtco"
+    },
+    {
+      "path": "scripts/build_context_bundle.py",
+      "purpose": "DEPRECATED: use scripts/build_bundle.py instead. Renamed in 10.68.1 W7.",
+      "function_names": [],
+      "created_iteration": "unknown",
+      "last_modified_date": "2026-04-08",
+      "last_used_date": "never",
+      "owner_workstream": "unassigned",
+      "lines": 7,
       "status": "stale",
       "linked_gotchas": [],
       "pipeline": "none",
@@ -738,6 +785,7 @@
         "argparse",
         "datetime",
         "hashlib",
+        "iao.bundle",
         "iao_middleware.context_bundle",
         "iao_paths",
         "json",
@@ -748,7 +796,8 @@
         "scripts.firestore_query",
         "subprocess",
         "sys"
-      ]
+      ],
+      "code": "kjtco"
     },
     {
       "path": "scripts/build_registry.py",
@@ -778,7 +827,8 @@
         "requests",
         "sys",
         "time"
-      ]
+      ],
+      "code": "kjtco"
     },
     {
       "path": "scripts/build_registry_v2.py",
@@ -810,11 +860,12 @@
         "time",
         "utils.iao_logger",
         "utils.ollama_config"
-      ]
+      ],
+      "code": "kjtco"
     },
     {
       "path": "scripts/check_compatibility.py",
-      "purpose": "Shim for iao_middleware.compatibility \u2014 see iao-middleware/iao_middleware/compatibility.py",
+      "purpose": "Shim for iao.compatibility \u2014 see iao/iao/compatibility.py",
       "function_names": [],
       "created_iteration": "unknown",
       "last_modified_date": "2026-04-08",
@@ -827,8 +878,10 @@
       "inputs": [],
       "outputs": [],
       "dependencies": [
+        "iao.compatibility",
         "iao_middleware.compatibility"
-      ]
+      ],
+      "code": "kjtco"
     },
     {
       "path": "scripts/cleanup_docs.py",
@@ -851,7 +904,8 @@
       "dependencies": [
         "glob",
         "os"
-      ]
+      ],
+      "code": "kjtco"
     },
     {
       "path": "scripts/embed_archive.py",
@@ -881,7 +935,8 @@
         "sys",
         "time",
         "utils.iao_logger"
-      ]
+      ],
+      "code": "kjtco"
     },
     {
       "path": "scripts/enrich_counties.py",
@@ -915,7 +970,8 @@
         "sys",
         "time",
         "utils.iao_logger"
-      ]
+      ],
+      "code": "kjtco"
     },
     {
       "path": "scripts/firestore_query.py",
@@ -948,7 +1004,8 @@
         "sys",
         "time",
         "utils.iao_logger"
-      ]
+      ],
+      "code": "kjtco"
     },
     {
       "path": "scripts/generate_artifacts.py",
@@ -1002,7 +1059,8 @@
         "time",
         "utils.iao_logger",
         "utils.ollama_logged"
-      ]
+      ],
+      "code": "kjtco"
     },
     {
       "path": "scripts/generate_leaderboard.py",
@@ -1024,7 +1082,8 @@
         "json",
         "os",
         "sys"
-      ]
+      ],
+      "code": "kjtco"
     },
     {
       "path": "scripts/intent_router.py",
@@ -1052,7 +1111,8 @@
         "time",
         "utils.iao_logger",
         "utils.ollama_config"
-      ]
+      ],
+      "code": "kjtco"
     },
     {
       "path": "scripts/iteration_deltas.py",
@@ -1083,7 +1143,8 @@
         "json",
         "os",
         "sys"
-      ]
+      ],
+      "code": "kjtco"
     },
     {
       "path": "scripts/panther_scrape.py",
@@ -1109,7 +1170,8 @@
         "json",
         "os",
         "playwright.async_api"
-      ]
+      ],
+      "code": "kjtco"
     },
     {
       "path": "scripts/post_flight.py",
@@ -1129,6 +1191,7 @@
       "outputs": [],
       "dependencies": [
         "firestore_query",
+        "iao.doctor",
         "iao_middleware.doctor",
         "json",
         "os",
@@ -1146,7 +1209,8 @@
         "sys",
         "time",
         "utils.iao_logger"
-      ]
+      ],
+      "code": "kjtco"
     },
     {
       "path": "scripts/pre_flight.py",
@@ -1166,6 +1230,7 @@
       "outputs": [],
       "dependencies": [
         "datetime",
+        "iao.doctor",
         "iao_middleware.doctor",
         "os",
         "requests",
@@ -1173,7 +1238,8 @@
         "socket",
         "subprocess",
         "sys"
-      ]
+      ],
+      "code": "kjtco"
     },
     {
       "path": "scripts/query_rag.py",
@@ -1201,11 +1267,12 @@
         "sys",
         "time",
         "utils.iao_logger"
-      ]
+      ],
+      "code": "kjtco"
     },
     {
       "path": "scripts/query_registry.py",
-      "purpose": "Shim for iao_middleware.registry \u2014 see iao-middleware/iao_middleware/registry.py",
+      "purpose": "Shim for iao.registry \u2014 see iao/iao/registry.py",
       "function_names": [],
       "created_iteration": "unknown",
       "last_modified_date": "2026-04-08",
@@ -1221,13 +1288,15 @@
       "outputs": [],
       "dependencies": [
         "argparse",
+        "iao.registry",
         "iao_middleware.registry",
         "json",
         "os",
         "pathlib",
         "query_registry",
         "sys"
-      ]
+      ],
+      "code": "kjtco"
     },
     {
       "path": "scripts/run_archive_analysis.py",
@@ -1256,7 +1325,8 @@
         "sys",
         "time",
         "utils.ollama_config"
-      ]
+      ],
+      "code": "kjtco"
     },
     {
       "path": "scripts/run_evaluator.py",
@@ -1309,7 +1379,8 @@
         "time",
         "utils.iao_logger",
         "utils.ollama_config"
-      ]
+      ],
+      "code": "kjtco"
     },
     {
       "path": "scripts/sync_script_registry.py",
@@ -1348,7 +1419,8 @@
         "re",
         "subprocess",
         "time"
-      ]
+      ],
+      "code": "kjtco"
     },
     {
       "path": "scripts/telegram_bot.py",
@@ -1389,7 +1461,8 @@
         "time",
         "utils.iao_logger",
         "utils.ollama_config"
-      ]
+      ],
+      "code": "kjtco"
     },
     {
       "path": "scripts/test_eval_schema.py",
@@ -1425,7 +1498,8 @@
         "jsonschema",
         "os",
         "sys"
-      ]
+      ],
+      "code": "kjtco"
     },
     {
       "path": "scripts/utils/consolidate_gotchas.py",
@@ -1450,7 +1524,8 @@
         "json",
         "os",
         "re"
-      ]
+      ],
+      "code": "kjtco"
     },
     {
       "path": "scripts/utils/consolidate_gotchas_v2.py",
@@ -1476,7 +1551,8 @@
         "json",
         "os",
         "re"
-      ]
+      ],
+      "code": "kjtco"
     },
     {
       "path": "scripts/utils/count_staging.py",
@@ -1495,7 +1571,8 @@
       "dependencies": [
         "firebase_admin",
         "os"
-      ]
+      ],
+      "code": "kjtco"
     },
     {
       "path": "scripts/utils/generate_bourdain_summary.py",
@@ -1520,11 +1597,12 @@
         "glob",
         "json",
         "os"
-      ]
+      ],
+      "code": "kjtco"
     },
     {
       "path": "scripts/utils/iao_logger.py",
-      "purpose": "Shim for iao_middleware.logger \u2014 see iao-middleware/iao_middleware/logger.py",
+      "purpose": "Shim for iao.logger \u2014 see iao/iao/logger.py",
       "function_names": [],
       "created_iteration": "unknown",
       "last_modified_date": "2026-04-08",
@@ -1538,11 +1616,13 @@
       "outputs": [],
       "dependencies": [
         "datetime",
+        "iao.logger",
         "iao_middleware.logger",
         "json",
         "os",
         "sys"
-      ]
+      ],
+      "code": "kjtco"
     },
     {
       "path": "scripts/utils/ollama_config.py",
@@ -1562,7 +1642,8 @@
       "pipeline": "none",
       "inputs": [],
       "outputs": [],
-      "dependencies": []
+      "dependencies": [],
+      "code": "kjtco"
     },
     {
       "path": "scripts/utils/ollama_logged.py",
@@ -1587,7 +1668,8 @@
         "time",
         "utils.iao_logger",
         "utils.ollama_config"
-      ]
+      ],
+      "code": "kjtco"
     },
     {
       "path": "scripts/utils/retry_bless_root.py",
@@ -1608,7 +1690,8 @@
       "dependencies": [
         "playwright.sync_api",
         "time"
-      ]
+      ],
+      "code": "kjtco"
     },
     {
       "path": "scripts/utils/sync_claw3d_data.py",
@@ -1633,7 +1716,8 @@
         "json",
         "os",
         "re"
-      ]
+      ],
+      "code": "kjtco"
     }
   ]
 }

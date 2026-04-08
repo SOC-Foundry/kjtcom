@@ -1,0 +1,803 @@
+{
+  "iteration": "10.68.1",
+  "generated_at": "2026-04-08",
+  "classification_default": "iaomw",
+  "classification_note": "Default is iaomw (universal). Only unambiguously kjtcom-specific items classified as kjtco.",
+  "summary": {
+    "adrs_total": 31,
+    "adrs_iaomw": 14,
+    "adrs_kjtco": 17,
+    "patterns_total": 29,
+    "patterns_iaomw": 25,
+    "patterns_kjtco": 4,
+    "gotchas_total": 60,
+    "gotchas_iaomw": 48,
+    "gotchas_kjtco": 12
+  },
+  "adrs": [
+    {
+      "original_id": "ADR-001",
+      "new_id": "kjtco-ADR-001",
+      "code": "kjtco",
+      "rationale": "contains 'kjtcom'"
+    },
+    {
+      "original_id": "ADR-002",
+      "new_id": "kjtco-ADR-002",
+      "code": "kjtco",
+      "rationale": "contains 'calgold'"
+    },
+    {
+      "original_id": "ADR-003",
+      "new_id": "iaomw-ADR-003",
+      "code": "iaomw",
+      "rationale": "default (no kjtcom-specific signal)"
+    },
+    {
+      "original_id": "ADR-004",
+      "new_id": "kjtco-ADR-004",
+      "code": "kjtco",
+      "rationale": "contains 'flutter'"
+    },
+    {
+      "original_id": "ADR-005",
+      "new_id": "iaomw-ADR-005",
+      "code": "iaomw",
+      "rationale": "default (no kjtcom-specific signal)"
+    },
+    {
+      "original_id": "ADR-006",
+      "new_id": "kjtco-ADR-006",
+      "code": "kjtco",
+      "rationale": "contains 'firestore'"
+    },
+    {
+      "original_id": "ADR-007",
+      "new_id": "iaomw-ADR-007",
+      "code": "iaomw",
+      "rationale": "default (no kjtcom-specific signal)"
+    },
+    {
+      "original_id": "ADR-008",
+      "new_id": "kjtco-ADR-008",
+      "code": "kjtco",
+      "rationale": "contains 'riverpod'"
+    },
+    {
+      "original_id": "ADR-009",
+      "new_id": "iaomw-ADR-009",
+      "code": "iaomw",
+      "rationale": "default (no kjtcom-specific signal)"
+    },
+    {
+      "original_id": "ADR-010",
+      "new_id": "kjtco-ADR-010",
+      "code": "kjtco",
+      "rationale": "contains 'calgold'"
+    },
+    {
+      "original_id": "ADR-011",
+      "new_id": "kjtco-ADR-011",
+      "code": "kjtco",
+      "rationale": "contains 'kjtcom'"
+    },
+    {
+      "original_id": "ADR-012",
+      "new_id": "iaomw-ADR-012",
+      "code": "iaomw",
+      "rationale": "default (no kjtcom-specific signal)"
+    },
+    {
+      "original_id": "ADR-013",
+      "new_id": "kjtco-ADR-013",
+      "code": "kjtco",
+      "rationale": "contains 'calgold'"
+    },
+    {
+      "original_id": "ADR-014",
+      "new_id": "iaomw-ADR-014",
+      "code": "iaomw",
+      "rationale": "default (no kjtcom-specific signal)"
+    },
+    {
+      "original_id": "ADR-015",
+      "new_id": "iaomw-ADR-015",
+      "code": "iaomw",
+      "rationale": "default (no kjtcom-specific signal)"
+    },
+    {
+      "original_id": "ADR-016",
+      "new_id": "iaomw-ADR-016",
+      "code": "iaomw",
+      "rationale": "default (no kjtcom-specific signal)"
+    },
+    {
+      "original_id": "ADR-017",
+      "new_id": "iaomw-ADR-017",
+      "code": "iaomw",
+      "rationale": "default (no kjtcom-specific signal)"
+    },
+    {
+      "original_id": "ADR-018",
+      "new_id": "kjtco-ADR-018",
+      "code": "kjtco",
+      "rationale": "contains 'claw3d'"
+    },
+    {
+      "original_id": "ADR-019",
+      "new_id": "kjtco-ADR-019",
+      "code": "kjtco",
+      "rationale": "contains 'kjtcom'"
+    },
+    {
+      "original_id": "ADR-020",
+      "new_id": "kjtco-ADR-020",
+      "code": "kjtco",
+      "rationale": "contains 'flutter'"
+    },
+    {
+      "original_id": "ADR-021",
+      "new_id": "iaomw-ADR-021",
+      "code": "iaomw",
+      "rationale": "default (no kjtcom-specific signal)"
+    },
+    {
+      "original_id": "ADR-022",
+      "new_id": "kjtco-ADR-022",
+      "code": "kjtco",
+      "rationale": "contains 'calgold'"
+    },
+    {
+      "original_id": "ADR-016",
+      "new_id": "iaomw-ADR-016",
+      "code": "iaomw",
+      "rationale": "default (no kjtcom-specific signal)"
+    },
+    {
+      "original_id": "ADR-017",
+      "new_id": "iaomw-ADR-017",
+      "code": "iaomw",
+      "rationale": "default (no kjtcom-specific signal)"
+    },
+    {
+      "original_id": "ADR-018",
+      "new_id": "kjtco-ADR-018",
+      "code": "kjtco",
+      "rationale": "contains 'claw3d'"
+    },
+    {
+      "original_id": "ADR-023",
+      "new_id": "kjtco-ADR-023",
+      "code": "kjtco",
+      "rationale": "contains 'kjtcom'"
+    },
+    {
+      "original_id": "ADR-024",
+      "new_id": "kjtco-ADR-024",
+      "code": "kjtco",
+      "rationale": "contains 'kjtcom'"
+    },
+    {
+      "original_id": "ADR-025",
+      "new_id": "kjtco-ADR-025",
+      "code": "kjtco",
+      "rationale": "contains 'claw3d'"
+    },
+    {
+      "original_id": "ADR-026",
+      "new_id": "iaomw-ADR-026",
+      "code": "iaomw",
+      "rationale": "default (no kjtcom-specific signal)"
+    },
+    {
+      "original_id": "ADR-027",
+      "new_id": "iaomw-ADR-027",
+      "code": "iaomw",
+      "rationale": "default (no kjtcom-specific signal)"
+    },
+    {
+      "original_id": "ADR-028",
+      "new_id": "kjtco-ADR-028",
+      "code": "kjtco",
+      "rationale": "contains 'claw3d'"
+    }
+  ],
+  "patterns": [
+    {
+      "original_id": "Pattern-1",
+      "new_id": "iaomw-Pattern-01",
+      "code": "iaomw",
+      "rationale": "default (no kjtcom-specific signal)"
+    },
+    {
+      "original_id": "Pattern-2",
+      "new_id": "iaomw-Pattern-02",
+      "code": "iaomw",
+      "rationale": "default (no kjtcom-specific signal)"
+    },
+    {
+      "original_id": "Pattern-3",
+      "new_id": "iaomw-Pattern-03",
+      "code": "iaomw",
+      "rationale": "default (no kjtcom-specific signal)"
+    },
+    {
+      "original_id": "Pattern-4",
+      "new_id": "iaomw-Pattern-04",
+      "code": "iaomw",
+      "rationale": "default (no kjtcom-specific signal)"
+    },
+    {
+      "original_id": "Pattern-5",
+      "new_id": "iaomw-Pattern-05",
+      "code": "iaomw",
+      "rationale": "default (no kjtcom-specific signal)"
+    },
+    {
+      "original_id": "Pattern-6",
+      "new_id": "iaomw-Pattern-06",
+      "code": "iaomw",
+      "rationale": "default (no kjtcom-specific signal)"
+    },
+    {
+      "original_id": "Pattern-7",
+      "new_id": "iaomw-Pattern-07",
+      "code": "iaomw",
+      "rationale": "default (no kjtcom-specific signal)"
+    },
+    {
+      "original_id": "Pattern-8",
+      "new_id": "iaomw-Pattern-08",
+      "code": "iaomw",
+      "rationale": "default (no kjtcom-specific signal)"
+    },
+    {
+      "original_id": "Pattern-9",
+      "new_id": "iaomw-Pattern-09",
+      "code": "iaomw",
+      "rationale": "default (no kjtcom-specific signal)"
+    },
+    {
+      "original_id": "Pattern-10",
+      "new_id": "iaomw-Pattern-10",
+      "code": "iaomw",
+      "rationale": "default (no kjtcom-specific signal)"
+    },
+    {
+      "original_id": "Pattern-11",
+      "new_id": "iaomw-Pattern-11",
+      "code": "iaomw",
+      "rationale": "default (no kjtcom-specific signal)"
+    },
+    {
+      "original_id": "Pattern-12",
+      "new_id": "iaomw-Pattern-12",
+      "code": "iaomw",
+      "rationale": "default (no kjtcom-specific signal)"
+    },
+    {
+      "original_id": "Pattern-13",
+      "new_id": "iaomw-Pattern-13",
+      "code": "iaomw",
+      "rationale": "default (no kjtcom-specific signal)"
+    },
+    {
+      "original_id": "Pattern-14",
+      "new_id": "iaomw-Pattern-14",
+      "code": "iaomw",
+      "rationale": "default (no kjtcom-specific signal)"
+    },
+    {
+      "original_id": "Pattern-15",
+      "new_id": "iaomw-Pattern-15",
+      "code": "iaomw",
+      "rationale": "default (no kjtcom-specific signal)"
+    },
+    {
+      "original_id": "Pattern-16",
+      "new_id": "kjtco-Pattern-16",
+      "code": "kjtco",
+      "rationale": "contains 'claw3d'"
+    },
+    {
+      "original_id": "Pattern-17",
+      "new_id": "iaomw-Pattern-17",
+      "code": "iaomw",
+      "rationale": "default (no kjtcom-specific signal)"
+    },
+    {
+      "original_id": "Pattern-18",
+      "new_id": "iaomw-Pattern-18",
+      "code": "iaomw",
+      "rationale": "default (no kjtcom-specific signal)"
+    },
+    {
+      "original_id": "Pattern-19",
+      "new_id": "kjtco-Pattern-19",
+      "code": "kjtco",
+      "rationale": "contains 'kjtcom'"
+    },
+    {
+      "original_id": "Pattern-21",
+      "new_id": "iaomw-Pattern-21",
+      "code": "iaomw",
+      "rationale": "default (no kjtcom-specific signal)"
+    },
+    {
+      "original_id": "Pattern-22",
+      "new_id": "iaomw-Pattern-22",
+      "code": "iaomw",
+      "rationale": "default (no kjtcom-specific signal)"
+    },
+    {
+      "original_id": "Pattern-23",
+      "new_id": "iaomw-Pattern-23",
+      "code": "iaomw",
+      "rationale": "default (no kjtcom-specific signal)"
+    },
+    {
+      "original_id": "Pattern-24",
+      "new_id": "iaomw-Pattern-24",
+      "code": "iaomw",
+      "rationale": "default (no kjtcom-specific signal)"
+    },
+    {
+      "original_id": "Pattern-25",
+      "new_id": "iaomw-Pattern-25",
+      "code": "iaomw",
+      "rationale": "default (no kjtcom-specific signal)"
+    },
+    {
+      "original_id": "Pattern-26",
+      "new_id": "iaomw-Pattern-26",
+      "code": "iaomw",
+      "rationale": "default (no kjtcom-specific signal)"
+    },
+    {
+      "original_id": "Pattern-27",
+      "new_id": "kjtco-Pattern-27",
+      "code": "kjtco",
+      "rationale": "contains 'calgold'"
+    },
+    {
+      "original_id": "Pattern-28",
+      "new_id": "iaomw-Pattern-28",
+      "code": "iaomw",
+      "rationale": "default (no kjtcom-specific signal)"
+    },
+    {
+      "original_id": "Pattern-29",
+      "new_id": "iaomw-Pattern-29",
+      "code": "iaomw",
+      "rationale": "default (no kjtcom-specific signal)"
+    },
+    {
+      "original_id": "Pattern-30",
+      "new_id": "kjtco-Pattern-30",
+      "code": "kjtco",
+      "rationale": "contains 'claw3d'"
+    }
+  ],
+  "gotchas": [
+    {
+      "original_id": "G1",
+      "original_title": "Heredocs break agents",
+      "new_id": "iaomw-G001",
+      "code": "iaomw",
+      "rationale": "default (no kjtcom-specific signal)"
+    },
+    {
+      "original_id": "G2",
+      "original_title": "CUDA LD_LIBRARY_PATH not set in subprocess environment",
+      "new_id": "iaomw-G002",
+      "code": "iaomw",
+      "rationale": "default (no kjtcom-specific signal)"
+    },
+    {
+      "original_id": "G18",
+      "original_title": "CUDA OOM on RTX 2080 SUPER",
+      "new_id": "iaomw-G018",
+      "code": "iaomw",
+      "rationale": "default (no kjtcom-specific signal)"
+    },
+    {
+      "original_id": "G19",
+      "original_title": "Gemini runs bash by default",
+      "new_id": "iaomw-G019",
+      "code": "iaomw",
+      "rationale": "default (no kjtcom-specific signal)"
+    },
+    {
+      "original_id": "G22",
+      "original_title": "`ls` color codes pollute output",
+      "new_id": "iaomw-G022",
+      "code": "iaomw",
+      "rationale": "default (no kjtcom-specific signal)"
+    },
+    {
+      "original_id": "G23",
+      "original_title": "LD_LIBRARY_PATH CUDA environment variable missing in fish",
+      "new_id": "iaomw-G023",
+      "code": "iaomw",
+      "rationale": "default (no kjtcom-specific signal)"
+    },
+    {
+      "original_id": "G31",
+      "original_title": "TripleDB schema drift during migration",
+      "new_id": "kjtco-G031",
+      "code": "kjtco",
+      "rationale": "contains 'tripledb'"
+    },
+    {
+      "original_id": "G34",
+      "original_title": "Firestore array-contains limits",
+      "new_id": "kjtco-G034",
+      "code": "kjtco",
+      "rationale": "contains 'firestore'"
+    },
+    {
+      "original_id": "G36",
+      "original_title": "Firestore arrayContains queries are case-sensitive",
+      "new_id": "kjtco-G036",
+      "code": "kjtco",
+      "rationale": "contains 'firestore'"
+    },
+    {
+      "original_id": "G37",
+      "original_title": "t_any_shows field contained mixed-case values in TripleDB",
+      "new_id": "kjtco-G037",
+      "code": "kjtco",
+      "rationale": "contains 'tripledb'"
+    },
+    {
+      "original_id": "G39",
+      "original_title": "Detail panel provider not accessible at all viewport sizes",
+      "new_id": "iaomw-G039",
+      "code": "iaomw",
+      "rationale": "default (no kjtcom-specific signal)"
+    },
+    {
+      "original_id": "G41",
+      "original_title": "Widget rebuild triggers event handlers multiple times",
+      "new_id": "iaomw-G041",
+      "code": "iaomw",
+      "rationale": "default (no kjtcom-specific signal)"
+    },
+    {
+      "original_id": "G42",
+      "original_title": "Rotating queries feature overwrites user input",
+      "new_id": "iaomw-G042",
+      "code": "iaomw",
+      "rationale": "default (no kjtcom-specific signal)"
+    },
+    {
+      "original_id": "G45",
+      "original_title": "Query editor cursor bug",
+      "new_id": "kjtco-G045",
+      "code": "kjtco",
+      "rationale": "contains 'flutter'"
+    },
+    {
+      "original_id": "G46",
+      "original_title": "Query appeared to cap results at 1,000 entities",
+      "new_id": "iaomw-G046",
+      "code": "iaomw",
+      "rationale": "default (no kjtcom-specific signal)"
+    },
+    {
+      "original_id": "G47",
+      "original_title": "CanvasKit prevents DOM scraping",
+      "new_id": "kjtco-G047",
+      "code": "kjtco",
+      "rationale": "contains 'canvaskit'"
+    },
+    {
+      "original_id": "G49",
+      "original_title": "TripleDB results displaying show names in title case",
+      "new_id": "kjtco-G049",
+      "code": "kjtco",
+      "rationale": "contains 'tripledb'"
+    },
+    {
+      "original_id": "G50",
+      "original_title": "Parser regex order regression - unquoted matched before quoted values",
+      "new_id": "iaomw-G050",
+      "code": "iaomw",
+      "rationale": "default (no kjtcom-specific signal)"
+    },
+    {
+      "original_id": "G51",
+      "original_title": "Qwen3.5-9B returns empty responses - tokens consumed by internal thinking",
+      "new_id": "iaomw-G051",
+      "code": "iaomw",
+      "rationale": "default (no kjtcom-specific signal)"
+    },
+    {
+      "original_id": "G52",
+      "original_title": "Firecrawl MCP server not loading despite API key being set",
+      "new_id": "iaomw-G052",
+      "code": "iaomw",
+      "rationale": "default (no kjtcom-specific signal)"
+    },
+    {
+      "original_id": "G53",
+      "original_title": "Firebase MCP reauth recurring",
+      "new_id": "iaomw-G053",
+      "code": "iaomw",
+      "rationale": "default (no kjtcom-specific signal)"
+    },
+    {
+      "original_id": "G54",
+      "original_title": "open-interpreter 0.4.3 incompatible with Python 3.14 (pkg_resources removed)",
+      "new_id": "iaomw-G054",
+      "code": "iaomw",
+      "rationale": "default (no kjtcom-specific signal)"
+    },
+    {
+      "original_id": "G62",
+      "original_title": "Self-grading bias accepted as Tier-1",
+      "new_id": "iaomw-G062",
+      "code": "iaomw",
+      "rationale": "default (no kjtcom-specific signal)"
+    },
+    {
+      "original_id": "G63",
+      "original_title": "Acquisition pipeline silently drops failures",
+      "new_id": "iaomw-G063",
+      "code": "iaomw",
+      "rationale": "default (no kjtcom-specific signal)"
+    },
+    {
+      "original_id": "G64",
+      "original_title": "Harness content drift (duplicate sections, stale stamps)",
+      "new_id": "iaomw-G064",
+      "code": "iaomw",
+      "rationale": "default (no kjtcom-specific signal)"
+    },
+    {
+      "original_id": "G65",
+      "original_title": "Rich-context payload exceeds curl argv limit",
+      "new_id": "iaomw-G065",
+      "code": "iaomw",
+      "rationale": "default (no kjtcom-specific signal)"
+    },
+    {
+      "original_id": "G66",
+      "original_title": "Stale claw3d data files",
+      "new_id": "kjtco-G066",
+      "code": "kjtco",
+      "rationale": "contains 'claw3d'"
+    },
+    {
+      "original_id": "G67",
+      "original_title": "Two parallel gotcha numbering schemes",
+      "new_id": "iaomw-G067",
+      "code": "iaomw",
+      "rationale": "default (no kjtcom-specific signal)"
+    },
+    {
+      "original_id": "G68",
+      "original_title": "`iao_event_log.jsonl` tags v10.63 events as `v9.39`",
+      "new_id": "iaomw-G068",
+      "code": "iaomw",
+      "rationale": "default (no kjtcom-specific signal)"
+    },
+    {
+      "original_id": "G69",
+      "original_title": "Claw3D connector labels overflow",
+      "new_id": "kjtco-G069",
+      "code": "kjtco",
+      "rationale": "contains 'claw3d'"
+    },
+    {
+      "original_id": "G70",
+      "original_title": "Post-flight MCP checks version-only",
+      "new_id": "iaomw-G070",
+      "code": "iaomw",
+      "rationale": "default (no kjtcom-specific signal)"
+    },
+    {
+      "original_id": "G71",
+      "original_title": "Agent asks for permission",
+      "new_id": "iaomw-G071",
+      "code": "iaomw",
+      "rationale": "default (no kjtcom-specific signal)"
+    },
+    {
+      "original_id": "G80",
+      "original_title": "Qwen empty reports",
+      "new_id": "iaomw-G080",
+      "code": "iaomw",
+      "rationale": "default (no kjtcom-specific signal)"
+    },
+    {
+      "original_id": "G81",
+      "original_title": "Claw3D `fetch()` 404",
+      "new_id": "kjtco-G081",
+      "code": "kjtco",
+      "rationale": "contains 'claw3d'"
+    },
+    {
+      "original_id": "G82",
+      "original_title": "Qwen schema validation too strict",
+      "new_id": "iaomw-G082",
+      "code": "iaomw",
+      "rationale": "default (no kjtcom-specific signal)"
+    },
+    {
+      "original_id": "G83",
+      "original_title": "Agent overwrites design/plan",
+      "new_id": "iaomw-G083",
+      "code": "iaomw",
+      "rationale": "default (no kjtcom-specific signal)"
+    },
+    {
+      "original_id": "G84",
+      "original_title": "Chip text overflow",
+      "new_id": "iaomw-G084",
+      "code": "iaomw",
+      "rationale": "default (no kjtcom-specific signal)"
+    },
+    {
+      "original_id": "G85",
+      "original_title": "Map 0 of 6181",
+      "new_id": "iaomw-G085",
+      "code": "iaomw",
+      "rationale": "default (no kjtcom-specific signal)"
+    },
+    {
+      "original_id": "G86",
+      "original_title": "Build/report not generated",
+      "new_id": "iaomw-G086",
+      "code": "iaomw",
+      "rationale": "default (no kjtcom-specific signal)"
+    },
+    {
+      "original_id": "G87",
+      "original_title": "Self-grading bias",
+      "new_id": "iaomw-G087",
+      "code": "iaomw",
+      "rationale": "default (no kjtcom-specific signal)"
+    },
+    {
+      "original_id": "G88",
+      "original_title": "Acquisition silent failures",
+      "new_id": "iaomw-G088",
+      "code": "iaomw",
+      "rationale": "default (no kjtcom-specific signal)"
+    },
+    {
+      "original_id": "G89",
+      "original_title": "Harness content drift",
+      "new_id": "iaomw-G089",
+      "code": "iaomw",
+      "rationale": "default (no kjtcom-specific signal)"
+    },
+    {
+      "original_id": "G90",
+      "original_title": "Curl argv too long",
+      "new_id": "iaomw-G090",
+      "code": "iaomw",
+      "rationale": "default (no kjtcom-specific signal)"
+    },
+    {
+      "original_id": "G91",
+      "original_title": "Build-side-effect from late workstreams",
+      "new_id": "iaomw-G091",
+      "code": "iaomw",
+      "rationale": "default (no kjtcom-specific signal)"
+    },
+    {
+      "original_id": "G92",
+      "original_title": "Tier 2 evaluator also produces synthesis padding",
+      "new_id": "iaomw-G092",
+      "code": "iaomw",
+      "rationale": "default (no kjtcom-specific signal)"
+    },
+    {
+      "original_id": "G93",
+      "original_title": "Closing report Trident mismatch with build log",
+      "new_id": "iaomw-G093",
+      "code": "iaomw",
+      "rationale": "default (no kjtcom-specific signal)"
+    },
+    {
+      "original_id": "G94",
+      "original_title": "Gotcha consolidation lost or unaudited entries",
+      "new_id": "iaomw-G094",
+      "code": "iaomw",
+      "rationale": "default (no kjtcom-specific signal)"
+    },
+    {
+      "original_id": "G95",
+      "original_title": "Firebase OAuth path different from SA path",
+      "new_id": "iaomw-G095",
+      "code": "iaomw",
+      "rationale": "default (no kjtcom-specific signal)"
+    },
+    {
+      "original_id": "G96",
+      "original_title": "Magic color constants outside Tokens",
+      "new_id": "iaomw-G096",
+      "code": "iaomw",
+      "rationale": "default (no kjtcom-specific signal)"
+    },
+    {
+      "original_id": "G97",
+      "original_title": "query_rag.py CLI --json flag parsed as positional argument",
+      "new_id": "iaomw-G097",
+      "code": "iaomw",
+      "rationale": "default (no kjtcom-specific signal)"
+    },
+    {
+      "original_id": "G98",
+      "original_title": "Firestore composite index required for rating sort + filter combo",
+      "new_id": "kjtco-G098",
+      "code": "kjtco",
+      "rationale": "contains 'firestore'"
+    },
+    {
+      "original_id": "G99",
+      "original_title": "Gemini Flash model string instability across litellm versions",
+      "new_id": "iaomw-G099",
+      "code": "iaomw",
+      "rationale": "default (no kjtcom-specific signal)"
+    },
+    {
+      "original_id": "G100",
+      "original_title": "Flutter transitive dependency lock",
+      "new_id": "kjtco-G100",
+      "code": "kjtco",
+      "rationale": "contains 'flutter'"
+    },
+    {
+      "original_id": "G153",
+      "original_title": "",
+      "new_id": "iaomw-G153",
+      "code": "iaomw",
+      "rationale": "default (no kjtcom-specific signal)"
+    },
+    {
+      "original_id": "G91",
+      "original_title": "Build-side-effect from late workstreams",
+      "new_id": "iaomw-G091",
+      "code": "iaomw",
+      "rationale": "default (no kjtcom-specific signal)"
+    },
+    {
+      "original_id": "G92",
+      "original_title": "Tier 2 evaluator also produces synthesis padding",
+      "new_id": "iaomw-G092",
+      "code": "iaomw",
+      "rationale": "default (no kjtcom-specific signal)"
+    },
+    {
+      "original_id": "G93",
+      "original_title": "Closing report Trident mismatch with build log",
+      "new_id": "iaomw-G093",
+      "code": "iaomw",
+      "rationale": "default (no kjtcom-specific signal)"
+    },
+    {
+      "original_id": "G94",
+      "original_title": "Gotcha consolidation lost or unaudited entries",
+      "new_id": "iaomw-G094",
+      "code": "iaomw",
+      "rationale": "default (no kjtcom-specific signal)"
+    },
+    {
+      "original_id": "G95",
+      "original_title": "Firebase OAuth path different from SA path",
+      "new_id": "iaomw-G095",
+      "code": "iaomw",
+      "rationale": "default (no kjtcom-specific signal)"
+    },
+    {
+      "original_id": "G96",
+      "original_title": "Magic color constants outside Tokens",
+      "new_id": "iaomw-G096",
+      "code": "iaomw",
+      "rationale": "default (no kjtcom-specific signal)"
+    }
+  ]
+}

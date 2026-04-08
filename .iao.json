@@ -4,11 +4,12 @@
   "artifact_prefix": "kjtcom",
   "gcp_project": "kjtcom-c78cd",
   "env_prefix": "KJTCOM",
-  "current_iteration": "v10.66",
+  "current_iteration": "10.68.1",
   "phase": 10,
   "evaluator_default_tier": "qwen",
   "created_at": "2026-04-08T07:00:00+00:00",
   "deploy_paused": true,
   "deploy_paused_reason": "Focus on iao-middleware Phase A hardening (v10.67) and extraction (v10.68)",
-  "deploy_paused_since": "2026-04-08"
+  "deploy_paused_since": "2026-04-08",
+  "project_code": "kjtco"
 }

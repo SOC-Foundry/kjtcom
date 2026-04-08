@@ -1,0 +1,16 @@
+{
+  "iaomw": {
+    "name": "iao",
+    "path": "self",
+    "status": "phase-B",
+    "registered": "2026-04-08",
+    "description": "iao living template itself"
+  },
+  "intra": {
+    "name": "tachtech-intranet",
+    "path": null,
+    "status": "planned",
+    "registered": "2026-04-08",
+    "description": "TachTech intranet GCP middleware - future iao consumer"
+  }
+}

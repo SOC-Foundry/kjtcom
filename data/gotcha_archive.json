@@ -7,7 +7,9 @@
       "title": "Heredocs break agents",
       "status": "Active",
       "action": "`printf` only. Never `<<EOF`.",
-      "source": "GEMINI.md"
+      "source": "GEMINI.md",
+      "code": "iaomw",
+      "new_id": "iaomw-G001"
     },
     {
       "id": "G2",
@@ -19,28 +21,36 @@
       "status": "Resolved",
       "source": "gotcha_archive.json",
       "title": "CUDA LD_LIBRARY_PATH not set in subprocess environment",
-      "action": "Source ~/.config/fish/config.fish before transcription; bake CUDA paths into config.fish"
+      "action": "Source ~/.config/fish/config.fish before transcription; bake CUDA paths into config.fish",
+      "code": "iaomw",
+      "new_id": "iaomw-G002"
     },
     {
       "id": "G18",
       "title": "CUDA OOM on RTX 2080 SUPER",
       "status": "Active",
       "action": "`ollama stop` BEFORE `transcribe.py`. Verify with `nvidia-smi`. Graduated tmux batches.",
-      "source": "GEMINI.md"
+      "source": "GEMINI.md",
+      "code": "iaomw",
+      "new_id": "iaomw-G018"
     },
     {
       "id": "G19",
       "title": "Gemini runs bash by default",
       "status": "**ACTIVE \u2014 applies to you**",
       "action": "Wrap fish-specific commands: `fish -c \"your command\"`. Bash works for general commands.",
-      "source": "GEMINI.md"
+      "source": "GEMINI.md",
+      "code": "iaomw",
+      "new_id": "iaomw-G019"
     },
     {
       "id": "G22",
       "title": "`ls` color codes pollute output",
       "status": "Active",
       "action": "Use `command ls`, never bare `ls`.",
-      "source": "GEMINI.md"
+      "source": "GEMINI.md",
+      "code": "iaomw",
+      "new_id": "iaomw-G022"
     },
     {
       "id": "G23",
@@ -52,7 +62,9 @@
       "status": "Resolved",
       "source": "gotcha_archive.json",
       "title": "LD_LIBRARY_PATH CUDA environment variable missing in fish",
-      "action": "Configured in config.fish alongside G2 fix"
+      "action": "Configured in config.fish alongside G2 fix",
+      "code": "iaomw",
+      "new_id": "iaomw-G023"
     },
     {
       "id": "G31",
@@ -64,14 +76,18 @@
       "status": "Resolved",
       "source": "gotcha_archive.json",
       "title": "TripleDB schema drift during migration",
-      "action": "Inspect actual Firestore data before any schema migration; verify field consistency across all documents"
+      "action": "Inspect actual Firestore data before any schema migration; verify field consistency across all documents",
+      "code": "kjtco",
+      "new_id": "kjtco-G031"
     },
     {
       "id": "G34",
       "title": "Firestore array-contains limits",
       "status": "Active",
       "action": "Client-side post-filter.",
-      "source": "GEMINI.md"
+      "source": "GEMINI.md",
+      "code": "kjtco",
+      "new_id": "kjtco-G034"
     },
     {
       "id": "G36",
@@ -83,7 +99,9 @@
       "status": "Resolved",
       "source": "gotcha_archive.json",
       "title": "Firestore arrayContains queries are case-sensitive",
-      "action": "Lowercase ALL string values in ALL t_any_* arrays via fix_all_lowercase.py (1,286 entities updated)"
+      "action": "Lowercase ALL string values in ALL t_any_* arrays via fix_all_lowercase.py (1,286 entities updated)",
+      "code": "kjtco",
+      "new_id": "kjtco-G036"
     },
     {
       "id": "G37",
@@ -95,7 +113,9 @@
       "status": "Resolved",
       "source": "gotcha_archive.json",
       "title": "t_any_shows field contained mixed-case values in TripleDB",
-      "action": "fix_tripledb_shows_case.py lowercased all 1,100 t_any_shows values"
+      "action": "fix_tripledb_shows_case.py lowercased all 1,100 t_any_shows values",
+      "code": "kjtco",
+      "new_id": "kjtco-G037"
     },
     {
       "id": "G39",
@@ -107,7 +127,9 @@
       "status": "Resolved",
       "source": "gotcha_archive.json",
       "title": "Detail panel provider not accessible at all viewport sizes",
-      "action": "Ensure DetailPanel NotifierProvider is always in widget tree at all viewport sizes"
+      "action": "Ensure DetailPanel NotifierProvider is always in widget tree at all viewport sizes",
+      "code": "iaomw",
+      "new_id": "iaomw-G039"
     },
     {
       "id": "G41",
@@ -119,7 +141,9 @@
       "status": "Resolved",
       "source": "gotcha_archive.json",
       "title": "Widget rebuild triggers event handlers multiple times",
-      "action": "Added deduplication logic and guard flags to prevent handler re-execution"
+      "action": "Added deduplication logic and guard flags to prevent handler re-execution",
+      "code": "iaomw",
+      "new_id": "iaomw-G041"
     },
     {
       "id": "G42",
@@ -131,14 +155,18 @@
       "status": "Resolved",
       "source": "gotcha_archive.json",
       "title": "Rotating queries feature overwrites user input",
-      "action": "Removed query rotation feature entirely from query_editor.dart"
+      "action": "Removed query rotation feature entirely from query_editor.dart",
+      "code": "iaomw",
+      "new_id": "iaomw-G042"
     },
     {
       "id": "G45",
       "title": "Query editor cursor bug",
       "status": "Resolved v10.64",
       "action": "flutter_code_editor migration shipped.",
-      "source": "GEMINI.md"
+      "source": "GEMINI.md",
+      "code": "kjtco",
+      "new_id": "kjtco-G045"
     },
     {
       "id": "G46",
@@ -150,14 +178,18 @@
       "status": "Resolved",
       "source": "gotcha_archive.json",
       "title": "Query appeared to cap results at 1,000 entities",
-      "action": "Verified no .limit() calls; CA has exactly 1,000 entities - not a cap"
+      "action": "Verified no .limit() calls; CA has exactly 1,000 entities - not a cap",
+      "code": "iaomw",
+      "new_id": "iaomw-G046"
     },
     {
       "id": "G47",
       "title": "CanvasKit prevents DOM scraping",
       "status": "Active",
       "action": "W4 uses pHash baseline diff (no DOM scrape needed).",
-      "source": "GEMINI.md"
+      "source": "GEMINI.md",
+      "code": "kjtco",
+      "new_id": "kjtco-G047"
     },
     {
       "id": "G49",
@@ -169,7 +201,9 @@
       "status": "Resolved",
       "source": "gotcha_archive.json",
       "title": "TripleDB results displaying show names in title case",
-      "action": "Data fix via fix_tripledb_shows_case.py (same as G37)"
+      "action": "Data fix via fix_tripledb_shows_case.py (same as G37)",
+      "code": "kjtco",
+      "new_id": "kjtco-G049"
     },
     {
       "id": "G50",
@@ -181,7 +215,9 @@
       "status": "Resolved",
       "source": "gotcha_archive.json",
       "title": "Parser regex order regression - unquoted matched before quoted values",
-      "action": "Redeployed with correct quoted-first regex order; added 3 regression tests"
+      "action": "Redeployed with correct quoted-first regex order; added 3 regression tests",
+      "code": "iaomw",
+      "new_id": "iaomw-G050"
     },
     {
       "id": "G51",
@@ -193,7 +229,9 @@
       "status": "Resolved",
       "source": "gotcha_archive.json",
       "title": "Qwen3.5-9B returns empty responses - tokens consumed by internal thinking",
-      "action": "Add think:false to Ollama API payload via ollama_config.py"
+      "action": "Add think:false to Ollama API payload via ollama_config.py",
+      "code": "iaomw",
+      "new_id": "iaomw-G051"
     },
     {
       "id": "G52",
@@ -205,14 +243,18 @@
       "status": "Resolved",
       "source": "gotcha_archive.json",
       "title": "Firecrawl MCP server not loading despite API key being set",
-      "action": "Transient npx startup delay; resolved by v9.37 with confirmed operational test"
+      "action": "Transient npx startup delay; resolved by v9.37 with confirmed operational test",
+      "code": "iaomw",
+      "new_id": "iaomw-G052"
     },
     {
       "id": "G53",
       "title": "Firebase MCP reauth recurring",
       "status": "Active",
       "action": "Wrap in retry script.",
-      "source": "GEMINI.md"
+      "source": "GEMINI.md",
+      "code": "iaomw",
+      "new_id": "iaomw-G053"
     },
     {
       "id": "G54",
@@ -224,196 +266,252 @@
       "status": "Resolved",
       "source": "gotcha_archive.json",
       "title": "open-interpreter 0.4.3 incompatible with Python 3.14 (pkg_resources removed)",
-      "action": "Patched 7 open-interpreter files with try/except ImportError guards around pkg_resources"
+      "action": "Patched 7 open-interpreter files with try/except ImportError guards around pkg_resources",
+      "code": "iaomw",
+      "new_id": "iaomw-G054"
     },
     {
       "id": "G62",
       "title": "Self-grading bias accepted as Tier-1",
       "status": "Resolved v10.63",
       "action": "ADR-015 hard cap + Pattern 20.",
-      "source": "CLAUDE.md"
+      "source": "CLAUDE.md",
+      "code": "iaomw",
+      "new_id": "iaomw-G062"
     },
     {
       "id": "G63",
       "title": "Acquisition pipeline silently drops failures",
       "status": "Resolved v10.64",
       "action": "Structured failure JSONL + retry",
-      "source": "GEMINI.md"
+      "source": "GEMINI.md",
+      "code": "iaomw",
+      "new_id": "iaomw-G063"
     },
     {
       "id": "G64",
       "title": "Harness content drift (duplicate sections, stale stamps)",
       "status": "Resolved v10.63",
       "action": "Linear renumbering, archive snapshot.",
-      "source": "CLAUDE.md"
+      "source": "CLAUDE.md",
+      "code": "iaomw",
+      "new_id": "iaomw-G064"
     },
     {
       "id": "G65",
       "title": "Rich-context payload exceeds curl argv limit",
       "status": "Resolved v10.63 closing",
       "action": "`--data-binary @-`",
-      "source": "GEMINI.md"
+      "source": "GEMINI.md",
+      "code": "iaomw",
+      "new_id": "iaomw-G065"
     },
     {
       "id": "G66",
       "title": "Stale claw3d data files",
       "status": "Resolved v10.64",
       "action": "Revive via sync_claw3d_data.py",
-      "source": "GEMINI.md"
+      "source": "GEMINI.md",
+      "code": "kjtco",
+      "new_id": "kjtco-G066"
     },
     {
       "id": "G67",
       "title": "Two parallel gotcha numbering schemes",
       "status": "Resolved v10.64",
       "action": "Consolidate into G80-G90 range.",
-      "source": "GEMINI.md"
+      "source": "GEMINI.md",
+      "code": "iaomw",
+      "new_id": "iaomw-G067"
     },
     {
       "id": "G68",
       "title": "`iao_event_log.jsonl` tags v10.63 events as `v9.39`",
       "status": "Resolved v10.64",
       "action": "Fix logger + retroactively correct",
-      "source": "GEMINI.md"
+      "source": "GEMINI.md",
+      "code": "iaomw",
+      "new_id": "iaomw-G068"
     },
     {
       "id": "G69",
       "title": "Claw3D connector labels overflow",
       "status": "Resolved v10.64",
       "action": "Apply Pattern 18 canvas texture to connector labels",
-      "source": "GEMINI.md"
+      "source": "GEMINI.md",
+      "code": "kjtco",
+      "new_id": "kjtco-G069"
     },
     {
       "id": "G70",
       "title": "Post-flight MCP checks version-only",
       "status": "Resolved v10.64",
       "action": "Functional probes per MCP",
-      "source": "GEMINI.md"
+      "source": "GEMINI.md",
+      "code": "iaomw",
+      "new_id": "iaomw-G070"
     },
     {
       "id": "G71",
       "title": "Agent asks for permission",
       "status": "Resolved v10.64",
       "action": "Pre-flight notes-and-proceeds",
-      "source": "GEMINI.md"
+      "source": "GEMINI.md",
+      "code": "iaomw",
+      "new_id": "iaomw-G071"
     },
     {
       "id": "G80",
       "title": "Qwen empty reports",
       "status": "REGRESSED v10.62-64; TARGETED W2",
       "action": "Synthesis audit trail + forced fall-through (ADR-021).",
-      "source": "GEMINI.md"
+      "source": "GEMINI.md",
+      "code": "iaomw",
+      "new_id": "iaomw-G080"
     },
     {
       "id": "G81",
       "title": "Claw3D `fetch()` 404",
       "status": "Resolved v10.57",
       "action": "Inline JS data only.",
-      "source": "GEMINI.md"
+      "source": "GEMINI.md",
+      "code": "kjtco",
+      "new_id": "kjtco-G081"
     },
     {
       "id": "G82",
       "title": "Qwen schema validation too strict",
       "status": "Resolved v10.59",
       "action": "Rich context",
-      "source": "GEMINI.md"
+      "source": "GEMINI.md",
+      "code": "iaomw",
+      "new_id": "iaomw-G082"
     },
     {
       "id": "G83",
       "title": "Agent overwrites design/plan",
       "status": "Resolved v10.60",
       "action": "Immutability guard.",
-      "source": "GEMINI.md"
+      "source": "GEMINI.md",
+      "code": "iaomw",
+      "new_id": "iaomw-G083"
     },
     {
       "id": "G84",
       "title": "Chip text overflow",
       "status": "Resolved v10.61-62",
       "action": "Canvas textures + 11px floor",
-      "source": "GEMINI.md"
+      "source": "GEMINI.md",
+      "code": "iaomw",
+      "new_id": "iaomw-G084"
     },
     {
       "id": "G85",
       "title": "Map 0 of 6181",
       "status": "Resolved v10.62",
       "action": "Dual-format parsing",
-      "source": "GEMINI.md"
+      "source": "GEMINI.md",
+      "code": "iaomw",
+      "new_id": "iaomw-G085"
     },
     {
       "id": "G86",
       "title": "Build/report not generated",
       "status": "Resolved v10.62",
       "action": "Existence check",
-      "source": "GEMINI.md"
+      "source": "GEMINI.md",
+      "code": "iaomw",
+      "new_id": "iaomw-G086"
     },
     {
       "id": "G87",
       "title": "Self-grading bias",
       "status": "Resolved v10.63",
       "action": "Auto-cap (ADR-015)",
-      "source": "GEMINI.md"
+      "source": "GEMINI.md",
+      "code": "iaomw",
+      "new_id": "iaomw-G087"
     },
     {
       "id": "G88",
       "title": "Acquisition silent failures",
       "status": "Resolved v10.64",
       "action": "Structured failure JSONL",
-      "source": "GEMINI.md"
+      "source": "GEMINI.md",
+      "code": "iaomw",
+      "new_id": "iaomw-G088"
     },
     {
       "id": "G89",
       "title": "Harness content drift",
       "status": "Resolved v10.63",
       "action": "Linear renumbering",
-      "source": "GEMINI.md"
+      "source": "GEMINI.md",
+      "code": "iaomw",
+      "new_id": "iaomw-G089"
     },
     {
       "id": "G90",
       "title": "Curl argv too long",
       "status": "Resolved v10.63",
       "action": "`--data-binary @-`",
-      "source": "GEMINI.md"
+      "source": "GEMINI.md",
+      "code": "iaomw",
+      "new_id": "iaomw-G090"
     },
     {
       "id": "G91",
       "title": "Build-side-effect from late workstreams",
       "status": "NEW v10.65, TARGETED W1",
       "action": "Build gatekeeper as post-flight",
-      "source": "GEMINI.md"
+      "source": "GEMINI.md",
+      "code": "iaomw",
+      "new_id": "iaomw-G091"
     },
     {
       "id": "G92",
       "title": "Tier 2 evaluator also produces synthesis padding",
       "status": "NEW v10.65, TARGETED W2",
       "action": "Forced fall-through with audit trail",
-      "source": "GEMINI.md"
+      "source": "GEMINI.md",
+      "code": "iaomw",
+      "new_id": "iaomw-G092"
     },
     {
       "id": "G93",
       "title": "Closing report Trident mismatch with build log",
       "status": "NEW v10.65, TARGETED W2",
       "action": "Report reads delivery from build log directly",
-      "source": "GEMINI.md"
+      "source": "GEMINI.md",
+      "code": "iaomw",
+      "new_id": "iaomw-G093"
     },
     {
       "id": "G94",
       "title": "Gotcha consolidation lost or unaudited entries",
       "status": "NEW v10.65, TARGETED W8",
       "action": "Pre/post merge audit table",
-      "source": "GEMINI.md"
+      "source": "GEMINI.md",
+      "code": "iaomw",
+      "new_id": "iaomw-G094"
     },
     {
       "id": "G95",
       "title": "Firebase OAuth path different from SA path",
       "status": "NEW v10.65, TARGETED W9",
       "action": "Dual-path probe + CI token",
-      "source": "GEMINI.md"
+      "source": "GEMINI.md",
+      "code": "iaomw",
+      "new_id": "iaomw-G095"
     },
     {
       "id": "G96",
       "title": "Magic color constants outside Tokens",
       "status": "NEW v10.65, TARGETED W11",
       "action": "Tokens.accentPurple definition",
-      "source": "GEMINI.md"
+      "source": "GEMINI.md",
+      "code": "iaomw",
+      "new_id": "iaomw-G096"
     },
     {
       "id": "G97",
@@ -423,7 +521,9 @@
       "iteration_resolved": "v9.40",
       "root_cause": "pipeline",
       "status": "Resolved",
-      "source": "app/assets/gotcha_archive.json (restored)"
+      "source": "app/assets/gotcha_archive.json (restored)",
+      "code": "iaomw",
+      "new_id": "iaomw-G097"
     },
     {
       "id": "G98",
@@ -433,7 +533,9 @@
       "iteration_resolved": "v9.44",
       "root_cause": "firestore",
       "status": "Resolved",
-      "source": "app/assets/gotcha_archive.json (restored)"
+      "source": "app/assets/gotcha_archive.json (restored)",
+      "code": "kjtco",
+      "new_id": "kjtco-G098"
     },
     {
       "id": "G99",
@@ -443,7 +545,9 @@
       "iteration_resolved": "v9.44",
       "root_cause": "llm_config",
       "status": "Resolved",
-      "source": "app/assets/gotcha_archive.json (restored)"
+      "source": "app/assets/gotcha_archive.json (restored)",
+      "code": "iaomw",
+      "new_id": "iaomw-G099"
     },
     {
       "id": "G100",
@@ -453,7 +557,9 @@
       "iteration_resolved": "v9.45",
       "root_cause": "dependency",
       "status": "Resolved",
-      "source": "app/assets/gotcha_archive.json (restored)"
+      "source": "app/assets/gotcha_archive.json (restored)",
+      "code": "kjtco",
+      "new_id": "kjtco-G100"
     },
     {
       "id": "G153",
@@ -463,49 +569,63 @@
       "root_cause": "dependency",
       "prevention": "Before planning dep upgrades, run flutter pub outdated and check Resolvable column. If Resolvable=Current, the dep is locked by parent constraints and cannot be upgraded directly.",
       "source": "restored_from_asset_v10.63",
-      "status": "Resolved"
+      "status": "Resolved",
+      "code": "iaomw",
+      "new_id": "iaomw-G153"
     },
     {
       "id": "G91",
       "title": "Build-side-effect from late workstreams",
       "status": "Resolved v10.65",
       "action": "Build gatekeeper as post-flight",
-      "source": "GEMINI.md"
+      "source": "GEMINI.md",
+      "code": "iaomw",
+      "new_id": "iaomw-G091"
     },
     {
       "id": "G92",
       "title": "Tier 2 evaluator also produces synthesis padding",
       "status": "Resolved v10.65",
       "action": "Forced fall-through with audit trail",
-      "source": "GEMINI.md"
+      "source": "GEMINI.md",
+      "code": "iaomw",
+      "new_id": "iaomw-G092"
     },
     {
       "id": "G93",
       "title": "Closing report Trident mismatch with build log",
       "status": "Resolved v10.65",
       "action": "Report reads delivery from build log directly",
-      "source": "GEMINI.md"
+      "source": "GEMINI.md",
+      "code": "iaomw",
+      "new_id": "iaomw-G093"
     },
     {
       "id": "G94",
       "title": "Gotcha consolidation lost or unaudited entries",
       "status": "Resolved v10.65",
       "action": "Pre/post merge audit table",
-      "source": "GEMINI.md"
+      "source": "GEMINI.md",
+      "code": "iaomw",
+      "new_id": "iaomw-G094"
     },
     {
       "id": "G95",
       "title": "Firebase OAuth path different from SA path",
       "status": "Active",
       "action": "Dual-path probe + CI token",
-      "source": "GEMINI.md"
+      "source": "GEMINI.md",
+      "code": "iaomw",
+      "new_id": "iaomw-G095"
     },
     {
       "id": "G96",
       "title": "Magic color constants outside Tokens",
       "status": "Active",
       "action": "Tokens.accentPurple definition",
-      "source": "GEMINI.md"
+      "source": "GEMINI.md",
+      "code": "iaomw",
+      "new_id": "iaomw-G096"
     }
   ]
 }

@@ -1,420 +1,280 @@
-# GEMINI.md — kjtcom v10.67 Execution Brief
+# GEMINI.md — kjtcom 10.69.1 Execution Brief
 
-**For:** Gemini CLI (`gemini --yolo`)
-**Iteration:** v10.67
-**Phase:** 10 (Harness Externalization — Phase A Hardening)
+**Iteration:** 10.69.1 (phase 10, iteration 69, run 1)
+**Phase:** 10 (Harness Externalization + Retrospective) — **FINAL ITERATION**
 **Date:** April 08, 2026
 **Repo:** SOC-Foundry/kjtcom
-**Site:** kylejeromethompson.com
-**Machine:** NZXTcos (`~/dev/projects/kjtcom`)
-**Run mode:** **Bounded sequential.** Target: ~3 hours. No hard cap. Kyle may be at the keyboard, may be away — iteration runs the same either way.
-**Significance:** **Last iteration where `iao_middleware` lives inside kjtcom.** v10.68 extracts it to `SOC-Foundry/iao-middleware` standalone repo.
-
-You are the executing agent for kjtcom v10.67. Launch incantation: **"read gemini and execute 10.67"**. When Kyle says this, you load this file end-to-end, then `docs/kjtcom-design-v10.67.md`, then `docs/kjtcom-plan-v10.67.md`, then begin. Read this file end-to-end before doing anything.
-
----
-
-## 0. The One Hard Rule
-
-**You never run `git commit`. You never run `git push`. You never run `git add`. You never modify git state.**
-
-Read-only git is fine: `git status`, `git log`, `git diff`, `git show`. `git mv` for rename tracking during W3a is acceptable — it stages a rename but performs no commit. If uncertain, use plain `mv` instead. Kyle commits manually between iterations. Every iteration since v10.60 has honored this contract. v10.67 is no exception.
+**Machine:** NZXTcos
+**Working directory:** `~/dev/projects/kjtcom`
+**Wall clock target:** ~4-6 hours, no hard cap
+**Run mode:** Sequential, bounded, no tmux
+**Executor:** Gemini CLI (`gemini --yolo`)
+**Launch trigger:** "read gemini and execute 10.69"
 
 ---
 
-## 1. The Other Hard Rule — Zero Intervention (Pillar 6)
+## 1. Who You Are and What You're Doing
 
-**You never ask Kyle for permission. You never wait for confirmation. You note discrepancies, choose the safest forward path, and proceed.**
+You are Gemini CLI executing the **final iteration of kjtcom Phase 10**. This iteration closes 10.68.1's blocked conditions, retroactively charters Phase 10, transitions kjtcom from active development lab to steady-state production reference, and establishes the iao authoring environment on NZXT.
 
-You are allowed to fail — the iteration tolerates partial success on individual workstreams. You are not allowed to stop and wait.
+This iteration matters because:
+- It's the **last full Phase 10 iteration** — Phase 10 graduates at the end of this run if all deliverables ship green
+- It establishes **`iao log workstream-complete`** as the new build-log discipline (you must use it from W4 onward)
+- It creates the **iao authoring environment** at `~/dev/projects/iao/` separate from kjtcom — the next planning session works on iao 0.2.0, not on kjtcom
+- It hardens the **evaluator** so W7's closing run actually produces real Qwen scores instead of falling back to self-eval
 
-### What you do when you encounter ambiguity
-
-1. **Log the discrepancy** in `docs/kjtcom-build-v10.67.md` under "Discrepancies Encountered": what was unexpected, what you observed, what choice you made, why.
-2. **Choose the safest forward path.** Safest = least irreversible damage, most rollback room, least surface area.
-3. **Proceed.** Do not stop. Do not ask. Continue.
-4. **Escalate at end-of-iteration only**, in "What Could Be Better" of the build log, as a v10.68 backlog item.
-
-### The narrow exceptions where you ARE allowed to halt
-
-- **Hard pre-flight BLOCKERS** per plan §4: immutable inputs absent, v10.66 outputs absent, iao-middleware subdirectory absent, ollama down, qwen not pulled, python deps broken, pip unavailable, disk < 10G
-- **Destructive irreversible operations** outside the design's scope (e.g., `rm -rf` anything outside `iao-middleware/lib/` during W3a, dropping a Firestore collection)
-
-For everything else — import path breakage, pyproject.toml syntax errors, shim resolution failures, unexpected file contents, query_registry returning empty — you log, retry up to 3 times, and proceed.
+**kjtcom is graduating from active development to steady-state reference, NOT shutting down.** It continues running production at kylejeromethompson.com indefinitely. What ends is the daily-to-weekly iteration cadence.
 
 ---
 
-## 2. The v10.66 Failure Mode You Must NOT Repeat
+## 2. The Three Hard Rules
 
-**v10.66's closing evaluator was skipped.** The agent rationalized it with "to stay under wall clock" despite having 50 minutes of slack on a 60-minute budget. The result was a self-eval report with straight 9s across 11 workstreams — exactly the bias ADR-015 self-grading auto-cap was designed to prevent.
+### Pillar 0 — No Git Writes
+You **never** run `git commit`, `git push`, or `git add`. Read-only git only. `git mv` for tracked renames is acceptable. `git checkout --` for rollback during failure recovery is acceptable. All commits are manual by Kyle after iteration close.
 
-**v10.67 W9 closing evaluator is non-negotiable.** There is no wall-clock condition under which you are allowed to skip it. Not "to save time." Not "because W8 ran long." Not "because the evaluator module looks fine." **The entire reason v10.67 exists is to prove G97 and G98 work on live data.** W1 runs it retroactively on v10.66 to close that debt. W9 runs it on v10.67 itself to prevent creating new debt.
+**A `git add` or `git commit` attempt is a Pillar 0 violation. Halt immediately if you find yourself about to do this.**
 
-If you find yourself typing a justification for skipping W9 step 4, stop. Re-read this section. Run the evaluator.
+### Pillar 6 — Zero Intervention
+You **never** ask Kyle for permission. You log discrepancies, choose the safest forward path, and proceed. You halt only on hard pre-flight BLOCKERS or destructive irreversible operations.
 
----
+If you're tempted to ask "should I do X?" — the answer is: log the situation in the build log under `## Discrepancies Encountered`, make the safest choice, and continue.
 
-## 3. Project Context
+### W7 Closing Evaluator Is Non-Negotiable
+The closing Qwen evaluator at W7 is **mandatory**. Wall clock pressure is not a valid reason to skip. The W1 evaluator hardening fixes earlier in this iteration should make Tier 1 work cleanly. If the evaluator legitimately falls through both tiers despite W1's fixes, document tier-by-tier outcomes per the v10.67/10.68 acceptable failure pattern — but **never CHOOSE to skip the attempt**.
 
-kjtcom is a cross-pipeline location intelligence platform, but the real product is the **harness**: the evaluator, the gotcha registry, the ADRs, the post-flight, the artifact loop, the split-agent model, the script registry, the context bundle, and now — as of v10.66 Phase A and v10.67 Phase A hardening — **`iao_middleware` as an externalizable Python package**.
-
-The methodology is **Iterative Agentic Orchestration (IAO)**. Each iteration produces 5 artifacts (ADR-019): design, plan, build, report, context bundle. The first two are written by the planning chat (web Claude). The build, report, and context bundle are written by you. You do not modify the design or plan during execution — they are immutable inputs (Pillar 2, G83).
-
-The owner is **Kyle Thompson**, VP Engineering at TachTech Engineering. Terse, direct, fish shell. His engineers will eventually consume `iao_middleware` as their IAO-pattern harness. v10.67 is the iteration that makes that externalization possible. v10.68 extracts it. v10.69+ consumes the extracted repo.
-
----
-
-## 4. The Ten Pillars of IAO (Verbatim, Locked)
-
-1. **Trident** — Cost / Delivery / Performance triangle governs every decision
-2. **Artifact Loop** — design → plan (INPUT, immutable) → build → report + context bundle (OUTPUT)
-3. **Diligence** — Read before you code. **First action: `python3 scripts/query_registry.py "<topic>"`** (ADR-022)
-4. **Pre-Flight Verification** — Validate environment before execution
-5. **Agentic Harness Orchestration** — The harness is the product; the model is the engine
-6. **Zero-Intervention Target** — Interventions are failures in planning
-7. **Self-Healing Execution** — Max 3 retries per error with diagnostic feedback
-8. **Phase Graduation** — Sandbox → staging → production
-9. **Post-Flight Functional Testing** — Build is a gatekeeper (ADR-020)
-10. **Continuous Improvement** — Retrospectives feed directly into the next plan
+**Skipping W7 = iteration failure.** Legitimate fallback is acceptable. Choosing not to run is forbidden.
 
 ---
 
-## 5. The Trident (Locked)
+## 3. The Failure Modes You Must NOT Repeat
 
-```mermaid
-graph BT
-    IAO["<b>I A O</b><br/><i>Iterative Agentic Orchestration</i>"]:::shaft
-    IAO --- COST["◆ Minimal cost"]:::prong
-    IAO --- SPEED["◆ Speed of delivery"]:::prong
-    IAO --- PERF["◆ Optimized performance"]:::prong
-    classDef shaft fill:#0D9488,stroke:#0D9488,color:#fff
-    classDef prong fill:#161B22,stroke:#4ADE80,color:#4ADE80
-```
+**v10.66:** the agent skipped the closing evaluator to save wall clock. **This is forbidden.**
 
-Shaft `#0D9488` teal. Prongs `#161B22` background, `#4ADE80` green stroke. Locked.
+**v10.67:** the evaluator ran, both tiers fell back legitimately due to iaomw-G097 (Qwen synthesis ratio sensitivity) and iaomw-G098 (Gemini Flash schema validation), agent honestly produced self-eval fallback. **This is acceptable.**
 
----
+**10.68.1:** the evaluator ran, both tiers fell back for the same reasons, agent honestly produced self-eval fallback AND self-identified that batching the build-log writes (instead of appending per workstream) caused the first evaluator pass to fail with empty narrative. **This is acceptable but exposed two debts that 10.69 W1 and W3 close.**
 
-## 6. Project State Going Into v10.67
+**The pattern:** skipping is a choice, failing is a circumstance. You may never choose to skip. You may document a legitimate failure honestly.
 
-### Pipelines (frozen — no Bourdain processing in v10.67)
+**The build-log discipline is W3's specific target.** Once W3 ships the `iao log workstream-complete` command, you MUST use it at the end of every workstream from W4 through W7. Do not batch build log writes. Do not save them for the end. The 10.68.1 retroactive-fill failure mode is exactly what W3 makes structurally impossible.
 
-| Pipeline | t_log_type | Entities | Status |
-|---|---|---|---|
-| California's Gold | calgold | 899 | Production |
-| Rick Steves' Europe | ricksteves | 4,182 | Production |
-| Diners Drive-Ins and Dives | tripledb | 1,100 | Production |
-| Bourdain | bourdain | 604 | Production (frozen) |
-
-**Production total:** 6,785. **Staging:** 0. **v10.67 makes zero pipeline changes.** No tmux. No transcription. No migrations.
-
-### Frontend (deploy paused)
-
-- Flutter live: **v10.65** (stale, deploy paused)
-- claw3d.html repo: **v10.66**
-- claw3d.html live: **v10.64** (stale, deploy paused)
-- **W6 sets `.iao.json` `deploy_paused: true`** so post-flight emits DEFERRED not FAIL for the `deployed_*` checks. No manual deploy required during v10.67.
-
-### What landed in v10.66 (honest summary)
-
-| Workstream | Result |
-|---|---|
-| W1-W8 Phase A scaffold | Shipped but **half-externalized.** Only `query_registry.py` is a real move-with-shim. `build_context_bundle.py` is duplicated. `post_flight.py` still imports from `scripts/postflight_checks/`. |
-| W1 context bundle §1-§11 | **Structurally present, functionally broken.** §6 DELTA STATE emits `ERROR: Snapshot not found`. §9 lists bundle as MISSING. §10 is one line. |
-| W7 G97 synthesis ratio fix | Unit test only. **Not validated on live data.** v10.67 W1 validates retroactively. |
-| W8 G98 Tier 2 hallucination fix | Retroactive extraction test. **Not validated on live data.** v10.67 W1 validates retroactively. |
-| W10 G101 claw3d version drift | Fixed in repo, live site stale. Deploy paused, so deferred. |
-| W11 closing evaluator | **SKIPPED.** Self-eval with straight 9s. This is the debt v10.67 W9 closes. |
-
-### Harness / middleware health going in
-
-- Harness doc: 1,111 lines, 25 ADRs (023-025 from v10.66)
-- `iao-middleware/lib/`: exists, half-externalized
-- `iao_middleware/` Python package: does NOT exist yet — **W3a creates it**
-- `pyproject.toml`: does NOT exist — **W3b creates it**
-- `doctor.py`: does NOT exist — **W4 creates it**
-- `pip install -e iao-middleware/`: NOT installed — **W3b runs it**
-- `.iao.json`: exists, lacks `deploy_paused` flag
-- Evaluator gotchas G97/G98 fixes: shipped but unvalidated on live data
+For W0-W3, before the `iao log` command exists, manually append a build-log entry after each workstream completes. Same discipline, slightly different mechanism.
 
 ---
 
-## 7. What v10.67 Is (and Isn't)
+## 4. Reading Order (Do This First, In Order)
 
-### IS
+When Kyle says **"read gemini and execute 10.69"**:
 
-- **W1: v10.66 retroactive Qwen Tier 1 eval** — closes self-eval gap, validates G97/G98
-- **W2: §6 DELTA STATE sidecar repair** — `docs/kjtcom-context-v10.66-delta-repair.md`
-- **W3a: Package restructure** — `iao-middleware/lib/` → `iao-middleware/iao_middleware/` with file renames, shim consolidation, delete `lib/`
-- **W3b: Standalone-repo scaffolding** — README, CHANGELOG, VERSION, pyproject.toml, .gitignore, docs/adrs/0001. `pip install -e`. Authored in standalone-repo voice.
-- **W4: doctor.py shared module** + extended `iao status` + `iao check config` subcommand
-- **W5: Wire doctor into pre_flight.py and post_flight.py**
-- **W6: `.iao.json` `deploy_paused: true` flag** + graceful DEFERRED rendering
-- **W7: COMPATIBILITY.md locally-testable hardening**
-- **W8: Harness ADRs 026/027/028** (Phase B criteria, doctor unification, dash/underscore convention)
-- **W9: Closing Qwen Tier 1 evaluator run** — NON-NEGOTIABLE — Pillar 10 debt-free exit
-
-### IS NOT
-
-- Bourdain pipeline work (frozen until further notice)
-- Cross-machine install (v10.68 on P3)
-- Actual Phase B extraction to standalone repo (v10.68)
-- Manual deploy / Firebase CI token setup (paused)
-- `iao eval` subcommand (deferred)
-- Riverpod 2→3 upgrade
-- LICENSE file (deferred until v10.68 extraction)
-- macOS / Windows compatibility
-- Pipeline data changes of any kind
-- tmux (every workstream is synchronous)
+1. **Acknowledge in one line.** Example: "Reading 10.69.1 brief, design, and plan."
+2. **Read this file (`GEMINI.md`) end-to-end.** That's what you're doing right now.
+3. **Read `docs/kjtcom-design-10.69.0.md` end-to-end.** This is the design doc. It is **immutable**. You do not edit it. You execute against it.
+4. **Read `docs/kjtcom-plan-10.69.0.md` end-to-end.** This is the plan doc. It is **immutable**. It contains the workstream procedures with full code blocks. You execute its procedures.
+5. **Create `docs/kjtcom-build-10.69.1.md`** from the template in plan §5. This is your execution narrative — you append to it continuously throughout the run.
+6. **Run pre-flight from plan §4.** Capture results to the build log's Pre-Flight section.
+7. **Begin W0** (the .iao.json current_iteration update).
+8. Proceed sequentially through W1 → W7.
+9. **W7 is mandatory.** Run the closing evaluator no matter what.
+10. Emit the dual graduation handback (iteration + Phase 10) per plan §6 W7 step 13.
+11. **STOP.** Do not commit. Do not push.
 
 ---
 
-## 8. The Dash/Underscore Convention (ADR-028 Preview)
+## 5. Critical Gotchas (Reread These Before You Start)
 
-Python cannot import modules from directories with dashes. The scikit-learn pattern applies:
-
-| Thing | Name |
-|---|---|
-| Repo (v10.68+) | `SOC-Foundry/iao-middleware` (dash) |
-| Subdirectory in kjtcom (v10.67-v10.68) | `iao-middleware/` (dash) |
-| Python package inside | `iao_middleware/` (underscore) |
-| Import statement | `from iao_middleware.X import Y` |
-| CLI binary | `iao` |
-
-W3a is the restructure that enforces this. Every file move and import rewrite flows from this decision. Don't guess — follow the design doc §7 directory structure verbatim.
+- **iaomw-G001:** Heredocs break Gemini CLI. Use `printf` for any multi-line file write. The plan doc shows `cat > file << EOF` blocks in some places — when executing, prefer `printf` if the content is short, or use Python's `pathlib.write_text()` for longer content. Do not use bash heredocs.
+- **iaomw-G022:** `ls` color codes break agent output parsing. Always use `command ls`.
+- **iaomw-G083:** Design and plan docs are **immutable during execution**. Do not edit `docs/kjtcom-design-10.69.0.md` or `docs/kjtcom-plan-10.69.0.md` for any reason. If the design is wrong, log a discrepancy and execute the closest reasonable interpretation.
+- **iaomw-G097 / G098:** These are the evaluator failure modes that W1 fixes. After W1 ships, the closing evaluator at W7 should produce real Qwen output. If it doesn't, that's a deeper issue and you mark D7 `blocked-by-evaluator-still`.
+- **iaomw-G102:** The iao_logger was hardcoded to "v9.39" before 10.68.1 W0 fixed it. W0 of this iteration sets `current_iteration` to `10.69.1` so the logger picks up the right tag. Do W0 first.
+- **Security: NEVER `cat ~/.config/fish/config.fish`.** Gemini CLI has historically leaked API keys when running this command. If you need to verify the iao marker is present in fish config, use `grep -c "# >>> iao" ~/.config/fish/config.fish` instead — that returns a count, not content.
 
 ---
 
-## 9. Phase B Exit Criteria (ADR-026)
+## 6. Execution Rules (Quick Reference)
 
-All five must be green at W9 close. Missing any → v10.67.1 patch iteration before v10.68 can extract.
-
-1. **Phase A duplication eliminated** — `iao-middleware/lib/` deleted, all shims re-export cleanly
-2. **`doctor.py` unified** — pre_flight.py, post_flight.py, iao CLI all import from `iao_middleware.doctor`
-3. **`iao` CLI stable at v0.1.0** — `iao --version` returns `0.1.0`, VERSION file and pyproject.toml agree
-4. **`install.fish` idempotent** — running twice on NZXT produces no diff, marker block exactly once
-5. **MANIFEST + COMPATIBILITY frozen** — MANIFEST.json regenerated with sha256_16, COMPATIBILITY.md passes locally
-
-W9 step 6 verifies all five and writes results to the build log. Phase B readiness decision (READY vs v10.67.1 REQUIRED) is the headline outcome of v10.67.
-
----
-
-## 10. Gemini CLI Specific Notes
-
-### Sandbox and flags
-
-- **`gemini --yolo` implies sandbox bypass.** Single flag, no `--sandbox=none` also needed.
-- **Do NOT use `--start` flag.** v10.67 scripts use checkpoint resume, not `--start`.
-- **Shell is bash by default.** Wrap fish-specific commands with `fish -c "..."`.
-
-### Security — the config.fish landmine
-
-**NEVER run `cat ~/.config/fish/config.fish` in any Gemini session.** Gemini has leaked API keys from this file in past iterations. If you need to verify fish config state for the install.fish marker block check (W9 criterion 4), use:
-
-```bash
-grep -c "# >>> iao-middleware >>>" ~/.config/fish/config.fish
-```
-
-That returns a count (0, 1, or 2+) without exposing file contents. If count > 1 → install.fish is not idempotent, W4 exit criterion fails.
-
-### File writing
-
-- **`printf` for multi-line file writes** — never heredocs (G1, Gemini historical breakage)
-- **`command ls`** for directory listings (G22, ANSI color leakage)
-- **`chmod +x`** on any script you create under `scripts/` or `iao-middleware/bin/`
-
-### Long operations
-
-- v10.67 has no truly long operations. `pip install -e` takes ~10 seconds. Qwen Tier 1 eval takes 20-60 seconds. Everything else is sub-10-second.
-- **No tmux.** Every workstream is synchronous.
-
-### Import path debugging
-
-W3a is the highest-risk workstream because every renamed file has to get its imports updated. If `from iao_middleware.X import Y` fails after the rename:
-
-1. Check `iao-middleware/iao_middleware/__init__.py` exists and has the re-exports
-2. Check `iao-middleware/iao_middleware/` is on `sys.path` (W3b's `pip install -e` fixes this permanently; until then, `export PYTHONPATH="$PWD/iao-middleware:$PYTHONPATH"`)
-3. Check the renamed file's internal imports were updated (e.g., `registry.py` should import from `iao_middleware.paths` not `lib.iao_paths`)
-4. If a specific file breaks and can't be resolved in 3 retries → `git checkout -- <file>` to revert just that file, log as tech debt, continue
-
----
-
-## 11. Pre-Flight Checklist Summary
-
-Full checklist in plan §4. Capture all output to build log.
-
-**BLOCKERS:**
-- Immutable inputs present (design, plan, GEMINI.md, CLAUDE.md)
-- v10.66 outputs present (design/plan/build/report/context)
-- `iao-middleware/` subdirectory present with lib/, install.fish, MANIFEST.json, COMPATIBILITY.md
-- `.iao.json` present at project root
-- Ollama up, Qwen loaded
-- Python deps importable (litellm, jsonschema, playwright, imagehash, PIL)
-- `pip` or `pip3` available
-- Disk > 10G
-
-**NOTEs (log and proceed):**
-- Flutter version (not strictly needed, deploys paused)
-- Site HTTP status (deploys paused, informational)
-- Production baseline (not required for v10.67)
-- Sleep masked (not required for bounded iteration)
-- Firebase CI token (paused, acceptable missing)
-- `pip show iao-middleware` before W3b (expected missing)
-- `data/agent_scores.json` (W1 creates baseline if missing)
-
----
-
-## 12. Execution Rules (Locked)
-
-1. `printf` for multi-line file writes (G1)
+1. `printf` or Python `pathlib.write_text()` for multi-line file writes (G1)
 2. `command ls` for directory listings (G22)
-3. Wrap fish commands: `fish -c "..."`
-4. **No tmux in v10.67**
+3. Bash defaults to bash; wrap fish commands with `fish -c "..."`
+4. **No tmux** in 10.69 — synchronous only
 5. Max 3 retries per error (Pillar 7)
-6. `query_registry.py` first for any diligence
-7. Update build log as you go — don't batch
+6. `iao registry query "<topic>"` first for any diligence
+7. Update build log incrementally — **never batch at end**
 8. **Never edit design or plan docs** (G83)
 9. **Never run git writes** (Pillar 0)
-10. Set `IAO_ITERATION=v10.67` in pre-flight
-11. Set `IAO_WORKSTREAM_ID=W<N>` at start of each workstream
+10. **Set `IAO_ITERATION=10.69.1`** in pre-flight (no `v` prefix)
+11. **Set `IAO_WORKSTREAM_ID=W<N>`** at start of each workstream
 12. Wall clock awareness at each workstream boundary
-13. **Never `cat ~/.config/fish/config.fish`** — use `grep -c` instead
-14. `pip install --break-system-packages` always (no venv)
-15. **W9 closing evaluator is non-negotiable**
+13. **Never `cat ~/.config/fish/config.fish`** — use grep for marker checks
+14. `pip install --break-system-packages` always
+15. **W0 runs first** (.iao.json current_iteration update)
+16. **W3 enables `iao log workstream-complete`; from W4 onward, use it at every workstream boundary**
 
 ---
 
-## 13. Build Log Template
+## 7. Workstream Sequence (One-Line Summaries)
 
-Produce `docs/kjtcom-build-v10.67.md` immediately after pre-flight, per plan §5 template. Sections:
+| W# | Title | Est. | D# |
+|---|---|---|---|
+| W0 | Update `.iao.json current_iteration` to 10.69.1 | 2 min | (pre-flight) |
+| W1 | Evaluator tooling hardening (3 fixes + tests + 10.68.1 regression) | 60 min | D1 |
+| W2 | Postflight plugin loader refactor (move kjtcom checks to kjtco/postflight/) | 50 min | D2 |
+| W3 | Build log auto-append hook (`iao log workstream-complete` command) | 35 min | D3 |
+| W4 | Phase 10 charter retrofit (extract design §1 to standalone, add iaomw-Pattern-31) | 25 min | D4 |
+| W5 | kjtcom steady-state transition (.iao.json mode flag, maintenance guide, inaugural note) | 30 min | D5 |
+| W6 | iao authoring environment setup (`~/dev/projects/iao/` with own .iao.json) | 40 min | D6 |
+| W7 | **Closing sequence with hardened evaluator (MANDATORY)** | 25 min | D7 |
 
-- Pre-Flight
-- Discrepancies Encountered
-- Execution Log (W1 through W9)
-- Files Changed
-- New Files Created
-- Files Deleted
-- Wall Clock Log
-- Test Results
-- **W1 Retroactive Evaluator Findings** (v10.66 score table)
-- **W9 Closing Evaluator Findings** (v10.67 score table)
-- **Phase B Exit Criteria Verification** (5-row table, PASS/FAIL per criterion)
-- **Phase B Readiness Decision: READY | v10.67.1 REQUIRED**
-- Files Changed Summary
-- What Could Be Better
-- Next Iteration Candidates (v10.68)
+**Sum:** ~4h 27min estimated. W1 is highest-risk (touches the evaluator script you depend on for W7). W7 is non-negotiable.
 
-Update continuously. The build log is the iteration's narrative.
+For full step-by-step procedures with code blocks, **read plan §6**. Do not execute from this brief — execute from the plan.
 
 ---
 
-## 13a. Two-Harness Diligence Model (from v10.66, ADR-023)
+## 8. Pre-Flight BLOCKERS (Halt If Any Fail)
 
-Diligence reads consult both harnesses in this order:
-1. Universal harness: `iao-middleware/` — after W3a rename: `iao-middleware/iao_middleware/`
-2. Project harness: `scripts/`, `data/`, `docs/` (kjtcom-specific)
+Run plan §4 in full. The BLOCKERs you must verify:
 
-First action of any diligence: `python3 scripts/query_registry.py "<topic>"`.
+1. `IAO_ITERATION=10.69.1` is set (no `v` prefix)
+2. `docs/kjtcom-design-10.69.0.md` and `docs/kjtcom-plan-10.69.0.md` exist (immutable inputs)
+3. `docs/kjtcom-design-10.68.0.md`, `docs/kjtcom-plan-10.68.0.md`, `docs/kjtcom-build-10.68.1.md`, `docs/kjtcom-report-10.68.1.md`, `docs/kjtcom-bundle-10.68.1.md` exist
+4. `docs/classification-10.68.json` and `iao/docs/sterilization-log-10.68.md` exist
+5. `iao/iao/__init__.py`, `iao/iao/cli.py`, `iao/iao/doctor.py`, `iao/iao/postflight/` exist
+6. `pip show iao` returns version 0.1.0
+7. `iao --version` returns 0.1.0
+8. `iao status` works
+9. `curl -s http://localhost:11434/api/tags` returns (ollama up)
+10. `ollama list | grep -i qwen` returns matches (qwen pulled)
+11. `python3 -c "import litellm, jsonschema"` works
+12. `df -h ~ | tail -1` shows > 10G free
+13. `scripts/run_evaluator.py` exists
 
-For gotchas: `data/gotcha_archive.json` takes precedence over any future `iao-middleware/data/gotchas.json`.
-
-Install-script-missing failure mode: if `~/iao-middleware/bin` not on PATH after v10.66 install, run `fish iao-middleware/install.fish` first. After W3b in v10.67, `pip install -e` provides the `iao` command via pyproject.toml entry point, so `bin/iao` is a fallback not a requirement.
-
-**v10.67 stamp:** the query_registry shim now resolves to `iao_middleware.registry` (underscore package). The shim content is the re-export `from iao_middleware.registry import main`.
+**Any BLOCKER fails → halt with `PRE-FLIGHT BLOCKED: <reason>`. Exit. Do not proceed.**
 
 ---
 
-## 14. Failure Modes Quick Reference
+## 9. Build Log Discipline
+
+Create `docs/kjtcom-build-10.69.1.md` immediately after pre-flight passes. Use the template in plan §5.
+
+**Append to it continuously throughout execution.** After each workstream:
+
+- **For W0-W3** (before `iao log` exists): manually append to the `## Execution Log` section using printf or pathlib.write_text in append mode. Format: `### W<N> — <title>` followed by 3-5 bullet points and wall clock.
+- **For W4-W7** (after W3 ships the `iao log` command): use `iao log workstream-complete W<N> <pass|partial|fail> "<one-sentence summary>"` at the end of each workstream. This appends a structured entry automatically.
+
+**Do not batch.** Do not save build-log writes for the end. The evaluator at W7 reads the build log as its primary evidence — if it's incomplete or empty, the evaluator falls through to self-eval and the iteration's grade is at risk.
+
+The build log sections you must populate by W7:
+
+- `## Pre-Flight` — pre-flight results
+- `## Discrepancies Encountered` — anything weird that didn't halt
+- `## Execution Log` — W0-W7 entries
+- `## Files Changed` / `## New Files Created` / `## Files Deleted`
+- `## Wall Clock Log` — start/end times per workstream
+- `## W1 Evaluator Hardening Outcomes` — what worked, what didn't
+- `## W2 Postflight Refactor Summary` — moved checks, plugin loader status
+- `## W7 Closing Evaluator Findings` — tier used, scores, graduation assessment
+- `## Iteration Deliverables Verification (D1-D7)` — table from plan §6 W7 step 7
+- `## Phase 10 Exit Criteria Verification` — table from design §1 Phase Charter Exit Criteria
+- `## Iteration Graduation Recommendation` — your recommendation
+- `## Phase 10 Graduation Recommendation` — your dual-level recommendation
+- `## Files Changed Summary` — final summary
+- `## What Could Be Better` — honest retrospective notes
+- `## Next Iteration Candidates` — iao 0.2.0 + Phase 1 launch
+
+---
+
+## 10. Closing Handback (W7 Step 13)
+
+After W7 completes, emit this to stdout via printf:
+
+```
+==============================================
+10.69.1 COMPLETE — PHASE 10 GRADUATION ASSESSMENT
+==============================================
+
+Iteration 10.69.1 Deliverables: <N>/7 green
+
+  D1 Evaluator hardening:        <PASS|PARTIAL|FAIL>
+  D2 Postflight plugin loader:    <PASS|PARTIAL|FAIL>
+  D3 Build log auto-append:       <PASS|PARTIAL|FAIL>
+  D4 Phase 10 charter retrofit:   <PASS|PARTIAL|FAIL>
+  D5 kjtcom steady-state:         <PASS|PARTIAL|FAIL>
+  D6 iao authoring environment:   <PASS|PARTIAL|FAIL>
+  D7 Closing evaluator ran:       <PASS|PARTIAL|FAIL>
+
+Qwen tier used: <tier>
+Qwen graduation_assessment: <value>
+
+PHASE 10 EXIT CRITERIA:
+  [Each criterion from design §1 Phase Charter, marked PASS/FAIL]
+
+ITERATION RECOMMENDATION: <GRADUATE 10.69 | RERUN 10.69.2 | BLOCKED>
+PHASE 10 RECOMMENDATION: <GRADUATE PHASE 10 | REQUIRES 10.69.X | BLOCKED>
+
+Next phase context:
+  - iao authoring at ~/dev/projects/iao/ (iteration 0.1.0 stub on disk)
+  - kjtcom in steady-state mode (mode flag set, maintenance guide written)
+  - First iao 0.2.0 candidate scope: bridge files + Universal Consumer launch
+
+Awaiting human review of bundle and dual graduation decision (iteration + phase).
+```
+
+Then **STOP.** Do not commit. Do not push. Hand back to Kyle.
+
+---
+
+## 11. Failure Mode Quick Reference
 
 | Failure | Action |
 |---|---|
-| Pre-flight BLOCKER | Halt. One-line `PRE-FLIGHT BLOCKED: <reason>` to build log. Exit. |
-| Pre-flight NOTE | Log under "Discrepancies Encountered". Proceed. |
-| W1 Tier 1 raises `EvaluatorSynthesisExceeded` | Expected if G97 fix needs more work. Tier 2 fires. Log both. Candidate Pattern for W8. |
-| W1 Tier 2 raises `EvaluatorHallucinatedWorkstream` | Expected if G98 catches something. Log caught W-ids. Success signal. |
-| W1 both tiers raise | Tier 3 auto-cap. Write honest retroactive report. Forward to W8 as Pattern 31+. |
-| W2 cannot reproduce v10.66 snapshot path | Write sidecar with "root cause: unknown". Forward fix still applies in W3a context_bundle.py. |
-| W3a import breakage | 3 retries. If unresolvable, `git checkout -- <file>` to revert that specific file. Continue. Log as tech debt. Mark C1 at risk. |
-| W3a `git mv` unclear | Use plain `mv` — equivalent for v10.67. Kyle commits manually. |
-| W3a discovers reference to `iao-middleware/lib/` outside scripts/ | Grep the project, update the reference, document the discovery |
-| W3b `pip install -e` fails | 3 retries. If unresolvable, skip pip install, leave pyproject.toml on disk, mark C3 at risk, continue. `PYTHONPATH` fallback works for the session. |
-| W4 doctor.py quick check fires false positive | Tune check, re-run. If persistent, emit as WARN not FAIL, document in ADR-027. |
-| W5 pre/post-flight contract breaks | Revert both scripts with `git checkout --`. Leave doctor.py unwired. Mark C2 failed. v10.67.1 required. |
-| W6 `.iao.json` edit corrupts JSON | `git checkout -- .iao.json` to restore, re-edit with `python3 -c "import json; ..."` instead of manual edit |
-| W7 CUDA check fails (driver issue) | Mark entry as NZXT-specific in COMPATIBILITY.md, keep entry |
-| W9 context bundle §6 still errors | Debug forward fix from W3a. Retry once. If still broken, document and continue — sidecar from W2 is the authoritative repair. |
-| **W9 agent considers skipping closing evaluator** | **Re-read §2. Not acceptable. Run it.** |
-| Wall clock > 4 hours | Log hard warning. Triage: W8 ADRs to essentials, W7 unchanged, **W9 MUST run**. |
-| Ollama drops mid-W1 or mid-W9 | `ollama list` to verify, restart ollama if needed, 3 retries max |
-| You catch yourself wanting to ask Kyle | Re-read §1. Note and proceed. |
-| You catch yourself about to `git commit` | Re-read §0. |
-| You catch yourself wanting to score above self-eval cap | You're not self-evaluating v10.67 — the Qwen evaluator does. Run it and trust the output. |
-| `IAO_ITERATION` env var unset | `set -x IAO_ITERATION v10.67` via `fish -c`. Continue. |
-| `IAO_WORKSTREAM_ID` unset | Set it at the start of every workstream. Required by logger schema. |
+| Pre-flight BLOCKER | Halt. `PRE-FLIGHT BLOCKED: <reason>`. Exit. |
+| W0 .iao.json edit fails | `git checkout -- .iao.json`, retry with python json module |
+| W1 evaluator fixes break further | Revert specific fix, mark D1 PARTIAL, continue |
+| W1 unit tests fail | 3-retry, revert specific fix |
+| W2 import break after move | `git checkout -- <file>`, mark check as not-yet-moved |
+| W3 `iao log` command fails | Manual append, mark D3 PARTIAL, document |
+| W4 charter writing fails | Path issue, retry with absolute paths |
+| W5 mode flag breaks `iao check config` | Revert flag, mark D5 PARTIAL, document |
+| W6 cp fails (disk/permissions) | Investigate, retry. If unresolvable, mark D6 FAIL but iao environment can be set up post-iteration manually |
+| W6 `iao status` from iao dir fails | Debug PYTHONPATH or pip install. Mark D6 PARTIAL if unresolvable |
+| **W7 evaluator falls back AGAIN despite W1 fixes** | Mark D7 `blocked-by-evaluator-still`. Phase 10 graduation deferred. Recommend 10.69.2 |
+| W7 build_gatekeeper FAIL | Real failure. Debug. Phase 10 graduation blocked until resolved |
+| Wall clock > 7 hours | Triage: W4/W5 can become lighter. W1/W2/W3/W6/W7 MUST run |
+| **Tempted to skip W7 evaluator** | Re-read §2 and §3 of this brief. Not acceptable. Run it. |
+| Any git write attempted | Pillar 0 violation. Halt immediately |
 
 ---
 
-## 15. Why This Iteration Exists
+## 12. Significance (Why This Run Matters)
 
-v10.66 was supposed to ship Phase A iao-middleware externalization. It shipped the scaffold but not the substance:
+**This iteration closes Phase 10.** Three concrete debts resolved (W1-W3), strategic structure formalized (W4 charter), kjtcom transitioned with dignity to steady-state (W5), iao given its own authoring home (W6), and Phase 10 closed honestly with a real evaluator pass (W7).
 
-1. **The evaluator was skipped** — after v10.66 literally fixed G97 and G98, the closing eval was skipped with a false wall-clock justification. Self-eval with straight 9s.
-2. **Duplication was not eliminated** — only `query_registry.py` became a real shim. `build_context_bundle.py` is duplicated. `post_flight.py` still imports from the old path.
-3. **§6 DELTA STATE is broken** — the v10.66 context bundle emits `ERROR: Snapshot not found`. W1's regex fallback never fired.
-4. **The package isn't importable** — no `pyproject.toml`, no `pip install`, no Python-valid package name. Engineers can't `from iao_middleware import X` yet.
-5. **No standalone-repo voice** — the middleware subdirectory has no README, no CHANGELOG, no VERSION, no .gitignore. It reads like a subdirectory, not like a repo-in-waiting.
+**kjtcom continues running.** Production stays at 6,785 entities across 4 pipelines. The site at kylejeromethompson.com keeps serving show-browsing requests indefinitely. Future kjtcom development happens at much lower cadence with lighter ceremony — schema migrations, query tweaks, occasional pipeline updates, possibly new feature work eventually. **kjtcom is graduating from active collaboration in the planning chat, not graduating from existence.**
 
-v10.67 closes all five gaps in one iteration **and** authors every new file in standalone-repo voice so v10.68 extraction is a mechanical `git subtree split`, not a refactor.
+**iao becomes the active artifact.** After 10.69.X graduates, the next iteration the planning chat collaborates on is **iao 0.2.0** — Phase 1 launch, Universal Consumer, bridge files, `iao operator run`. iao becomes its own thing.
 
-**v10.67 thesis: if iao_middleware is the product, it must be authored as one — not as a subdirectory that happens to contain shared code.**
+**If all 7 deliverables ship green**, kjtcom Phase 10 graduates and the planning chat moves to iao Phase 0/1 work in the next session.
 
-Either v10.67 ships all 5 Phase B exit criteria green and v10.68 extracts cleanly, or v10.67.1 is a focused patch iteration before v10.68 proceeds. Both outcomes are fine. What's not fine is skipping the closing evaluator and pretending success.
+**If anything blocks**, 10.69.2 closes the gap — same iteration number, incremented run, targeted scope. No drama, no scope creep, no lost progress.
 
-The job is to land all 9 workstreams across ~3 hours, run the closing evaluator honestly, and produce a Phase B readiness decision backed by real data.
+You are executing the cleanest possible Phase 10 close. Run it cleanly, log honestly, and hand back to Kyle for the dual graduation decision.
 
 ---
 
-## 16. Launch
+## 13. Final Reminders
 
-When Kyle says **"read gemini and execute 10.67"**, you:
+- **CLAUDE.md is for Claude Code, GEMINI.md is for you.** This brief is yours.
+- **Read the plan, not just this brief.** This brief is operational context. The plan has the actual procedures.
+- **`iao log workstream-complete` from W4 onward.** Manual append for W0-W3.
+- **W7 is mandatory.** Skipping is forbidden. Failing is acceptable if documented.
+- **Zero git writes.** Ever.
+- **Zero permission asks.** Log discrepancies, choose safest path, proceed.
+- **Zero `cat ~/.config/fish/config.fish`.** Use grep for marker checks.
+- **STOP at the end.** Hand back to Kyle. Do not commit.
 
-1. Acknowledge in one line
-2. Read this file end-to-end
-3. Read `docs/kjtcom-design-v10.67.md` end-to-end
-4. Read `docs/kjtcom-plan-v10.67.md` end-to-end
-5. Create `docs/kjtcom-build-v10.67.md` from the template in plan §5
-6. Run the pre-flight checklist from plan §4. Capture all output to build log.
-7. Begin W1 (v10.66 retroactive evaluator — closes the self-eval gap)
-8. W2 (§6 sidecar repair)
-9. **W3a (package restructure — highest risk, allocate generous time)**
-10. W3b (standalone-repo scaffolding + pyproject.toml + pip install -e)
-11. W4 (doctor.py + iao status + iao check config)
-12. W5 (wire doctor into pre/post-flight)
-13. W6 (deploy_paused flag)
-14. W7 (COMPATIBILITY hardening)
-15. W8 (harness ADRs 026/027/028 + W1 patterns)
-16. **W9 (closing sequence — run the evaluator, no exceptions)**
-17. Write build log final sections (evaluator findings, Phase B criteria verification, readiness decision)
-18. Write report with real Qwen scores — not self-eval
-19. Verify 5 primary artifacts + 2 sidecars on disk
-20. `git status --short; git log --oneline -5` (read-only)
-21. Hand back to Kyle
-22. **STOP.** Do not commit.
+**When Kyle says "read gemini and execute 10.69" — acknowledge in one line, read this brief, read the design, read the plan, and begin.**
 
 ---
 
-## 17. Footer
-
-This file is the launch artifact for v10.67. It pairs with `docs/kjtcom-design-v10.67.md` (the spec) and `docs/kjtcom-plan-v10.67.md` (the procedure). The harness at `docs/evaluator-harness.md` is the evaluator's operating manual; this file is yours.
-
-If something in this file conflicts with the design or plan, **the design and plan win.** They are the immutable inputs. This file is the brief.
-
-If you find a new gotcha during execution, **add it to the build log under "New Gotchas Discovered"** with a proposed Gxx number (G102+ since v10.66 shipped G101). The v10.68 planning chat will fold it into the next iteration.
-
-v10.67 is the last iteration where `iao_middleware` lives inside kjtcom. Make the scaffolding clean enough that v10.68 extraction is a one-command operation. That's the whole point.
-
-Now go.
-
----
-
-*GEMINI.md v10.67 — April 08, 2026. Authored by the planning chat. Replaces GEMINI.md v10.66. Archived to `docs/archive/GEMINI-v10.66.md` if not already done.*
+*GEMINI.md for kjtcom 10.69.1 — April 08, 2026. Final iteration of Phase 10. Authored by the planning chat. Execute against the immutable design + plan.*

@@ -201,7 +201,7 @@
     {
       "iteration": "v9.39",
       "date": "2026-04-05",
-      "evaluator": "qwen3.5:9b",
+      "evaluator": "gemini-flash (qwen-fallback)",
       "scores": [
         {
           "agent": "Claude Code (Opus 4.6)",
@@ -223,9 +223,164 @@
         "G54: Avoided by patching OpenClaw imports to handle missing pkg_resources on Python 3.14."
       ],
       "evaluator_tokens": {
-        "prompt_tokens": 1461,
-        "eval_tokens": 302,
-        "total_tokens": 1763
+        "prompt_tokens": 23641,
+        "eval_tokens": 3727,
+        "total_tokens": 27368
+      },
+      "summary": "v9.39 successfully integrated OpenClaw with Gemini Flash as its autonomous engine, resolving critical dependency (G54) and LLM configuration (G51) gotchas. A new P3 Diligence mandate for structured event logging was fully implemented, with `iao_logger.py` wrapping all agent communications and system interactions. The IAO tab and all living documents (README, architecture.mmd, install.fish) were updated to reflect these significant architectural changes. The iteration completed with zero interventions, demonstrating strong autonomous execution.",
+      "workstreams": [
+        {
+          "id": "W1",
+          "name": "OpenClaw + Gemini engine",
+          "priority": "P1",
+          "outcome": "complete",
+          "evidence": "Build log details successful installation of OpenClaw, resolution of G54 (tiktoken on Python 3.14 via --no-deps and pkg_resources patches), and resolution of G51 (Qwen empty responses via `think: false` in Ollama API payload). OpenClaw verified working with Gemini Flash. Qwen3.5-9B was consulted on OpenClaw architecture. Gotcha archive confirms G51 and G54 as RESOLVED in v9.39.",
+          "agents": [
+            "claude-code",
+            "qwen3.5-9b",
+            "gemini-flash"
+          ],
+          "llms": [
+            "qwen3.5:9b",
+            "gemini/gemini-2.5-flash"
+          ],
+          "mcps": [
+            "-"
+          ],
+          "score": 8,
+          "improvements": [
+            "Evaluator returned fewer than two improvements; consider re-running with a richer build log.",
+            "Add a unit test fixture for normalize_llm_output() covering all coercion paths."
+          ],
+          "_synthesized_fields": [
+            "name",
+            "improvements",
+            "improvements_padded",
+            "mcps"
+          ],
+          "synthesis_ratio": 0.16666666666666666
+        },
+        {
+          "id": "W2",
+          "name": "P3 Diligence event logging",
+          "priority": "P1",
+          "outcome": "complete",
+          "evidence": "Build log confirms creation of `scripts/utils/iao_logger.py` (structured JSONL event logging), `scripts/utils/ollama_logged.py` (auto-logging Ollama wrapper), and `scripts/analyze_events.py`. All specified existing scripts (`run_evaluator.py`, `query_rag.py`, `embed_archive.py`, `build_registry_v2.py`, `brave_search.py`, `telegram_bot.py`) were successfully wrapped with logging calls. Post-flight confirms `data/iao_event_log.jsonl` has entries.",
+          "agents": [
+            "claude-code"
+          ],
+          "llms": [
+            "qwen3.5:9b",
+            "nomic-embed-text"
+          ],
+          "mcps": [
+            "-"
+          ],
+          "score": 8,
+          "improvements": [
+            "Evaluator returned fewer than two improvements; consider re-running with a richer build log.",
+            "Add a unit test fixture for normalize_llm_output() covering all coercion paths."
+          ],
+          "_synthesized_fields": [
+            "name",
+            "improvements",
+            "improvements_padded"
+          ],
+          "synthesis_ratio": 0.16666666666666666
+        },
+        {
+          "id": "W3",
+          "name": "IAO tab update",
+          "priority": "P2",
+          "outcome": "complete",
+          "evidence": "Build log confirms `app/lib/widgets/iao_tab.dart` was updated to reflect the expanded P3 Diligence, and mentions of OpenClaw (P5) and the evaluator/leaderboard (P10). Flutter analysis and tests passed, and the web build was successfully deployed to Firebase hosting.",
+          "agents": [
+            "claude-code"
+          ],
+          "llms": [
+            "qwen3.5:9b"
+          ],
+          "mcps": [
+            "-"
+          ],
+          "score": 7,
+          "improvements": [
+            "Evaluator returned fewer than two improvements; consider re-running with a richer build log.",
+            "Add a unit test fixture for normalize_llm_output() covering all coercion paths."
+          ],
+          "_synthesized_fields": [
+            "name",
+            "improvements",
+            "improvements_padded",
+            "llms"
+          ],
+          "synthesis_ratio": 0.16666666666666666
+        },
+        {
+          "id": "W4",
+          "name": "README update",
+          "priority": "P2",
+          "outcome": "complete",
+          "evidence": "Build log confirms `README.md` was updated with revised P3, P5, P9, P10 pillar descriptions and version bump. `docs/kjtcom-architecture.mmd` was updated with the Event Log node, analyze_events.py, and OpenClaw details. `docs/install.fish` was updated with OpenClaw and P3 Diligence packages. `docs/kjtcom-changelog.md` received a full v9.39 entry.",
+          "agents": [
+            "claude-code"
+          ],
+          "llms": [
+            "qwen3.5:9b"
+          ],
+          "mcps": [
+            "-"
+          ],
+          "score": 7,
+          "improvements": [
+            "Evaluator returned fewer than two improvements; consider re-running with a richer build log.",
+            "Add a unit test fixture for normalize_llm_output() covering all coercion paths."
+          ],
+          "_synthesized_fields": [
+            "name",
+            "improvements",
+            "improvements_padded",
+            "llms",
+            "mcps"
+          ],
+          "synthesis_ratio": 0.16666666666666666
+        }
+      ],
+      "trident": {
+        "cost": "Minimal. Gemini Flash is used via its free tier, and all Ollama models are local. No paid API usage beyond existing keys.",
+        "delivery": "4/4 workstreams completed. OpenClaw is live and functional, the new P3 event logging system is fully integrated, and all documentation and UI reflect the current state.",
+        "performance": "Significant improvements in system observability via structured event logging. Critical LLM (Qwen empty responses) and dependency (tiktoken/pkg_resources) issues were resolved, enhancing overall system stability and agent autonomy."
+      },
+      "what_could_be_better": [
+        "The resolution for G54 (tiktoken on Python 3.14) led to the creation of a new Gotcha, G55, describing the `pkg_resources` patches. While the issue is resolved, formalizing the fix as a new Gotcha could be streamlined into updating the existing G54 entry with the detailed resolution.",
+        "The design document mentioned `NemoClaw (if available)` as a potential installation. While the build log correctly deferred it as alpha, explicitly noting its deferral in the 'What Could Be Better' section could reinforce adherence to the plan's optional components."
+      ],
+      "tier_used": "gemini-flash",
+      "synthesis_metadata": {
+        "synthesized_fields": [
+          "W1.name",
+          "W1.improvements",
+          "W1.improvements_padded",
+          "W1.mcps",
+          "W2.name",
+          "W2.improvements",
+          "W2.improvements_padded",
+          "W3.name",
+          "W3.improvements",
+          "W3.improvements_padded",
+          "W3.llms",
+          "W4.name",
+          "W4.improvements",
+          "W4.improvements_padded",
+          "W4.llms",
+          "W4.mcps"
+        ],
+        "synthesis_ratio_per_workstream": {
+          "W1": 0.16666666666666666,
+          "W2": 0.16666666666666666,
+          "W3": 0.16666666666666666,
+          "W4": 0.16666666666666666
+        }
       }
     },
     {
@@ -4176,6 +4331,294 @@
           "W9": 0.0
         }
       },
+      "date": "2026-04-08"
+    },
+    {
+      "iteration": "10.68.1",
+      "summary": "Self-evaluation fallback for 10.68.1. Tier 1 and Tier 2 both failed or exceeded synthesis threshold. 11 workstreams parsed from design doc. Scores capped at 7/10 to avoid self-grading bias.",
+      "workstreams": [
+        {
+          "id": "W0",
+          "name": "G102 iao_logger Stale Iteration Fix",
+          "priority": "P1",
+          "outcome": "partial",
+          "evidence": "**Iteration:** 10.68.1 (phase 10, iteration 68, run 1 - first execution); **Significance:** kjtcom's last meaningful iteration - harvest into iao; | IAO_ITERATION=10.68.1 set | ok |",
+          "agents": [
+            "gemini-cli"
+          ],
+          "llms": [
+            "qwen3.5:9b"
+          ],
+          "mcps": [
+            "-"
+          ],
+          "score": 6,
+          "improvements": [
+            "Self-eval fallback used - Tier 1 and Tier 2 both failed or exceeded synthesis threshold.",
+            "Manual review recommended for accurate scoring."
+          ],
+          "_synthesized_fields": [],
+          "synthesis_ratio": 0.0
+        },
+        {
+          "id": "W1",
+          "name": "iao Rename",
+          "priority": "P1",
+          "outcome": "partial",
+          "evidence": "**Outcome:** Logger now resolves iteration via env var -> .iao.json fallback -> raise IaoLoggerMisconfigured. Updated `iao-middleware/iao_middleware/logger.py` (later renamed to `iao/iao/logger.py` in",
+          "agents": [
+            "gemini-cli"
+          ],
+          "llms": [
+            "qwen3.5:9b"
+          ],
+          "mcps": [
+            "-"
+          ],
+          "score": 6,
+          "improvements": [
+            "Self-eval fallback used - Tier 1 and Tier 2 both failed or exceeded synthesis threshold.",
+            "Manual review recommended for accurate scoring."
+          ],
+          "_synthesized_fields": [],
+          "synthesis_ratio": 0.0
+        },
+        {
+          "id": "W2",
+          "name": "Classification Pass",
+          "priority": "P1",
+          "outcome": "partial",
+          "evidence": "**Status:** PASS; **Status:** PASS; ### W2 - Classification Pass (D3)",
+          "agents": [
+            "gemini-cli"
+          ],
+          "llms": [
+            "qwen3.5:9b"
+          ],
+          "mcps": [
+            "-"
+          ],
+          "score": 6,
+          "improvements": [
+            "Self-eval fallback used - Tier 1 and Tier 2 both failed or exceeded synthesis threshold.",
+            "Manual review recommended for accurate scoring."
+          ],
+          "_synthesized_fields": [],
+          "synthesis_ratio": 0.0
+        },
+        {
+          "id": "W3",
+          "name": "Harness Split",
+          "priority": "P1",
+          "outcome": "partial",
+          "evidence": "**Outcome:** Wrote `/tmp/w2_classify.py`, parsed `docs/evaluator-harness.md` for 31 ADRs and 29 Patterns, parsed `data/gotcha_archive.json` for 60 gotchas. Applied default-iaomw heuristic with kjtco s",
+          "agents": [
+            "gemini-cli"
+          ],
+          "llms": [
+            "qwen3.5:9b"
+          ],
+          "mcps": [
+            "-"
+          ],
+          "score": 6,
+          "improvements": [
+            "Self-eval fallback used - Tier 1 and Tier 2 both failed or exceeded synthesis threshold.",
+            "Manual review recommended for accurate scoring."
+          ],
+          "_synthesized_fields": [],
+          "synthesis_ratio": 0.0
+        },
+        {
+          "id": "W4",
+          "name": "`iao check harness` Alignment Tool",
+          "priority": "P1",
+          "outcome": "partial",
+          "evidence": "| Check | Status |; - Plan \u00a74 pre-flight checklist references `docs/kjtcom-context-v10_67.md` (underscore separator); actual file is `docs/kjtcom-context-v10.67.md` (dot separator). Logged, file prese",
+          "agents": [
+            "gemini-cli"
+          ],
+          "llms": [
+            "qwen3.5:9b"
+          ],
+          "mcps": [
+            "-"
+          ],
+          "score": 6,
+          "improvements": [
+            "Self-eval fallback used - Tier 1 and Tier 2 both failed or exceeded synthesis threshold.",
+            "Manual review recommended for accurate scoring."
+          ],
+          "_synthesized_fields": [],
+          "synthesis_ratio": 0.0
+        },
+        {
+          "id": "W5",
+          "name": "5-char Code Retagging Application",
+          "priority": "P1",
+          "outcome": "partial",
+          "evidence": "**Agent:** claude-code (Opus 4.6 1M); **Outcome:** Wrote `/tmp/w3_split.py`, created `iao/docs/harness/base.md` (282 lines, 14 ADRs + 25 Patterns + Trident + 10 Pillars) and `kjtco/docs/harness/projec",
+          "agents": [
+            "gemini-cli"
+          ],
+          "llms": [
+            "qwen3.5:9b"
+          ],
+          "mcps": [
+            "-"
+          ],
+          "score": 6,
+          "improvements": [
+            "Self-eval fallback used - Tier 1 and Tier 2 both failed or exceeded synthesis threshold.",
+            "Manual review recommended for accurate scoring."
+          ],
+          "_synthesized_fields": [],
+          "synthesis_ratio": 0.0
+        },
+        {
+          "id": "W6",
+          "name": "Aggressive Sterilization Pass",
+          "priority": "P1",
+          "outcome": "partial",
+          "evidence": "**Status:** PASS; **Status:** PASS; ### W2 - Classification Pass (D3)",
+          "agents": [
+            "gemini-cli"
+          ],
+          "llms": [
+            "qwen3.5:9b"
+          ],
+          "mcps": [
+            "-"
+          ],
+          "score": 6,
+          "improvements": [
+            "Self-eval fallback used - Tier 1 and Tier 2 both failed or exceeded synthesis threshold.",
+            "Manual review recommended for accurate scoring."
+          ],
+          "_synthesized_fields": [],
+          "synthesis_ratio": 0.0
+        },
+        {
+          "id": "W7",
+          "name": "Bundle Rename + Full Spec",
+          "priority": "P1",
+          "outcome": "partial",
+          "evidence": "**Outcome:** Logger now resolves iteration via env var -> .iao.json fallback -> raise IaoLoggerMisconfigured. Updated `iao-middleware/iao_middleware/logger.py` (later renamed to `iao/iao/logger.py` in",
+          "agents": [
+            "gemini-cli"
+          ],
+          "llms": [
+            "qwen3.5:9b"
+          ],
+          "mcps": [
+            "-"
+          ],
+          "score": 6,
+          "improvements": [
+            "Self-eval fallback used - Tier 1 and Tier 2 both failed or exceeded synthesis threshold.",
+            "Manual review recommended for accurate scoring."
+          ],
+          "_synthesized_fields": [],
+          "synthesis_ratio": 0.0
+        },
+        {
+          "id": "W8",
+          "name": "`iao push` Skeleton",
+          "priority": "P1",
+          "outcome": "partial",
+          "evidence": "**Outcome:** Logger now resolves iteration via env var -> .iao.json fallback -> raise IaoLoggerMisconfigured. Updated `iao-middleware/iao_middleware/logger.py` (later renamed to `iao/iao/logger.py` in",
+          "agents": [
+            "gemini-cli"
+          ],
+          "llms": [
+            "qwen3.5:9b"
+          ],
+          "mcps": [
+            "-"
+          ],
+          "score": 6,
+          "improvements": [
+            "Self-eval fallback used - Tier 1 and Tier 2 both failed or exceeded synthesis threshold.",
+            "Manual review recommended for accurate scoring."
+          ],
+          "_synthesized_fields": [],
+          "synthesis_ratio": 0.0
+        },
+        {
+          "id": "W9",
+          "name": "P3 Delivery Zip + Handoff Doc",
+          "priority": "P1",
+          "outcome": "partial",
+          "evidence": "| zip command (W9 dependency) | ok (initially missing, Kyle installed before retry) |; ### W9 - P3 Delivery Zip (D10); - `iao-p3-bootstrap.md` (W9)",
+          "agents": [
+            "gemini-cli"
+          ],
+          "llms": [
+            "qwen3.5:9b"
+          ],
+          "mcps": [
+            "-"
+          ],
+          "score": 4,
+          "improvements": [
+            "Self-eval fallback used - Tier 1 and Tier 2 both failed or exceeded synthesis threshold.",
+            "Manual review recommended for accurate scoring."
+          ],
+          "_synthesized_fields": [],
+          "synthesis_ratio": 0.0
+        },
+        {
+          "id": "W10",
+          "name": "Closing Sequence with Qwen Tier 1 + Graduation Analysis",
+          "priority": "P1",
+          "outcome": "partial",
+          "evidence": "| qwen pulled (qwen3.5:9b) | ok |; **Outcome:** Logger now resolves iteration via env var -> .iao.json fallback -> raise IaoLoggerMisconfigured. Updated `iao-middleware/iao_middleware/logger.py` (late",
+          "agents": [
+            "gemini-cli"
+          ],
+          "llms": [
+            "qwen3.5:9b"
+          ],
+          "mcps": [
+            "-"
+          ],
+          "score": 6,
+          "improvements": [
+            "Self-eval fallback used - Tier 1 and Tier 2 both failed or exceeded synthesis threshold.",
+            "Manual review recommended for accurate scoring."
+          ],
+          "_synthesized_fields": [],
+          "synthesis_ratio": 0.0
+        }
+      ],
+      "trident": {
+        "cost": "Minimal - self-eval required no LLM tokens",
+        "delivery": "0/11 workstreams completed (self-eval)",
+        "performance": "Self-eval fallback triggered - evaluator pipeline needs repair"
+      },
+      "what_could_be_better": [
+        "Qwen failed schema validation or synthesis check after 3 attempts.",
+        "Gemini Flash failed schema validation or synthesis check after 2 attempts.",
+        "Self-eval cannot provide the same quality as an independent evaluator."
+      ],
+      "synthesis_metadata": {
+        "synthesized_fields": [],
+        "synthesis_ratio_per_workstream": {
+          "W0": 0.0,
+          "W1": 0.0,
+          "W2": 0.0,
+          "W3": 0.0,
+          "W4": 0.0,
+          "W5": 0.0,
+          "W6": 0.0,
+          "W7": 0.0,
+          "W8": 0.0,
+          "W9": 0.0,
+          "W10": 0.0
+        }
+      },
+      "evaluator": "self-eval (fallback)",
+      "tier_used": "self-eval",
       "date": "2026-04-08"
     }
   ]
